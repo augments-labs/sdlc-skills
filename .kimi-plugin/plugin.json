@@ -30,23 +30,6 @@
   "sessionStart": {
     "skill": "using-sdlc-skills"
   },
-  "hooks": [
-    {
-      "event": "PreToolUse",
-      "command": "bash ./scripts/sh/implementation-guard.sh",
-      "timeout": 15
-    },
-    {
-      "event": "PostToolUse",
-      "command": "bash ./scripts/sh/implementation-guard.sh",
-      "timeout": 15
-    },
-    {
-      "event": "Stop",
-      "command": "bash ./scripts/sh/completion-guard.sh",
-      "timeout": 15
-    }
-  ],
   "skillInstructions": "Kimi Code tool mapping for SDLC skills:\n\n- When a skill says to ask the user, ask clarifying questions, present multiple-choice options, or wait for the user's choice, call Kimi Code's `AskUserQuestion` tool. Do not render those choices as plain assistant text unless `AskUserQuestion` is unavailable or the session is in auto permission mode. Provide 1 question with 2-4 concrete options when possible; put the recommended option first and suffix its label with `(Recommended)`.\n- When a skill refers to a todo list or task tracking, use Kimi Code's `TodoList` tool.\n- When a skill or approved execution mode calls for delegated implementation, review, exploration, or planning, use Kimi Code's `Agent` tool: `subagent_type: \"coder\"` for implementation and review work (paste the fully filled brief into `prompt`, plus a short `description`), `subagent_type: \"explore\"` for read-only exploration, `subagent_type: \"plan\"` for read-only planning. Do not pass `general-purpose` as `subagent_type`.\n- When a skill names a capability tier (`small | medium | large`) for a dispatched subagent, state the tier explicitly in the subagent prompt so the harness can bind it to a model; never substitute a vendor model name.\n- Keep dependent subagent steps sequential. Use multiple `Agent` calls in one response, or `run_in_background: true`, only when the work is genuinely independent.\n- When a loaded skill names a relative sibling file such as `references/...`, resolve it from that skill's installed directory, never from the current project. Locate it under the managed `sdlc-skills` skill root in Kimi Code's configured home (`$KIMI_CODE_HOME/plugins/managed/sdlc-skills/skills` when that variable is set), read the named file completely, and stop as `reference unavailable` instead of improvising its prompt or procedure. Use `Bash` to locate/read the plugin-owned file if `Read` or `Glob` cannot access paths outside the project.\n- When a skill refers to invoking a skill, use Kimi Code's native `Skill` tool.\n- Use Kimi Code's `Read`, `Write`, `Edit`, `Bash`, `Grep`, `Glob`, `FetchURL`, `WebSearch`, and MCP tools by their actual exposed names: `Grep` to search file contents, `Glob` to find files by path or pattern, `FetchURL` to fetch a URL, `WebSearch` to search the web.",
   "interface": {
     "displayName": "SDLC skills",

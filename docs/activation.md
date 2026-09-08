@@ -55,28 +55,20 @@ integration paths, and release controls.
 SDLC skills does not ship a universal project CI template. The commands, platforms,
 thresholds, and failure responses are properties of the adopting project.
 
-## Scoped implementation-entry backstop
+## Session-start-only activation
 
-Claude Code and Kimi Code run a pre-tool guard on their structured edit-class
-actions for code paths. Claude Code checks native skill invocations in its
-transcript, and Kimi Code records native skill invocations through its post-tool
-lifecycle event. The edit is allowed only after the current session has loaded
-both `test-driven-development` and `yagni`.
+Every adapter carries routing through its session-start mechanism. No adapter
+registers tool, prompt, or turn-end hooks. The entry skill requires loading
+requested or potentially relevant skills before responding, asking questions,
+exploring files, planning, or executing commands. Catalogue descriptions help
+select a skill; its loaded body supplies the instructions.
 
-Codex does not run this guard. Its adapter has no authoritative skill invocation
-receipt, and absence of an auxiliary file-read receipt cannot prove that a skill
-was skipped. Treating that missing evidence as a denial can deadlock a valid
-session, so routing and project gates carry the discipline there.
+An already-loaded body can be applied directly. A candidate is set aside only
+after its scope or skip conditions have been checked. This keeps the obligation
+in resident context without adding repeated lifecycle interventions.
 
-This is deliberately a narrow backstop. It covers the named structured edit
-actions and common code extensions. It does not cover shell commands, generated
-files written by another action, every programming language, or harnesses that
-do not expose the required lifecycle evidence. Its denial message states that
-scope. Project tests and promotion gates remain responsible for the artifact.
-
-A reminder that fires on a *cadence* rather than a boundary does not belong
-here. Carry routing in the always-loaded surface, re-apply it where context is
-actually lost, and reserve hook denials for an observable action boundary.
+This policy supplies no deterministic skill-invocation enforcement. The adopting
+project's artifact and promotion gates remain responsible for correctness.
 
 ## The honest line
 

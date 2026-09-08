@@ -43,6 +43,21 @@ ctx() { # $1 jq path, rest: env assignments + args
   env "$@" bash "$S" 2>/dev/null | jq -r "$path // empty" 2>/dev/null
 }
 
+echo "--- adapters activate only at session start"
+for config in hooks/hooks.json plugins/sdlc-skills/hooks/hooks.json; do
+  if jq -e '.hooks | keys == ["SessionStart"]' "$config" >/dev/null 2>&1; then
+    ok "$config: only SessionStart is registered"
+  else
+    bad "$config: expected SessionStart as the sole hook event"
+  fi
+done
+if jq -e '.sessionStart.skill == "using-sdlc-skills" and ((.hooks // []) | length == 0)' \
+    .kimi-plugin/plugin.json >/dev/null 2>&1; then
+  ok "Kimi: sessionStart.skill is the sole activation mechanism"
+else
+  bad "Kimi: expected the session-start router without lifecycle hooks"
+fi
+
 echo "--- emits valid JSON in every envelope"
 for spec in \
   'CLAUDE_PLUGIN_ROOT=/p|.hookSpecificOutput.additionalContext|claude' \

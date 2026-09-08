@@ -200,53 +200,28 @@ while IFS= read -r f; do
   sed 's/`[^`]*`//g' "$f" | grep -qiE "$SCANNER_TRIGGERS" && err "$f: harness scanner trigger-word"
 done < <(find hooks -name '*.md' 2>/dev/null)
 
-# Cadence reminders stay retired in every supported adapter. A cadence fires on
-# the turn itself — on its wording, or on every prompt — so it re-spends its text
-# for as long as the session runs and blocks turn-end to do it. The boundary
-# guards are the opposite and stay: each fires on an observable action, and each
-# goes quiet once that action's boundary has been honoured.
-#
-# UserPromptSubmit has no boundary reading and stays retired outright. A turn-end
-# event may only run a state-conditioned guard, never a wording nudge — which is
-# what the retired stop-nudge scripts below were.
-echo "• no cadence reminder hooks (UserPromptSubmit, wording-triggered turn-end)"
-for hook_config in \
-  hooks/hooks.json \
-  plugins/sdlc-skills/hooks/hooks.json \
-  .kimi-plugin/plugin.json; do
-  [ -f "$hook_config" ] || continue
-  grep -q '"UserPromptSubmit"' "$hook_config" \
-    && err "$hook_config: UserPromptSubmit is retired across supported adapters"
-  # A turn-end registration is legal only as the state-conditioned guard. This
-  # is deliberately file-scoped rather than parsed: the gate ships without a
-  # JSON dependency, and pairing it with the retired-script list below is enough
-  # to keep a wording nudge from coming back under a new name.
-  if grep -q '"Stop"' "$hook_config" && ! grep -q 'completion-guard\.sh' "$hook_config"; then
-    err "$hook_config: a turn-end hook is registered that is not the completion guard"
-  fi
-done
+# Routing belongs in session-start context; no tool or turn-end hooks ship.
+echo "• session-start-only activation"
+if ! bash tests/run-session-start.sh >/dev/null; then
+  err "tests/run-session-start.sh failed"
+fi
 for retired_script in \
   scripts/sh/implementation-remind.sh \
   scripts/sh/stop-nudge.sh \
   scripts/sh/stop-nudge-detect.sh \
   scripts/sh/stop-nudge-kimi.sh \
-  tests/run-stop-nudge.sh; do
+  tests/run-stop-nudge.sh \
+  scripts/sh/implementation-guard.sh \
+  scripts/sh/completion-guard.sh \
+  tests/run-implementation-guard.sh \
+  tests/run-completion-guard.sh; do
   [ ! -e "$retired_script" ] || err "obsolete $retired_script still exists"
 done
 
-# Mandatory implementation ordering has no pass-rate allowance. The scoped
-# guard must be installed in the harnesses whose Write/Edit-class lifecycle it
-# understands, and every deterministic contract test must pass.
-echo "• implementation-entry contracts"
-[ -x scripts/sh/implementation-guard.sh ] ||
-  err "scripts/sh/implementation-guard.sh is missing or not executable"
-for contract in \
-  tests/run-implementation-guard.sh \
-  tests/run-plan-execution-contract.sh; do
-  if ! bash "$contract" >/dev/null; then
-    err "$contract failed"
-  fi
-done
+echo "• plan-to-implementation contract"
+if ! bash tests/run-plan-execution-contract.sh >/dev/null; then
+  err "tests/run-plan-execution-contract.sh failed"
+fi
 
 # Manifest sync: a harness discovers skills only through its manifest, so every
 # leaf skill dir must be listed explicitly in the plugin's "skills" array — a

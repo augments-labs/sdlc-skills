@@ -12,6 +12,24 @@ catalogue's triggers, not by confidence.
 
 # Using SDLC skills
 
+## The rule: load before acting
+
+**Before responding or taking an action, load every requested or potentially
+relevant skill through the harness's skill-loading action.** Clarifying
+questions, planning, repository exploration, file checks, and commands are
+already actions; none creates an exception for "just getting context first."
+
+Use the names and descriptions already in context to find candidates. Seeing a
+description, remembering a procedure, or announcing a skill does not load its
+instructions. If its current body is already loaded, apply it; do not reload it
+merely to repeat the invocation. Otherwise load it before proceeding.
+
+After loading, state which skill you are using and its purpose, then follow its
+applicable instructions. A candidate may be set aside when its own scope or
+skip conditions show it does not fit. Uncertainty is a reason to load and check,
+never permission to bypass that check. If no catalogue trigger matches, proceed
+without a skill; do not invent a workflow.
+
 ## Routing lives in the skills
 
 Routing is distributed: each skill's description says when it fires, and each
