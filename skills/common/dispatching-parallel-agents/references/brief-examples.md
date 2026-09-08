@@ -169,7 +169,7 @@ One brief per approach, identical except `{{approach}}`. The shared report shape
 
 - **The brief that needs the session.** Any reference to "the earlier discussion," "as we decided," or "the bug I showed you" — the agent has none of that. Paste it or point at a file.
 - **Bulk pasted, definition pointed.** A 500-line log inline and "the spec is at {{path/to/spec}}" is backwards. The paste tax is paid on every turn of the subagent's run.
-- **Missing tier.** Omitted, the agent inherits the session's model — usually the most expensive one running a task a small tier would do.
+- **Tier without selection.** The brief names the capability needed; apply the skill's **Model selection** section to configure the model that will actually run.
 - **Verification by description.** "Make sure it works" is not DONE WHEN. Name the command; the exit code is the verdict.
 - **Symmetric overlap.** Two briefs that each say "and tidy up anything nearby" touch the same files. Generosity is a race condition.
 - **Report shapes that don't reconcile.** If you can't put the agents' outputs side by side, you didn't specify the shape — you specified an essay contest.

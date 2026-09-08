@@ -29,7 +29,7 @@ returned by `visual-ui-verification`. Every required gate must pass on the same
 accepted state before the task can be `done`; a `mismatch`, failed VCONF, `unavailable` or
 `error` evaluator result, or any pending gate keeps it non-done.
 
-**Suggested tier:** {{small | medium | large}} — {{mechanical | logic | design}}
+**Suggested tier:** {{small | medium | large}} — {{reason under the Model selection criteria}}
 **Implementation disciplines:** {{`test-driven-development` + `yagni` for
 behavior-affecting work, or the exact carve-out that makes them inapplicable}}
 

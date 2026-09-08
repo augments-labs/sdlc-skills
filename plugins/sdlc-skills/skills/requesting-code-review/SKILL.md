@@ -68,6 +68,13 @@ bound to it — voids the verdict.
    skill, with its own verification, references, identity, and receipt; never
    dispatch one ad hoc.
 
+## Model selection
+
+Before dispatching a reviewer, apply the **Model selection** section of
+`dispatching-parallel-agents` to that role's scope, uncertainty, and consequences
+of a missed defect. Review depth determines coverage and independence; it does
+not automatically require the largest model for every role.
+
 ## Specialist passes
 
 Add the axes the candidate's own content requires — each line says when to open
