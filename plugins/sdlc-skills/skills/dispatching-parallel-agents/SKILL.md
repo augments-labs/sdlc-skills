@@ -28,6 +28,31 @@ Check every pair; if any fails, group them into one agent or sequence them inste
 - **State** — disjoint ports, databases, fixtures. If they run a server or migrations, isolate each (`using-task-branches`).
 - **Order** — none consumes another's output. A dependency is a sequence, not a fan-out.
 
+## Model selection
+
+This section applies to each subagent, including sequential workers and
+reviewers; it does not require a parallel fan-out. Choose autonomously within
+the user's permitted models, using the lowest tier sufficient for the remaining
+decisions and consequences of error.
+
+| Tier | Work |
+| --- | --- |
+| `small` | Mechanical transformations, formatting, structured extraction; rules and expected output are explicit. |
+| `medium` | Execution of settled decisions that still requires judgment: specified implementation, focused review, substantive summarization. |
+| `large` | Resolving uncertainty: architecture, unclear requirements, unexplained failures, uncertain impact, or consequential tradeoffs. |
+
+At dispatch, map the chosen tier to an available model and explicitly set the
+harness's supported model parameter or agent configuration. Naming a tier in the
+prompt does not select a model. If selection is unavailable, disclose that
+limitation and use only a fallback the user's preferences permit; never claim
+an override was applied. Preserve the user's main-session model and any models
+reserved for orchestration.
+
+Supply missing context before escalating capability. Move up a tier when the
+remaining reasoning difficulty warrants it, within the authorized budget and
+data boundary; do not retry a stronger model merely because information was
+missing.
+
 ## The dispatch packet (per agent)
 
 Each agent starts cold, so hand it everything and never your session history.
@@ -37,16 +62,13 @@ envelope, and terminal control. `references/brief-examples.md` explains why thos
 fields exist and shows weak-versus-strong packets for real tasks; read it while
 writing your first one.
 
-Four judgements the template cannot make for you:
+Three judgements the template cannot make for you:
 
 **Paste what defines the task; point at what merely informs it.** The task
 contract, the exact spec, the failing assertion — paste those, so the agent starts
 from a known snapshot. A diff, a log, a large fixture — give a path it opens
 itself. A paste occupies the most expensive context for the agent's whole run; a
 path costs nothing until it is read.
-
-**Name the tier.** Omit it and the agent inherits the session's model, which is
-usually the costliest one available running work a small tier would have done.
 
 **Keep subdispatch off by default.** A child agent has neither the coordinator's
 ownership map nor its capacity view. Allow it only when the packet allocates the

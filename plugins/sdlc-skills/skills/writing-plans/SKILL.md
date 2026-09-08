@@ -87,9 +87,10 @@ Turn an aligned intent into an executable plan: a small durable **map** plus thi
    normative files, and make every normative change a successor rather than an
    edit.
 
-6. **Tag a capability tier per task.** Mechanical work is `small`; work carrying
-   logic or design judgement is `large`. Tag the tier, never a vendor model
-   name — each harness binds tier to model itself.
+6. **Tag a capability tier per task.** Apply the **Model selection** section of
+   `dispatching-parallel-agents` to the decisions that remain in that task.
+   Record the suggested tier and reason; the dispatcher binds it to an available
+   model when the task runs.
 
 ### Self-review before saving (inline, ~30s)
 
