@@ -2,6 +2,13 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [6.3.1] — 2026-09-08
+
+### Changed
+
+- **Session start is the sole activation mechanism across adapters.** The resident router requires relevant skills before responses or actions, replacing tool and turn-end guards.
+- **Subagent models are selected explicitly according to the decisions remaining.** Planning and review share the same capability tiers, avoiding accidental inheritance of the parent model where selection is supported.
+
 ## [6.3.0] — 2026-08-28
 
 ### Added
