@@ -46,6 +46,6 @@ done < <(find skills -mindepth 3 -maxdepth 3 -name SKILL.md | sort)
 # Hooks are inert without their scripts beside them. session-start.sh resolves
 # the router from the flat mirror and needs no rewriting.
 mkdir -p "$root/scripts/sh"
-rm -f "$root/scripts/sh/implementation-guard.sh"
+rm -f "$root/scripts/sh/implementation-guard.sh" "$root/scripts/sh/completion-guard.sh"
 cp -a scripts/sh/session-start.sh "$root/scripts/sh/session-start.sh"
 chmod +x "$root/scripts/sh/session-start.sh"

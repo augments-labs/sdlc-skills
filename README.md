@@ -100,9 +100,9 @@ Three harnesses have adapters:
 
 | Harness | Adapter | Routing support |
 | --- | --- | --- |
-| Claude Code | `.claude-plugin/` | `SessionStart` router injection; `Write`/`Edit` guard |
-| Codex CLI | `plugins/sdlc-skills/`, listed in `.agents/plugins/marketplace.json` | bundled SessionStart router; no implementation guard |
-| Kimi Code | `.kimi-plugin/` | session-start router, tool bindings, and `Write`/`Edit` guard |
+| Claude Code | `.claude-plugin/` | `SessionStart` router injection |
+| Codex CLI | `plugins/sdlc-skills/`, listed in `.agents/plugins/marketplace.json` | bundled `SessionStart` router |
+| Kimi Code | `.kimi-plugin/` | session-start router and tool bindings |
 
 `AGENTS.md` and `GEMINI.md` symlink to `CLAUDE.md`, so a harness that reads its
 own instructions file gets the same guidance from one source.
@@ -121,23 +121,15 @@ Every adapter injects the **full `using-sdlc-skills` entry-skill body** as sessi
 
 It used to inject a ~90-token *pointer* asking the agent to invoke the router before working. That is one discretionary tool call, and a discretionary call can be skipped — it was skipped on this very repository, on exactly the kind of task the router governs. Injecting the body costs ~1,500 approx tokens per context epoch and removes the skippable step: the routing rules are simply resident. The text is read from the canonical skill at runtime, never copied, so editing the skill cannot silently stop shipping it.
 
-No adapter ships a turn-end reminder. One did — a Stop hook that re-routed
-whenever a turn's wording read as a completion claim — and it is retired.
+Session start is the only activation mechanism. No adapter registers
+`PreToolUse`, `PostToolUse`, `Stop`, or other tool, prompt, or turn-end hooks.
+The resident entry skill requires relevant skills to load before any response
+or action, including preliminary questions and file checks. Catalogue names and
+descriptions identify candidates; they do not replace the loaded instructions.
+`scripts/sh/validate-skills.sh` checks this activation contract across adapters.
 
-It fired on a cadence rather than a boundary, so in a long session it re-spent
-its full text over and over, and bought each repetition with an extra model
-turn, for routing the resident skill descriptions and the session-start
-injection already carry. The injection is re-applied where the harness reports
-that context was actually lost; that is where a reminder earns its tokens.
-`scripts/sh/validate-skills.sh` keeps the retired events retired across every
-adapter.
-
-Claude Code and Kimi Code also run a scoped implementation-entry guard. It
-requires both `test-driven-development` and `yagni` to load before a structured
-`Write`/`Edit`-class code edit. Shell writes remain outside that hook boundary;
-project gates still own artifact correctness. Codex does not run the guard
-because its adapter has no authoritative skill invocation receipt; a missing
-side-channel receipt cannot safely deny an edit.
+Routing remains an instruction to the agent. Project tests, review, CI, and
+release gates establish whether the resulting artifacts can advance.
 
 On Codex, SDLC skills ships a plugin adapter and local marketplace metadata, and the plugin bundles its own hooks (`plugins/sdlc-skills/hooks/hooks.json`) that run the same injector on `SessionStart`; the injector itself drops compact-source invocations, since Codex's hook cannot filter by source. The skills install through Codex, durable repo guidance still comes through `AGENTS.md`, and the Codex harness test observes activation by watching the agent read the installed `SKILL.md` file from the plugin cache.
 

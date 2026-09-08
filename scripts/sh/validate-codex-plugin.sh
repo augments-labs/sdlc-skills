@@ -93,14 +93,9 @@ if [ ! -f "$codex_hook" ]; then
   err "missing $codex_hook (an installed plugin would inject no router)"
 else
   grep -q '"SessionStart"' "$codex_hook" || err "$codex_hook: no SessionStart hook (router would not load)"
-  if jq -e '.hooks | has("PostCompact")' "$codex_hook" >/dev/null 2>&1; then
-    err "$codex_hook: compact re-injection is retired — PostCompact must stay unregistered"
-  fi
+  jq -e '.hooks | keys == ["SessionStart"]' "$codex_hook" >/dev/null 2>&1 ||
+    err "$codex_hook: SessionStart must be the sole hook event"
   grep -q 'session-start\.sh' "$codex_hook" || err "$codex_hook: does not invoke session-start.sh"
-  if jq -e '.hooks | has("PreToolUse") or has("PostToolUse")' \
-       "$codex_hook" >/dev/null 2>&1; then
-    err "$codex_hook: structured edit lifecycle hooks must stay retired"
-  fi
   grep -q 'PLUGIN_ROOT' "$codex_hook" \
     || err "$codex_hook: resolves no plugin root — the command must not depend on the session cwd"
 fi
@@ -120,8 +115,10 @@ if [ ! -x "$mirrored" ]; then
 elif ! diff -q scripts/sh/session-start.sh "$mirrored" >/dev/null; then
   err "$mirrored is stale — re-run scripts/sh/sync-codex-plugin-skills.sh"
 fi
-[ ! -e "$plugin_root/scripts/sh/implementation-guard.sh" ] \
-  || err "$plugin_root/scripts/sh/implementation-guard.sh is unused and must not ship"
+for guard in implementation-guard completion-guard; do
+  [ ! -e "$plugin_root/scripts/sh/$guard.sh" ] ||
+    err "$plugin_root/scripts/sh/$guard.sh is unused and must not ship"
+done
 [ -f "$plugin_root/skills/using-sdlc-skills/SKILL.md" ] \
   || err "$plugin_root/skills/using-sdlc-skills/SKILL.md missing — the injector would find no router"
 

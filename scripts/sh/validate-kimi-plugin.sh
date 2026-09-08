@@ -81,20 +81,9 @@ else
   [ -n "$router" ] || err "missing sessionStart.skill"
   [ -n "$router" ] && printf '%s\n' "$exposed" | grep -qx "common/$router" || err "sessionStart.skill '$router' is not an exposed skill"
 
-  echo "• Kimi plugin hooks"
-  while IFS= read -r cmd; do
-    script="$(printf '%s' "$cmd" | awk '{print $2}')"
-    case "$script" in
-      ./*) [ -x "$script" ] || err "Kimi hook command is not an executable plugin script: $cmd" ;;
-      *) err "Kimi hook command must invoke a ./ script inside the plugin: $cmd" ;;
-    esac
-  done < <(jq -r '.hooks[]?.command // empty' "$manifest")
-  for event in PreToolUse PostToolUse; do
-    jq -e --arg event "$event" '
-      any(.hooks[]?; .event == $event and (.command | contains("implementation-guard.sh")))
-    ' "$manifest" >/dev/null ||
-      err "Kimi $event does not run the scoped implementation guard"
-  done
+  echo "• Kimi session-start-only activation"
+  jq -e '(.hooks // []) | length == 0' "$manifest" >/dev/null ||
+    err "Kimi activation belongs in sessionStart.skill; lifecycle hooks must not ship"
 
   echo "• Kimi skill instructions (tool binding)"
   instructions="$(jq -r '.skillInstructions // ""' "$manifest")"
