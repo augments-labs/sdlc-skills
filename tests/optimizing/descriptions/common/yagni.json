@@ -32,7 +32,7 @@
    "query": "This project has no integration coverage at all and I don't trust the unit tests. What gates should we actually have?"},
   {"split": "validation", "should_trigger": false, "expect": "none",
    "query": "Explain what YAGNI actually means and where it comes from — I'm writing a section on it for our team style guide."},
-  {"split": "validation", "should_trigger": false, "expect": "using-task-branches",
+  {"split": "validation", "should_trigger": false, "expect": "using-git-worktrees",
    "query": "Update README.md to document the three new environment variables we added last sprint."},
   {"split": "validation", "should_trigger": false, "expect": "debugging",
    "query": "The checkout total is off by one cent on about 1 in 200 orders and I have no idea why. Speculative code is my guess but find it."},

@@ -23,7 +23,7 @@ Advance only through real state transitions; nothing is done until its evaluator
    Offer delegated only where the harness provides a subagent action; otherwise
    say so and execute inline. Task independence is not a mode decision.
 
-2. **Refresh the workspace** through `using-task-branches`. Establish who owns
+2. **Refresh the workspace** through `using-git-worktrees`. Establish who owns
    it, what HEAD and the intended base actually are, whether the tree is clean,
    what the baseline gate returns, and which runtime identities are live. Read
    all of that from the workspace itself; never infer it from what the plan says

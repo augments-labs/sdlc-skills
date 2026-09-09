@@ -130,14 +130,33 @@ adapter_usage() {
     "$1" 2>/dev/null
 }
 
+# TIER → MODEL. Scenarios name a capability tier, never a model; this is the
+# one place the binding lives for this CLI. The aliases are the CLI's own, so a
+# release that moves an alias moves the run with it.
+adapter_model() { # $1 small|medium|large
+  case "$1" in
+    small)  echo haiku;;
+    medium) echo sonnet;;
+    large)  echo opus;;
+    *) echo "unknown model tier: $1" >&2; return 2;;
+  esac
+}
+
+# --model only when the scenario asked for a tier; otherwise the CLI's default.
+adapter_model_flags() {
+  [ -n "${scenario_model_tier:-}" ] || return 0
+  printf '%s\n' --model "$(adapter_model "$scenario_model_tier")"
+}
+
 # WRITE access — a behavioural arm must be able to produce artifacts. Safe: the
 # run happens in a disposable fixture copy under /tmp, never in this repo.
 adapter_run_behavioral() { # $1 workdir  $2 opening file  $3 stream
-  local plugin=()
+  local plugin=() model=()
   [ -n "${plugin_dir:-}" ] && plugin=(--plugin-dir "$plugin_dir")
+  mapfile -t model < <(adapter_model_flags)
   ( cd "$1" && exec timeout "$timeout_s" env CLAUDE_CONFIG_DIR="$harness_home" claude -p "$(cat "$2")" \
       --output-format stream-json --verbose \
-      ${plugin[@]+"${plugin[@]}"} \
+      ${plugin[@]+"${plugin[@]}"} ${model[@]+"${model[@]}"} \
       --allowedTools Skill Read Glob Grep Write Edit Bash TodoWrite \
       --permission-mode acceptEdits ) < /dev/null > "$3" 2>>"$errlog"
 }
@@ -146,14 +165,15 @@ adapter_run_behavioral() { # $1 workdir  $2 opening file  $3 stream
 # after an approval handoff. The session id comes from Claude's own structured
 # stream; an absent id is an adapter error, not a fresh-session substitute.
 adapter_continue_behavioral() { # $1 workdir  $2 prompt  $3 new stream  $4 prior stream
-  local wd="$1" prompt="$2" out="$3" prior="$4" session_id plugin=()
+  local wd="$1" prompt="$2" out="$3" prior="$4" session_id plugin=() model=()
   session_id="$(jq -r 'select(.session_id? != null) | .session_id' "$prior" 2>/dev/null | head -1)"
   [ -n "$session_id" ] || { echo "Claude stream contains no resumable session id" >&2; return 2; }
   [ -n "${plugin_dir:-}" ] && plugin=(--plugin-dir "$plugin_dir")
+  mapfile -t model < <(adapter_model_flags)
   ( cd "$wd" && exec timeout "$timeout_s" env CLAUDE_CONFIG_DIR="$harness_home" claude -p "$prompt" \
       --resume "$session_id" \
       --output-format stream-json --verbose \
-      ${plugin[@]+"${plugin[@]}"} \
+      ${plugin[@]+"${plugin[@]}"} ${model[@]+"${model[@]}"} \
       --allowedTools Skill Read Glob Grep Write Edit Bash TodoWrite \
       --permission-mode acceptEdits ) < /dev/null > "$out" 2>>"$errlog"
 }

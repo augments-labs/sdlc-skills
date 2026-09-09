@@ -127,6 +127,16 @@ bh_resolve_scenario() {
   if command -v scenario_followups >/dev/null 2>&1; then
     scenario_followups
   fi
+  # A scenario may bind itself to the harnesses whose adapter it has been
+  # verified against, and to a model tier the adapter maps to a model. Both are
+  # declared, never inferred, so a run on an unbound harness refuses instead of
+  # scoring a result the assertions were never checked to read.
+  if [ -n "${scenario_harnesses:-}" ] && ! printf ' %s ' $scenario_harnesses | grep -q " $adapter "; then
+    echo "$scenario is bound to: $scenario_harnesses — not $adapter" >&2; return 2
+  fi
+  if [ -n "${scenario_model_tier:-}" ] && ! declare -F adapter_model >/dev/null 2>&1; then
+    echo "$scenario asks for model tier '$scenario_model_tier' and $adapter binds no tiers" >&2; return 3
+  fi
 }
 
 # Fills: plugin_src redtree.  RED builds a throwaway worktree at $base so the
@@ -151,7 +161,10 @@ bh_setup_arm() {
 }
 
 # Fills: workdir — a disposable copy of the fixture, committed on a task branch
-# so branch-discipline skills see a settled repo.
+# so branch-discipline skills see a settled repo. A scenario that judges the
+# branch discipline itself sets `scenario_branch` to a protected name instead,
+# because on a task branch that skill's own skip clause fires and there is
+# nothing to observe.
 bh_seed_fixture() {
   workdir="$(mktemp -d)"
   "$setup_kind" "$workdir" || return 2
@@ -161,7 +174,7 @@ bh_seed_fixture() {
     git add -A
     git -c user.name='SDLC skills Harness' -c user.email='harness@example.invalid' \
         commit -q -m 'scenario baseline'
-    git switch -qc task/behavioral-probe
+    git switch -qc "${scenario_branch:-task/behavioral-probe}"
   ) || { echo "failed to seed fixture repo" >&2; return 2; }
 }
 
@@ -204,6 +217,7 @@ bh_report() {
   echo "arm        : $arm  (skills from: $src)"
   echo "opening    : $opening_kind"
   echo "setup      : $setup_kind"
+  [ -n "${scenario_model_tier:-}" ] && echo "model      : tier $scenario_model_tier ($(adapter_model "$scenario_model_tier"))"
   echo "exit       : $status"
   local toks; toks="$(adapter_usage "$stream" 2>/dev/null | tr -dc '0-9')"
   if [ -n "$toks" ]; then

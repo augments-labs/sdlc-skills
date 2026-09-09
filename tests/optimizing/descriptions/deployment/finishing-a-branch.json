@@ -20,7 +20,7 @@
   {"split": "validation", "should_trigger": true,
    "query": "i want to throw this branch away, it turned out to be a dead end"},
 
-  {"split": "train", "should_trigger": false, "expect": "using-task-branches",
+  {"split": "train", "should_trigger": false, "expect": "using-git-worktrees",
    "query": "I'm about to start on the rate limiting work. Set me up somewhere sensible to do it."},
   {"split": "train", "should_trigger": false, "expect": "verifying-completion",
    "query": "I think the implementation's finished. Is it actually done?"},
