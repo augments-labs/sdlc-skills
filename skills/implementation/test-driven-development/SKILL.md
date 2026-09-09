@@ -83,8 +83,8 @@ cycle.
 Refactor only while the observable contract is unchanged. An intended behavior
 change returns to the new-behavior RED cycle and to the approval that owns it.
 
-A green cycle ends by invoking `verifying-completion` on the exact state you
-are about to call done — the gate this cycle ran is one row of its ledger, not
+**REQUIRED:** a green cycle ends by invoking `verifying-completion` on the
+exact state you are about to call done — the gate this cycle ran is one row of its ledger, not
 the ledger. Then return to whatever invoked this skill: a plan task, a worktree
 checkpoint, or a fix under `debugging`. This skill never commits, pushes, or
 opens a PR on its own.

@@ -85,7 +85,7 @@ alone does not override one.
    offload that means its raw diff, its authorized checkpoints (or none), its
    result revision, and its evaluator output — never its summary.
 
-5. **Invoke `verifying-completion`** to run the complete required gate set the
+5. **REQUIRED — invoke `verifying-completion`** to run the complete required gate set the
    task template defines — for a UI-bearing task, the Evaluator plus every
    applicable VCONF, and `visual-ui-verification` for an integrated UI — in the
    authoritative workspace, binding every output to the same exact state.
@@ -127,15 +127,15 @@ these in order, in the authoritative workspace, and let each loading action
 appear in the execution evidence — the same rule step 3 applies to the
 disciplines:
 
-1. **Invoke `verifying-completion`** for plan Acceptance on the exact
+1. **REQUIRED — invoke `verifying-completion`** for plan Acceptance on the exact
    integrated revision — every required gate rerun on that state, not a
    re-read of the task ledgers.
 
-2. **Invoke `requesting-code-review`.** The integrated candidate is a done
+2. **REQUIRED — invoke `requesting-code-review`.** The integrated candidate is a done
    boundary; task-local evaluator status never stood in for review, and a
    review you do yourself is not that skill.
 
-3. **Invoke `finishing-a-branch`.** It owns push, PR, merge, keep, and discard,
+3. **REQUIRED — invoke `finishing-a-branch`.** It owns push, PR, merge, keep, and discard,
    and it will not act without step 2's verdict. Do not run any of those
    actions from this skill, and do not choose one on the user's behalf — the
    integration question belongs to that skill.

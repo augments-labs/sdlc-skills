@@ -87,7 +87,7 @@ unverified.
    what remains pending. If any required row failed or did not run, do not say
    complete.
 
-10. **Route by the transition you named in step 2.** Task green inside a plan or
+10. **REQUIRED — route by the transition you named in step 2.** Task green inside a plan or
     a worktree checkpoint returns to the skill that sent it, and nothing more
     happens here. A completion or integration claim — the user will read the
     work as done, or it is about to be pushed, published, or merged — invokes

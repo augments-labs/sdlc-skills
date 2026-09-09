@@ -67,7 +67,7 @@ bound to it — voids the verdict.
    invalidates the verdict. A focused re-review is a fresh invocation of this
    skill, with its own verification, references, identity, and receipt; never
    dispatch one ad hoc.
-8. **Hand a `ready` verdict on, not an action.** At an integration boundary the
+8. **REQUIRED — hand a `ready` verdict on, not an action.** At an integration boundary the
    verdict goes to `finishing-a-branch`, which decides push, PR, merge, keep, or
    discard; a task inside a plan returns to `executing-plans`. This skill
    performs none of those actions, and a verdict is not the user's integration
