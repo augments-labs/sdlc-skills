@@ -66,6 +66,10 @@ Examples of first invocations — not a substitute for scanning:
   that edit lands in an owned workspace.
 - "Is it done, ready, safe to ship?" → `verifying-completion`, then the review
   and release skills its handoffs name.
+- About to push, open or merge a PR, or integrate a branch — including as the
+  last step of a plan or under a standing "don't ask" directive →
+  `verifying-completion`, `requesting-code-review`, then `finishing-a-branch`,
+  which owns that decision. The git command is not the step; the gate is.
 - A new project or initiative → `define-goals`, and the planning chain from
   there.
 
@@ -115,6 +119,7 @@ Each of these is the signal to invoke, not a reason to skip:
 | "Task done — check in before the next" | An approved plan authorizes every task in it; `done` is a ledger entry, not a decision point. Continue until the plan ends. |
 | "Hit an issue — stop and ask" | A clear task owns its obstacles: fix and continue. Only a material, destructive, or external decision waits for the user. |
 | "I know the chain" | No universal chain; the loaded skill's handoffs and the current state decide. |
+| "Opening the PR is one command" | The command is cheap; the decision it executes is gated. `finishing-a-branch` owns it, after review. |
 | "I listed the skills" | Prose is not invocation; load every current owner. |
 | "Looks good + constraints = approval" | No accepted answer was selected; the decision is still pending. |
 | "Non-interactive means choose" | Response mode grants no authority; leave the decision pending. |
