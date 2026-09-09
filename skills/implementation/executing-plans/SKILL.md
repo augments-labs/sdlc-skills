@@ -100,16 +100,54 @@ alone does not override one.
 
 7. **Re-run a combined gate** after integrating parallel results.
 
-8. **Return to step 1 with the next task** whose `Depends on` is satisfied.
+8. **Integrate per task only when the plan says so.** If the plan index, the
+   task, or the user's standing directive binds one task to its own PR or
+   merge, then this task's `done` is an integration boundary: invoke
+   `requesting-code-review` on the task's exact revision, then invoke
+   `finishing-a-branch`, and come back here only after that skill has decided.
+   Otherwise a task ends at `done`, and nothing is pushed, published, or merged
+   between tasks.
+
+9. **Return to step 1 with the next task** whose `Depends on` is satisfied.
    `done` is a ledger entry, not a decision point: the approved plan and its
    approved mode are the authority for every task in it, and that authority is
    not re-granted task by task. A green evaluator is not a hand-back, and
    reporting one is not a gate.
 
-   The loop ends — and the turn with it — on exactly one of: the plan's tasks
-   are exhausted; the ledger records any outcome other than `done`; a normative
-   plan change needs direct reapproval; or a high-risk target task's entry gate
-   has not passed. Anything else is the next task.
+   The loop leaves this section on exactly one of: the plan's tasks are
+   exhausted, which goes to *Finishing the plan* below; the ledger records any
+   outcome other than `done`; a normative plan change needs direct reapproval;
+   or a high-risk target task's entry gate has not passed. The last three end
+   the turn. Anything else is the next task.
+
+## Finishing the plan
+
+The last task's `done` closes the loop, not the plan, and it opens no PR. Run
+these in order, in the authoritative workspace, and let each loading action
+appear in the execution evidence — the same rule step 3 applies to the
+disciplines:
+
+1. **Invoke `verifying-completion`** for plan Acceptance on the exact
+   integrated revision — every required gate rerun on that state, not a
+   re-read of the task ledgers.
+
+2. **Invoke `requesting-code-review`.** The integrated candidate is a done
+   boundary; task-local evaluator status never stood in for review, and a
+   review you do yourself is not that skill.
+
+3. **Invoke `finishing-a-branch`.** It owns push, PR, merge, keep, and discard,
+   and it will not act without step 2's verdict. Do not run any of those
+   actions from this skill, and do not choose one on the user's behalf — the
+   integration question belongs to that skill.
+
+| Thought | Reality |
+| --- | --- |
+| "All tasks are done, so the plan is done" | Tasks are done inside the plan. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
+| "The user said not to ask per action, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision and asks its own question. |
+| "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
+| "I'll name the review skill in the PR description" | Naming a skill is not invoking it. Its loading action has to be in the evidence. |
+| "Verified at the last task, no need to rerun" | Evidence binds to a state. The integrated revision is a new state. |
+| "Finishing is one command; a skill for it is ceremony" | The command is cheap. The decision it executes — whose branch, which base, reviewed or not — is what the skill gates. |
 
 ## Outcomes and circuit breaker
 
@@ -119,8 +157,8 @@ supersession each need their owning approved plan decision, and neither means
 done.
 
 Task `done` means evaluator-accepted inside the plan — not integrated, not
-merge-ready. Required task review and final-candidate review remain separate
-gates.
+merge-ready. Per-task review runs only under loop step 8; the final candidate
+always goes through *Finishing the plan*.
 
 Every attempt carries an identity and terminal evidence. A failure or deadline
 enters **cancellation requested** and stays there until the worker, its
@@ -150,5 +188,5 @@ normative change — scope, interface, evaluator, phase, ownership, cutover,
 rollback, decommission, or mode — requires a successor and direct reapproval.
 Runtime attempts, leases, and outcomes update only their external ledgers.
 
-Run plan Acceptance on the exact integrated revision, then re-route. Review,
-branch integration, and release each retain their own gates and decisions.
+A resumed plan whose tasks are already exhausted enters *Finishing the plan*
+directly; a done ledger is not evidence that any of its three steps ran.
