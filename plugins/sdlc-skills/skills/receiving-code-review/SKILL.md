@@ -89,6 +89,12 @@ looks obvious — verify before agreeing, editing, replying, or resolving.
    Invoke `requesting-code-review` again for fresh identities and a receipt before
    focused re-review. Never dispatch or wait directly from this skill.
 
+   Count the rounds on one candidate. When a re-review returns a finding class
+   an earlier round already returned, or a third round ends without
+   convergence, another round is not the fix: record `needs decision` with the
+   round history and the disputed finding, route it to the accountable owner,
+   and stop.
+
 10. **Respond and resolve with evidence.** State the disposition, the revision,
     and the gate result.
 
