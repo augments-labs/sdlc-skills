@@ -61,7 +61,7 @@ Improve the structure of code that already exists. The goal is **deep modules** 
    `writing-plans`/`executing-plans`. Each stable slice migrates its callers,
    runs the bound and project gates, compares accepted floors, and retains the
    known-green state. Checkpoint each coherent slice under
-   `using-task-branches`. A behavior delta stops and returns to its
+   `using-git-worktrees`. A behavior delta stops and returns to its
    requirement/new-behavior cycle.
 8. **Retire only proven redundancy.** Before removing a surface, inventory every
    path that could still reach it: static calls, dynamic registration,

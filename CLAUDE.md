@@ -35,7 +35,7 @@ Before you open a PR here, you MUST:
 If any check fails, do not open the PR. Explain why it would be rejected and what would have to change first.
 
 Local checkpoint commits on a task branch are ordinary authorized work here, and
-`using-task-branches` owns when to make one and what it does not grant.
+`using-git-worktrees` owns when to make one and what it does not grant.
 
 ## Authoring rules (non-negotiable)
 

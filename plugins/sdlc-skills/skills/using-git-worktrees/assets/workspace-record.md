@@ -13,7 +13,8 @@ to, and what the suite looked like before you touched anything.
 | Branch or HEAD | {{branch-or-detached-revision}} |
 | Base | {{base-ref}} at {{revision}} |
 | Remote freshness | {{fetched-at}} / {{stale}} |
-| Isolation kind | branch / worktree / harness-native workspace |
+| Isolation kind | worktree / harness-native workspace / branch in a dedicated checkout |
+| Ignore rule | `.gitignore` / `info/exclude` / outside the repository / native tool owns it |
 | Owner of the checkout | this task / user / host |
 
 ## Inventory

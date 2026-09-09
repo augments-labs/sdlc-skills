@@ -17,7 +17,7 @@ transitions, then wait.
   shallow `self-reviewed: ready`, or the required independent review with no
   blocker. Enter at completion without one and the only permitted choices are
   keep, or obtain that review first.
-- Ordinary development checkpoints are owned by `using-task-branches`; they do
+- Ordinary development checkpoints are owned by `using-git-worktrees`; they do
   not enter this skill until the work is complete or the user names a keep,
   discard, publication, or integration transition.
 - A PR-only close or reopen binds current PR state and a scoped choice, not

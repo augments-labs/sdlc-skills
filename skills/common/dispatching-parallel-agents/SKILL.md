@@ -25,7 +25,7 @@ Check every pair; if any fails, group them into one agent or sequence them inste
 - **Files** — they own exclusive paths, including generated outputs, manifests,
   lockfiles, shared fixtures, and tests. Name one later integration owner for a
   truly shared file; nobody else edits it concurrently.
-- **State** — disjoint ports, databases, fixtures. If they run a server or migrations, isolate each (`using-task-branches`).
+- **State** — disjoint ports, databases, fixtures. If they run a server or migrations, isolate each (`using-git-worktrees`).
 - **Order** — none consumes another's output. A dependency is a sequence, not a fan-out.
 
 ## Model selection
