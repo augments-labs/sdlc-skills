@@ -2,6 +2,12 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [6.3.3] — 2026-09-09
+
+### Changed
+
+- **The comparison surface reads as a document and shows every variant side by side.** `ui-ux-design`'s shared chrome becomes a single document column with an ink-and-orange palette, a version banner that names the open decision, a feedback strip, and a board that lays every variant out at once before any tab is chosen. The stub contract, radio-driven switching, and version markers are unchanged.
+
 ## [6.3.2] — 2026-09-09
 
 ### Changed

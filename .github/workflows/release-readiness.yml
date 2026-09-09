@@ -1,10 +1,10 @@
 # Release-readiness gate for SDLC skills itself.
-# SDLC skills has no "release" label flow — it releases via a manifest version bump on a
-# PR into main. So: when a PR to main bumps the plugin version, require a CHANGELOG entry.
+# SDLC skills has no "release" label flow — it releases via a manifest version bump that
+# reaches main through a release PR from dev. So: when a PR bumps the plugin version, require a CHANGELOG entry.
 name: release-readiness
 on:
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 jobs:
   release-readiness:
     runs-on: ubuntu-latest

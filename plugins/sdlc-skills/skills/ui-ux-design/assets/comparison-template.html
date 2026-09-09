@@ -19,6 +19,14 @@
   link they already have keeps working. Two axes, independent: pick a variant,
   flip the version, and what changed on THAT variant is what you see.
 
+  HOW IT READS: a document, not an app. Title and dimensions; a status banner
+  carrying the question and the version control; a "Feedback needed" strip;
+  a held-constant / differs table; then folder tabs. The first tab, "All side
+  by side", lays every variant out as a bordered card in one grid so nothing
+  is compared from memory; the numbered tabs isolate one variant at full
+  width. Colour is reserved for what needs attention: the ink is the action
+  and the done state, one orange marks attention, red marks blocked.
+
   WHAT YOU AUTHOR: the variants (structure, hierarchy, affordance, visual
   direction). What you never author from scratch: this chrome. The whole
   point of the file is that every surface behaves identically, so versions
@@ -37,205 +45,239 @@
   - Every version block and variant carries a stable data ID. A selected
     direction is cited by these IDs; order or visible label is not identity.
   - State the question and the 2-4 comparison dimensions on the surface
-    (the header below), plus what is held constant.
+    (the header and banner below), plus what is held constant.
   - A click or control state is not approval; the decision is confirmed in
     conversation and recorded in the design section.
   - Responsive and adaptive is MANDATORY, in any browser: the surface must hold
     from a 360px phone to a 2560px monitor. Authored variant content is fluid
     (nothing wider than its container), and a wide block — a table, a code
     block, a long unbroken value — scrolls inside its own overflow-x:auto
-    container, never the page body. Check at 360px before presenting.
+    container, never the page body. In the side-by-side grid a variant gets
+    roughly a third of the page; author for that width, and rely on the
+    numbered tabs for the full-width read. Check at 360px before presenting.
   - Self-contained: inline styles only, system fonts, no external requests,
     no JavaScript required (this file ships none), works over file://,
     light/dark via prefers-color-scheme.
 
   VARIANT COUNT: stubs are provided for 4. Delete the unused radio inputs,
-  their labels, and their sections — never leave an empty variant.
+  their tabs, their cards, and their summary lines — never leave an empty
+  variant. Keep "All side by side" (pick-0) whatever the count.
 -->
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #fafafa; --surface: #ffffff; --ink: #18181b; --muted: #52525b;
-    --line: #e4e4e7; --soft: #f4f4f5;
-    --done: #047857; --done-bg: #ecfdf5;
-    --now: #4f46e5; --now-bg: #eef2ff;
-    --blocked: #b91c1c; --blocked-bg: #fef2f2;
-    --drift: #b45309; --drift-bg: #fffbeb;
-    --pending: #52525b; --pending-bg: #f4f4f5;
-    --accent: #4f46e5;
+    --fg: #1a1a1a; --bg: #fdfdfd; --muted: #666; --border: #ddd; --code-bg: #f5f5f5;
+    --accent: #1a1a1a;  /* the ink is the action and the done state */
+    --warn: #c2410c;    /* the one attention colour */
+    --red: #b91c1c;     /* blocked */
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #09090b; --surface: #131316; --ink: #f4f4f5; --muted: #a1a1aa;
-      --line: #27272a; --soft: #1c1c1f;
-      --done: #34d399; --done-bg: #052e1f;
-      --now: #818cf8; --now-bg: #1a1c3a;
-      --blocked: #f87171; --blocked-bg: #2a1215;
-      --drift: #fbbf24; --drift-bg: #251a08;
-      --pending: #a1a1aa; --pending-bg: #1c1c1f;
-      --accent: #818cf8;
+      --fg: #e4e4e4; --bg: #1a1a1a; --muted: #999; --border: #333; --code-bg: #262626;
+      --accent: #e4e4e4; --warn: #fb923c; --red: #f87171;
     }
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 15px/1.5 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
-  .page { max-width: 1180px; margin: 0 auto; padding: 24px clamp(12px, 4vw, 20px) 64px; }
+  .page { max-width: 980px; margin: 0 auto; padding: 1.5em clamp(.8em, 4vw, 1.5em) 3em; }
+  h1, h2, h3 { font-weight: 600; line-height: 1.3; margin: 1.6em 0 .5em; }
+  h1 { font-size: 1.7em; margin: 0 0 .2em; }
+  h2 { font-size: 1.35em; border-bottom: 1px solid var(--border); padding-bottom: .2em; }
+  h3 { font-size: 1.1em; }
+  a { color: var(--fg); }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; background: var(--code-bg); padding: .1em .35em; border-radius: 3px; }
+  table { border-collapse: collapse; width: 100%; margin: .8em 0; font-size: .93em; }
+  th, td { border: 1px solid var(--border); padding: .45em .7em; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 600; white-space: nowrap; }
+  .tblwrap { overflow-x: auto; }
+  .meta { color: var(--muted); font-size: .85em; }
+  .sub { color: var(--muted); font-size: .95em; margin: .3em 0 0; }
+  .sub .dim { color: var(--fg); }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
   /* authored variant content must never force the page wider than the viewport */
   .variant :is(img, svg, video, canvas, iframe) { max-width: 100%; height: auto; }
+  .variant { min-width: 0; overflow-wrap: break-word; }
 
-  /* ---------- decision scaffolding ---------- */
-  .meta-head { margin-bottom: 20px; }
-  .meta-head h1 { font-size: 22px; margin: 0 0 4px; }
-  .meta-head .q { font-size: 16px; margin: 8px 0; }
-  .meta-head .dims { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
-  .dim { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 4px 10px; font-size: 13px; }
-  .note { color: var(--muted); font-size: 13px; }
-  .note strong { color: var(--ink); }
+  /* ---------- status banner: badge, version control, as-of, question ---------- */
+  .status {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .4em 1em;
+    border: 1px solid var(--accent); border-radius: 8px; padding: .9em 1.2em; margin: 1.2em 0;
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  }
+  .badge { display: inline-block; background: var(--accent); color: var(--bg); padding: .1em .6em; border-radius: 4px; font-size: .78em; font-weight: 600; letter-spacing: .02em; }
+  .status .asof { margin-left: auto; }
+  .status .q { flex-basis: 100%; margin: .3em 0 0; font-size: .95em; }
 
-  /* ---------- variant switcher (pure CSS, no JS) ----------
-     The radio inputs MUST stay direct siblings of .variants, before it in
-     the DOM: the `#pick-N:checked ~ .variants` selector only reaches
-     following siblings. Nesting the inputs inside the <nav> silently
-     blanks every pane — that bug shipped once. Do not "tidy" them away. */
+  /* ---------- feedback strip ---------- */
+  .next { border: 1px solid var(--warn); border-left: 4px solid var(--warn); border-radius: 8px; padding: .8em 1.2em; margin: 1.2em 0; background: color-mix(in srgb, var(--warn) 8%, var(--bg)); }
+  .next > summary { cursor: pointer; font-weight: 600; font-size: 1.02em; }
+  .next > summary .meta { font-weight: 400; }
+  .next ol { margin: .5em 0 .1em 1.3em; padding: 0; }
+  .next li { margin: .3em 0; }
+  .next .who { font-weight: 600; }
+
+  /* ---------- shared status vocabulary (icon + text, never color alone) ---------- */
+  .pill {
+    display: inline-block; font-size: .78em; font-weight: 600; line-height: 1.6;
+    padding: .1em .55em; border-radius: 10px; white-space: nowrap; vertical-align: 1px;
+    background: var(--code-bg); color: var(--muted); border: 1px solid transparent;
+  }
+  .pill.done    { background: var(--accent); color: var(--bg); }
+  .pill.now     { background: var(--warn);   color: var(--bg); }
+  .pill.blocked { background: var(--red);    color: var(--bg); }
+  .pill.drift   { color: var(--warn); border-color: var(--warn); }
+  .pill.pending { color: var(--fg);   border-color: var(--border); }
+
+  /* ---------- switchers (pure CSS, no JS) ----------
+     The radio inputs MUST stay direct siblings of .status, .tabbar, and
+     .variants, before them in the DOM: `#pick-N:checked ~ .variants` only
+     reaches following siblings. Nesting the inputs inside the banner or the
+     tab bar silently blanks every pane — that bug shipped once. Do not
+     "tidy" them away. */
   .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .switcher { display: flex; gap: 4px; background: var(--soft); border-radius: 10px; padding: 4px; margin: 18px 0 24px; width: max-content; max-width: 100%; flex-wrap: wrap; }
-  .switcher label {
-    padding: 8px 16px; border-radius: 7px; cursor: pointer; font-weight: 600; font-size: 14px;
-    color: var(--muted); border: 1px solid transparent;
-  }
-  #pick-1:checked ~ .switcher label[for="pick-1"],
-  #pick-2:checked ~ .switcher label[for="pick-2"],
-  #pick-3:checked ~ .switcher label[for="pick-3"],
-  #pick-4:checked ~ .switcher label[for="pick-4"] { background: var(--surface); color: var(--ink); border-color: var(--line); }
-  #pick-1:focus-visible ~ .switcher label[for="pick-1"],
-  #pick-2:focus-visible ~ .switcher label[for="pick-2"],
-  #pick-3:focus-visible ~ .switcher label[for="pick-3"],
-  #pick-4:focus-visible ~ .switcher label[for="pick-4"] { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .variant { display: none; }
-  @media (max-width: 560px) {
-    .switcher { width: 100%; }
-    .switcher label { padding: 6px 10px; font-size: 13px; }
-    .meta-head h1 { font-size: 19px; }
-  }
-  #pick-1:checked ~ .variants .variant-1 { display: block; }
-  #pick-2:checked ~ .variants .variant-2 { display: block; }
-  #pick-3:checked ~ .variants .variant-3 { display: block; }
-  #pick-4:checked ~ .variants .variant-4 { display: block; }
 
-  /* ---------- version switcher (same sibling trick, second axis) ----------
-     A variant shows only when its version block is shown AND its own radio
-     is picked — two independent groups, no JS. The version radios are
-     direct siblings of .variants for the same reason the pick-N ones are. */
+  /* version control: pills inside the banner, second axis */
+  .versions { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .3em; }
+  .versions label { cursor: pointer; }
+  #ver-1:checked ~ .status label[for="ver-1"],
+  #ver-2:checked ~ .status label[for="ver-2"],
+  #ver-3:checked ~ .status label[for="ver-3"],
+  #ver-4:checked ~ .status label[for="ver-4"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  #ver-1:focus-visible ~ .status label[for="ver-1"],
+  #ver-2:focus-visible ~ .status label[for="ver-2"],
+  #ver-3:focus-visible ~ .status label[for="ver-3"],
+  #ver-4:focus-visible ~ .status label[for="ver-4"] { outline: 2px solid var(--accent); outline-offset: 2px; }
   .version { display: none; }
   #ver-1:checked ~ .variants .version-1,
   #ver-2:checked ~ .variants .version-2,
   #ver-3:checked ~ .variants .version-3,
   #ver-4:checked ~ .variants .version-4 { display: block; }
-  #ver-1:checked ~ .versions label[for="ver-1"],
-  #ver-2:checked ~ .versions label[for="ver-2"],
-  #ver-3:checked ~ .versions label[for="ver-3"],
-  #ver-4:checked ~ .versions label[for="ver-4"] { background: var(--surface); color: var(--ink); border-color: var(--line); }
-  #ver-1:focus-visible ~ .versions label[for="ver-1"],
-  #ver-2:focus-visible ~ .versions label[for="ver-2"],
-  #ver-3:focus-visible ~ .versions label[for="ver-3"],
-  #ver-4:focus-visible ~ .versions label[for="ver-4"] { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .versions { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin: 0 0 4px; }
-  .versions .lbl { font-size: 12px; font-weight: 600; color: var(--muted); margin-right: 4px; }
-  .versions label {
-    padding: 4px 12px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 600;
-    color: var(--muted); border: 1px solid var(--line); background: var(--soft);
-  }
-  .v-stamp { color: var(--muted); font-size: 12px; margin: 0 0 14px; }
-  .v-stamp .mono { color: var(--ink); }
+  .v-stamp { margin: 0 0 1em; }
 
-  /* ---------- variant header ---------- */
-  .v-head { border-bottom: 2px solid var(--line); padding-bottom: 10px; margin-bottom: 16px; }
-  .v-head h2 { margin: 0 0 2px; font-size: 19px; }
-  .v-head .char { color: var(--muted); margin: 2px 0; }
-  .v-head .trade { font-size: 13px; margin: 6px 0 0; }
-  .v-head .trade strong { color: var(--ink); }
-
-  /* ---------- shared status vocabulary (icon + text, never color alone) ---------- */
-  .pill {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 12px; font-weight: 600; line-height: 1;
-    padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+  /* variant control: folder tabs. pick-0 = all side by side; pick-N = one */
+  .tabbar { display: flex; flex-wrap: wrap; gap: .2em; border-bottom: 2px solid var(--border); margin: 1.2em 0 1.5em; }
+  .tabbar label {
+    padding: .55em 1em; cursor: pointer; user-select: none; font-size: .95em; font-weight: 500;
+    color: var(--muted); border: 1px solid transparent; border-bottom: 0; border-radius: 6px 6px 0 0; margin-bottom: -2px;
   }
-  .pill.done    { color: var(--done);    background: var(--done-bg); }
-  .pill.now     { color: var(--now);     background: var(--now-bg); }
-  .pill.blocked { color: var(--blocked); background: var(--blocked-bg); }
-  .pill.drift   { color: var(--drift);   background: var(--drift-bg); }
-  .pill.pending { color: var(--pending); background: var(--pending-bg); }
+  .tabbar label:hover { color: var(--fg); }
+  #pick-0:checked ~ .tabbar label[for="pick-0"],
+  #pick-1:checked ~ .tabbar label[for="pick-1"],
+  #pick-2:checked ~ .tabbar label[for="pick-2"],
+  #pick-3:checked ~ .tabbar label[for="pick-3"],
+  #pick-4:checked ~ .tabbar label[for="pick-4"] { color: var(--fg); font-weight: 600; background: var(--bg); border-color: var(--border); border-bottom: 2px solid var(--bg); }
+  #pick-0:focus-visible ~ .tabbar label[for="pick-0"],
+  #pick-1:focus-visible ~ .tabbar label[for="pick-1"],
+  #pick-2:focus-visible ~ .tabbar label[for="pick-2"],
+  #pick-3:focus-visible ~ .tabbar label[for="pick-3"],
+  #pick-4:focus-visible ~ .tabbar label[for="pick-4"] { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .variant { display: none; }
+  #pick-0:checked ~ .variants .variant { display: block; }
+  #pick-1:checked ~ .variants .variant-1,
+  #pick-2:checked ~ .variants .variant-2,
+  #pick-3:checked ~ .variants .variant-3,
+  #pick-4:checked ~ .variants .variant-4 { display: block; }
+
+  /* ---------- the board: one column by default, a grid when All is picked ---------- */
+  .board { display: grid; grid-template-columns: 1fr; gap: 1.2em; }
+  @media (min-width: 760px) {
+    #pick-0:checked ~ .variants .board { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    #pick-0:checked ~ .variants .variant { border: 1px solid var(--border); border-radius: 8px; padding: 1em 1.1em; }
+    #pick-0:checked ~ .variants .v-head h2 { font-size: 1.15em; }
+  }
+  .v-head h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4em; margin-top: 0; }
+  .v-head h2 .meta { margin-left: auto; font-weight: 400; }
+  .callout { border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 4px; padding: .7em 1em; margin: 0 0 1em; font-size: .93em; background: color-mix(in srgb, var(--accent) 4%, var(--bg)); }
+  .callout p { margin: .2em 0; }
 
   /* ---------- footer ---------- */
-  .foot { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 16px; font-size: 13.5px; color: var(--muted); }
-  .foot h2 { font-size: 15px; color: var(--ink); margin: 0 0 8px; }
-  .foot li { margin-bottom: 6px; }
+  .foot { color: var(--muted); font-size: .93em; }
+  .foot h2 { font-size: 1.1em; color: var(--fg); }
+  .foot li { margin-bottom: .4em; }
+  @media (max-width: 560px) {
+    h1 { font-size: 1.4em; }
+    .tabbar label { padding: .45em .7em; font-size: .9em; }
+  }
 </style>
 </head>
 <body>
 <div class="page">
 
-  <header class="meta-head">
+  <header>
     <h1>{{surface-title}}</h1>
-    <p class="q"><strong>Question:</strong> {{the visual or interaction decision being made, one sentence}}</p>
-    <div class="dims">
-      <!-- 2-4 comparison dimensions, e.g. task clarity · information density · recovery · scannability -->
-      <span class="dim">{{dimension-1}}</span>
-      <span class="dim">{{dimension-2}}</span>
-      <span class="dim">{{dimension-3}}</span>
-      <span class="dim">{{dimension-4}}</span>
-    </div>
-    <p class="note">
-      <strong>Held constant:</strong> {{requirements, content, data, device, and baseline accessibility that are identical across variants}}.
-      <strong>Differs:</strong> {{the open axis — structure, hierarchy, affordance, or visual direction}}.
-      A click is not approval — the decision is confirmed in conversation and recorded in the design section.
-    </p>
+    <!-- 2-4 comparison dimensions, e.g. task clarity · information density · recovery · scannability -->
+    <p class="sub">Visual decision · compared on <span class="dim">{{dimension-1}}</span> · <span class="dim">{{dimension-2}}</span> · <span class="dim">{{dimension-3}}</span> · <span class="dim">{{dimension-4}}</span></p>
   </header>
 
-  <!-- VERSION radios: keep as direct siblings of .variants (see CSS note).
-       Appending a version = un-check the current one, add the next id with
-       `checked`, add its label below, add its .version block. Delete the
-       unused ids/labels; a first render ships v1 alone. -->
+  <!-- VERSION radios: keep as direct siblings of .status and .variants (see
+       CSS note). Appending a version = un-check the current one, add the
+       next id with `checked`, add its label in the banner, add its .version
+       block. Delete the unused ids/labels; a first render ships v1 alone. -->
   <input class="visually-hidden" type="radio" name="version" id="ver-1" checked>
   <input class="visually-hidden" type="radio" name="version" id="ver-2">
   <input class="visually-hidden" type="radio" name="version" id="ver-3">
   <input class="visually-hidden" type="radio" name="version" id="ver-4">
 
-  <!-- switcher radios: keep as direct siblings of .variants (see CSS note) -->
-  <input class="visually-hidden" type="radio" name="variant" id="pick-1" checked>
+  <!-- VARIANT radios: keep as direct siblings of .tabbar and .variants (see
+       CSS note). pick-0 is "All side by side" and stays whatever the count. -->
+  <input class="visually-hidden" type="radio" name="variant" id="pick-0" checked>
+  <input class="visually-hidden" type="radio" name="variant" id="pick-1">
   <input class="visually-hidden" type="radio" name="variant" id="pick-2">
   <input class="visually-hidden" type="radio" name="variant" id="pick-3">
   <input class="visually-hidden" type="radio" name="variant" id="pick-4">
-  <nav class="versions" aria-label="Choose version to view">
-    <span class="lbl">Version</span>
-    <label for="ver-1">v1</label>
-    <label for="ver-2">v2</label>
-    <label for="ver-3">v3</label>
-    <label for="ver-4">v4</label>
-  </nav>
 
-  <nav class="switcher" aria-label="Choose variant to view">
-    <label for="pick-1">{{variant-1-short-label}}</label>
-    <label for="pick-2">{{variant-2-short-label}}</label>
-    <label for="pick-3">{{variant-3-short-label}}</label>
-    <label for="pick-4">{{variant-4-short-label}}</label>
+  <div class="status">
+    <span class="badge">OPEN DECISION</span>
+    <nav class="versions meta" aria-label="Choose version to view">
+      Version
+      <label class="pill pending" for="ver-1">v1</label>
+      <label class="pill pending" for="ver-2">v2</label>
+      <label class="pill pending" for="ver-3">v3</label>
+      <label class="pill pending" for="ver-4">v4</label>
+    </nav>
+    <span class="meta asof">As of {{YYYY-MM-DD}}</span>
+    <p class="q"><strong>Question:</strong> {{the visual or interaction decision being made, one sentence}}</p>
+  </div>
+
+  <details class="next" open>
+    <summary>Feedback needed <span class="meta">· 3 items</span></summary>
+    <ol>
+      <li><span class="who">Pick</span> — the variant that best serves the question <span class="meta">— by number, not by feel</span></li>
+      <li><span class="who">Name</span> — the dimension that drove it and what fails in the others <span class="meta">— more useful than the number</span></li>
+      <li><span class="who">Confirm</span> — in conversation; a click here is not approval <span class="meta">— the decision is recorded in the design section</span></li>
+    </ol>
+  </details>
+
+  <div class="tblwrap"><table>
+    <tr><th>Held constant</th><td>{{requirements, content, data, device, and baseline accessibility that are identical across variants}}</td></tr>
+    <tr><th>Differs</th><td>{{the open axis — structure, hierarchy, affordance, or visual direction}}</td></tr>
+  </table></div>
+
+  <nav class="tabbar" aria-label="Choose variant to view">
+    <label for="pick-0">All side by side</label>
+    <label for="pick-1">1 · {{variant-1-short-label}}</label>
+    <label for="pick-2">2 · {{variant-2-short-label}}</label>
+    <label for="pick-3">3 · {{variant-3-short-label}}</label>
+    <label for="pick-4">4 · {{variant-4-short-label}}</label>
   </nav>
 
   <div class="variants">
 
   <!-- comparison-version:start {{version-1-identity}} -->
   <div class="version version-1" data-version-id="{{version-1-identity}}" aria-label="Version 1">
-    <p class="v-stamp">Version <span class="mono">{{version-1-identity}}</span> · {{YYYY-MM-DD}} · {{what changed from the previous version, or "first version"}} · fixture {{fixture identity}}</p>
+    <p class="v-stamp meta">Version <span class="mono">{{version-1-identity}}</span> · {{YYYY-MM-DD}} · {{what changed from the previous version, or "first version"}} · fixture {{fixture identity}}</p>
+    <div class="board">
 
     <section class="variant variant-1" data-variant-id="{{variant-1-stable-ID}}" aria-label="Variant 1">
       <div class="v-head">
-        <h2>{{variant-1-name}}</h2>
-        <p class="char">{{one line: what this direction is}}</p>
-        <p class="trade"><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        <h2>{{variant-1-name}} <span class="meta">1 of {{variant-count}}</span></h2>
+        <div class="callout">
+          <p>{{one line: what this direction is}}</p>
+          <p><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        </div>
       </div>
       <!-- VARIANT 1 CONTENT — authored by you. Same fixture, same states,
            same vocabulary as every other variant. -->
@@ -244,31 +286,38 @@
 
     <section class="variant variant-2" data-variant-id="{{variant-2-stable-ID}}" aria-label="Variant 2">
       <div class="v-head">
-        <h2>{{variant-2-name}}</h2>
-        <p class="char">{{one line: what this direction is}}</p>
-        <p class="trade"><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        <h2>{{variant-2-name}} <span class="meta">2 of {{variant-count}}</span></h2>
+        <div class="callout">
+          <p>{{one line: what this direction is}}</p>
+          <p><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        </div>
       </div>
       {{variant-2-content}}
     </section>
 
     <section class="variant variant-3" data-variant-id="{{variant-3-stable-ID}}" aria-label="Variant 3">
       <div class="v-head">
-        <h2>{{variant-3-name}}</h2>
-        <p class="char">{{one line: what this direction is}}</p>
-        <p class="trade"><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        <h2>{{variant-3-name}} <span class="meta">3 of {{variant-count}}</span></h2>
+        <div class="callout">
+          <p>{{one line: what this direction is}}</p>
+          <p><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        </div>
       </div>
       {{variant-3-content}}
     </section>
 
     <section class="variant variant-4" data-variant-id="{{variant-4-stable-ID}}" aria-label="Variant 4">
       <div class="v-head">
-        <h2>{{variant-4-name}}</h2>
-        <p class="char">{{one line: what this direction is}}</p>
-        <p class="trade"><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        <h2>{{variant-4-name}} <span class="meta">4 of {{variant-count}}</span></h2>
+        <div class="callout">
+          <p>{{one line: what this direction is}}</p>
+          <p><strong>Strongest for:</strong> {{the dimension(s) it wins}}. <strong>Trade-off:</strong> {{its honest cost}}.</p>
+        </div>
       </div>
       {{variant-4-content}}
     </section>
 
+    </div><!-- .board -->
   </div><!-- .version-1 -->
   <!-- comparison-version:end {{version-1-identity}} -->
 
@@ -281,6 +330,7 @@
 
   </div><!-- .variants -->
 
+  <hr>
   <footer class="foot">
     <h2>Text summary (if the page can't render)</h2>
     <ul>
@@ -290,7 +340,7 @@
       <li><strong>{{variant-4-name}}</strong> — {{same}}</li>
     </ul>
     <p>All variants render the same fixture: {{fixture identity — date, content, states}}. Showing version <span class="mono">{{current-version-identity}}</span>; earlier versions stay selectable above, in this same file. Cite comparison evidence as this path plus the version identity — the path alone no longer says which version was seen.</p>
-    <p><strong>Feedback needed:</strong> which variant, and — more useful than the letter — which dimension drove the preference and what fails. A click is not approval; the direction is confirmed in conversation, then recorded in the design section.</p>
+    <p><strong>Feedback needed:</strong> which variant, and — more useful than the number — which dimension drove the preference and what fails. A click is not approval; the direction is confirmed in conversation, then recorded in the design section.</p>
   </footer>
 
 </div>
