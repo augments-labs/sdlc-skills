@@ -87,6 +87,14 @@ unverified.
    what remains pending. If any required row failed or did not run, do not say
    complete.
 
+10. **Route by the transition you named in step 2.** Task green inside a plan or
+    a worktree checkpoint returns to the skill that sent it, and nothing more
+    happens here. A completion or integration claim — the user will read the
+    work as done, or it is about to be pushed, published, or merged — invokes
+    `requesting-code-review` next; verified is not reviewed. A releasable
+    artifact goes to `release-readiness`. This skill never commits to a
+    branch's fate: no push, no PR, no merge.
+
 Any change to a gate's inputs invalidates the evidence it produced; the ledger's
 `Invalidation` section is where they are listed. For the source half, check
 rather than recall — immediately after the gate, before any claim:

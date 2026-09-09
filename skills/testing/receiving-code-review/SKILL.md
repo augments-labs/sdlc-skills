@@ -104,6 +104,10 @@ looks obvious — verify before agreeing, editing, replying, or resolving.
     closes it. Leave stale, ambiguous, inconclusive, or pending-decision items
     open.
 
+    A fully resolved review returns its verdict to the skill that requested it.
+    `finishing-a-branch` owns what happens to the branch next; nothing here
+    pushes, merges, or closes a PR.
+
 ## Red flags
 
 | Thought | Reality |
