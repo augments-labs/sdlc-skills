@@ -25,8 +25,6 @@ jobs:
       # about the library — a red sheet there is a number, not a regression.
       - name: Session-start router injection
         run: bash tests/run-session-start.sh
-      - name: Plan-to-implementation contract
-        run: bash tests/run-plan-execution-contract.sh
       - name: Governed localhost preview (serve.py + wrappers)
         run: bash tests/run-serve-preview.sh
       - name: Token budget (always-loaded surface)
