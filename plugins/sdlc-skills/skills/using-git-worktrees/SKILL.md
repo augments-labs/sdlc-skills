@@ -80,17 +80,7 @@ whatever finishes the branch, cannot re-derive from the repository alone.
 
 ### Create the workspace
 
-5. **Pick the mechanism, in this order.** User instruction wins, then project
-   guidance, then a harness-native worktree command or session flag when the
-   harness offers one — it owns the path, the ignore rule, and cleanup, so use
-   it, confirm inside it that HEAD is the proven base, and skip to step 9.
-   Failing those, create a worktree yourself — do not
-   `git switch -c` or `git checkout -b` in a shared checkout: switching rewires
-   it, so the user, a second agent, or a running app working in it is blocked
-   or collides until you switch back. Switch branches in place only in a
-   checkout dedicated to this task alone.
-
-6. **Validate the name and its collisions.** Follow project naming, or use
+5. **Validate the name and its collisions.** Follow project naming, or use
    `feature/{{short-task}}`, `fix/{{short-task}}`, or `docs/{{short-task}}`.
    Validate the ref, then check local branches, remote-tracking refs, and
    attached worktrees. Never overwrite or silently reuse a collision.
@@ -102,14 +92,23 @@ whatever finishes the branch, cannot re-derive from the repository alone.
    git worktree list | grep -F "[$BRANCH]"
    ```
 
+6. **Pick the mechanism, in this order.** User instruction wins, then project
+   guidance, then a harness-native worktree command or session flag when the
+   harness offers one — it owns the path, the ignore rule, and cleanup, so use
+   it with the name from step 5, confirm inside it that HEAD is the proven
+   base, and skip to step 9. Failing those, create a worktree yourself — do
+   not `git switch -c` or `git checkout -b` in a shared checkout: switching
+   rewires it, so the user, a second agent, or a running app working in it is
+   blocked or collides until you switch back. Switch branches in place only in
+   a checkout dedicated to this task alone.
+
 7. **Choose the directory and prove it is ignored.** A user-given path wins.
    Otherwise reuse an existing `.worktrees/` or `worktrees/` at the project
    root (`.worktrees/` wins when both exist), and default to `.worktrees/`
-   when neither does. Create it under the main checkout's root, never inside
-   another worktree.
+   when neither does.
 
    ```bash
-   root="$(git rev-parse --show-toplevel)" && cd "$root"   # check-ignore resolves paths from here
+   root="$(cd "$common_dir/.." && pwd -P)" && cd "$root"   # main checkout root, even from inside a linked worktree
    dir=".worktrees"
    [ -d "$root/worktrees" ] && [ ! -d "$root/.worktrees" ] && dir="worktrees"
    git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null || echo "NOT IGNORED"

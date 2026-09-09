@@ -7,6 +7,11 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 ### Changed
 
 - **`using-task-branches` is `using-git-worktrees` again, and the body now says how.** The skill walks the worktree flow step by step — detect a linked worktree or submodule, prefer a harness-native worktree tool, put the worktree under `.worktrees/` at the project root and prove it is ignored with `git check-ignore` before creating it from the proven base — and adds pressure rows for the ignore gate, the native tool, and a sandbox that blocks the path. This reverses the earlier rename: the default has been a worktree since 6.2.4, so the name should say so. Callers of `sdlc-skills:using-task-branches` must update.
+- **Edit requests route through the worktree skill first.** The entry skill's example for add, change, or fix behavior names `using-git-worktrees` before `test-driven-development` and `yagni`, so the workspace exists before the first edit.
+
+### Added
+
+- **A behavioural scenario for the worktree boundary.** `tests/behavioral/using-git-worktrees.sh` seeds the fixture on `dev` and reads the artifact: a worktree under `.worktrees/`, ignored, holding the fix, with the shared checkout untouched. Scenarios can now declare their seed branch, the harnesses they are bound to, and a model tier, and the runner takes `--tier` for a diagnostic run.
 
 ## [6.3.3] — 2026-09-09
 

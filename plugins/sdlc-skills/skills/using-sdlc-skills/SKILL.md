@@ -61,8 +61,9 @@ Examples of first invocations — not a substitute for scanning:
 
 - Something is broken and the cause is unknown → `debugging`; a failure
   reaching real users right now → `containing-an-incident` first.
-- Any request to add, change, or fix behavior → `test-driven-development` and
-  `yagni` before the first edit.
+- Any request to add, change, or fix behavior → `using-git-worktrees` before
+  the first edit, so it starts in an owned workspace, then
+  `test-driven-development` and `yagni` before that edit.
 - "Is it done, ready, safe to ship?" → `verifying-completion`, then the review
   and release skills its handoffs name.
 - A new project or initiative → `define-goals`, and the planning chain from

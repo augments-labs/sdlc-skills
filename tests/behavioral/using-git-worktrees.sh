@@ -9,17 +9,23 @@
 # create from the base — and this run checks the ARTIFACT that procedure
 # leaves: the worktree, its ignore rule, and an untouched protected branch.
 #
-# Bound to one harness and a small model on purpose. Small models are where the
-# discipline slips first and the run is cheap, and the assertions read the
-# harness's own worktree list and event stream, which only the bound adapter
-# has been checked to expose. Bind another adapter by verifying those two
-# things there, not by loosening the list.
+# Bound to one harness and to a tier below the default on purpose: a smaller
+# model is where the discipline slips first and the run is cheap, and the
+# assertions read the harness's own worktree list and event stream, which only
+# the bound adapter has been checked to expose. Bind another adapter by
+# verifying those two things there, not by loosening the list.
+#
+# The tier is medium, not small, because small was tried: on this adapter two
+# GREEN runs on the small tier loaded no skill at all — not this one, not the
+# router — so a run there measures whether the small tier activates skills,
+# which is a different question with a different owner. Pass `--tier small`
+# to watch that instead.
 #
 # The fixture sits on `dev` — a protected name. On the runner's usual task
 # branch the skill's own skip clause fires and there is nothing to observe.
 
 scenario_harnesses="claude-code"
-scenario_model_tier="small"
+scenario_model_tier="medium"
 scenario_branch="dev"
 
 # No branch or worktree vocabulary: the trigger has to fire from the edit.

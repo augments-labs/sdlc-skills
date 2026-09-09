@@ -52,6 +52,9 @@ tests/run-behavioral.sh — did the skill change what got BUILT?
                       none   no skills at all (is the skill earning its context?)
   --base REF        git ref the red arm checks out       (default: origin/dev)
   --timeout SEC     per-arm wall clock                   (default: 1800)
+  --tier TIER       small | medium | large — overrides the scenario's model
+                    tier for one diagnostic run; the scenario's own tier is
+                    the one a result is reported against
   --keep            keep the scenario workdir for inspection
   --help            this text
 
@@ -91,7 +94,7 @@ declare -F adapter_usage >/dev/null 2>&1 || adapter_usage() { :; }
 
 # Fills: scenario arm base timeout_s keep
 bh_parse_args() {
-  scenario=""; arm=""; base="origin/dev"; timeout_s="${BH_DEFAULT_TIMEOUT:-1800}"; keep=""
+  scenario=""; arm=""; base="origin/dev"; timeout_s="${BH_DEFAULT_TIMEOUT:-1800}"; keep=""; tier_override=""
   while [ "$#" -gt 0 ]; do
     case "$1" in
       --scenario) scenario="$2"; shift 2;;
@@ -99,6 +102,7 @@ bh_parse_args() {
       --base)     base="$2"; shift 2;;   # RED arm: ref holding the pre-change skills
       --timeout)  timeout_s="$2"; shift 2;;
       --keep)     keep="1"; shift;;
+      --tier)     tier_override="$2"; shift 2;;
       *) echo "unknown argument: $1" >&2; return 2;;
     esac
   done
@@ -127,6 +131,7 @@ bh_resolve_scenario() {
   if command -v scenario_followups >/dev/null 2>&1; then
     scenario_followups
   fi
+  [ -n "$tier_override" ] && scenario_model_tier="$tier_override"
   # A scenario may bind itself to the harnesses whose adapter it has been
   # verified against, and to a model tier the adapter maps to a model. Both are
   # declared, never inferred, so a run on an unbound harness refuses instead of
