@@ -36,7 +36,7 @@ push and pull request.
 | `name` matches parent directory | conforms | compared per skill |
 | `description` non-empty, ≤ 1024 chars | conforms | length check; longest is 572 |
 | Body ≤ 500 lines | conforms | line check; longest is 165 (33% of ceiling) |
-| Body < 5000 tokens recommended | conforms | token check; largest is ~2077 (42%) |
+| Body < 5000 tokens recommended | conforms | token check; largest is ~1708 (34%) |
 | File references relative to skill root | conforms | every path resolved in the install tree |
 | References one level deep, no nested chains | conforms | depth check |
 | `scripts/` / `references/` / `assets/` semantics | conforms | see *Directory conventions* |
@@ -101,7 +101,7 @@ Not machine-checkable. These are the bar a reviewer holds a skill to.
 
 | Directory | Standard's purpose | Our use |
 | --- | --- | --- |
-| `references/` | documentation read on demand | 22 skills; rubrics, checklists, reviewer briefs, worked examples |
+| `references/` | documentation read on demand | 23 skills; rubrics, checklists, reviewer briefs, worked examples |
 | `assets/` | static resources, incl. document templates | 26 skills; every fill-in template — see below |
 | `scripts/` | bundled executable code | 5 skills — see below |
 
