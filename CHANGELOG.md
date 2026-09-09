@@ -2,6 +2,19 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [6.3.2] — 2026-09-09
+
+### Changed
+
+- **Ceremony scales with the task; approval does not.** The entry skill now says that each loaded skill's own skip conditions set how much procedure a small change needs, while a decision a skill puts to the user is owed at every size.
+- **A review loop that is not converging stops.** `receiving-code-review` counts rounds on one candidate: a repeated finding class or a third round without convergence records `needs decision` and routes the dispute to its owner instead of another round.
+- **Four descriptions trigger without summarising the workflow.** `viewing-artifacts`, `containing-an-incident`, `zoom-out`, and `using-sdlc-skills` lose the trailing sentence that described how they work; every trigger and skip stays.
+- **Bodies defer to the files that own the rule.** `viewing-artifacts` moves its state-derivation rules to a reference, the plan skills point at their templates for the contract fields those templates define, and the TDD and YAGNI entry rule is stated once, in the router. The largest always-loaded body drops from about 2841 to 2198 tokens.
+
+### Removed
+
+- **The offline plan-execution contract runner.** It matched exact wording in four shipped files, so it could only catch a rephrasing; the behavioural scenario for that boundary stays.
+
 ## [6.3.1] — 2026-09-08
 
 ### Changed
