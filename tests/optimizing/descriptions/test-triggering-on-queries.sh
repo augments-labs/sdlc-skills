@@ -183,7 +183,7 @@ observe_once() { # $1 query text  $2 subject skill
   # Skills CHAIN: using-sdlc-skills routes, then task-branches, then TDD, then
   # yagni. So stopping at the first non-router skill truncates a correct chain and
   # scores it as a miss — that is exactly what happened to test-driven-development
-  # (killed at using-task-branches, which the router correctly sends you to first)
+  # (killed at using-git-worktrees, which the router correctly sends you to first)
   # and to finishing-a-branch (killed at verifying-completion). Wait for the
   # SUBJECT; --max-turns bounds a run that never reaches it, which is every
   # correctly-behaving negative.

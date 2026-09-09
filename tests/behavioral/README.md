@@ -45,6 +45,15 @@ scenario_setup   <dir>    # seed the disposable project
 scenario_assert  <dir>    # read what was built; exit code IS the verdict
 ```
 
+Three optional variables narrow a run, and each is declared in the scenario
+rather than inferred: `scenario_branch` names the branch the fixture is seeded
+on (default `task/behavioral-probe`; a scenario judging branch discipline needs a
+protected name there or the skill's skip clause fires), `scenario_harnesses`
+lists the adapters the assertions have been checked against (any other adapter
+refuses the run), and `scenario_model_tier` asks for `small | medium | large`,
+which the adapter binds to a model (`adapter_model`) — a small model is where a
+discipline slips first, and the cheapest place to watch it.
+
 A scenario with follow-up turns requires an adapter implementation of
 `adapter_continue_behavioral`. Continuation must use the harness's structured
 session identity; starting a fresh session and replaying prose is not equivalent.
@@ -79,7 +88,7 @@ grounded in a real defect costs hours to run and proves nothing when it passes.
 | Selection | API calls | Per call | Wall clock |
 | --- | --- | --- | --- |
 | One scenario, one harness, one arm | 1 | ~5–40 min | — |
-| Every scenario × 3 harnesses × 2 arms | 15 × 3 × 2 | ~5–40 min | **8–60 h** |
+| Every scenario × 3 harnesses × 2 arms | 16 × 3 × 2 | ~5–40 min | **8–60 h** |
 
 That matrix is **deliberately not filled**, and the limit is stated rather than
 papered over. Run one arm before a sweep — if GREEN fails on one harness, the

@@ -34,11 +34,16 @@ tests/harnesses/
 Required: `adapter_check`, `adapter_install`, `adapter_chain`,
 `adapter_run_activation`, `adapter_run_behavioral`.
 
-Optional: `adapter_ran`, `adapter_usage`, `adapter_component_inventory`, and
-`adapter_continue_behavioral`. The last one is required only for a scenario that
-defines follow-up turns; it must resume from structured session evidence rather
-than simulate continuity with a new session. Detection and usage helpers degrade
-to silence rather than a confident wrong answer.
+Optional: `adapter_ran`, `adapter_usage`, `adapter_component_inventory`,
+`adapter_continue_behavioral`, and `adapter_model`. `adapter_continue_behavioral`
+is required only for a scenario that defines follow-up turns; it must resume
+from structured session evidence rather than simulate continuity with a new
+session. `adapter_model` binds a tier — `small | medium | large` — to the
+model name the CLI accepts, and is required only by a scenario that sets
+`scenario_model_tier` (or a run passing `--tier`); the runner refuses the run
+on an adapter without it rather than running on the default model and calling
+it that tier. Detection and usage helpers degrade to silence rather than a
+confident wrong answer.
 
 The disposable project a run is pointed at is not per-harness, so it lives one
 level up in `tests/fixtures.sh`.

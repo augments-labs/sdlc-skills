@@ -60,7 +60,7 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | common | `prototyping` | Answer one uncertain design or feasibility question with a throwaway spike, then delete it |
 | common | `zoom-out` | Before changing unfamiliar code, go up a layer and map the relevant modules and their callers in the project's own vocabulary |
 | common | `handoff` | Write a durable, resumable handoff when a session ends — goal, state, decisions, gotchas, and the one concrete next step |
-| common | `using-task-branches` | Establish an owned branch/workspace, proven base and baseline, and isolated runtime state before edits, then checkpoint locally as the work goes; integration and cleanup remain separate decisions |
+| common | `using-git-worktrees` | Create an owned, gitignored git worktree on a proven base with a real baseline and isolated runtime state before edits, then checkpoint locally as the work goes; integration and cleanup remain separate decisions |
 | common | `dispatching-parallel-agents` | Fan out independent work only with exclusive ownership and isolated state, then inspect raw results and run a combined gate |
 | common | `yagni` | Build exactly the accepted scope—neither speculative additions nor incomplete delivery—and preserve inherited correctness, compatibility, recovery, and assurance commitments |
 | design | `system-architecture` | Design the target system—traceable components, trust/data paths, failure and recovery behavior, operational views, and justified seams |
@@ -94,7 +94,7 @@ Early and growing. All seven SDLC phases — planning, analysis, design,
 implementation, testing, deployment, and maintenance — now ship at least one
 working skill, alongside the nine `common` skills: orientation, skill-authoring,
 scope discipline, and the cross-cutting tools (interviewing, prototyping,
-zoom-out, handoff, task branches, and parallel dispatch).
+zoom-out, handoff, git worktrees, and parallel dispatch).
 
 Three harnesses have adapters:
 
