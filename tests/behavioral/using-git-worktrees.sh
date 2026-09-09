@@ -2,12 +2,14 @@
 # Behavioural scenario: does a repo edit start in an owned, ignored git
 # worktree — or on the shared checkout the user is standing in?
 #
-# The failure this guards was reported by a maintainer reading real sessions:
-# the skill asked for a worktree and agents still switched or edited in place,
-# because the body named the rule and not the commands. The rewrite makes the
-# procedure executable — detect, choose `.worktrees/`, prove it is ignored,
-# create from the base — and this run checks the ARTIFACT that procedure
-# leaves: the worktree, its ignore rule, and an untouched protected branch.
+# The failure this guards was observed on this opening, not imagined: with the
+# previous skill and router installed, the RED arm loaded `test-driven-development`
+# and `yagni`, never the workspace skill, and edited on `dev` in place — no
+# worktree, no branch. The rewrite makes the procedure executable — detect,
+# choose `.worktrees/`, prove it is ignored, create from the base — and names
+# the skill first in the router's edit example. This run checks the ARTIFACT
+# that procedure leaves: the worktree, its ignore rule, and an untouched
+# protected branch.
 #
 # Bound to one harness and to a tier below the default on purpose: a smaller
 # model is where the discipline slips first and the run is cheap, and the
@@ -75,8 +77,11 @@ scenario_assert() {
               else echo "  FAIL  inside the repo but not under .worktrees/ or worktrees/"; fail=1; fi;;
       *) echo "  note  outside the repository";;
     esac
+    # The skill hands ignore ownership to a harness-native tool when one made
+    # the worktree, so that case is reported and only the skill's own path gated.
     case "$wt" in
       "$d"/*) if git check-ignore -q "$wt"; then echo "  ok    ignored ($(git check-ignore -v "$wt" | cut -f1))"
+              elif [ "$native" -eq 1 ]; then echo "  note  not ignored — the harness's worktree tool owns that"
               else echo "  FAIL  not ignored — it will show in every status and add"; fail=1; fi;;
     esac
     # The fix has to live in the worktree, not merely a worktree beside no work.
