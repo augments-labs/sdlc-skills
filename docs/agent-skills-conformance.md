@@ -34,7 +34,7 @@ push and pull request.
 | `name` 1–64 chars, lowercase `a-z0-9-` | conforms | charset + length check |
 | `name` no leading/trailing hyphen, no `--` | conforms | pattern check |
 | `name` matches parent directory | conforms | compared per skill |
-| `description` non-empty, ≤ 1024 chars | conforms | length check; longest is 693 |
+| `description` non-empty, ≤ 1024 chars | conforms | length check; longest is 572 |
 | Body ≤ 500 lines | conforms | line check; longest is 165 (33% of ceiling) |
 | Body < 5000 tokens recommended | conforms | token check; largest is ~2077 (42%) |
 | File references relative to skill root | conforms | every path resolved in the install tree |

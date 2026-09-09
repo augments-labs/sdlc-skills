@@ -1,6 +1,6 @@
 ---
 name: zoom-out
-description: "Use before working in a region of the codebase whose structure you have not established — map the relevant modules, their callers, and the project's own vocabulary before changing anything. Fires whenever a request names an unfamiliar file, module, or area, even when the user never says they are new to it and never asks to be oriented. A structural question — what reaches this, what it reaches, how a change travels through it — is the same trigger, not a lookup: searching answers the sentence and leaves the map unbuilt. Skip when the area is already understood."
+description: "Use before working in a region of the codebase whose structure you have not established — map the relevant modules, their callers, and the project's own vocabulary before changing anything. Fires whenever a request names an unfamiliar file, module, or area, even when the user never says they are new to it and never asks to be oriented. A structural question — what reaches this, what it reaches, how a change travels through it — is the same trigger. Skip when the area is already understood."
 ---
 
 # Zoom Out
