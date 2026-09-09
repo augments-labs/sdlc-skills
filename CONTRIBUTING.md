@@ -5,7 +5,7 @@ The full contributor guide lives in [`CLAUDE.md`](CLAUDE.md) — it is written f
 The short version:
 
 - **Solve a real problem you actually hit** — speculative or theoretical fixes are closed.
-- **One change per PR**, targeting `main` from a task branch.
+- **One change per PR**, targeting `dev` from a task branch. `main` holds releases only.
 - **Run the gate before you commit:** `bash scripts/sh/validate-skills.sh`. CI runs it on every push and PR.
 - **Prove behaviour-shaping changes** by re-running the tests and reporting what they returned — see [`skills/common/writing-skills/references/testing.md`](skills/common/writing-skills/references/testing.md). An inconclusive result is a valid finding; a green-washed one is not.
 - **Respect the authoring rules** for anything under `skills/` or `docs/`: no external references, no vendor model names, lean format ([`CLAUDE.md`](CLAUDE.md), "Authoring rules").
