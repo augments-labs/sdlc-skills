@@ -21,9 +21,6 @@ Inventing failure for behavior that should already work is not discipline.
   contract and for its entry gates to pass. Work authorized only to build a gate
   consumes only its exact proposal: it cannot edit the target, approve the
   contracts, or satisfy entry on its own.
-- Invoke `yagni` alongside this skill before the first project command or edit.
-  Reaching for the pair once you are already at GREEN, or as a retrofit after the
-  fact, does not count as having led with it.
 
 ## Choose the entry cycle
 
@@ -75,8 +72,7 @@ evidence details.
 
 ### Implement and refactor
 
-With the pair already loaded, write only what the current failing behavior or
-preservation slice requires. Run the relevant gate, then the gate the project
+Write only what the current failing behavior or preservation slice requires. Run the relevant gate, then the gate the project
 requires; both must be green. Refactor under green and re-run.
 
 When chronology is part of the claim, logs written by the candidate are not
