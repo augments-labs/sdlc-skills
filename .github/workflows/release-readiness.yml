@@ -4,7 +4,7 @@
 name: release-readiness
 on:
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 jobs:
   release-readiness:
     runs-on: ubuntu-latest

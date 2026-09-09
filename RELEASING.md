@@ -12,7 +12,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). For 
 
 The tie-breaker when unsure: does a user gain something *new to reach for* (minor), or does something they already reached for *now work better* (patch)? Behaviour-shaping edits can be substantial and still be patches — v1.0.1 and v1.0.2 both changed discipline behaviour and were patches, because the surface held.
 
-A release versions everything merged to `main` since the last tag, not any single PR: the highest tier reached by any change in it decides.
+A release versions the cumulative `dev` diff since the last tag, not any single PR: the highest tier reached by any change in it decides.
 
 ## Who bumps, and when
 
@@ -20,12 +20,12 @@ Nobody bumps in a contribution PR. Versioning is decided once per release, by th
 
 ## Cutting a release
 
-1. Decide the tier (above) for everything merged to `main` since the last tag.
+1. Decide the tier (above) for everything on `dev` since the last tag.
 2. Bump the version in all four manifests: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.kimi-plugin/plugin.json`, and `plugins/sdlc-skills/.codex-plugin/plugin.json`. The gate fails if they disagree, so a half-done bump cannot ship.
 3. Add the `CHANGELOG.md` entry — terse, newest-first (*Writing the changelog*, below).
 4. Run the gate: `bash scripts/sh/validate-skills.sh`.
-5. Commit the bump on a release branch as `chore(release): vX.Y.Z — <one-line theme>`.
-6. Open its PR against `main` and merge it, so the release commit is reviewed like any other.
+5. Commit the bump on a release branch off `dev` as `chore(release): vX.Y.Z — <one-line theme>`, and merge its PR into `dev`.
+6. Open the `dev` → `main` PR and merge it as a merge commit, so the individual changes stay in history and `main` never carries a commit `dev` lacks.
 7. Tag `vX.Y.Z` on `main` and create the release: title `SDLC skills vX.Y.Z`, notes carrying the narrative — the field report that drove the change, what changed, and the proof records under `tests/`.
 
 ## Writing the changelog

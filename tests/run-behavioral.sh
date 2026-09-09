@@ -50,7 +50,7 @@ tests/run-behavioral.sh — did the skill change what got BUILT?
                       green  skills from the working tree (your edit)
                       red    skills from a worktree at --base (the before)
                       none   no skills at all (is the skill earning its context?)
-  --base REF        git ref the red arm checks out       (default: origin/main)
+  --base REF        git ref the red arm checks out       (default: origin/dev)
   --timeout SEC     per-arm wall clock                   (default: 1800)
   --keep            keep the scenario workdir for inspection
   --help            this text
@@ -61,7 +61,7 @@ Exit codes: 0 the scenario's own assertions passed · 1 they failed
 Examples:
   tests/run-behavioral.sh --harness claude-code --scenario spec-it --arm green
   tests/run-behavioral.sh --harness claude-code --scenario spec-it --arm none
-  tests/run-behavioral.sh --harness codex --scenario spec-it --arm red --base origin/main
+  tests/run-behavioral.sh --harness codex --scenario spec-it --arm red --base origin/dev
 EOF
 }
 
@@ -91,7 +91,7 @@ declare -F adapter_usage >/dev/null 2>&1 || adapter_usage() { :; }
 
 # Fills: scenario arm base timeout_s keep
 bh_parse_args() {
-  scenario=""; arm=""; base="origin/main"; timeout_s="${BH_DEFAULT_TIMEOUT:-1800}"; keep=""
+  scenario=""; arm=""; base="origin/dev"; timeout_s="${BH_DEFAULT_TIMEOUT:-1800}"; keep=""
   while [ "$#" -gt 0 ]; do
     case "$1" in
       --scenario) scenario="$2"; shift 2;;

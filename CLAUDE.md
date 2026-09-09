@@ -159,30 +159,16 @@ someone on a completely different kind of project?
 For whether a phase's activities are separable or one interleaved pass, see
 `docs/skill-granularity.md`.
 
-## Writing the changelog
-
-What an entry says, and the four things to cut, are in `RELEASING.md`.
-
 ## Contributing
 
 - **Solve a real problem you actually hit** — not a speculative or theoretical one. "My review agent flagged it" or "this could theoretically break" is not a problem statement.
 - **One change per PR.** Don't bundle unrelated edits or batch-fix the tracker — pick one problem, understand it, submit focused work.
-- **Run the gate, and prove behaviour-shaping changes,** before opening a PR (see *Verify against the gate*). A human reviews the full diff first.
+- **Run the gate, and prove behaviour-shaping changes,** before opening a PR (see *Verify against the gate*).
 - **Identify yourself.** Disclose in the PR the model, harness, harness version, and any installed plugins that produced the change — or state plainly it was written by hand. Contributions are weighed by how they were made: a behaviour claim reasoned from documentation is held to a different bar than one grounded in a real session. Hiding the authoring environment is grounds for closing the PR.
-- **Target `main` from a task branch.** `main` is the only long-lived branch; every change reaches it through a reviewed PR. There is no staging branch to land on first.
-- **Never bump versions or edit CHANGELOG version headings in a PR.** Releases are versioned once, by the maintainer — see `RELEASING.md`.
-- The bar is the gate and the evidence, not volume or confidence. "No skill is needed here" is a valid, useful outcome.
-
-## What won't be accepted
-
-Closed without extended review — most are the inverse of a rule above:
-
-- **External references, vendor model names, or harness assumptions in shipped files** — Authoring rules 1–2.
-- **Domain-, tool-, or workflow-specific skills** — *What belongs here*; publish them as your own library.
-- **Speculative or fabricated content** — a problem no one actually hit, or invented test results. An inconclusive result is a valid finding; a fabricated one is not.
-- **"Compliance" reformatting of tuned skills** — restructuring or rewording a discipline's red-flag lists, rationalization tables, or hard-stops without a re-proven pressure test (*Editing a skill*).
-- **Third-party dependencies** — SDLC skills is zero-dependency by design. If a change needs an external tool or service, it belongs in a separate plugin. Adding a new harness is the exception.
-- **Bundled or batch PRs** — one change per PR.
+- **Target `dev` from a task branch.** `dev` is where reviewed changes collect; `main` holds releases only and receives nothing but release PRs from `dev`. A PR opened against `main` is asked to retarget `dev` before review.
+- **Never bump versions or edit CHANGELOG version headings in a PR.** Releases are versioned once, by the maintainer — see `RELEASING.md`, which also owns what a changelog entry says.
+- **No third-party dependencies.** SDLC skills is zero-dependency by design; a change that needs an external tool or service belongs in a separate plugin. Adding a harness is the exception.
+- The bar is the gate and the evidence, not volume or confidence. "No skill is needed here" is a valid, useful outcome; an inconclusive result is a valid finding; a fabricated one closes the PR.
 
 ## New harness support
 
@@ -200,14 +186,14 @@ but never invoked are not a working integration.
 ## Layout
 
 - `skills/<phase>/<name>/` — the skills, by SDLC phase (canonical order is in `README.md`; folders are unnumbered).
-- `.claude-plugin/` — the install manifest; its skills array must list every skill on disk (the gate checks it). `.kimi-plugin/` — the Kimi Code manifest; its skills paths must resolve to the same canonical set. Adding a harness: `docs/harness-support.md`.
+- `.claude-plugin/` — the install manifest; its skills array must list every skill on disk (the gate checks it). `.kimi-plugin/` — the Kimi Code manifest; its skills paths must resolve to the same canonical set. `plugins/sdlc-skills/` — the Codex plugin, whose skill mirror the sync script regenerates. Adding a harness: `docs/harness-support.md`.
 - `AGENTS.md`, `GEMINI.md` — symlinks to this file, so a harness that reads its own instructions file gets the same guidance from one source.
-- `.github/` — CI (`workflows/validate.yml`) and the PR template (`PULL_REQUEST_TEMPLATE.md`).
+- `.github/` — CI (`workflows/validate.yml`, `workflows/release-readiness.yml`) and the PR template (`PULL_REQUEST_TEMPLATE.md`).
 - `scripts/sh/` — portable validators, token budget, adapter checks, and hook scripts; CI runs `validate-skills.sh` and `token-budget.sh`. Everything here is deterministic, free, and safe to run anywhere.
 - `tests/` — everything that observes the library running, split by what a red result means. The **gates** live here directly, where the answer is known in advance: `run-behavioral.sh` with `behavioral/{{name}}.sh`, plus the offline `run-session-start.sh`, `run-plugin-smoke.sh`, and `run-serve-preview.sh`. `fixtures.sh` is the disposable project a live run is pointed at.
 - `tests/optimizing/` — **measurements**, where it is not: `descriptions/test-triggering-on-queries.sh` scoring descriptions against `descriptions/{{phase}}/{{skill}}.json`. A red sheet here is not a regression, and no part of it runs in CI.
 - `tests/harnesses/{{name}}.sh` — one file per CLI, holding only what differs between them: install, invoke, detect, cost. They decide nothing; every runner binds to them.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
 - `docs/` — repository-only rationale: philosophy, activation, harness support, skill granularity, testing, and the conformance record. Never referenced from a shipped skill; the gate enforces that.
-- `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the two manifest versions agree).
+- `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the four manifest versions agree).
 - `.claude/` — local config and notes; gitignored, never shipped.
