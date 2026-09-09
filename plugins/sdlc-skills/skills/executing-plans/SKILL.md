@@ -29,28 +29,21 @@ Advance only through real state transitions; nothing is done until its evaluator
    all of that from the workspace itself; never infer it from what the plan says
    should be true.
 
-3. **Audit executability before you change any code.** Read each task against the
-   contract fields the `writing-plans` task template defines — the stable IDs and
-   their successor delta, the inputs the task is currently bound to, its
-   dependencies, its interface, the files and effects it exclusively owns, the
-   evaluator's identity and whether this task may edit it, the trace, the review
-   it owes, the concerns rule, and plan Acceptance.
+3. **Audit executability before you change any code.** Read each task against
+   every contract field the `writing-plans` index and task templates define. A
+   missing field, or one that contradicts another, stops execution here rather
+   than halfway through the loop: a **Consumes** with no matching **Produces**,
+   a dependency on a cancelled task, an evaluator the task is also asked to
+   rewrite.
 
-   Any field that contradicts another stops execution here rather than halfway
-   through the loop: a **Consumes** with no matching **Produces**, a dependency on
-   a cancelled task, an evaluator the task is also asked to rewrite.
-
-   For every UI-bearing task, require its **Applicable visual references** to
-   match the plan index's **Selected visual references** and approved design
-   field for field. Confirm every Reference ID resolves through **Visual
-   reference coverage** to this task and a matching conformance evaluator. Run
-   each Freshness evaluator before the first UI edit. `pass` permits downstream
-   use; proved `mismatch` is stale, so restore the binding and rerun or stop for
-   an approved design successor and then an approved plan successor.
-   `unavailable` means the environment is absent and `error` means the evaluator
-   failed; either is pending until repaired and rerun and proves no drift. A
-   missing field also stops execution. Never infer a preferred direction or let
-   owner reconciliation alter the bound input.
+   For a UI-bearing task, its **Applicable visual references** must match the
+   plan index's **Selected visual references** field for field, every Reference
+   ID must resolve through **Visual reference coverage** to this task and a
+   conformance evaluator, and each Freshness evaluator runs before the first UI
+   edit. The index template states what each freshness result permits; a proved
+   `mismatch` waits for an approved design successor and then an approved plan
+   successor. Never infer a preferred direction or let owner reconciliation
+   alter the bound input.
 
 4. **Select the execution form.** Bounded tasks use the loop below; a plan with
    phases or machine-derived shards also loads `references/phase-queues.md`, and
@@ -92,26 +85,18 @@ alone does not override one.
    offload that means its raw diff, its authorized checkpoints (or none), its
    result revision, and its evaluator output — never its summary.
 
-   For a UI-bearing result, run each bound VCONF evaluator against the
-   Distinguishing invariants from its Applicable visual reference. Similar
-   styling or functional equivalence does not authorize a different layout,
-   hierarchy, or interaction. Each VCONF is a required gate, not an observation.
+5. **Invoke `verifying-completion`** to run the complete required gate set the
+   task template defines — for a UI-bearing task, the Evaluator plus every
+   applicable VCONF, and `visual-ui-verification` for an integrated UI — in the
+   authoritative workspace, binding every output to the same exact state.
+   Similar styling or functional equivalence does not authorize a different
+   layout, hierarchy, or interaction. That skill owns the evidence ledger; this
+   one owns the task-state transition.
 
-5. **Invoke `verifying-completion`** to run the complete required gate set in
-   the authoritative workspace and bind every output to the same exact state.
-   For a UI-bearing task that set is the task Evaluator plus every applicable
-   VCONF. That skill owns the evidence ledger; this one owns the task-state
-   transition.
-
-   When the result is an integrated UI, also invoke `visual-ui-verification`
-   against the same Applicable visual references and include its verdict in the
-   required gate set.
-
-6. **Append `done` only after all required gates pass on the accepted state.** A
-   failed or pending VCONF or visual-verification verdict keeps the task non-done.
-   A concern counts toward no gate until it is
-   proved non-blocking, or accepted under its exact owning deviation or
-   exclusion and a compensating gate.
+6. **Append `done` only after all required gates pass on the accepted state.**
+   A failed or pending gate keeps the task non-done. A concern counts toward no
+   gate until it is proved non-blocking, or accepted under its exact owning
+   deviation or exclusion and a compensating gate.
 
 7. **Re-run a combined gate** after integrating parallel results.
 
