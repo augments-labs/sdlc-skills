@@ -27,16 +27,13 @@ Turn an aligned intent into an executable plan: a small durable **map** plus thi
    goes stale. Fill the header of `assets/index-template.md` first — it names the
    bound inputs, the invalidation triggers, and the approval rule the plan owes.
 
-   When an approved UI design contains **Selected visual references**, bind that
-   complete keyed collection in the index. Every UI-bearing task copies only its
-   applicable subset, field for field: Reference ID, Decision ID, Medium,
-   Approved design artifact version, Artifact locator, Artifact version, Content
-   digest, Selection ID, Rendering-input identity, Freshness evaluator,
-   Normative conditions, and Distinguishing invariants. Map every Reference ID
-   in the index to one or more owning task IDs and conformance evaluator IDs. A
-   UI plan with a missing approved reference or uncovered Reference ID is not
-   executable; return it to `ui-ux-design` instead of reconstructing a preference
-   from prose or conversation.
+   When an approved UI design contains **Selected visual references**, bind the
+   complete keyed collection in the index and copy each UI-bearing task's
+   applicable subset field for field — both templates carry the columns. Map
+   every Reference ID to its owning task and conformance evaluator IDs in
+   **Visual reference coverage**. A UI plan with a missing approved reference or
+   an uncovered Reference ID is not executable; return it to `ui-ux-design`
+   instead of reconstructing a preference from prose or conversation.
 
    Give every file and every side effect exactly one owning task. Where two tasks
    would touch the same one, order them with an explicit dependency and name a
@@ -69,10 +66,9 @@ Turn an aligned intent into an executable plan: a small durable **map** plus thi
    and the observations that decide it, so the judgement is bound before the work
    starts rather than argued after it.
 
-   Give every applicable Reference ID a stable implementation conformance
-   evaluator ID in the task and index. Its executable check or controlled rubric
-   judges the Distinguishing invariants. Functional tests may share the gate,
-   but cannot replace those visual and structural invariants.
+   Every applicable Reference ID gets a conformance evaluator in the task's
+   **Visual conformance gates** table; functional tests may share that gate but
+   cannot replace the visual and structural invariants it judges.
 
    The evaluator's identity and owner live outside whatever the implementation
    may mutate. If a task is allowed to edit its own gate, say so explicitly and
@@ -98,11 +94,9 @@ Turn an aligned intent into an executable plan: a small durable **map** plus thi
 - No undefined *scope*: `TBD`, `handle edge cases`, `similar to task N` each mean a task you haven't written. (Deferring *implementation* is fine; deferring *scope* is not.)
 - Every task has an executable Evaluator or controlled rubric; the plan has one top-level **Acceptance** check.
 - **Every Consumes resolves to a Produces** under the *same* name and type — a `clearLayers()` consumed but only `clearFullLayers()` produced is a build-time break — and no task violates a rule in the index's Constraints block.
-- Every UI-bearing task carries its applicable references from the approved
-  **Selected visual references** collection and has a conformance evaluator for
-  their Distinguishing invariants.
-- Every selected Reference ID appears in Visual reference coverage with at least
-  one owning task and matching conformance evaluator; no reference is orphaned.
+- Every selected Reference ID appears in Visual reference coverage with an
+  owning task that carries it and a matching conformance evaluator; no
+  reference is orphaned.
 - Independent tasks have disjoint files, data, effects, evaluators, and external
   state; every overlap has an explicit dependency and single transition owner.
 
