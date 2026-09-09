@@ -15,6 +15,7 @@ tests/
   run-behavioral.sh       does the skill still change what gets BUILT? (live)
   run-session-start.sh    the injected router, per envelope      (offline)
   run-plugin-smoke.sh     install / marketplace mechanics        (offline)
+  run-serve-preview.sh    the localhost preview's safety contract (offline)
   assert.sh               assertion helpers every scenario uses
   fixtures.sh             the disposable project a live run is pointed at
   behavioral/             the scenarios, and how to write one
@@ -28,19 +29,22 @@ file covers only what the flags cannot say.
 ```bash
 tests/run-session-start.sh                    # offline
 tests/run-plugin-smoke.sh --harness codex     # offline
+tests/run-serve-preview.sh                    # offline
 tests/run-behavioral.sh   --harness kimi-code --scenario spec-it --arm green
 ```
 
 ## Prefer the offline tests
 
-`run-session-start.sh` and `run-plugin-smoke.sh` need no model. They are free,
-deterministic, and they catch real defects — a hook that stopped firing, a
-manifest drift, skills landing where the harness never looks.
+`run-session-start.sh`, `run-plugin-smoke.sh`, and `run-serve-preview.sh` need
+no model. They are free, deterministic, and they catch real defects — a hook
+that stopped firing, a manifest drift, skills landing where the harness never
+looks, a preview server that answers without its session key.
 `run-session-start.sh` gates what every adapter injects at session start: valid
 JSON in each harness's envelope, the canonical router body present *verbatim*
 with its frontmatter stripped, escaping that survives the quotes and tables
-inside it, and the event name echoed back. It runs in CI. The live runners never
-do.
+inside it, and the event name echoed back. `run-serve-preview.sh` starts each
+skill's bundled preview server on loopback and asserts the auth gate, path
+confinement, and clean stop. Both run in CI. The live runners never do.
 
 ## The live runners, and what each one is for
 

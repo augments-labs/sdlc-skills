@@ -7,7 +7,7 @@ held to different standards, so they keep different directories.
 | Where | What red means | Runner |
 | --- | --- | --- |
 | `tests/` | something broke; act | `run-behavioral.sh --arm red\|green`, one file per scenario under `tests/behavioral/` |
-| `tests/`, offline | something broke; act | `run-session-start.sh`, `run-plugin-smoke.sh` — no model, free, prefer these |
+| `tests/`, offline | something broke; act | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-serve-preview.sh` — no model, free, prefer these |
 | `tests/optimizing/` | a number, not a regression | `descriptions/test-triggering-on-queries.sh` |
 | `tests/harnesses/` | — | one file per CLI, holding only what differs between them; they decide nothing |
 
