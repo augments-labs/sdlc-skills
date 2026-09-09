@@ -214,14 +214,10 @@ for retired_script in \
   scripts/sh/implementation-guard.sh \
   scripts/sh/completion-guard.sh \
   tests/run-implementation-guard.sh \
-  tests/run-completion-guard.sh; do
+  tests/run-completion-guard.sh \
+  tests/run-plan-execution-contract.sh; do
   [ ! -e "$retired_script" ] || err "obsolete $retired_script still exists"
 done
-
-echo "• plan-to-implementation contract"
-if ! bash tests/run-plan-execution-contract.sh >/dev/null; then
-  err "tests/run-plan-execution-contract.sh failed"
-fi
 
 # Manifest sync: a harness discovers skills only through its manifest, so every
 # leaf skill dir must be listed explicitly in the plugin's "skills" array — a
