@@ -43,6 +43,13 @@ Match the form to the need (see `references/reference.md` for how much detail ea
    inlines them.
 4. **Complexity gate up top.** State when to *skip* the skill. Ceremony must scale down with task size.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
+6. **Instructions, not facts.** An agent can obey an instruction; it cannot obey
+   a fact. Write every rule as an action at the step where the agent acts —
+   "Invoke `x` before any push", not "`x` remains a separate gate". A handoff to
+   another skill is a numbered, emphasized step at the point the flow reaches
+   it, and it says what this skill never does itself. A rule stated as an
+   observation, or parked in a closing paragraph, is the one an agent under
+   pressure reads past.
 
 ## Discipline skills are the exception
 
