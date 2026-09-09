@@ -68,6 +68,12 @@ Examples of first invocations — not a substitute for scanning:
 - A new project or initiative → `define-goals`, and the planning chain from
   there.
 
+Ceremony scales with the task; approval does not. Each loaded skill's own skip
+and scale-down conditions decide how much of its procedure a small change
+needs, and a one-line fix takes the smallest gate that can fail. A decision a
+skill puts to the user is owed at every size — shrinking the process never
+shrinks that.
+
 Re-evaluate after each material result: the next skill comes from the loaded
 skill's own handoffs and the current state, never from a remembered sequence.
 Routing is not a turn boundary: re-evaluating between tasks inside an approved
