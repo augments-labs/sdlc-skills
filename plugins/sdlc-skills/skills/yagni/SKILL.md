@@ -8,8 +8,6 @@ description: "Use when code, files, flags, or dependencies are being removed as 
 YAGNI minimizes **scope**, never correctness or effort. A smaller solution that
 does not solve the accepted task is unfinished. Under pressure, aim the
 minimum-diff reflex at unnecessary surface, not at completion.
-For implementation, load this with `test-driven-development` before the first
-project command or edit; a later guard cannot cure a skipped entry discipline.
 
 ## The one definition everything hangs on
 
