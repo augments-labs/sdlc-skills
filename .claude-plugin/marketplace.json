@@ -9,7 +9,7 @@
     {
       "name": "sdlc-skills",
       "description": "Cross-platform SDLC skills library for coding agents: planning, TDD, debugging, review, and delivery workflows.",
-      "version": "6.3.3",
+      "version": "7.0.0",
       "source": "./",
       "author": {
         "name": "Njoyim Peguy",
@@ -17,5 +17,5 @@
       }
     }
   ],
-  "version": "6.3.3"
+  "version": "7.0.0"
 }
