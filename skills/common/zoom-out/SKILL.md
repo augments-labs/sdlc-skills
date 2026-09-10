@@ -10,8 +10,9 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 ## When to use
 
 - You're about to change, debug, or extend a part of the codebase you don't know well.
-- **Skip** only when you already understand the region and affected surfaces;
-  one changed line can still alter a public, data, security, or release path.
+- **Skip** only when a Step 3 boundary record for this region exists and is
+  inside its freshness limit; one changed line can still alter a public,
+  data, security, or release path.
 
 ## Step 1: Set the boundary
 
