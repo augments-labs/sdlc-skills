@@ -5,70 +5,67 @@ description: "Use when a session is ending or work is passing to a fresh session
 
 # Handoff
 
-Write down what the next session needs to continue, so it doesn't reconstruct it from scratch. A good handoff is *resumable*: someone reads it and knows exactly where to pick up.
+Write the state the next session resumes from — not a summary of the
+conversation — and write it only where the user or a standing instruction
+says it may go.
 
 ## When to use
 
 - A conversation is ending mid-work, or work is passing to a fresh session or a different agent.
 - **Skip** when the task is finished and self-contained — there's nothing to resume.
 
-## Where it may be written
+## Procedure
 
-A handoff moves state to a recipient, so writing one is a disclosure. Where an
-instruction or standing authority already names the destination, write it there
-and do not ask. Otherwise the destination is the user's choice and not a default
-to pick. Ask one conversational question offering: the durable handoff store
-(naming who can read it), a path the user names, or this reply only with no
-write. Recommend the least-disclosing option that still reaches the intended
-recipient, with one sentence of reasoning, then stop.
+1. **Settle the destination before writing a word.** Where an instruction or
+   standing authority already names it, write there and do not ask. Otherwise
+   ask one conversational question offering: the durable handoff store, naming
+   who can read it; a path the user names; or this reply only, with no write.
+   Recommend the least-disclosing option that still reaches the recipient,
+   with one sentence of reasoning, then stop. Treat "wherever is easiest",
+   approval of the content, and silence as no destination.
 
-Nothing is written until one of the three arrives; "wherever is easiest",
-approval of the *content*, and silence are not a destination.
+2. **For a scratch path outside the workspace, fill `Storage controls`** in
+   the template: data class, who may read it, how long it lives, the exact
+   cleanup target and owner, and whether cleanup is pending. Write nothing
+   into the repository.
 
-Writing to a named scratch path outside the workspace also creates a cleanup
-obligation: record its data class, who may read it, how long it lives, the exact
-cleanup target and owner, and whether cleanup is still pending. Never pollute
-the repository, and never assume someone will clean it up later.
+3. **Fill every section of `assets/handoff-template.md`:** identity, goal,
+   state identity, decisions and authority, evidence, gotchas and
+   permissions, resume first action, suggested skills, references.
 
-## What to capture
+4. **In `Handoff identity`, name the predecessor record** and append; never
+   overwrite the source. When several terminal successors exist, or the
+   content identity does not verify, stop and resolve the lineage instead of
+   picking one.
 
-Fill `assets/handoff-template.md`. It carries every section a resumable handoff
-owes — the identity block, the goal, state identity, decisions and authority,
-evidence, gotchas and permissions, the resume action, and suggested skills.
+5. **In `Decisions and authority`, write for each decision the direct answer
+   or the standing default that authorized it,** and list every still-open
+   decision as open. Never upgrade an assumption into approval.
 
-Four judgements the template cannot make for you:
+6. **In `Evidence`, write for each gate the command, where it ran, the tree
+   it ran against, when, and the result,** and say plainly when a result is
+   stale or was never run. Never leave a weak result out.
 
-**Records are append-only.** A successor names its predecessor; it never silently
-overwrites the source. Where several terminal successors exist, or the content
-identity does not verify, stop and resolve the lineage rather than guessing which
-record wins.
+7. **In `Suggested skills`, list candidates only.** They are not proof that
+   anything was invoked and not a fixed sequence.
 
-**A handoff never upgrades an assumption into approval.** For every decision,
-record the direct answer or the standing default that actually authorized it, and
-leave every still-open decision listed as open.
+8. **In `References`, point at existing specs, plans, ADRs, issues, and
+   commits by path or URL;** do not copy their content in.
 
-**Weak evidence gets marked, not omitted.** For each gate you are relying on,
-record the command, where it ran, the tree it ran against, when, and the result —
-and say plainly when something is stale or was never run. Leaving a weak result
-out is how the next session inherits a claim nobody checked.
+9. **Before writing, remove every key, token, password, and piece of personal
+   data.**
 
-**Suggested skills are advisory.** They are candidates for the next session's
-route, never proof that anything was invoked, and never a fixed sequence.
-
-## Rules
-
-- **Reference, don't duplicate.** Point to existing artifacts (specs, plans, ADRs, issues, commits) by path or URL — don't copy their content in.
-- **Redact secrets.** No keys, tokens, passwords, or personal data in the handoff.
-- A handoff is a one-shot transfer of *current* state — not a durable project-lessons store.
-- **Refresh before mutation.** The next session verifies identity, status,
-  approvals, and time-sensitive external state; it never executes the recorded
-  next step merely because the handoff says so.
+10. **Write `Resume first action` as one concrete step** the next session
+    verifies before executing — identity, status, approvals, and
+    time-sensitive external state may have moved.
 
 ## Common mistakes
 
 - A summary of the conversation instead of the state to resume from.
 - Duplicating a plan or spec that already exists — link it.
 - Omitting the one concrete next step, leaving the next session to guess.
+- Treating the handoff as a durable project-lessons store; it transfers
+  current state once.
 
 `assets/handoff-template.md` also carries a worked bad-versus-good example and
 what to leave out.
