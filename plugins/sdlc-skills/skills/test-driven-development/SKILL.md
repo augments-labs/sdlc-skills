@@ -19,79 +19,72 @@ change. Watch it happen; keep the output.
   contracts and their entry gates. Work authorized only to build a gate
   cannot edit the target or satisfy entry on its own.
 
-## Before the first test command
+## Step 1: Before the first test command
 
-1. **Write down what the test command will touch:** the environment and data
-   it runs against, the effects it causes outside the repository, the time and
-   resources it may spend, how it cleans up, and the authority you hold for
-   each. Never aim a test at a shared or production surface you have not
-   written down here.
+1. Write down what the test command touches: environment and data, effects
+   outside the repository, time and resources, cleanup, and your authority
+   for each. Never aim a test at a shared or production surface not written
+   here.
+2. Pin the public interface and the behavior it promises from the task, spec,
+   or approved design. Unresolved meaning → `interview-me`. Never guess it
+   into a test.
+3. Pick the cycle:
+   - new or intentionally changed behavior → Step 2
+   - behavior that must survive a change unchanged → Step 3
+   - bugfix → Step 2, starting from its runnable reproduction
+   Never invent a failure for behavior that already works.
 
-2. **Pin the public interface and the behavior it promises** from the task,
-   spec, or approved design. A meaning still unresolved goes back to its owner
-   through `interview-me`; do not guess it into a test.
+## Step 2: New behavior — RED → GREEN
 
-3. **Pick the cycle.** New or intentionally changed behavior: RED first.
-   Behavior that must survive a change unchanged: GREEN → deliberate RED →
-   GREEN. A bugfix takes the RED cycle starting from its runnable
-   reproduction. Never invent a failure for behavior that already works.
+1. Write one test for the next approved behavior.
+2. Run it through the project's real test command.
+3. Read the failure. Confirm it is the right one: the test was discovered,
+   executed, and failed at the intended assertion.
 
-## New behavior: RED → GREEN
+   ```text
+   RED, right reason:   FAIL test_rejects_expired_token — AssertionError: expected 401, got 200
+   RED, wrong reason:   ERROR test_rejects_expired_token — ImportError: cannot import name 'verify'
+   Not RED:             1 skipped, 0 failed
+   ```
 
-1. **Write one test for the next approved behavior** and run it through the
-   project's real test command.
+   Wrong reason or unexplained → invoke `debugging` before any product code.
+4. Keep the output.
+5. Record the test's identity, the evaluator's identity, and the expected
+   observable as of this RED. Any of the three changes later → the cycle is
+   invalid; restart and reach RED again.
+6. Write only the code that makes this test pass.
+7. Run the test, then the gate the project requires. Both green.
+8. Refactor under green. Rerun both. An intended behavior change is a new RED
+   cycle under the approval that owns it.
 
-2. **Read the failure and confirm it is the right one.** The test was
-   discovered, it executed, and it failed at the intended assertion — not on
-   an import, a syntax error, the harness, an unrelated case, a skip, or a
-   flake. Keep the output. A failure you cannot explain: invoke `debugging`
-   before writing product code.
+## Step 3: Preserved behavior — GREEN → deliberate RED → GREEN
 
-3. **Record the test's identity, the evaluator's identity, and the expected
-   observable** as of this RED. If any of the three has to change later, the
-   cycle is invalid: restart it and reach RED again with the new one.
+1. Take the characterization gate the task or plan accepted; high-risk work
+   uses the assurance matrix's differential gate. An inherited green suite
+   counts only once accepted as covering the preservation contract
+   independently of the target. Strengthen smoke-only coverage before the
+   first checkpoint.
+2. Run it on the current behavior. See it green. Keep the output.
+3. Introduce one controlled, representative divergence. Run the same gate.
+   Watch it go red the way you intended. Keep the output.
+4. Restore the exact state. Watch it go green again.
+5. Transform one slice, keeping that gate green. Read
+   `references/preservation-cycle.md` for the oracle, the generator and
+   config case, and the evidence to keep.
 
-4. **Write only the code that makes this test pass.** Run the test, then the
-   gate the project requires; both green.
+## Step 4: Close the cycle
 
-5. **Refactor under green** and rerun both. An intended behavior change is a
-   new RED cycle and goes back to the approval that owns it.
-
-## Preserved behavior: GREEN → deliberate RED → GREEN
-
-1. **Take the characterization gate the task or plan accepted** — for
-   high-risk work, the assurance matrix's differential gate. An inherited
-   green suite does not count until it is accepted as covering the
-   preservation contract independently of the target; strengthen smoke-only
-   coverage before the first checkpoint.
-
-2. **Run it on the current behavior and see it green.** Keep the output.
-
-3. **Introduce one controlled, representative divergence, run the same gate,
-   and watch it go red** the way you intended. Keep the output.
-
-4. **Restore the exact state and watch it go green again.**
-
-5. **Transform one slice, keeping that gate green.** Read
-   `references/preservation-cycle.md` for the oracle, the generator and config
-   case, and what evidence to keep.
-
-## Closing the cycle
-
-1. **When chronology is part of the claim, use an external observer** or
-   immutable checkpoints the evaluator reruns. Logs the candidate wrote are
-   not evidence, and checkpoint history is never written after the fact.
-
-2. **Restore only the mutations this task made** and whose pre-state you
-   recorded. Leave anything else pending and let `finishing-a-branch` decide
-   its disposition; never delete inherited, shared, or user state to
-   manufacture a cycle.
-
-3. **REQUIRED — invoke `verifying-completion`** on the exact state you are
-   about to call done; the gate this cycle ran is one row of its ledger, not
-   the ledger. Then return to whatever invoked this skill: a plan task, a
-   worktree checkpoint, or a fix under `debugging`. Run no commit, push, or PR
-   from this skill.
+1. Chronology part of the claim → use an external observer or immutable
+   checkpoints the evaluator reruns. Logs the candidate wrote are not
+   evidence. Never write checkpoint history after the fact.
+2. Restore only the mutations this task made whose pre-state you recorded.
+   Leave anything else pending for `finishing-a-branch`. Never delete
+   inherited, shared, or user state to manufacture a cycle.
+3. **REQUIRED SUB-SKILL:** invoke `verifying-completion` on the exact state
+   you are about to call done. This cycle's gate is one row of its ledger,
+   not the ledger.
+4. Return to whatever invoked this skill: a plan task, a worktree checkpoint,
+   or a fix under `debugging`. Run no commit, push, or PR here.
 
 ## Hard stops
 
