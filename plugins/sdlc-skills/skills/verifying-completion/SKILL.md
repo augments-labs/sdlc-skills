@@ -5,19 +5,18 @@ description: "Use before any claim that work is complete, fixed, passing, done, 
 
 # Verifying Completion
 
-Evidence before claims. A green result proves only the exact state, gate,
-environment, and transition it actually checked. Confidence, summaries, and a
-nearby run do not widen that evidence.
+Run the gate, read its raw output, and claim only what that output supports
+for the exact state it ran on. This skill produces evidence; it does not
+design the gates, review the change, integrate the branch, or decide release.
 
 ## When to use
 
-Every completion claim, every commit, every PR. This discipline never scales
-down; only the required gate set does.
-
-When the candidate bears an integrated UI, its gate set includes
-`visual-ui-verification`: automated checks passing does not make a screen
-visually correct, and a done claim on UI work without that verdict is
-unverified.
+- Before any claim that work is complete, fixed, passing, or done; before any
+  commit, push, or PR; before moving to the next task of a plan.
+- **Never skip.** Scale the gate set down for a small change; do not scale the
+  discipline down. A one-line fix still runs the smallest gate that can fail.
+- A candidate with an integrated UI adds `visual-ui-verification` to its gate
+  set: automated checks passing does not make a screen visually correct.
 
 ## Available scripts
 
@@ -27,90 +26,84 @@ unverified.
 
 ## The gate
 
-1. **Reconcile the request inventory first.** List every item the request
-   asked for—the user's message, task contract, or dispatch packet, including
-   items added mid-conversation—and give each an explicit disposition:
-   delivered, pending, blocked, or declined with a reason. Four of five
-   delivered is not done.
+1. **List every item the request asked for** — from the user's messages, the
+   task contract, or the dispatch packet, including items added
+   mid-conversation — and write a disposition beside each: delivered, pending,
+   blocked, or declined with a reason. Four of five delivered is not done.
 
-2. **Name the exact claim and transition.** Task green, integrated acceptance,
-   reviewed candidate, and releasable artifact are different states.
+2. **Write the claim you are about to make, and its transition,** in the
+   `Claim` section of `assets/evidence-ledger.md`. Pick one: task green,
+   integrated acceptance, reviewed candidate, releasable artifact. Each is a
+   different state with a different gate set.
 
-3. **Resolve the required gate set** from the task/plan Evaluators and the
-   applicable assurance-matrix cadence. Missing, planned, blocked, or
-   unjustifiably omitted gates make the claim pending.
+3. **List the required gates** from the task or plan `Evaluator` rows and the
+   assurance matrix's cadence for this transition. Write each as a row in the
+   ledger's `Results`. A gate that is missing, planned, blocked, or omitted
+   without a recorded reason makes the claim pending before anything runs.
 
-4. **Capture state identity, before the gate runs.**
+4. **Capture the source state before the first gate runs:**
 
    ```bash
    before=$(bash scripts/state-identity.sh --quiet)
    ```
 
-   That digest is the source the gate is about to read, and `--help` details
-   what it covers. The script sees the source and nothing else. Whatever else *this* gate depends
-   on — generated and external inputs, artifacts, configuration, build mode, gate
-   version, the pre-state of any controlled data, process, or effect — you record
-   yourself, under `State` in `assets/evidence-ledger.md`.
+   Then fill the ledger's `State` section yourself for everything the script
+   cannot see: generated and external inputs, configuration, build mode, gate
+   version, and the pre-state of any data, process, or effect the gate will
+   touch.
 
-5. **Contain and run each required action.** Bind the attempt to its identity,
-   authority, and effect boundary before it starts, and run fresh; the ledger's
-   `Results` and `Controlled pre/post state` fields name what to bind.
+5. **Run each required gate fresh, one effect boundary at a time.** Before
+   starting an action, write in its `Results` row what it may touch and under
+   whose authority. Run gates that share an effect boundary in sequence; run
+   only disjoint ones in parallel. Do not reuse an earlier run, and count a
+   cache only under its own gate contract.
 
-   Sequence overlapping gates, and parallelize only disjoint effect boundaries. A
-   timeout or failure is *cancellation-requested*, not a result, until processes
-   and effects quiesce — quarantine whatever partials it left behind. A rerun is
-   a linked successor attempt and rejects its predecessor's late output. Any
-   unintended mutation invalidates the evidence: restore and re-run, or surface
-   it pending. A cache counts only under its own gate contract.
+   If a gate times out or fails mid-run, do not record a result yet: wait
+   until its processes and effects have stopped, move what it left behind out
+   of the candidate, and start a new linked run that ignores any late output
+   from the first. If a gate mutated something it should not have, restore it
+   and rerun, or record the mutation as pending.
 
-6. **Read and protect the raw output.** Record the run in the ledger's `Results`
+6. **Read the raw output, and record it.** Write the run into its `Results`
    row and its handling under `Evidence controls`. Redact only the copy you
-   present.
+   present to the user.
 
-   Read what the gate asserted, not only how it exited. A gate that went green
-   over assertions that could not have gone red has said nothing about the code
-   it covers, so its green is not evidence you may cite for that code. Where
-   that is what you find, say so in the claim: repairing the gate is separate
-   scope, owned by `verification-strategy`, and is not yours to patch in
-   passing.
+   Read what the gate asserted, not only its exit code. If the assertions it
+   passed could not have failed for this code, write that in the row and do
+   not cite the green. Repairing such a gate belongs to
+   `verification-strategy`; do not patch it in passing.
 
-7. **Audit execution completeness** against the ledger's `Inventory
-   reconciliation` section: what was required to run, against what observably
-   ran. Aggregate green is red when required work did not run or did not
-   reconcile.
+7. **Re-check the source state immediately after the last gate:**
 
-8. **Return evidence without changing the candidate** — the ledger's own opening
-   says where it may live. Keep failures and inconclusive results rather than
-   green-washing them.
+   ```bash
+   bash scripts/state-identity.sh --compare "$before"
+   ```
 
-9. **Make only the supported claim.** State what passed, on which identity, and
-   what remains pending. If any required row failed or did not run, do not say
-   complete.
+   Non-zero exit: the source moved while a gate ran, so rerun from step 4.
+   Zero exit: the source held; reconcile the other `State` inputs yourself.
 
-10. **REQUIRED — route by the transition you named in step 2.** Task green inside a plan or
-    a worktree checkpoint returns to the skill that sent it, and nothing more
-    happens here. A completion or integration claim — the user will read the
-    work as done, or it is about to be pushed, published, or merged — invokes
-    `requesting-code-review` next; verified is not reviewed. A releasable
-    artifact goes to `release-readiness`. This skill never commits to a
-    branch's fate: no push, no PR, no merge.
+8. **Compare what ran against what step 3 required,** in the ledger's
+   `Inventory reconciliation` section. A required gate that did not run, or
+   ran on a different state, turns an aggregate green into red.
 
-Any change to a gate's inputs invalidates the evidence it produced; the ledger's
-`Invalidation` section is where they are listed. For the source half, check
-rather than recall — immediately after the gate, before any claim:
+9. **Return the ledger without touching the candidate.** Write it where the
+   ledger's opening says it may live. Keep failures and inconclusive results
+   in it as they are.
 
-```bash
-bash scripts/state-identity.sh --compare "$before"
-```
+10. **Write the claim the rows support, and nothing wider.** State what
+    passed, on which state identity, and what is pending. If any required row
+    failed or did not run, do not say complete. A commit with an identical
+    source tree may reuse content-check rows; commit, CI, and review gates
+    bind to their own revision, and a checkpoint commit banks work without
+    making it reviewed or merge-ready.
 
-A non-zero exit means the source moved while the gate ran, so the result
-describes a state that no longer exists: rerun it. A zero exit proves only that
-the source held — the other inputs are still yours to reconcile.
-
-A commit with an identical source tree may retain content-check evidence, but
-commit, CI, and review gates bind to their own revision. An authorized
-checkpoint banks work; it does not make it reviewed, merge-ready, or
-releasable.
+11. **REQUIRED — route by the transition from step 2.** Task green inside a
+    plan or a worktree checkpoint: return to the skill that sent you, and do
+    nothing more here. Completion or integration — the user will read the
+    work as done, or it is about to be pushed, published, or merged: invoke
+    `requesting-code-review` next; verified is not reviewed. Releasable
+    artifact: invoke `release-readiness`. Run no commit, push, PR, or merge
+    from this skill.
 
 ## Manual acceptance
 
@@ -152,9 +145,3 @@ self-certify a human-owned judgment.
 | "All checks are green, so done" | Green supports only the checks; independent review challenges completeness. |
 | "I did the main thing" | An unstarted item fails no gate; only the request inventory finds it. |
 | "The rest was minor or implied" | Scaling the request down is the requester's call, not yours. |
-
-## Relationship to plans
-
-Evaluators and assurance matrices define what must run. This skill binds those
-runs to exact evidence; it does not design the battery, review the change,
-integrate the branch, or decide release.
