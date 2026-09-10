@@ -14,50 +14,48 @@ says it may go.
 - A conversation is ending mid-work, or work is passing to a fresh session or a different agent.
 - **Skip** when the task is finished and self-contained — there's nothing to resume.
 
-## Procedure
+## Step 1: Settle the destination
 
-1. **Settle the destination before writing a word.** Where an instruction or
-   standing authority already names it, write there and do not ask. Otherwise
-   ask one conversational question offering: the durable handoff store, naming
-   who can read it; a path the user names; or this reply only, with no write.
-   Recommend the least-disclosing option that still reaches the recipient,
-   with one sentence of reasoning, then stop. Treat "wherever is easiest",
-   approval of the content, and silence as no destination.
+1. An instruction or standing authority names it → write there. Do not ask.
+2. Otherwise ask one question and end the turn:
 
-2. **For a scratch path outside the workspace, fill `Storage controls`** in
-   the template: data class, who may read it, how long it lives, the exact
-   cleanup target and owner, and whether cleanup is pending. Write nothing
-   into the repository.
+   ```text
+   Where should the handoff go?
 
-3. **Fill every section of `assets/handoff-template.md`:** identity, goal,
-   state identity, decisions and authority, evidence, gotchas and
-   permissions, resume first action, suggested skills, references.
+   1. The durable handoff store — readable by {{who}}
+   2. A path you name
+   3. This reply only — nothing written
 
-4. **In `Handoff identity`, name the predecessor record** and append; never
-   overwrite the source. When several terminal successors exist, or the
-   content identity does not verify, stop and resolve the lineage instead of
-   picking one.
+   Recommendation: {{least-disclosing option that reaches the recipient}} — {{one sentence}}.
+   ```
 
-5. **In `Decisions and authority`, write for each decision the direct answer
-   or the standing default that authorized it,** and list every still-open
-   decision as open. Never upgrade an assumption into approval.
+3. "Wherever is easiest", approval of the content, silence → no destination.
+   Re-ask.
+4. Scratch path outside the workspace → fill `Storage controls`: data class,
+   readers, lifetime, exact cleanup target and owner, cleanup pending or not.
+   Write nothing into the repository.
 
-6. **In `Evidence`, write for each gate the command, where it ran, the tree
-   it ran against, when, and the result,** and say plainly when a result is
-   stale or was never run. Never leave a weak result out.
+## Step 2: Fill `assets/handoff-template.md`
 
-7. **In `Suggested skills`, list candidates only.** They are not proof that
-   anything was invoked and not a fixed sequence.
-
-8. **In `References`, point at existing specs, plans, ADRs, issues, and
-   commits by path or URL;** do not copy their content in.
-
-9. **Before writing, remove every key, token, password, and piece of personal
-   data.**
-
-10. **Write `Resume first action` as one concrete step** the next session
-    verifies before executing — identity, status, approvals, and
-    time-sensitive external state may have moved.
+1. Fill every section: identity, goal, state identity, decisions and
+   authority, evidence, gotchas and permissions, resume first action,
+   suggested skills, references.
+2. `Handoff identity` → name the predecessor record and append. Several
+   terminal successors, or content identity does not verify → stop and
+   resolve the lineage.
+3. `Decisions and authority` → for each decision, the direct answer or the
+   standing default that authorized it. Every open decision listed as open.
+   Never write an assumption as approval.
+4. `Evidence` → for each gate: command, where it ran, tree, when, result.
+   Stale or never run → say so. Leave no weak result out.
+5. `Suggested skills` → candidates only. Not proof of invocation, not a
+   sequence.
+6. `References` → paths or URLs to specs, plans, ADRs, issues, commits. Copy
+   nothing in.
+7. `Resume first action` → one concrete step the next session verifies
+   before executing.
+8. Before writing, remove every key, token, password, and piece of personal
+   data.
 
 ## Common mistakes
 
