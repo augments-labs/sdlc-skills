@@ -5,188 +5,168 @@ description: "Use when asked to execute, run, continue, or resume a multi-task p
 
 # Executing Plans
 
-Advance only through real state transitions; nothing is done until its evaluator is green on the exact result.
+Run every task of an approved plan through its own evaluator, then hand the
+integrated result to the skills that review and integrate it. This skill moves
+task state; it never decides what happens to the branch.
 
-## Before you start
+## When to use
 
-1. **Verify authority and lineage.** Match the exact plan version, mode, and
-   complete approver rule to a current user-role answer or a scoped standing
-   receipt, and confirm every predecessor consumer is reconciled. A plan cannot
-   authenticate itself.
+- The user asks to execute, continue, or resume a plan directory written by
+  `writing-plans`, or answers its execution-mode question.
+- **Skip** a single task with no plan directory: implement it directly under
+  `test-driven-development` and `yagni`.
 
-   An approved plan carrying no bound mode is not a licence to pick one. Ask one
-   conversational question offering inline execution in this session or
-   delegated execution by one fresh subagent per task in sequence. Explain the
-   context trade-off briefly, recommend the mode supported by the harness and
-   task boundaries, then stop.
+## Before the first task
 
-   Offer delegated only where the harness provides a subagent action; otherwise
-   say so and execute inline. Task independence is not a mode decision.
+1. **Open the plan index and read its decision-ledger entry** for the exact
+   `Normative version` shown in the index. Confirm the entry records approval
+   by the owner the `Approval rule` names, and an execution mode, `inline` or
+   `delegated`. The index itself is not evidence of either; only the ledger
+   or the user's direct answer in this conversation is.
 
-2. **Refresh the workspace** through `using-git-worktrees`. Establish who owns
-   it, what HEAD and the intended base actually are, whether the tree is clean,
-   what the baseline gate returns, and which runtime identities are live. Read
-   all of that from the workspace itself; never infer it from what the plan says
-   should be true.
+   Missing approval: stop and say which version needs it. Missing mode: ask
+   one question — inline in this session, or one fresh subagent per task in
+   sequence — recommend the one the harness supports, and stop. Offer
+   `delegated` only if the harness has a subagent action; otherwise say so and
+   run inline.
 
-3. **Audit executability before you change any code.** Read each task against
-   every contract field the `writing-plans` index and task templates define. A
-   missing field, or one that contradicts another, stops execution here rather
-   than halfway through the loop: a **Consumes** with no matching **Produces**,
-   a dependency on a cancelled task, an evaluator the task is also asked to
-   rewrite.
+2. **Invoke `using-git-worktrees`** and complete its record: workspace owner,
+   HEAD, the intended base, a clean tree, the baseline gate's actual output,
+   and the runtime identities in use. Read each from the workspace with its
+   commands, not from what the plan says should be true.
 
-   For a UI-bearing task, its **Applicable visual references** must match the
-   plan index's **Selected visual references** field for field, every Reference
-   ID must resolve through **Visual reference coverage** to this task and a
-   conformance evaluator, and each Freshness evaluator runs before the first UI
-   edit. The index template states what each freshness result permits; a proved
-   `mismatch` waits for an approved design successor and then an approved plan
-   successor. Never infer a preferred direction or let owner reconciliation
-   alter the bound input.
+3. **Check every task file against the plan contract before editing code.**
+   For each task confirm: every `Consumes` names a `Produces` from an earlier
+   task; every `Depends on` points at a task that is not cancelled; the task
+   does not edit the evaluator that judges it; `Implementation disciplines` is
+   filled. For a UI-bearing task, confirm its `Applicable visual references`
+   match the index's `Selected visual references` field for field, and run each
+   freshness evaluator now. Any failure stops here: report the field and the
+   task, and do not start the loop.
 
-4. **Select the execution form.** Bounded tasks use the loop below; a plan with
-   phases or machine-derived shards also loads `references/phase-queues.md`, and
-   a queue is never flattened into copied tasks.
+4. **Choose the loop.** Bounded tasks use the loop below. If the index carries
+   phases or shards, read `references/phase-queues.md` and follow it; never
+   copy a queue into individual tasks. A high-risk task stays blocked until its
+   migration and assurance contracts are approved and their entry gates have
+   passed; report that instead of starting it.
 
-   High-risk target tasks stay blocked until approved current migration and
-   assurance contracts exist and their entry gates have passed. A directly
-   authorized gate prerequisite may consume its exact proposal before phase
-   entry, but it cannot modify target shards, approve the contract, or satisfy
-   entry on that contract's behalf.
+5. **Read `Integration cadence` from the index.** Absent or `plan end`: tasks
+   end at `done` and nothing is pushed, published, or merged until *Finishing
+   the plan*. `per task`: each task's `done` runs loop step 8.
 
-## Bounded task loop
+## The task loop
 
-Honor `Depends on` and the directly approved execution mode. Switching between
-inline and delegated execution needs a direct mode decision; task independence
-alone does not override one.
+Take the next task whose `Depends on` tasks are all `done`. Keep the approved
+mode; switching between inline and delegated needs the user's direct answer.
 
-1. **Load** the task, its exact referenced inputs, interfaces, and evaluator,
-   plus the identity-bound learnings already in the external execution ledger.
+1. **Read the task file, its `Context` paths, and its evaluator.** Read the
+   ledger's learnings for this plan. Do not start from memory of the plan.
 
-2. **Record what this attempt is bound to** before touching anything: the stable
-   task and attempt ID, the prior state you were allowed to start from, the exact
-   pre-task revision and effects, the current external task state, the
-   evaluator's identity, and the observable you expect to change. An attempt with
-   no recorded starting point cannot be reconciled afterwards.
+2. **Write the attempt row before any edit:** task ID, a new attempt ID, the
+   current revision, the evaluator's identity, and the observable the task
+   will change. This row is what a later resume reconciles against.
 
-3. **Load the implementation disciplines before action.** For every
-   behavior-affecting task, invoke `test-driven-development` and `yagni` before
-   the first project command or code edit. Their loading actions must appear in
-   the current execution evidence; naming them in the plan is not invocation.
-   Apply their RED or preservation cycle and pre-edit scope challenge to the
-   task. Only their explicit carve-outs may skip the pair.
+3. **REQUIRED — invoke `test-driven-development` and `yagni`** through the
+   harness's skill-loading action before the first project command or code
+   edit of a behavior-affecting task. The plan naming them is routing, not
+   invocation; the loading action has to appear in this session. Then run
+   their RED or preservation cycle and scope challenge on this task.
 
-   Delegated work carries the same requirement in its packet and goes through
-   `references/subagent-dispatch.md`; approved parallel work hands isolation and
-   reconciliation to `dispatching-parallel-agents`.
+   Delegated mode: build the packet from `references/subagent-dispatch.md`
+   and send it. Approved parallel work: invoke `dispatching-parallel-agents`.
 
-4. **Inspect the result** against the task's file and scope contract. For an
-   offload that means its raw diff, its authorized checkpoints (or none), its
-   result revision, and its evaluator output — never its summary.
+4. **Inspect the result yourself.** Diff the workspace against the attempt's
+   starting revision and compare it with the task's `Files` and `Exclusive
+   ownership` lines. For a dispatched task, read its raw diff, its result
+   revision, and its evaluator output; never its summary.
 
-5. **REQUIRED — invoke `verifying-completion`** to run the complete required gate set the
-   task template defines — for a UI-bearing task, the Evaluator plus every
-   applicable VCONF, and `visual-ui-verification` for an integrated UI — in the
-   authoritative workspace, binding every output to the same exact state.
-   Similar styling or functional equivalence does not authorize a different
-   layout, hierarchy, or interaction. That skill owns the evidence ledger; this
-   one owns the task-state transition.
+5. **REQUIRED — invoke `verifying-completion`** and run the task's full gate
+   set on that exact state: the `Evaluator`, every `VCONF` row, and
+   `visual-ui-verification` for an integrated UI. Keep its ledger; this skill
+   keeps only the task state.
 
-6. **Append `done` only after all required gates pass on the accepted state.**
-   A failed or pending gate keeps the task non-done. A concern counts toward no
-   gate until it is proved non-blocking, or accepted under its exact owning
-   deviation or exclusion and a compensating gate.
+6. **Append the task state to the external ledger.** Write `done` only when
+   every required gate passed on the state you inspected. Write `done with
+   concerns` when a gate raised something not yet proved non-blocking, and keep
+   it out of the completion count until it is. Write `blocked` or `needs
+   context` with the blocker, its owner, and the next gate. Mirror the row to
+   the index checkbox.
 
-7. **Re-run a combined gate** after integrating parallel results.
+7. **After parallel work, rerun the combined gate** on the merged state before
+   any of its tasks is `done`.
 
-8. **Integrate per task only when the plan says so.** If the plan index, the
-   task, or the user's standing directive binds one task to its own PR or
-   merge, then this task's `done` is an integration boundary: invoke
-   `requesting-code-review` on the task's exact revision, then invoke
-   `finishing-a-branch`, and come back here only after that skill has decided.
-   Otherwise a task ends at `done`, and nothing is pushed, published, or merged
-   between tasks.
+8. **`per task` cadence only: REQUIRED — invoke `requesting-code-review` on
+   this task's revision, then `finishing-a-branch`.** Return here after that
+   skill has recorded its decision. Under `plan end` cadence skip this step.
 
-9. **Return to step 1 with the next task** whose `Depends on` is satisfied.
-   `done` is a ledger entry, not a decision point: the approved plan and its
-   approved mode are the authority for every task in it, and that authority is
-   not re-granted task by task. A green evaluator is not a hand-back, and
-   reporting one is not a gate.
+9. **Go to step 1 with the next task.** Do not report, ask, or pause at
+   `done`: the approved plan authorizes every task in it. Leave the loop only
+   when one of these is true, and say which:
 
-   The loop leaves this section on exactly one of: the plan's tasks are
-   exhausted, which goes to *Finishing the plan* below; the ledger records any
-   outcome other than `done`; a normative plan change needs direct reapproval;
-   or a high-risk target task's entry gate has not passed. The last three end
-   the turn. Anything else is the next task.
+   - every task is `done` → go to *Finishing the plan*;
+   - the ledger holds any other state for a task → report it and end the turn;
+   - a task needs a normative change (scope, interface, evaluator, phase,
+     ownership, mode) → write the proposed successor, ask for reapproval, end
+     the turn;
+   - a high-risk task's entry gate has not passed → report it, end the turn.
 
 ## Finishing the plan
 
 The last task's `done` closes the loop, not the plan, and it opens no PR. Run
-these in order, in the authoritative workspace, and let each loading action
-appear in the execution evidence — the same rule step 3 applies to the
-disciplines:
+these in order, in the authoritative workspace; each loading action has to
+appear in this session.
 
-1. **REQUIRED — invoke `verifying-completion`** for plan Acceptance on the exact
-   integrated revision — every required gate rerun on that state, not a
-   re-read of the task ledgers.
+1. **REQUIRED — invoke `verifying-completion`** and run the index's
+   `Acceptance` check on the exact integrated revision, plus every task
+   evaluator again on that revision. Task ledgers are not evidence for this
+   state.
 
-2. **REQUIRED — invoke `requesting-code-review`.** The integrated candidate is a done
-   boundary; task-local evaluator status never stood in for review, and a
-   review you do yourself is not that skill.
+2. **REQUIRED — invoke `requesting-code-review`** on that revision. A task
+   evaluator never stood in for review, and reading the diff yourself is not
+   this step.
 
-3. **REQUIRED — invoke `finishing-a-branch`.** It owns push, PR, merge, keep, and discard,
-   and it will not act without step 2's verdict. Do not run any of those
-   actions from this skill, and do not choose one on the user's behalf — the
-   integration question belongs to that skill.
+3. **REQUIRED — invoke `finishing-a-branch`** with the workspace record from
+   step 2 of *Before the first task*. It asks the user the integration
+   question and executes the answer. Run no push, PR, merge, or delete from
+   this skill, and do not choose for the user.
 
 | Thought | Reality |
 | --- | --- |
 | "All tasks are done, so the plan is done" | Tasks are done inside the plan. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "The user said not to ask per action, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision and asks its own question. |
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
-| "I'll name the review skill in the PR description" | Naming a skill is not invoking it. Its loading action has to be in the evidence. |
+| "I'll name the review skill in the PR description" | Naming a skill is not invoking it. Its loading action has to be in the session. |
 | "Verified at the last task, no need to rerun" | Evidence binds to a state. The integrated revision is a new state. |
 | "Finishing is one command; a skill for it is ceremony" | The command is cheap. The decision it executes — whose branch, which base, reviewed or not — is what the skill gates. |
+| "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
+| "Task done — I'll check in before the next" | `done` is a ledger entry, not a decision point. Take the next task. |
 
-## Outcomes and circuit breaker
+## Failures and the circuit breaker
 
-The append-only ledger records **done**, **done with concerns**, **blocked**,
-**needs context**, **cancelled**, or **superseded**. Cancellation and
-supersession each need their owning approved plan decision, and neither means
-done.
+- **A failed attempt:** append it with its raw evidence, give the failure a
+  stable class ID, and start a new attempt that links to it.
+- **A worker that misses its deadline:** write `cancellation requested`, wait
+  until it and everything it started have stopped, quarantine what it
+  produced, and let the retry reject any late result from it.
+- **Three attempts in one failure class without convergence:** stop the task,
+  write `blocked` with the class and the three attempts, and end the turn.
+  High-risk contracts set their own thresholds; never patch shard failures one
+  at a time.
+- **Cancelled or superseded tasks** need the approved plan decision that
+  removed them, written in the ledger; neither counts as done.
 
-Task `done` means evaluator-accepted inside the plan — not integrated, not
-merge-ready. Per-task review runs only under loop step 8; the final candidate
-always goes through *Finishing the plan*.
+## Stopping and resuming
 
-Every attempt carries an identity and terminal evidence. A failure or deadline
-enters **cancellation requested** and stays there until the worker, its
-descendants, and its effects are quiescent. Quarantine the partials, and let a
-linked retry reject any late result or mutation.
-
-Classify repeated failures under a stable class ID with raw evidence. Three
-non-converging terminal attempts in one class stop the task. High-risk contracts
-own their own thresholds and pause scope — never patch shard symptoms one at a
-time.
-
-## Resume and plan changes
-
-When the remaining work will not fit the current session — context pressure,
-an approaching limit, an ending shift — stop at the current task boundary and
-invoke `handoff` so the next session resumes without re-deriving state, rather
-than degrading through a truncated context.
-
-On resume, re-read the state rather than trusting it. Refresh the plan and its
-decision state, the workspace with its base, HEAD, and dirty state, the external
-ledgers and queues, the contract versions, and whether the evidence is still
-fresh. Never infer progress from task order — a later task file existing says
-nothing about an earlier task having passed.
-
-When reality differs from the plan, update the owner of what changed. Every
-normative change — scope, interface, evaluator, phase, ownership, cutover,
-rollback, decommission, or mode — requires a successor and direct reapproval.
-Runtime attempts, leases, and outcomes update only their external ledgers.
-
-A resumed plan whose tasks are already exhausted enters *Finishing the plan*
-directly; a done ledger is not evidence that any of its three steps ran.
+- **When the remaining work will not fit this session** — context pressure,
+  an approaching limit — finish the current task's ledger row, then invoke
+  `handoff`. Do not continue into a truncated context.
+- **On resume, re-read before trusting:** the plan's decision ledger, the
+  workspace's base, HEAD, and dirty state through `using-git-worktrees`, the
+  execution ledger, and whether each `done` row's evidence still matches the
+  current revision. A later task file existing says nothing about an earlier
+  task having passed.
+- **A resumed plan whose tasks are all `done`** enters *Finishing the plan*
+  directly; a done ledger is not evidence that any of its three steps ran.
+- **When reality contradicts the plan,** update the owner of what changed:
+  a normative change gets a proposed successor and direct reapproval; runtime
+  facts go only to the execution ledger.
