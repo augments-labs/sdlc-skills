@@ -47,6 +47,11 @@ conformance evaluator; no row may be inferred from task prose.
 - **Implementation entry:** every behavior-affecting task invokes
   `test-driven-development` and `yagni` before its first project command or code
   edit. Naming either skill here is routing evidence, not invocation evidence.
+- **Integration cadence:** `plan end | per task`. `plan end` is the default:
+  tasks end at `done`, and the integrated candidate goes through
+  `requesting-code-review` and `finishing-a-branch` once. `per task` makes every
+  task's `done` an integration boundary; it requires the user's direct
+  instruction, quoted here.
 
 Every normative change creates a proposed successor with an exact delta. An
 approved successor invalidates predecessor-bound consumers until each owner

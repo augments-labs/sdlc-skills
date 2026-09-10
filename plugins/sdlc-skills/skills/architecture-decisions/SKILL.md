@@ -1,6 +1,6 @@
 ---
 name: architecture-decisions
-description: "Use when a significant, hard-to-reverse technical choice is being weighed or has just been settled — a datastore, sync vs async, a framework, a public contract, an auth or security model — so it is recorded with its alternatives and consequences before anything is built on it. Fires on should we use X or Y, on a choice made in passing during discussion, and on a request to revisit an old one, even if nobody says ADR or decision record. Skip easily-reversible choices."
+description: "Use when a significant, hard-to-reverse technical choice is being weighed or has just been settled — a datastore, sync vs async, a framework, a public contract, an auth or security model. Fires on should we use X or Y, on a choice made in passing during discussion, and on a request to revisit an old one, even if nobody says ADR or decision record. Skip easily-reversible choices."
 ---
 
 # Architecture Decisions
@@ -12,62 +12,57 @@ Record the decisions you'd regret not being able to explain in six months. An AD
 - Record a decision only when **all three** hold: it's **hard to reverse**, it would be **surprising without the rationale**, and there were **genuine trade-offs** between real options — a datastore, a sync/async boundary, a framework, a public contract, a security model.
 - **Skip** when any of the three is missing — a reversible, obvious, or inevitable choice (a variable name; the only option that could work) is noise as an ADR.
 
-## Procedure
+## Step 1: Draft the ADR
 
-`assets/adr-template.md` owns the fields and what each one must contain. Read it
-while drafting; the steps below are the judgements it cannot make for you.
+Open `assets/adr-template.md` now. It owns the fields.
 
-1. **Name the decision and its authority.** State the question, the artifact or
-   system scope, the forces bearing on it, and either one accountable decision
-   owner or the required approvers with a conflict rule.
+1. State the question, the artifact or system scope, the forces, and one
+   accountable decision owner or the approvers with a conflict rule.
+2. Weigh at least two real options: assumptions, failure limits,
+   disqualifiers, reversal cost, evidence. Evaluate status quo or deferring
+   wherever viable; record the evidence when not.
+3. Give every assumption a stable ID and a way to be proved wrong.
+4. Record the proposed choice and each rejected alternative. Preserve
+   rejections; never edit them away.
+5. Record consequences and reversal: commitments, data and migration
+   consequences, how to undo, what it closes off. Only upsides → not
+   examined.
 
-2. **Weigh at least two real options** on their assumptions, failure limits,
-   disqualifiers, reversal cost, and evidence. Evaluate the status quo, or
-   deferring, wherever that is viable — and record the evidence when it is not.
+## Step 2: Challenge and persist
 
-   Every assumption gets a stable identity and a stated way to be proved wrong;
-   the template's assumptions field names the rest of what it carries.
+1. A reviewer other than the sole author challenges options, assumptions,
+   consequences, reversal, under the template's challenge contract. Skip only
+   when a current independent design review covers this exact ADR identity.
+2. Append the immutable `proposed` ADR to
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the project's
+   decision log, preserving what is there.
 
-3. **Record the proposed choice and the rejected alternatives.** The rejection is
-   the load-bearing part — it is what stops a later reader reopening a settled
-   question. Preserve it rather than silently editing history.
+## Step 3: Present and track
 
-4. **Record consequences and reversal:** what this commits you to, its data and
-   migration consequences, how it could be undone, and what it closes off. A
-   decision with only upsides was not examined.
+1. Present and end the turn:
 
-5. **Challenge independently.** A reviewer other than the sole author challenges
-   the options, assumptions, consequences, and reversal — unless a current
-   independent design review already covers this exact ADR identity. The
-   template's challenge contract binds the access, deadline, quiescence, and
-   finding disposition.
+   ```text
+   ADR {{identity}}: {{question}}
+   Proposed: {{choice}} — {{rationale, one line}}
+   Rejected: {{alternatives}}  Reversal cost: {{one line}}
 
-6. **Persist the complete proposal.** Append the immutable `proposed` ADR to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`, or the project's decision
-   log, preserving the sections already there.
+   1. Accept
+   2. Reject in favor of {{other option}}
+   3. Request changes
+   4. Cancel
 
-7. **Present the ADR for decision.** `proposed` means drafted and unapproved.
-   State its identity, proposed choice, rationale, rejected alternatives,
-   consequences, and reversal cost. Ask one conversational question offering
-   accept, reject in favor of another option, request changes, or cancel. Lead
-   with the option supported by the recorded trade-offs and one sentence of
-   reasoning, then stop.
+   Recommendation: {{option the recorded trade-offs support}} — {{one sentence}}.
+   ```
 
-   Praise and momentum accept nothing. Record accepted, rejected, or cancelled
-   externally, with trusted exact-version evidence.
-
-   Once issued, the old identity never mutates. A normative change creates a
-   proposed successor with an exact delta, and an accepted successor inventories
-   and invalidates predecessor-bound consumers until their owners reconcile.
-
-8. **Track the decision and its conformance separately.** Acceptance may
-   supersede the prior normative decision, but it neither puts the successor
-   `in force` nor proves the old implementation is gone — the transition work
-   owns that mixed state.
-
-   Conformance is what gates `in force`; retirement needs owner action and the
-   absence of the governed surface. A contradiction between the two reopens
-   every affected artifact owner.
+2. Praise and momentum accept nothing. Record accepted, rejected, or
+   cancelled externally with exact-version evidence.
+3. Normative change → a proposed successor with an exact delta. Accepted
+   successor → inventory and invalidate predecessor-bound consumers until
+   their owners reconcile. Never edit an issued identity.
+4. Track decision and conformance separately. Acceptance puts nothing `in
+   force`; conformance does. Retirement needs owner action and absence of the
+   governed surface. Contradiction → reopen every affected owner.
+5. Return the recorded outcome to the skill that invoked this one.
 
 ## Common mistakes
 

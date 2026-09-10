@@ -1,12 +1,13 @@
 ---
 name: visual-ui-verification
-description: "Use before declaring any page, screen, view, or other UI-bearing candidate visually correct, done, or ready to ship. Also use when acceptance or release depends on how an integrated running GUI or TUI looks or responds across states, viewports, themes, or input paths. Fires on does this look right, is the UI done, and check the screen, even if nobody asks for a visual check. Skip isolated widget or snapshot assertions, nonvisual behavior, and open design decisions."
+description: "Use before declaring any page, screen, view, or other UI-bearing candidate visually correct, done, or ready to ship, and when acceptance or release depends on how a running GUI or TUI looks or responds across states, viewports, themes, or input paths. Fires on does this look right, is the UI done, and check the screen, even if nobody asks for a visual check. Skip isolated widget or snapshot assertions, nonvisual behavior, and open design decisions."
 ---
 
 # Visual UI Verification
 
-Drive the integrated interface and inspect retained frames. A visual claim cites
-candidate-bound evidence; snapshots and “looks good” do not establish it.
+Drive the integrated interface, retain every frame, calibrate the inspection
+on a deliberately broken frame, and return a row-by-row verdict bound to the
+candidate. Never return "looks good".
 
 ## When to use
 
@@ -15,81 +16,75 @@ candidate-bound evidence; snapshots and “looks good” do not establish it.
 - **Skip** isolated component/snapshot checks and purely nonvisual behavior.
 - Route unsettled flow or visual direction to `ui-ux-design` before verifying it.
 
-## Procedure
+## Step 1: Bind the target
 
-1. **Bind the target and the judge.** Open `assets/evidence-record.md` and fill
-   its run header before anything is captured — it names every field this
-   binding owes, from the candidate's identity down to the invalidation rule.
+1. Open `assets/evidence-record.md`. Fill the `Run` header before any capture.
+2. Write the candidate as an immutable source or artifact identity, or a
+   working-tree digest covering staged, unstaged, untracked, and relevant
+   ignored inputs. Keep the record outside that identity.
+3. Copy every applicable **Selected visual reference** from the approved UI
+   design, field for field. Plan-bound: match each to its plan task and
+   conformance evaluator.
+4. Run each Freshness evaluator:
+   - `pass` → capture
+   - `mismatch` → restore the binding and rerun, or obtain a design successor
+     (plus a plan successor when plan-bound)
+   - `unavailable` or `error` → verdict pending until repaired and rerun
+5. Any missing field → verdict pending.
 
-   The candidate is an immutable source or artifact identity, or a working-tree
-   digest that covers staged, unstaged, untracked, and relevant ignored inputs.
-   The record itself lives outside that identity, so writing evidence never
-   changes what the evidence is about.
+## Step 2: Capture
 
-   When an approved UI design contains **Selected visual references**, bind every
-   reference applicable to this candidate field for field. When plan-bound, also
-   match each record and conformance evaluator to the approved plan and task;
-   design-only verification needs no plan. Run each Freshness evaluator before
-   capture. `pass` permits capture; proved `mismatch` is stale, so restore the
-   binding and rerun or approve a design successor and, when plan-bound, a plan
-   successor. `unavailable` means the environment is absent and `error` means the
-   evaluator failed; either is pending until repaired and rerun and proves no
-   drift. A missing field also leaves the verdict pending.
-2. **Build the smallest deciding matrix.** Cross applicable journeys and states
-   with viewport/window size, theme, input method, platform, and content
-   pressure. Include empty, loading, error, overflow, and no-permission states
-   when the accepted UI contract contains them; disposition omissions.
-3. **Drive the real interface.** Exercise the integrated artifact through its
-   real input boundary. Use screenshots or recordings for GUIs. For TUIs, use a
-   PTY at the declared dimensions and a VT-capable renderer; retain the raw
-   terminal stream as well as the rendered frame. A row ends at a stable,
-   named observation, not merely successful launch.
-4. **Capture attributable evidence** into the same
-   [evidence-record.md](assets/evidence-record.md), one row per required
-   observation. Hash the raw capture bytes and the rendered media, keep the
-   capture tool's identity and the row's inputs, and never overwrite an earlier
-   frame.
+1. Build the smallest deciding matrix: journeys and states × viewport, theme,
+   input method, platform, content pressure. Include empty, loading, error,
+   overflow, and no-permission states the UI contract contains. Disposition
+   omissions.
+2. Drive the real interface through its real input boundary. GUI: screenshots
+   or recordings. TUI: a PTY at the declared dimensions and a VT-capable
+   renderer; retain the raw terminal stream and the rendered frame.
+3. End each row at a stable, named observation, not at a successful launch.
+4. Write one `Scenario matrix` row per observation: hash the raw bytes and
+   the rendered media, record the capture tool and the row's inputs.
+5. Never overwrite an earlier frame. Retain and disposition retries,
+   duplicates, late output, and superseded frames. One accepted result per
+   required row.
 
-   Each required row reconciles to exactly one accepted result. Retries,
-   duplicates, late output, and superseded frames are retained and dispositioned
-   rather than discarded. A rendered derivative never stands in for raw bytes.
-5. **Calibrate inspection before a pass.** Freeze the rubric and observer, then
-   use a reversible fault or known-bad fixture outside the candidate to produce
-   one deliberately broken frame. The same inspection must mark it red. Restore
-   the probe and retain red/restoration receipts; an unsafe or missed probe
-   leaves the gate pending.
-6. **Inspect every frame** with a media-capable observer, against the accepted UI
-   criteria. Where each is relevant, look at visual hierarchy, legibility,
-   clipping and overflow, focus, contrast, behaviour at content extremes, state
-   feedback, and whether recovery controls are actually visible.
+## Step 3: Calibrate, then inspect
 
-   Judge conformance to all selected visual references applicable to the
-   candidate explicitly. A candidate that satisfies generic quality criteria
-   but substitutes a rejected layout, hierarchy, or interaction fails unless an
-   approved design successor, plus a plan successor when plan-bound, replaces
-   the binding.
+1. Fill `Calibration` before any pass: freeze the rubric and observer.
+2. Produce one deliberately broken frame with a reversible fault or known-bad
+   fixture outside the candidate. Confirm the same inspection marks it red.
+3. Restore the probe. Record the red and restoration receipts. Unsafe or
+   missed probe → gate pending.
+4. Inspect every frame with a media-capable observer against the accepted UI
+   criteria: hierarchy, legibility, clipping and overflow, focus, contrast,
+   content extremes, state feedback, visible recovery controls.
+5. Judge conformance to each selected visual reference explicitly. A
+   rejected layout, hierarchy, or interaction fails, however polished, unless
+   an approved design successor replaces the binding.
+6. File each defect in `Defects`: severity, requirement violated, matrix row
+   and frame, impact, reproduction.
+7. Human-owned criterion or exception: follow `verifying-completion`'s
+   manual-acceptance contract. Only its trusted user-origin receipt passes
+   that row.
 
-   File each defect with its severity, the requirement it violates, the matrix
-   row and frame it was seen in, its impact, and how to reproduce it. An agent's
-   observation is evidence, never authority. Where a criterion or an exception is
-   human-owned, follow `verifying-completion`'s manual-acceptance contract — only
-   its trusted user-origin receipt can pass that row.
-7. **Close the loop.** Do not edit without authority. Route fixes through their
-   implementation discipline, then recapture the same row and affected
-   neighbors. Preserve before/after evidence. Any candidate or material
-   environment change invalidates affected passes.
-8. **Return the verdict, and wire it in.** Pass only when all four hold: the
-   calibrated probe was caught and restored, every required row was captured and
-   inspected, no blocking defect remains, and every human-owned row carries its
-   trusted receipt. Anything short of that returns fail or pending.
+## Step 4: Fix and verdict
 
-   When the project battery is being established, this becomes a row in
-   `verification-strategy`'s matrix, with its own cells, action, evidence, owner,
-   cadence, promotion, and failure response. A project may label that row `VQA`.
-
-   A verdict taken against source or a working tree is acceptance evidence only.
-   `release-readiness` consumes only a fresh verdict bound to the exact immutable
-   artifact being promoted, and this skill never authorizes that promotion.
+1. Edit nothing from this skill. Route each fix through
+   `test-driven-development` and `yagni` under the authority that covers it.
+2. Recapture the fixed row and its affected neighbors. Keep before and after
+   evidence. Any candidate or material environment change invalidates
+   affected passes.
+3. Write the `Verdict`. Pass only when all four hold: calibrated probe caught
+   and restored; every required row captured and inspected; no blocking
+   defect; every human-owned row has its trusted receipt. Otherwise fail or
+   pending.
+4. Return the verdict to the skill that requested it. Authorize no
+   acceptance, integration, or promotion here.
+5. Establishing the project battery: add this gate as a row in
+   `verification-strategy`'s matrix with its own cells, action, evidence,
+   owner, cadence, promotion, and failure response.
+6. Release: take a fresh verdict against the exact immutable artifact. A
+   verdict on source or a working tree is acceptance evidence only.
 
 ## Common mistakes
 

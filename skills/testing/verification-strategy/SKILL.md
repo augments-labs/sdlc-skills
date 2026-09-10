@@ -1,14 +1,13 @@
 ---
 name: verification-strategy
-description: "Use to establish or repair a project's correctness battery, or before high-risk work whose assurance is absent, stale, or unfalsifiable. Fires on how should we test this project, our tests don't catch anything, and what should CI run, even if nobody says strategy. Revisit on changed risk, an escaped defect, or a hollow gate. Skip a bounded feature, and skip merely writing or running an already-defined gate."
+description: "Use to establish or repair a project's correctness battery, before high-risk work whose assurance is absent, stale, or unfalsifiable, and again on changed risk, an escaped defect, or a hollow gate. Fires on how should we test this project, our tests don't catch anything, and what should CI run, even if nobody says strategy. Skip a bounded feature, and skip writing or running an already-defined gate."
 ---
 
 # Verification Strategy
 
-Build a correctness battery that matches the project's real risks, and prove
-each gate by watching it fail. Confidence comes from a gate observed failing and
-wired to block the promotion it protects — never from reading the code, from a
-coverage number, or from the builder's opinion.
+Map the project's real risks to gates, watch each gate fail before calling it
+executable, and wire it to block the promotion it protects. Accept no gate on
+reading the code, a coverage number, or the builder's opinion.
 
 ## When to use
 
@@ -18,89 +17,69 @@ coverage number, or from the builder's opinion.
 - **Skip** a bounded feature — its plan evaluators and TDD own the local proof.
   A missing project floor is separate scope.
 
-## Procedure
+## Step 1: Map the risks before writing any gate
 
-### Map the risks before writing any gate
+1. Inventory what the project promises and what could break it: committed
+   behaviour, platforms and build modes, data and operations, commands and CI
+   that already run, existing tests, escaped defects.
+2. Transformation: add its migration facts, invariants, and approved
+   deviations.
+3. Instantiate `assets/assurance-matrix.md` now. Fill `Risk inventory` and
+   `Risk-to-gate matrix`. Write no gate code before this exists.
+4. Fill `Catalogue disposition` for every category in
+   `references/battery-catalogue.md`: covered, or an accountable expiring
+   approval plus a compensating gate. N/A needs evidence and an owner.
 
-1. **Inventory what the project promises and what could break it.** That means
-   the behaviour it commits to, the platforms and build modes it ships on, the
-   data and operations it touches, the commands and CI that already run, the
-   tests that exist, and any defects that escaped.
+## Step 2: Make each gate real
 
-   A transformation consumes more: its migration facts, its invariants, and the
-   deviations already approved.
+1. Fill `Cadence and promotion map`: cheap gates block every change;
+   expensive ones protect a phase, trial, cutover, or release.
+2. A "manual" gate gets a procedure, evidence, an owner, and a promotion it
+   blocks.
+3. Calibrate in isolation you are authorized to use: bind what the gate
+   touches and your authority to mutate, recover, and clean up.
+4. Watch the whole cycle: green → red on an introduced divergence → full
+   restoration → green. Keep raw results outside the candidate.
+5. Unsafe to calibrate for real: use a known-bad fixture, or mark the gate
+   `uncalibrated` and say so.
+6. Record each gate as `executable`, `planned`, or `blocked`. Only
+   `executable` satisfies an entry condition.
+7. One bounded gate to implement: invoke `test-driven-development`.
+   Multi-step gate work: invoke `writing-plans`.
 
-2. **Build the risk-to-gate matrix, before any gate code exists.** Read
-   `assets/assurance-matrix.md` now and instantiate it; do not rebuild the
-   format from memory. It owns the required cells, the gate-establishment
-   contract, the self-protection classes, and the receipt rules.
+## Step 3: Protect the battery from its own erosion
 
-   Authoring the matrix alongside the gates, or after them, fails this
-   transition — the matrix is what decides which gates are worth writing.
+1. Fill `Control-plane independence` and `Test-inventory audit`.
+2. Keep the inventory, the validator, and the wiring *outside* the tests they
+   protect.
+3. A mutable plane that would guard its own invocation: record its promotion
+   as `planned` or `blocked` until external enforcement exists.
 
-3. **Disposition every category in `references/battery-catalogue.md`,** reading
-   it while you select gates. Each category is either covered, or carries an
-   accountable approval that expires plus a compensating gate. N/A is a decision
-   with evidence and an owner, not a shorthand.
+## Step 4: Challenge, then hand over the decision
 
-### Make each gate real
-
-4. **Set each gate's cadence from its cost and its consequence.** Cheap gates
-   block every change; expensive ones may protect a phase, a trial, a cutover,
-   or a release instead.
-
-   A gate marked "manual" is still a gate. It needs a procedure, evidence, an
-   owner, and a promotion it blocks.
-
-5. **Calibrate in isolation you are authorized to use.** Bind what the gate
-   touches, and your authority to mutate, recover, and clean up. Then watch the
-   whole cycle: green → red on an introduced divergence → complete restoration →
-   green again. Keep the raw results outside the candidate.
-
-   Where calibrating for real would be unsafe, use a known-bad fixture, or mark
-   the gate `uncalibrated` and say so.
-
-6. **Report gate state honestly.** Externally a gate is `executable`, `planned`,
-   or `blocked`, and only `executable` satisfies an entry condition — a planned
-   command is not evidence. TDD implements a single bounded gate; multi-step
-   work belongs to a plan.
-
-### Protect the battery from its own erosion
-
-7. **Make the loss of a control, an oracle, or a test turn the suite red.** A
-   battery that cannot detect its own erosion is not a battery. Instantiate the
-   applicable self-protection cells from `assets/assurance-matrix.md`, which
-   owns the attack classes and the tiny-inventory floor.
-
-   Two rules decide the rest:
-
-   - Keep the inventory, the validator, and the wiring *outside* the tests they
-     protect. A check that lives inside what it guards dies with it.
-   - A mutable plane cannot protect its own invocation. Without external
-     enforcement, its promotion stays `planned` or `blocked`.
-
-### Challenge it, then hand over the decision
-
-8. **Challenge the matrix independently, while approval is still pending.** Read
-   `references/assurance-challenger.md` and invoke `requesting-code-review` with
-   the broad prompt — a generic review cannot produce that reference's verdict.
-   Keep the candidate read-only.
-
-   A blocker closes only the candidate it was raised against. Correct a
-   successor, reverify, and rechallenge until it comes back clear or is
+1. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with the prompt in
+   `references/assurance-challenger.md`, before approval. Keep the candidate
+   read-only.
+2. Blocker: correct a successor, reverify, rechallenge until clear or
    concretely blocked.
+3. Present the matrix and stop:
 
-9. **Present the matrix for decision.** Authority to draft or implement gates is
-   not authority to approve unseen risks, thresholds, omissions, or exceptions.
-   State the path, executable/planned/absent counts, thresholds, omissions, and
-   blocking cadence. Ask one conversational question offering approve the
-   battery, request changes, reject the strategy, or cancel. Recommend the
-   answer supported by the uncovered-risk state, with one sentence of
-   reasoning, then stop.
+   ```text
+   Assurance matrix {{path}} — {{n}} executable, {{n}} planned, {{n}} absent
+   Thresholds: {{list}}. Omissions: {{list}}. Blocking cadence: {{summary}}.
 
-   Only approved advances; keep lifecycle external and the normative file
-   immutable `proposed`. A normative change creates an exact-delta successor,
-   and only an approved replacement supersedes.
+   1. Approve the battery
+   2. Request changes
+   3. Reject the strategy
+   4. Cancel
+
+   Recommendation: {{option}} — {{one sentence}}.
+   ```
+
+4. Approve nothing yourself. Authority to draft gates is not authority to
+   accept unseen risks, thresholds, omissions, or exceptions.
+5. Keep the normative file at `proposed`; lifecycle state stays external.
+   Every normative change is an exact-delta successor.
 
 ## Hard stops
 

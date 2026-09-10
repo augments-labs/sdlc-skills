@@ -1,130 +1,112 @@
 ---
 name: migration-strategy
-description: "Use before planning or implementing a high-risk rewrite, migration, generated conversion, or wide behavior-preserving transformation — one whose output is impractical to review line by line, crosses ownership boundaries, or can fail at the platform, build, runtime, data, or cutover layer. Fires on port this to X, move us off Y, and regenerate this from Z, even if nobody says migration. Skip bounded changes, and skip target architecture, executable proof, test writing, and running the migration itself."
+description: "Use before planning or implementing a high-risk rewrite, migration, generated conversion, or wide behavior-preserving transformation — one whose output cannot be reviewed line by line, crosses ownership boundaries, or can fail at the platform, build, runtime, data, or cutover layer. Fires on port this to X, move us off Y, and regenerate this from Z, even if nobody says migration. Skip bounded changes."
 ---
 
 # Migration Strategy
 
-Define how a trusted source becomes the intended target without losing behavior, data, control, or recoverability. Make preservation and change reviewable first.
+Write the contract under which a trusted source becomes the intended target
+without losing behavior, data, control, or recoverability, and get it approved
+before any target work starts.
 
 ## When to use
 
 - The transformation is too broad, partitioned, preservation-heavy, or operationally risky for ordinary feature planning and line-by-line review.
-- Classify before implementing, on risk evidence rather than line count:
-  **reviewability** (can independent humans or gates inspect the result?),
-  **preservation** (must behavior, compatibility, data, or operations match?),
-  **breadth** (how many owners, consumers, platforms, or modes change?), and
-  **failure surfaces** (can data, security, concurrency, resources, cutover, or
-  recovery fail independently?). If the ordinary route cannot make these
-  surfaces reviewable and recoverable, target work waits for this skill's
-  approved contract plus `verification-strategy`'s assurance and passed entry
-  gates. Uncertainty is pending classification; reclassify when inputs change.
+- Classify before implementing, on risk evidence rather than line count.
+  Answer four questions: can independent humans or gates inspect the result
+  (**reviewability**); must behavior, compatibility, data, or operations match
+  (**preservation**); how many owners, consumers, platforms, or modes change
+  (**breadth**); can data, security, concurrency, resources, cutover, or
+  recovery fail independently (**failure surfaces**)? If the ordinary route
+  cannot make those surfaces reviewable and recoverable, hold target work
+  until this contract is approved and `verification-strategy`'s entry gates
+  have passed. Record uncertainty as pending classification; reclassify when
+  inputs change.
 - **Skip** for a bounded change whose behavior and diff remain directly reviewable — bounded reviewable work stays on its ordinary route.
-- This skill owns source facts and transition strategy; `system-architecture`
-  owns target shape, `verification-strategy` proof, and planning/execution work.
+- Write source facts and transition strategy here. Send target shape to
+  `system-architecture`, proof to `verification-strategy`, and tasks to
+  `writing-plans`.
 
-## Procedure
+## Step 1: Establish the ground truth
 
-Each step fills the matching section of `assets/migration-contract.md`. Read it
-while you work rather than rebuilding its fields from memory.
+Open `assets/migration-contract.md` now. Each step fills the section it names.
 
-### Establish the ground truth
+1. Fill `Normative control`: source and target revisions, scope, one
+   accountable owner or approval rule. Unsettled target → back to
+   `system-architecture` first.
+2. Fill `Source-fact inventory` from observable behavior and contracts, not
+   from the source's structure: behavior, contracts, durable data, consumers,
+   platforms and build modes, operational obligations, known deviations.
+3. Classify every fact in `Preservation and deviation contract` or `Unknown
+   contract`: preserved invariant, intentional deviation, or unknown.
+4. Each deviation: attach the approved requirement or decision that owns it.
+   A newly discovered choice goes back to that owner, never settled here.
+5. Each unknown: blocked until proved irrelevant or approved with a
+   compensating gate.
 
-1. **Bind versions and authority.** Name the source and target revisions, the
-   scope, and one accountable owner or approval rule. An unsettled target routes
-   back to its owner first.
+## Step 2: Design the transition
 
-2. **Inventory implementation-independent facts** — behavior, contracts, durable
-   data, consumers, platforms and build modes, operational obligations, known
-   deviations.
+1. Fill `Transition and translation`: incremental, cutover, or hybrid;
+   translation rules; legal intermediate and mixed-version states;
+   compatibility direction; behavior of unmapped or invalid input.
+2. Fill `Representative trial slice`: riskiest paths at useful scale over a
+   stable coverage inventory; a disposition for every excluded cell; outcome,
+   expansion decision, failure response. Commands and thresholds belong to
+   the assurance matrix.
+3. Fill `Partitions and ownership`: a stable shard inventory and ownership
+   rules. Attempts, owners, heartbeats, transfers, and results go to an
+   append-only external ledger, never into the contract.
 
-   The source's structure is not the specification. Treating it as one is how a
-   migration faithfully preserves an accident and quietly drops a requirement.
+## Step 3: Control what moves underneath you
 
-3. **Classify every fact** as a preserved invariant, an intentional deviation, or
-   an unresolved unknown. A deviation needs the approved requirement or decision
-   that owns it, and a newly discovered choice reopens that owner rather than
-   being settled here. An unknown blocks until it is proved irrelevant or
-   approved with a compensating gate.
+1. Fill `Source evolution during migration`: freeze the source, or run one
+   versioned change-intake contract and external queue. Every post-baseline
+   change gets an identity and an exact terminal disposition.
+2. Fill `Mutable live-state catch-up` wherever data or work keeps moving:
+   boundary binding through maximum permitted lag and the owning gate. Every
+   post-snapshot write lands in exactly one terminal disposition. "Probably
+   applied" is unreconciled and blocks cutover.
+3. Fill `Convergence and failure queue`: reconcile the external ledgers; every
+   skip gets an approved disposition. Repeated failure *class* → pause the
+   affected work, fix the shared rule, re-audit every impacted shard.
+4. Fill `Pause, abort, cutover, and rollback`, `Retained artifacts`, and
+   `Decommission and retained-source retirement` before anyone needs them:
+   pause and abort, cutover authority, rollback target, point of no return,
+   recovery time, fate of the retained source.
+5. Enter decommission only when retention has elapsed, live use is provably
+   zero, its gate passed, and its targets, authority, and recovery are
+   written. A partial, failed, or validation-failed action there blocks
+   release and cleanup.
 
-### Design the transition
+## Step 4: Challenge, then decide
 
-4. **Choose the transition strategy** — incremental, cutover, or hybrid — with
-   its translation rules, legal intermediate and mixed-version states,
-   compatibility direction, and the behavior of unmapped or invalid input.
+1. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with two challenger
+   roles before approval: one who knows the source and its domain, one who
+   owns operations and data. They challenge fact completeness, mappings and
+   mixed states, intake path and partitions, trial slice and recovery plan.
+2. Record an accountable skip for any role left out. Bind each challenge to an
+   exact attempt with a deadline. A required role without a current,
+   successful, resolved report blocks approval.
+3. Write the contract to
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`. Keep
+   stable-ID delta, review, and execution state external.
+4. Present the contract and stop:
 
-5. **Design a representative trial slice** that covers the riskiest paths at
-   useful scale, mapped over a stable coverage inventory. Every excluded cell
-   needs its exact disposition. Outcome, expansion decision, and failure response
-   live here; assurance owns the commands and thresholds.
+   ```text
+   Migration contract {{path}} — {{strategy}}
+   Preserves: {{invariants}}. Trial: {{slice}}. Pause/abort/rollback: {{rules}}. Retirement: {{plan}}.
 
-6. **Partition exclusively.** Bind a stable shard inventory and its ownership
-   rules. Attempts, owners, heartbeats, transfers, and results go in an
-   append-only external ledger — runtime progress never rewrites the normative
-   contract.
+   1. Approve this exact version for planning
+   2. Request changes
+   3. Reject the strategy
+   4. Cancel
 
-### Control what moves underneath you
+   Recommendation: {{option}} — {{one sentence}}.
+   ```
 
-7. **Control source evolution.** Freeze the source, or run one versioned
-   change-intake contract and external queue. Every post-baseline change gets an
-   identity and an exact terminal disposition; none may disappear between
-   revisions.
-
-8. **Control live-state drift** wherever mutable data or work keeps moving while
-   the migration runs. The contract's *Mutable live-state catch-up* section names
-   every field this owes, from the boundary binding down to the maximum permitted
-   lag and the gate that owns it.
-
-   The judgement the template cannot make for you: every accepted write or work
-   item after the snapshot has to land in exactly one terminal disposition.
-   "Probably applied" is an unreconciled row, and an unreconciled row blocks
-   cutover.
-
-9. **Define convergence and learning.** Reconcile the external ledgers, and give
-   every skip an approved disposition. A repeated failure *class* pauses the
-   affected work, updates the shared rule, and re-audits every impacted shard —
-   fixing its instances one at a time is how the class stays invisible.
-
-10. **Make exit recoverable and retirement explicit.** Predeclare the whole exit
-    path before anyone needs it: how work pauses and aborts, who authorizes
-    cutover, what rollback returns to, where the point of no return sits, how long
-    recovery takes, and what becomes of the retained source. The contract's exit
-    and retention sections carry those fields.
-
-    Decommission is a separate destructive state machine. Enter it only once
-    retention has elapsed, live use is provably zero, its gate has passed, and its
-    exact targets, authority, and recovery are established. A partial, failed, or
-    validation-failed action there blocks release and cleanup.
-
-### Challenge, then decide
-
-11. **Challenge independently, before approval.** Two roles have to push back on
-    this contract: someone who knows the source and its domain, and someone who
-    owns operations and data. Between them they challenge whether the facts are
-    complete, whether the mappings and mixed states hold, whether the intake path
-    and the partitions work, and whether the trial slice and the recovery plan are
-    real. A role you leave out needs an accountable, recorded skip.
-
-    Bind each challenge to an exact attempt with a deadline, under the
-    cancellation, quiescence, quarantine, linked-retry, and late-result rules the
-    contract's challenge fields define — so that "in flight" can never pass for
-    "returned". A required role with no current, successful, resolved report
-    blocks approval.
-
-12. **Write the contract** to
-    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`, keeping the
-    stable-ID delta, review, and execution state external to it.
-
-13. **Present the contract for decision.** State the path, strategy, preserved
-    invariants, representative trial, pause/abort/rollback rules, and retirement
-    plan. Ask one conversational question offering approve this exact version
-    for planning, request changes, reject the strategy, or cancel. Recommend the
-    answer supported by the preservation evidence and open unknowns, with one
-    sentence of reasoning, then stop.
-
-    Only an approved exact version, with predecessor-bound consumers reconciled,
-    lets planning proceed; praise and silence decide nothing. Every normative
-    change creates a proposed successor.
+5. Only an approved exact version, with predecessor-bound consumers
+   reconciled, proceeds to `writing-plans`. Praise and silence decide nothing.
+   Every normative change is a proposed successor.
 
 ## Common mistakes
 

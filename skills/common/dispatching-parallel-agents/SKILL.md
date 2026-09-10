@@ -5,9 +5,9 @@ description: "Use when two or more work items can run concurrently with disjoint
 
 # Dispatching Parallel Agents
 
-Run independent work concurrently instead of in series. The win is wall-clock;
-the risk is collision — so this applies only when the pieces genuinely do not
-touch each other.
+Prove the pieces are independent, hand each agent a complete packet, dispatch
+through a callable action that returns a receipt, and reconcile every diff
+yourself before anything integrates.
 
 ## When to use
 
@@ -16,24 +16,40 @@ touch each other.
   quicker done inline. Sequence it in the current task or plan; `executing-plans`
   is for an approved plan only.
 
-## The independence test — confirm before fanning out
+## Step 1: Before fan-out
 
-Check every pair; if any fails, group them into one agent or sequence them instead:
-
-- **Base** — every writer starts from the same immutable revision, or an
-  explicitly ordered dependency revision.
-- **Files** — they own exclusive paths, including generated outputs, manifests,
-  lockfiles, shared fixtures, and tests. Name one later integration owner for a
-  truly shared file; nobody else edits it concurrently.
-- **State** — disjoint ports, databases, fixtures. If they run a server or migrations, isolate each (`using-git-worktrees`).
-- **Order** — none consumes another's output. A dependency is a sequence, not a fan-out.
+1. Run the independence test on every pair. Group or sequence any pair that
+   fails a line:
+   - **Base** — same immutable revision, or an explicitly ordered dependency
+     revision.
+   - **Files** — exclusive paths, including generated outputs, manifests,
+     lockfiles, shared fixtures, tests. A truly shared file gets one later
+     integration owner and no concurrent editor.
+   - **State** — disjoint ports, databases, fixtures. A server or migrations
+     → invoke `using-git-worktrees` for each.
+   - **Order** — neither consumes the other's output. A dependency is a
+     sequence.
+2. Pick each agent's tier from the table below. Write it in the packet's
+   `TIER` field. Lowest tier sufficient for the remaining decisions and the
+   cost of an error. Supply missing context before moving up a tier.
+3. Fill one `assets/dispatch-packet.md` per agent, every field. Read
+   `references/brief-examples.md` while writing the first one. Never paste
+   session history.
+   - `START FROM` → what defines the task: the contract, the exact spec, the
+     failing assertion.
+   - `READ` → a path to what informs it: a diff, a log, a large fixture.
+   - `SUBDISPATCH: prohibited` unless the packet allocates sub-scope,
+     capacity, data and egress boundary, and who reconciles grandchildren.
+   - `DATA/ACCESS` → what is reachable, who may hold it, what is prohibited,
+     who cleans up. Configuration grants no disclosure authority.
+4. Freeze the expected packet IDs and count, the terminal deadline, and the
+   timeout and cancel action with its owner, before the first dispatch.
 
 ## Model selection
 
 This section applies to each subagent, including sequential workers and
-reviewers; it does not require a parallel fan-out. Choose autonomously within
-the user's permitted models, using the lowest tier sufficient for the remaining
-decisions and consequences of error.
+reviewers; it does not require a parallel fan-out. Choose within the user's
+permitted models.
 
 | Tier | Work |
 | --- | --- |
@@ -41,79 +57,41 @@ decisions and consequences of error.
 | `medium` | Execution of settled decisions that still requires judgment: specified implementation, focused review, substantive summarization. |
 | `large` | Resolving uncertainty: architecture, unclear requirements, unexplained failures, uncertain impact, or consequential tradeoffs. |
 
-At dispatch, map the chosen tier to an available model and explicitly set the
-harness's supported model parameter or agent configuration. Naming a tier in the
-prompt does not select a model. If selection is unavailable, disclose that
-limitation and use only a fallback the user's preferences permit; never claim
-an override was applied. Preserve the user's main-session model and any models
-reserved for orchestration.
+At dispatch, map the chosen tier to an available model and set the harness's
+model parameter or agent configuration explicitly; naming a tier in the prompt
+selects nothing. If selection is unavailable, say so and use only a fallback
+the user's preferences permit; never claim an override was applied. Leave the
+user's main-session model and any model reserved for orchestration untouched.
 
-Supply missing context before escalating capability. Move up a tier when the
-remaining reasoning difficulty warrants it, within the authorized budget and
-data boundary; do not retry a stronger model merely because information was
-missing.
+## Step 2: Dispatch
 
-## The dispatch packet (per agent)
+1. Dispatch through the real callable action. Record each returned non-empty
+   agent or job ID in `DISPATCH RECEIPT`.
+2. Action unavailable, refused, or empty → write `not dispatched`, keep the
+   packet pending, stop. Name the action tried and what would make it
+   callable. Never describe a fan-out without receipts. Never quietly do the
+   work sequentially instead.
+3. Failure or deadline → write `cancellation requested`. Wait until the
+   worker, its descendants, and its effects are quiescent. Quarantine partial
+   output. Only then write failed, timed out, or cancelled.
+4. Reassign through a linked successor attempt that rejects every late result
+   or mutation from its predecessor.
+5. A writer reports a shared generator, file, state, dependency, or scope
+   outside its packet → pause the affected work, preserve the diffs,
+   reclassify, assign one owner or a sequence, issue revised packets. "Small
+   overlap" is overlap.
 
-Each agent starts cold, so hand it everything and never your session history.
-Fill one `assets/dispatch-packet.md` per agent — it carries every field a packet
-owes, from scope and ownership through isolation, data boundary, resource
-envelope, and terminal control. `references/brief-examples.md` explains why those
-fields exist and shows weak-versus-strong packets for real tasks; read it while
-writing your first one.
+## Step 3: Reconcile
 
-Three judgements the template cannot make for you:
-
-**Paste what defines the task; point at what merely informs it.** The task
-contract, the exact spec, the failing assertion — paste those, so the agent starts
-from a known snapshot. A diff, a log, a large fixture — give a path it opens
-itself. A paste occupies the most expensive context for the agent's whole run; a
-path costs nothing until it is read.
-
-**Keep subdispatch off by default.** A child agent has neither the coordinator's
-ownership map nor its capacity view. Allow it only when the packet allocates the
-sub-scope, the capacity, the data and egress boundary, and who reconciles the
-grandchildren. Otherwise the agent reports back instead of spawning.
-
-**Bound data and effects, not only files.** Say what material is reachable, which
-workers, providers, and storage may hold it, what is prohibited outright, and how
-evidence is retained and cleaned up under whose authority. Configuration is not
-disclosure authority — a new recipient or a new egress path needs its own scoped
-decision.
-
-## The dispatch-receipt gate
-
-**Before fan-out,** freeze the expected packet IDs and count, the terminal
-deadline, and the timeout and cancel action with its owner.
-
-**Dispatch through the real callable action.** Join each returned nonempty agent
-or job ID as an attempt identity under one packet; names and “running” prose are
-not receipts. Unavailable, refused, or empty means **not dispatched** — retain
-the packet pending and stop, naming the action attempted and what this
-environment needs to make it callable (an enabled capability, a granted
-permission, a configured runner). Never narrate a fan-out you hold no receipts
-for, or silently substitute sequential work for one.
-
-**At failure or deadline,** record `cancellation requested` until the worker, its
-descendants, and its effects are confirmed quiescent, and quarantine partial
-output. Only then record failed, timed out, or cancelled. Reassignment creates a
-linked successor attempt that rejects every late result or mutation from its
-predecessor. Non-success never disappears.
-
-If any writer discovers a shared generator, file, state, dependency, or required
-scope outside its packet, pause affected work. Preserve the diffs, reclassify the
-dependency, assign one owner or sequence it, and issue revised packets. “Small
-overlap” is still overlap.
-
-## Reconcile (the coordinator's job, not the agents')
-
-Reconcile the frozen packet set and every terminal outcome. Inspect each returned
-diff against its declared base and ownership set, authorized checkpoints (or
-none), and raw evaluator evidence. Reject scope leaks, mixed changes, or missing
-evidence even if a suite is green. Required scope advances only when every packet
-has an accepted success report, or a directly approved scope change or
-reassignment. Then integrate through the named owner, and run the combined
-checks on the exact result.
+1. Inspect every returned diff yourself against its declared base, ownership
+   set, authorized checkpoints, and raw evaluator evidence. Reject a scope
+   leak, a mixed change, or missing evidence even under a green suite.
+2. Advance required scope only when every packet has an accepted success
+   report, or a directly approved scope change or reassignment.
+3. Integrate through the named owner. Run the combined checks on the exact
+   result.
+4. **REQUIRED SUB-SKILL:** invoke `verifying-completion` for that combined
+   state before anything downstream treats it as done.
 
 ## Common mistakes
 

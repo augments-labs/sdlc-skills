@@ -1,12 +1,13 @@
 ---
 name: containing-an-incident
-description: "Use this skill the moment a failure is reaching real users — an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data being corrupted or exposed, a customer-visible regression. Fires on it's down, customers are getting errors, something broke in production, and this started after the deploy, even when nobody says incident, outage, or severity. Skip when nothing is reaching users — a failing test, a bug caught in review, a defect nobody has hit. Skip once impact has stopped and the question is why the safeguards missed it; that is post-mortem."
+description: "Use the moment a failure is reaching real users — an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data corrupted or exposed, a customer-visible regression. Fires on it's down, customers are getting errors, something broke in production, and this started after the deploy, even if nobody says incident or outage. Skip a failing test, a bug caught in review, or a defect nobody has hit, and skip once impact has stopped."
 ---
 
 # Containing an Incident
 
-Stop the impact first, understand it second. Every minute spent finding the cause
-while users are failing is a minute you chose to spend.
+Stop the impact first and prove it stopped from the outside; leave the cause
+to `debugging`. Every minute spent finding the cause while users are failing is
+a minute you chose to spend.
 
 ## When to use
 
@@ -20,66 +21,53 @@ while users are failing is a minute you chose to spend.
 - Not sure whether users are affected? Answering that *is* step 1, and it is
   fast. Do not resolve the doubt by starting to read code.
 
-## Procedure
+## Step 1: Bound the impact
 
-1. **Bound the impact before you explain it.** What is failing, for whom, since
-   when, and how badly — read from the signal users are actually hitting, not
-   from the source. Three lines is enough. You are not diagnosing yet; you are
-   sizing the decision that comes next.
+1. Write three lines from the signal users are hitting, not from source:
+   what fails, for whom, since when, how badly.
+2. Do not diagnose. Do not open product code.
 
-2. **Inventory the levers, not the causes.** What could stop this in the next few
-   minutes? Fastest and narrowest first:
-   - a feature flag, config value, or kill switch — seconds, narrow, reversible
+## Step 2: Pick the lever
+
+1. List what could stop it in minutes, fastest and narrowest first:
+   - a feature flag, config value, or kill switch
    - shedding or redirecting traffic, draining an instance, opening a breaker
    - raising or lowering a limit, quota, or concurrency
-   - blocking the input, tenant, or job that triggers it
-   - rolling back to the last known-good release — minutes, wide, usually needs
-     approval
+   - blocking the triggering input, tenant, or job
+   - rolling back to the last known-good release — wide, usually needs approval
+2. Read the runbook, deploy log, and config for them. Reading is not pulling.
+3. Lever not yours to pull (deploy, rollback, production data, customer-facing
+   block) → escalate now with the Step 1 lines. That is the containment step.
+4. Pull the narrowest lever that works. Cannot state its effect in one
+   sentence → do not pull it.
 
-   The runbook, the deploy log, and the config are where these live. Reading
-   them is not pulling them.
+## Step 3: Prove it stopped
 
-3. **Check what you are allowed to do.** A deploy, a rollback, a production data
-   change, or a customer-facing block may not be yours to make. When it is not,
-   **escalating is the containment step** — it starts now, carrying the impact
-   statement from step 1, not after you have found the cause.
+1. Read the signal from Step 1 again. Returned to normal → contained.
+2. Signal unchanged → not contained. Back to Step 2. The action taken proves
+   nothing.
+3. Cheap to capture → save a failing example, the logs, or the current
+   configuration before a rollback or restart erases it. Seconds, not
+   minutes. Never delay containment for evidence.
 
-4. **Pull the narrowest lever that stops the impact.** Prefer the smallest blast
-   radius that actually works over the one that feels most thorough. Never pull a
-   lever whose effect you cannot state in one sentence.
+## Step 4: Record and hand off
 
-5. **Prove it stopped, from the outside.** Containment is proved by the signal
-   that showed the impact returning to normal — the error rate, the failing
-   request, the affected user's path. It is never proved by the fact that you
-   took the action. If the signal has not moved, you have not contained it: back
-   to step 2.
+1. Fill `assets/containment-record.md`: impact, lever, when pulled, cost
+   while it holds, how to reverse, who owns reversal.
+2. Report three things and call nothing resolved:
 
-6. **Preserve what the fix will need, if it is cheap.** A rollback or a restart
-   can erase the state that explains the failure. Capture a failing example, the
-   relevant logs, or the current configuration before it disappears — in seconds,
-   not minutes. Never delay containment to collect evidence while users are
-   failing.
+   ```text
+   Stopped: {{what the signal shows}}
+   Still true: {{the feature is still broken}}
+   Cost while it holds: {{what the mitigation costs}}
+   ```
 
-7. **Write down what you changed and how to undo it.** A flag left off, a limit
-   lowered, an instance drained is live debt that outlives your session. Fill
-   `assets/containment-record.md`: the impact, the lever, when it was pulled,
-   what it costs while it holds, what reversing it takes, and who owns that.
-   Unrecorded mitigation becomes a permanent mystery.
-
-8. **Now hand off.** With the impact stopped, `debugging` owns the cause and
-   `post-mortem` owns why it escaped. Both are cheaper from here — the pressure
-   is off and you can afford to be thorough.
-
-When none of this fits cleanly — no lever exists, the damage is already done,
-containment would destroy the only evidence, or the lever helps some users and
-hurts others — read `references/hard-containments.md`.
-
-## Containment is not resolution
-
-Stopping the bleeding closes nothing. The feature is still broken, the mitigation
-is still load-bearing, and something is now running in a degraded configuration
-that nobody else knows about. Report all three: what stopped, what is still true,
-and what the mitigation costs while it stays in place.
+3. **REQUIRED SUB-SKILL:** invoke `debugging` for the cause. Once cause and
+   containment are known, invoke `post-mortem`. Write both into the record's
+   `Still open` lines. Diagnose nothing from this skill.
+4. No lever, damage already done, containment destroys the only evidence, or
+   the lever helps some users and hurts others → read
+   `references/hard-containments.md`.
 
 ## When you are tempted to skip it
 

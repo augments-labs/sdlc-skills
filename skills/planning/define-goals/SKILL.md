@@ -1,6 +1,6 @@
 ---
 name: define-goals
-description: "Use at the start of a new project or initiative, before scoping or building, to pin down what it is for: the objective, the stakeholders, how success is measured, and the guardrails. Fires on we want to build X with no stated objective, even if nobody says goals. A vague or missing objective is the reason to use this, not a reason to go elsewhere first. Skip a single feature, and skip while a named decision or approval reply is still pending."
+description: "Use at the start of a new project or initiative, before scoping or building, to pin down what it is for: the objective, the stakeholders, how success is measured, and the guardrails. Fires on we want to build X with no stated objective, and on a vague or missing objective, even if nobody says goals. Skip a single feature, and skip while a decision or approval reply is pending."
 ---
 
 # Define Goals
@@ -17,41 +17,50 @@ A project without a clear goal ships features no one needed. Before scope or des
 - **Skip** when a drafted goal or brief is awaiting a direct answer; an
   informative non-answer routes to `interview-me`, not a new goal pass.
 
-## Procedure
+## Step 1: Find the objective
 
-1. **Find the real objective.** Ask "why this, why now?" until you reach an outcome, not a feature. A goal is something the world does differently afterward, not code that exists.
-2. **Name stakeholders and conflicts.** Who benefits, who operates or bears risk,
-   what changes for each, and who owns the outcome? Do not hide competing goals
-   in one average metric. Record either one accountable decision owner or the
-   required approvers, conflict resolver, and decision rule.
-3. **Make success measurable.** For each outcome record the current baseline,
-   target, time horizon, measurement source, and accountable owner. A number with
-   no source or date cannot be checked later.
-4. **Add guardrails and failure criteria.** Name what must not degrade—reliability,
-   safety, accessibility, cost, trust—and the observation that would mean the
-   initiative failed even if its primary metric rose.
-5. **State the value in one sentence** — the elevator version.
-6. **Write the proposed `## Goals` section** into
-   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` (another path only if the user
-   set one). Open `assets/goals-section.md` and fill it — it carries every field
-   the section owes, including its normative identity and where the decision
-   ledger lives. Preserve the other approved sections, and treat the section as
-   immutable once its identity is issued.
-7. **Present the goal set for decision.** State the brief path, objective,
-   baseline-to-target measure and horizon, and guardrails. Ask one conversational
-   question with four accepted answers: approve the goals, request changes,
-   reject the objective, or cancel. Recommend the answer best supported by the
-   open assumptions, with one sentence of reasoning, then stop.
+Open `assets/goals-section.md` now. Each step fills its section.
 
-   Nothing hands off until one of the four arrives; praise, constraints,
-   silence, and a partial reply leave it pending. Record the outcome externally
-   and never mutate the normative section to mirror lifecycle. Once identity is
-   issued, never mutate it: a normative change creates a replacement that
-   reopens the required owners, and an approved successor invalidates stale
-   downstream bindings until each owner revalidates or reconciles them.
+1. Ask "why this, why now?" until the answer is what the world does
+   differently afterward, not code that exists.
+2. Name who benefits, who operates or bears risk, what changes for each, who
+   owns the outcome. Competing goals → separate metrics, never one average.
+3. Record one accountable decision owner, or the approvers, conflict
+   resolver, and decision rule.
+4. Per outcome: current baseline, target, time horizon, measurement source,
+   accountable owner. No source or date → cannot be checked → not a goal.
+5. Write the guardrails (what must not degrade) and the failure criterion:
+   the observation meaning the initiative failed even with its metric up.
+6. Write the value in one sentence.
 
-After approval, route from the actual next uncertainty: use `feasibility-check`
-only if viability is unresolved; use `scope-it` when the boundary is next.
+## Step 2: Write and present
+
+1. Write the immutable `## Goals` section to
+   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+   preserving approved sections around it.
+2. Present and end the turn:
+
+   ```text
+   Goals {{path}} — version {{identity}}
+   Objective: {{one line}}
+   Measure: {{baseline}} → {{target}} by {{horizon}}, source {{source}}
+   Guardrails: {{list}}
+
+   1. Approve the goals
+   2. Request changes
+   3. Reject the objective
+   4. Cancel
+
+   Recommendation: {{option the open assumptions support}} — {{one sentence}}.
+   ```
+
+3. Only option 1 hands off. Praise, constraints, silence, a partial reply →
+   pending. An informative non-answer → `interview-me`. Record lifecycle
+   externally. Normative change → a replacement that reopens the owners.
+   Never edit an issued identity.
+4. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` when
+   viability is unresolved; otherwise `scope-it` when the boundary is next.
+   Never impose a phase already complete.
 
 ## Common mistakes
 

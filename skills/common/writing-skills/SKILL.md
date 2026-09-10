@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: "Use when creating or editing a skill in this library — the lean format, progressive disclosure to sibling files, and how to prove a skill actually works. Fires on add a skill for X and this skill isn't triggering, even if nobody says authoring. For AUTHORING skills, not for using them."
+description: "Use when creating or editing a skill in this library — its format, its sibling files, and how to prove it works. Fires on add a skill for X and this skill isn't triggering, even if nobody says authoring. Skip using a skill."
 ---
 
 # Writing Skills
@@ -43,6 +43,14 @@ Match the form to the need (see `references/reference.md` for how much detail ea
    inlines them.
 4. **Complexity gate up top.** State when to *skip* the skill. Ceremony must scale down with task size.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
+6. **Instructions, not facts.** An agent can obey an instruction; it cannot obey
+   a fact. Write the body as `## Step N:` sections of numbered one-line acts.
+   Put each outcome on its own line as `condition → act`. Mark every handoff with a bold
+   `REQUIRED SUB-SKILL:` naming the skill to invoke, at the step where the flow
+   reaches it, and say what this skill never does itself. Put the exact text of a question
+   to the user, and the right-versus-wrong shape of an output, in a fenced
+   block; put a command in a `bash` block only where running it is the act.
+   Cut every line that fails "would the agent get this wrong without it?".
 
 ## Discipline skills are the exception
 
@@ -54,22 +62,28 @@ debugging, and receiving review. For these only:
 - They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test (`references/testing.md`), not by sounding good.
 - Everything else (capability, template, reference, meta) has no temptation to counter — keep it lean.
 
-## Procedure
+## Step 1: Decide it is a skill
 
-1. **Confirm it should be a skill—and whether it is one.** Write one only if an
-   agent reliably gets this wrong without guidance. Plain prompt text or a
-   one-off? Do not. An exact fragile sequence belongs in a tested script. Split
-   activities only when each is independently invokable; otherwise keep one
+1. Write one only if an agent reliably gets this wrong without guidance.
+   Plain prompt text or a one-off → do not.
+2. An exact fragile sequence → a tested script, not prose.
+3. Split activities only when each is independently invokable. Otherwise one
    cohesive skill.
-2. Choose the phase folder (`planning`…`maintenance`) or `common/`, create `skills/<phase>/<name>/`, and copy `assets/skill-template.md` to start.
-3. Write `description` as a trigger first. Test it: does it say **when**, not **how**? If it lists steps, rewrite.
-4. Write the body: **When to use** (incl. Skip), **Procedure** (numbered), **Common mistakes**.
-5. Move anything heavy to a sibling file — `assets/` if the agent fills it in,
+
+## Step 2: Write it
+
+1. Choose the phase folder (`planning`…`maintenance`) or `common/`. Create
+   `skills/<phase>/<name>/` from `assets/skill-template.md`.
+2. Write `description` as a trigger. Test it: does it say **when**, not
+   **how**? Lists steps → rewrite.
+3. Write the body: **When to use** (incl. Skip), `## Step N:` sections of
+   one-line acts (format rule 6), **Common mistakes**.
+4. Move anything heavy to a sibling: `assets/` if the agent fills it in,
    `references/` if the agent reads it.
-6. Verify the shape (below), then **prove the behavior at the failure surface** —
-   trigger, artifact/side effect, or pressured discipline. Read
-   `references/testing.md`; an agent explaining the rule is not evidence that it
-   follows it.
+5. Verify the shape (below). Then prove the behavior at the failure surface:
+   trigger, artifact or side effect, or pressured discipline. Read
+   `references/testing.md`. An agent explaining the rule is not evidence that
+   it follows it.
 
 ## Available scripts
 

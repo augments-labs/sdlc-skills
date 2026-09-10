@@ -1,6 +1,6 @@
 ---
 name: zoom-out
-description: "Use before working in a region of the codebase whose structure you have not established — map the relevant modules, their callers, and the project's own vocabulary before changing anything. Fires whenever a request names an unfamiliar file, module, or area, even when the user never says they are new to it and never asks to be oriented. A structural question — what reaches this, what it reaches, how a change travels through it — is the same trigger. Skip when the area is already understood."
+description: "Use before working in a region of the codebase whose structure you have not established — its modules, their callers, and the project's own vocabulary. Fires whenever a request names an unfamiliar file, module, or area, and on any structural question — what reaches this, what it reaches, how a change travels through it — even if nobody asks to be oriented. Skip when the area is already understood."
 ---
 
 # Zoom Out
@@ -13,39 +13,34 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 - **Skip** only when you already understand the region and affected surfaces;
   one changed line can still alter a public, data, security, or release path.
 
-## Procedure
+## Step 1: Set the boundary
 
-1. **Set breadth from risk.** Before reading anything, say what change you intend
-   and how far it could plausibly reach, and why the boundary you picked is wide
-   enough to hold that reach. A local edit may need one module; a wide or
-   compatibility-sensitive change cannot stop at direct callers.
+1. Before reading anything, write the intended change, how far it could
+   reach, and why the boundary you picked holds that reach. Compatibility-
+   sensitive change → never stop at direct callers.
+2. Pin the repository or working state and the identity of every material
+   external input. Write what makes the reading stale.
 
-   Then pin what you are reading against: the repository or working state, and the
-   identity of any material external input the map will lean on. Say what makes
-   that reading stale.
-2. **Go up a layer.** Start at the containing module and its neighbors. Identify
-   responsibilities, runtime entry points, callers, collaborators, and the data
-   flowing between them.
-3. **Inspect affected surfaces.** As the risk warrants, trace generated code and
-   build inputs; persistent state and migrations; public contracts and
-   consumers; configuration, deployment, and operational paths; tests, CI, and
-   other proof surfaces; and relevant ownership or change history. Record an
-   evidence-based reason for each material surface excluded.
-4. **Use the domain's vocabulary**, not generic "service / handler / util," so
-   the map matches the code and its contracts.
-5. **Cite the evidence.** Attach each conclusion to current files, symbols,
-   searches, commands, or revisions. Separate observed facts from inference and
-   mark anything stale or unavailable. The map's input identity covers every
-   material source and external fact on which its conclusions rely.
-6. **State the boundaries you found:** what the region owns, what it delegates,
-   where its seams are, and which downstream obligations a change has to
-   preserve.
+## Step 2: Map
 
-   The map has a shelf life. Once it is past the freshness limit you set, or a
-   material input has changed, revalidate the affected claims against current
-   evidence before relying on them. If implementation turns up a caller or a
-   surface the map never covered, stop and reorient rather than extending the map
-   from memory.
+1. Start at the containing module and its neighbors: responsibilities,
+   runtime entry points, callers, collaborators, data between them.
+2. As risk warrants, trace: generated code and build inputs; persistent
+   state and migrations; public contracts and consumers; configuration,
+   deployment, operational paths; tests, CI, proof surfaces; ownership and
+   change history. Per excluded material surface → an evidence-based reason.
+3. Use the domain's vocabulary, never "service / handler / util".
+4. Attach each conclusion to current files, symbols, searches, commands, or
+   revisions. Separate observed from inferred. Mark stale or unavailable.
+
+## Step 3: State the boundaries
+
+1. Write what the region owns, what it delegates, where its seams are, which
+   downstream obligations a change must preserve.
+2. Set a freshness limit. Past it, or a material input changed → revalidate
+   affected claims before relying on them.
+3. Implementation finds a caller or surface the map never covered → stop and
+   reorient. Never extend the map from memory.
 
 ## Common mistakes
 

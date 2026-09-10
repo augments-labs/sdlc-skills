@@ -10,12 +10,21 @@ The one idea behind every skill: you are a non-deterministic generator, so claim
 leave the generator through an external **gate**, never through confidence. Which
 kind of gate answers which kind of claim is `using-sdlc-skills`.
 
-Emphasis is not the opposite of that. A skill may raise its voice — a hard stop,
-a red-flag list, a rationalization table — to get an agent to a gate it is
-tempted to skip, and in a discipline skill that is the mechanism, not a lapse.
-What emphasis cannot do is settle anything: nothing here becomes true by being
-said forcefully. So it belongs in bodies, where the temptation is, and stays out
-of descriptions, which fire on plain triggers — that was measured, not assumed.
+Emphasis is how a body gets obeyed. An agent can obey an instruction; it
+cannot obey a fact. "Review and integration remain separate gates" is a fact,
+and an agent under pressure reads past it. "Invoke `requesting-code-review`
+before any push" is an instruction, and a hard stop, a REQUIRED marker, a
+red-flag list, or a rationalization table placed at the exact step where the
+temptation hits is what makes it stick. Write bodies that way, deliberately: a
+handoff is a numbered, emphasized step naming the skill to invoke, never a
+closing remark. The sessions in which an agent skipped a gate skipped one that
+was stated as a fact.
+
+Emphasis has one limit: it gets an agent to a gate; it never replaces one.
+Nothing becomes true by being said forcefully, so a forceful instruction still
+ends at an executable check, an accountable decision, or a review. And it stays
+out of descriptions, which fire on plain triggers — that was measured, not
+assumed.
 
 ## If you are an AI agent
 

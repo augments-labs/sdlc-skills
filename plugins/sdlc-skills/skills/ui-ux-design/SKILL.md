@@ -1,6 +1,6 @@
 ---
 name: ui-ux-design
-description: "Use when a new or revised user interface still has open decisions about flow, state, hierarchy, responsive behaviour, accessibility, content, or visual direction, before it is implemented. An open visual direction is decided by comparing rendered variants side by side, then recorded in a versioned design section. Fires on design this screen, what should this look like, and how does the user get through this, even if nobody says UX or design. Skip backend-only work, and skip exact cosmetic edits whose direction is already decided."
+description: "Use when a new or revised user interface still has open decisions about flow, state, hierarchy, responsive behaviour, accessibility, content, or visual direction, before it is implemented. Fires on design this screen, what should this look like, and how does the user get through this, even if nobody says UX or design. Skip backend-only work and cosmetic edits whose direction is already decided."
 ---
 
 # UI/UX Design
@@ -24,91 +24,87 @@ Design the experience and decide its direction before implementation. In an exis
   They wrap `scripts/serve.py`;
   [visual-decisions.md](references/visual-decisions.md) owns the details.
 
-## Procedure
+## Step 1: Read the real context
 
-Each step fills the matching section of `assets/ui-ux-section.md`. Open it now
-and work in it; the steps below are the judgements the template cannot make for
-you.
+Open `assets/ui-ux-section.md` now. Each step fills its section.
 
-1. **Read the real context.** Establish the requirements and audience, then, in an
-   existing project, go and find the system that is already there — its routes and
-   screens, its components and tokens, its type and content patterns, its preview
-   tooling, its responsive and accessibility conventions, and its tests.
+1. Establish requirements and audience.
+2. Existing project → find its routes, screens, components, tokens, type and
+   content patterns, preview tooling, responsive and accessibility
+   conventions, tests.
+3. Sort findings: deliberate constraints you are bound by, and inconsistencies
+   this work may correct.
+4. Existing product and no evidence reachable → stop. Ask for the repository,
+   a preview, screenshots, or the system documentation. Never substitute a
+   generic system.
 
-   Sort what you find into two piles: deliberate constraints you are bound by, and
-   inconsistencies this work may correct. If the task depends on an existing
-   product and that evidence is simply unavailable, stop before proposing any
-   direction and ask for the repository, a preview, screenshots, or the system
-   documentation. Do not substitute a generic system for the one you could not read.
-2. **Frame the experience.** Name the user's situation, the interface's single
-   primary job, the primary affordance that does that job, and what success and
-   failure each look like.
-3. **Map flows and states.** Write the key journeys as *given / when / then*
-   scenarios, each with an entry, a completion, an escape, and a recovery.
+## Step 2: Frame, flow, hierarchy
 
-   Then cover the states a happy path hides: empty, loading, partial, validation,
-   error, offline, and no-permission, wherever they can occur.
-4. **Set hierarchy and content.** Decide what is primary, secondary, contextual,
-   and deferred on each screen.
+1. Name the user's situation, the interface's single primary job, the primary
+   affordance, what success and failure each look like.
+2. Write each key journey as *given / when / then* with entry, completion,
+   escape, recovery.
+3. Cover the hidden states wherever they can occur: empty, loading, partial,
+   validation, error, offline, no-permission.
+4. Per screen, mark primary, secondary, contextual, deferred.
+5. Use realistic content in the user's vocabulary. Keep an action's name
+   identical across control, confirmation, errors.
 
-   Use realistic content and the user's own vocabulary, and keep an action's name
-   identical through its control, its confirmation, and its errors.
-5. **Choose an intentional direction.** For any open visual direction, read
-   [design-quality.md](references/design-quality.md). Define layout, type, color,
-   spacing, shape, imagery, and motion as one product-specific system — and do not
-   decorate around a hierarchy that is still unresolved.
-6. **Show the direction as rendered variants.** An open visual, spatial, or
-   motion decision is made by seeing, not by being described: read
-   [visual-decisions.md](references/visual-decisions.md), build the comparison
-   surface from `assets/comparison-template.html` (the shared chrome — you
-   author only the variants), and compare 2–4 controlled, meaningfully
-   different variants. Give every version block and variant a stable ID; those
-   IDs become the implementation reference if the stakeholder selects it.
+## Step 3: Decide the direction by seeing it
 
-   Skipping the surface takes a stated reason, recorded with the decision:
-   every open question is conceptual — requirements, scope, and trade-offs are
-   not easier to see — the scale-down clause applies, or the uncertainty is
-   feasibility, which routes to `prototyping`. Answering "what should this look
-   like" with prose alone is the failure this step exists to prevent.
-7. **Design across conditions.** The template's *Conditions* table lists the eight
-   families this owes and the fields a skip record carries.
+1. Open visual direction → read `references/design-quality.md`. Define
+   layout, type, color, spacing, shape, imagery, motion as one
+   product-specific system. Decorate nothing around an unresolved hierarchy.
+2. Open visual, spatial, or motion decision → read
+   `references/visual-decisions.md`. Build the comparison surface from
+   `assets/comparison-template.html`. Author 2–4 controlled, meaningfully
+   different variants. Give every version block and variant a stable ID.
+3. Serve it and present the URL with the delivery:
 
-   An interface does not have to answer all eight. It does have to say which ones
-   it is not answering, and leave someone accountable for each — a family dropped
-   without a skip record is one nobody will notice is missing.
-8. **Classify the evidence.** Tag every claim with where it came from, using the
-   template's *Evidence* kinds.
+   ```bash
+   bash scripts/start-server.sh
+   ```
 
-   The tag that carries the weight is stakeholder preference. A preference can
-   select a direction; it cannot masquerade as proof that users can complete the
-   flow. Where a usability risk stays open, record it as open, with a named future
-   evaluator and an owner.
+   Serving fails or is declined → give the file path.
+4. Skip the surface only with a recorded reason: every open question is
+   conceptual; the scale-down clause applies; the uncertainty is feasibility
+   → `prototyping`. Prose alone for "what should this look like" is the
+   failure this step prevents.
+5. Fill the template's *Conditions* table for the eight families. Each one
+   not answered → a skip record with an accountable owner.
 
-   When preferences select rendered variants, freeze the keyed **Selected
-   visual references** collection exactly as `visual-decisions.md` defines it
-   before compiling the design. Conversation memory, a path, or a visible label
-   alone is not a downstream implementation contract.
-9. **Compile one immutable proposed whole UI/UX section.** Write the filled
-   template to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`, or the
-   user-set location, preserving the sections already approved around it.
+## Step 4: Classify evidence, compile, present
 
-   The word doing the work is *whole*. Individually selected screens, a chosen
-   variant, an agreed flow — those are inputs to the section, not the section,
-   and none of them is what gets presented for decision.
-10. **Present the design for decision.** State the path, flows, visual direction,
-    and open risks. Ask one conversational question offering approve and hand
-    off to planning, request changes, reject the direction, or cancel. Recommend
-    the answer supported by the evidence and unresolved risks, with one sentence
-    of reasoning, then stop.
+1. Tag every claim with its *Evidence* kind. Stakeholder preference selects a
+   direction; it never proves users can complete the flow. Open usability
+   risk → record it open with a named evaluator and owner.
+2. Preferences selected rendered variants → freeze the keyed **Selected
+   visual references** collection exactly as `visual-decisions.md` defines
+   before compiling. Memory, a path, or a label is not a contract.
+3. Write the whole section to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`
+   or the user-set path, preserving approved sections around it. Selected
+   screens, a chosen variant, an agreed flow are inputs, not the section.
+4. Present and end the turn:
 
-    Only one of the four authorizes planning. A preference selects a direction
-    but does not approve the design; praise and silence decide nothing. Record
-    lifecycle externally.
+   ```text
+   {{Section}} {{path}} — version {{identity}}
+   {{summary lines}}
 
-    An issued identity never mutates: a normative change creates a successor with
-    `added / changed / removed / preserved` IDs (including selected visual
-    references; removal needs owning approval)
-    that invalidates stale downstream bindings until owners revalidate.
+   1. Approve and hand off to planning
+   2. Request changes
+   3. Reject
+   4. Cancel
+
+   Recommendation: {{option}} — {{one sentence}}.
+   ```
+
+5. Only option 1 authorizes planning. A preference, praise, silence → nothing.
+   Record lifecycle externally.
+6. Normative change after issue → a successor with `added / changed / removed
+   / preserved` IDs, selected visual references included. Removal needs
+   owning approval. Never edit an issued identity.
+7. Option 1, and every design section the work needs is approved →
+   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
 
 ## Common mistakes
 

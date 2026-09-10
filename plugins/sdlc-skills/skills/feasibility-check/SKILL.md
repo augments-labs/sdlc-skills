@@ -1,6 +1,6 @@
 ---
 name: feasibility-check
-description: "Use before an accountable owner commits to a project or initiative, when whether it can actually be done under real technical, delivery, operational, security, data, or dependency constraints is still uncertain. Fires on can we actually build this, is this realistic by the deadline, and what would it take, even if nobody says feasibility. The commitment itself stays the owner's. Skip proven or trivially reversible approaches."
+description: "Use before an accountable owner commits to a project or initiative, when whether it can be done under real technical, delivery, operational, security, data, or dependency constraints is still uncertain. Fires on can we actually build this, is this realistic by the deadline, and what would it take, even if nobody says feasibility. Skip proven or trivially reversible approaches."
 ---
 
 # Feasibility Check
@@ -14,45 +14,54 @@ put an evidence-bound recommendation to the accountable owner.
 - When feasibility is genuinely uncertain — new tech, hard constraints, unknown data.
 - **Skip** when the path is well-trodden and the risk is obviously low.
 
-## Procedure
+## Step 1: Assess
 
-1. **Assess the whole commitment:** technical, delivery/team/budget, operations
-   and recovery, security/compliance, data, and external dependencies with their
-   accountable owners. “Technically possible” is not “operable and deliverable.”
-2. **Find the killer risks:** assumptions that, if false, sink the goal. Rank
-   likelihood × impact and name the evidence source, freshness, and confidence
-   for each; unknown is a valid confidence.
-3. **Reduce the top unknowns cheaply** — usually a bounded `prototyping` question,
-   not more discussion. Do not let one successful spike answer other dimensions.
-4. **Compare Option Zero and smaller alternatives.** Record evidence for whether
-   do not build, an existing tool/configuration/process, or a smaller initiative
-   can meet the goal and guardrails; recommendation convenience is not evidence.
-5. **Recommend:** go / no-go / go-if. Bind the exact recommendation version. Give
-   every go-if condition a stable ID, evaluator/evidence, owner, freshness/expiry,
-   state (`pending / satisfied / failed`), and failure/abort response. This is
-   advice to the accountable decision maker, not authority to commit the project.
-6. **Write the proposed `## Feasibility` section** into
-   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` (or the user-set path). Open
-   `assets/feasibility-section.md` and fill it — it carries the dimension rows,
-   the risk and condition contracts, and the identity fields. Preserve the other
-   approved sections; the section is immutable once its identity is issued.
-7. **Present the recommendation for decision.** This is advice; the commitment
-   is the user's. State the brief path, recommendation, highest-confidence
-   risks, and owned conditions. Ask one conversational question offering go,
-   go-if every named condition is met, no-go, or cancel. Lead with your
-   recommendation and one sentence of evidence-based reasoning, then stop.
+Open `assets/feasibility-section.md` now. Each step fills its section.
 
-   Nothing hands off until one of the four arrives. A go-if decision does not
-   satisfy its conditions: only the named evidence and owner move their external
-   `pending / satisfied / failed` state, and only a current decided-go, or a
-   decided-go-if with every condition satisfied, hands off. Expiry or any change
-   to a bound input, evaluator, evidence, owner, or freshness invalidates the
-   affected condition evidence and reopens the decision. An issued identity never
-   mutates: a normative change creates a proposed successor that invalidates
-   stale downstream bindings until owners revalidate or reconcile them.
+1. Fill every dimension row with its accountable owner: technical, delivery
+   and budget, operations and recovery, security and compliance, data,
+   external dependencies. "Technically possible" answers one row.
+2. List the killer assumptions: false → the goal sinks. Rank likelihood ×
+   impact. Per risk: evidence source, freshness, confidence. `unknown` is a
+   valid confidence.
+3. Top unknown → a bounded `prototyping` question, not more discussion. One
+   spike answers one dimension.
+4. Fill Option Zero: evidence for whether not building, an existing tool,
+   configuration, or process, or a smaller initiative meets the goal and
+   guardrails.
 
-After a direct go/go-if whose conditions are met, route to the actual next need;
-use `scope-it` when the project boundary remains to be drawn.
+## Step 2: Recommend and present
+
+1. Write go / no-go / go-if bound to the exact recommendation version. Per
+   go-if condition: stable ID, evaluator or evidence, owner, expiry, state
+   `pending / satisfied / failed`, abort response.
+2. Write the immutable `## Feasibility` section to
+   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+   preserving approved sections around it.
+3. Present and end the turn:
+
+   ```text
+   Feasibility {{path}} — version {{identity}}
+   Recommendation: {{go | no-go | go-if}}
+   Top risks: {{list with confidence}}
+   Conditions: {{each with owner and evaluator}}
+
+   1. Go
+   2. Go-if every named condition is met
+   3. No-go
+   4. Cancel
+
+   Recommendation: {{option}} — {{one sentence of evidence}}.
+   ```
+
+4. Nothing hands off until one option arrives. The commitment is the user's.
+5. Go-if → only the named evidence and owner move a condition's external
+   state. Expiry, or any change to a bound input, evaluator, evidence, owner,
+   or freshness → condition invalid, decision reopened. Normative change → a
+   proposed successor. Never edit an issued identity.
+6. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
+   `satisfied`, invoke `scope-it` when the boundary is next. Never impose a
+   phase already complete.
 
 ## Common mistakes
 

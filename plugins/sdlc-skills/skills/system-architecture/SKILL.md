@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Use when approved requirements need a target system design before planning or implementation: how it splits into components, where the boundaries fall, how data moves through it, how it fails and recovers, and which seams are worth their cost. Fires on how should we structure this and what are the moving pieces, even if nobody says architecture. Covers the target design of a system, not the transition from an existing one. Skip a small feature whose structure fits inside its own task or plan."
+description: "Use when approved requirements need a target system design before planning or implementation: components, boundaries, data flow, failure and recovery, and which seams are worth their cost. Fires on how should we structure this and what are the moving pieces, even if nobody says architecture. Skip the transition from an existing system, and skip a small feature whose structure fits inside its own task or plan."
 ---
 
 # System Architecture
@@ -16,63 +16,67 @@ Design the shape of the solution before anyone builds it: what the pieces are, h
   existing system reaches that target; `verification-strategy` owns the
   initiative-wide proof battery.
 
-## Procedure
+## Step 1: Trace and structure
 
-Each step fills the matching section of `assets/architecture-section.md`. Open it
-now and work in it; the steps below are the judgements the template cannot make
-for you.
+Open `assets/architecture-section.md` now. Each step fills its section.
 
-1. **Trace the contract.** Map every requirement, preserved obligation, and
-   material risk to the component, interface, and owning evaluator reference
-   that covers it. Do not redefine assurance gates here. Unmapped rows block
-   approval.
-2. **Components and boundaries.** Name each module by what it *does* and
-   deliberately *doesn't*. A module earns its place if removing it would spread
-   its complexity across callers; if complexity merely relocates, merge it.
-3. **Trace data and trust.** Follow request, response, event, and sensitive-data
-   paths from entry to effect. Mark ownership, authorization boundaries, and
-   source-of-truth transitions.
-4. **Design failure and recovery.** For each dependency and asynchronous path,
-   state timeouts, retry and idempotency behavior, degraded operation, recovery,
-   and how each path is exercised.
-5. **Select operational views by risk.** Cover a view — deployment and runtime
-   topology, scale and resource budgets, observability, the target capabilities
-   that make rollout and compatibility possible — wherever it affects
-   correctness. The migration contract owns the transition procedure; do not
-   restate it here.
+1. Map every requirement, preserved obligation, and material risk to the
+   component, interface, and owning evaluator reference covering it. Define no
+   assurance gates here. Unmapped row → approval blocked.
+2. Name each module by what it does and does not do. Removing it would spread
+   its complexity across callers → it stays. Complexity merely relocates →
+   merge it.
+3. Follow request, response, event, and sensitive-data paths from entry to
+   effect. Mark ownership, authorization boundaries, source-of-truth
+   transitions.
+4. Per dependency and asynchronous path, write timeouts, retry and
+   idempotency, degraded operation, recovery, how each is exercised.
 
-   A view you omit gets a real skip record, with the fields the template's
-   operational-views table lists. Dropping a view because it felt inapplicable is
-   skipping by ritual, and it is how a rollout surface reaches production
-   undesigned.
-6. **Place justified seams.** Repeated behavior with a stable owner and measured
-   change friction may justify substitution. One real volatile or external boundary
-   can also justify a seam when it
-   contains measured impedance, failure policy, or test isolation. Hypothetical
-   future variation cannot; implementation count alone neither requires nor
-   forbids a seam.
-7. **Record load-bearing decisions.** Route hard-to-reverse choices through
-   `architecture-decisions`; unresolved material choices route through
-   `interview-me`. Name everything in the domain's language.
-8. **Write the immutable proposed architecture section** into
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`, or the location the user
-   set, preserving the sections already approved around it. The template's header
-   carries the identity, predecessor, approval rule, ledger location, and stable
-   ID delta this section owes.
+## Step 2: Operational views and seams
 
-   For a high-risk design, the independent review in `references/design-review.md`
-   is mandatory and blocking — run it before you present anything.
-9. **Present the reviewed version for decision.** State the path, components,
-   trust boundaries, hard-to-reverse choices, and open risks. Ask one
-   conversational question offering approve and hand off to planning, request
-   changes, reject the design, or cancel. Recommend the answer supported by the
-   review and open-risk state, with one sentence of reasoning, then stop.
+1. Cover each view that affects correctness: deployment and runtime topology,
+   scale and resource budgets, observability, rollout and compatibility
+   capabilities. Transition procedure belongs to the migration contract; do
+   not restate it.
+2. Omitted view → a skip record with the fields in the template's
+   operational-views table. Never drop one as "inapplicable" without it.
+3. Place a seam only for repeated behavior with a stable owner and measured
+   change friction, or one real volatile or external boundary with measured
+   impedance, failure policy, or test isolation. Hypothetical variation earns
+   none.
+4. Hard-to-reverse choice → invoke `architecture-decisions`. Unresolved
+   material choice → invoke `interview-me`. Use the domain's language
+   throughout.
 
-   Only one of the four authorizes planning; praise, silence, and prior-version
-   approval do not. Record lifecycle externally. An issued identity never
-   mutates: a normative change creates a successor with a per-ID
-   `added / changed / removed / preserved` delta (removal needs owning approval)
-   that invalidates stale downstream bindings until owners revalidate.
+## Step 3: Write, review, present
+
+1. Write the immutable section to
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+   preserving approved sections around it. Fill the header: identity,
+   predecessor, approval rule, ledger location, stable ID delta.
+2. High-risk design → run `references/design-review.md` before presenting.
+   Blocking.
+3. Present and end the turn:
+
+   ```text
+   {{Section}} {{path}} — version {{identity}}
+   {{summary lines}}
+
+   1. Approve and hand off to planning
+   2. Request changes
+   3. Reject
+   4. Cancel
+
+   Recommendation: {{option}} — {{one sentence}}.
+   ```
+
+4. Only option 1 authorizes planning. Praise, silence, prior-version approval
+   → nothing. Record lifecycle externally.
+5. Normative change after issue → a successor with a per-ID `added / changed /
+   removed / preserved` delta. Removal needs owning approval. Never edit an
+   issued identity.
+6. Option 1, and every design section the work needs is approved →
+   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
 
 ## Common mistakes
 

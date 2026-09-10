@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout, so an owned git worktree on a proven base exists, or the workspace the user or project prefers instead. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when the current checkout is already dedicated to this task."
+description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when the current checkout is already dedicated to this task."
 ---
 
 <EXTREMELY-IMPORTANT>
@@ -12,8 +12,8 @@ unless the user explicitly okayed the current checkout.
 
 # Using Git Worktrees
 
-One repository, one checkout per task. A worktree is the default because it
-adds a checkout instead of rewiring the one everyone else is in.
+Give every task its own checkout, prove the base it starts from, and write
+down what you found there before you change anything.
 
 ## When to use
 
@@ -21,16 +21,11 @@ adds a checkout instead of rewiring the one everyone else is in.
 - Runtime or review isolation matters: parallel agents, risky changes, separate ports, databases, fixtures, or long-running app state.
 - **Skip** for read-only investigation, when the user explicitly says to stay in the current checkout, or when the current branch/workspace is already dedicated to this task with known ownership, base, and baseline.
 
-## Procedure
+## Step 1: Detect what you are in
 
-Each step fills the matching section of `assets/workspace-record.md`. Open it
-now and write as you go — the fields it asks for are the ones a later step, and
-whatever finishes the branch, cannot re-derive from the repository alone.
+Open `assets/workspace-record.md` now. Fill each section as its step runs.
 
-### Understand what you are already in
-
-1. **Detect the real checkout.** Run it; do not judge it from the prompt or the
-   path name:
+1. Run this. Do not judge the checkout from the prompt or the path name:
 
    ```bash
    git rev-parse --show-toplevel
@@ -42,48 +37,37 @@ whatever finishes the branch, cannot re-derive from the repository alone.
    git worktree list
    ```
 
-   Read the submodule line first: inside a submodule the two directories match
-   even though it is not a linked worktree. Also note any harness-native
-   workspace metadata.
+2. Read the submodule line first: inside a submodule the two directories
+   match without a linked worktree. Write down any harness-native workspace
+   metadata.
+3. Detached or host-owned checkout with unknown owner → do not nest, attach,
+   switch, or clean it.
+4. Write every resource and dirty change into the inventory: created by this
+   task, or pre-existing/user-owned/shared/host-owned. Unknown → second
+   column. It blocks switching and cleanup. Never stash dirty state you do
+   not own.
+5. Planning happened in another workspace → rerun 1 before the first product
+   edit. Plan approval says nothing about code isolation.
 
-   A detached or host-owned checkout may already be isolated. Until you know its
-   owner and permitted lifecycle, do not nest inside it, attach to it, switch it,
-   or clean it.
+## Step 2: Prove the base
 
-2. **Classify ownership** of every resource and dirty change: created by this
-   task, or pre-existing, user-owned, shared, or host-owned. Unknown provenance
-   counts as the latter, and blocks switching or cleanup. Dirty state in the
-   shared checkout does not follow you into a worktree and is not yours to
-   stash.
-
-3. **Separate planning state from implementation state.** Planning may stay in
-   an approved planning or native workspace. Before the first product edit,
-   re-run this check and bind implementation to its own branch or workspace and
-   its own exact base. Plan approval says nothing about code isolation.
-
-### Establish the base
-
-4. **Prove the intended base** from direct user or project guidance, and record
-   its revision and remote freshness:
+1. Take the base from direct user or project guidance. Record revision and
+   remote freshness:
 
    ```bash
    git fetch origin "$BASE"          # only with network authority; otherwise record "not fetched"
    git rev-parse "$BASE" "origin/$BASE"
    ```
 
-   Gate inputs that live outside the source tree — ignored, generated,
-   external — belong in the record too; the revision does not capture them.
+2. Record gate inputs outside the source tree (ignored, generated, external)
+   in their own section.
+3. Read `references/baseline-contract.md` before any install or baseline
+   command.
 
-   Any install or baseline command runs under the contract in
-   `references/baseline-contract.md`. Read it before running anything, not
-   after: it decides whether the command may run in the current checkout at all.
+## Step 3: Create the workspace
 
-### Create the workspace
-
-5. **Validate the name and its collisions.** Follow project naming, or use
-   `feature/{{short-task}}`, `fix/{{short-task}}`, or `docs/{{short-task}}`.
-   Validate the ref, then check local branches, remote-tracking refs, and
-   attached worktrees. Never overwrite or silently reuse a collision.
+1. Name it by project convention, or `feature/{{short-task}}`,
+   `fix/{{short-task}}`, `docs/{{short-task}}`. Check collisions:
 
    ```bash
    git check-ref-format --branch "$BRANCH"
@@ -92,20 +76,13 @@ whatever finishes the branch, cannot re-derive from the repository alone.
    git worktree list | grep -F "[$BRANCH]"
    ```
 
-6. **Pick the mechanism, in this order.** User instruction wins, then project
-   guidance, then a harness-native worktree command or session flag when the
-   harness offers one — it owns the path, the ignore rule, and cleanup, so use
-   it with the name from step 5, confirm inside it that HEAD is the proven
-   base, and skip to step 9. Failing those, create a worktree yourself — do
-   not `git switch -c` or `git checkout -b` in a shared checkout: switching
-   rewires it, so the user, a second agent, or a running app working in it is
-   blocked or collides until you switch back. Switch branches in place only in
-   a checkout dedicated to this task alone.
-
-7. **Choose the directory and prove it is ignored.** A user-given path wins.
-   Otherwise reuse an existing `.worktrees/` or `worktrees/` at the project
-   root (`.worktrees/` wins when both exist), and default to `.worktrees/`
-   when neither does.
+   Anything prints → pick another name. Never overwrite or reuse.
+2. Pick the mechanism, first that applies: user instruction → project
+   guidance → harness-native worktree command or session flag (use the name
+   above, confirm HEAD is the proven base, skip to Step 4) → a worktree you
+   create below. Never `git switch -c` or `git checkout -b` in a shared
+   checkout.
+3. Choose the directory and prove it is ignored. User-given path wins.
 
    ```bash
    root="$(cd "$common_dir/.." && pwd -P)" && cd "$root"   # main checkout root, even from inside a linked worktree
@@ -115,20 +92,15 @@ whatever finishes the branch, cannot re-derive from the repository alone.
    git check-ignore -q "$dir" || echo "$dir itself is not ignored"
    ```
 
-   Both lines must be silent: the first is the gate, the second proves the
-   directory you actually chose, because the gate passes when either name is
-   ignored. If it is not ignored, do not fix `.gitignore` in the shared
-   checkout — that is an edit on the branch the hard stop protects. Exclude it
-   locally, which `git check-ignore` honours and nothing commits:
+4. Either line printed → do not edit `.gitignore` in the shared checkout.
+   Exclude locally, then make adding `{{dir}}/` to `.gitignore` the first
+   commit on the task branch:
 
    ```bash
    printf '%s/\n' "$dir" >> "$(git rev-parse --git-common-dir)/info/exclude"
    ```
 
-   Then make adding `{{dir}}/` to `.gitignore` the first commit on the task
-   branch. A path outside the repository needs no ignore rule.
-
-8. **Create only from the proven base, then enter it.**
+5. Create from the proven base and enter:
 
    ```bash
    path="$root/$dir/${BRANCH//\//-}"
@@ -136,28 +108,21 @@ whatever finishes the branch, cannot re-derive from the repository alone.
    cd "$path" && git status --short --branch   # expect: ## $BRANCH, clean
    ```
 
-   If `worktree add` or `cd` fails on a permission or sandbox boundary, try a
-   path the boundary allows and ask the user to confirm it. If none works,
-   report it and stop: a failure to isolate does not authorize editing the
-   shared checkout. A submodule needs an owned branch and an explicit plan
-   for the parent gitlink.
+6. `worktree add` or `cd` fails on a permission or sandbox boundary → try a
+   path the boundary allows and ask the user to confirm it. None works →
+   report and stop. Never edit the shared checkout instead. Submodule → an
+   owned branch and an explicit plan for the parent gitlink.
 
-### Baseline it
+## Step 4: Baseline it
 
-9. **Isolate runtime state, then run the real baseline in the chosen
-   workspace.** Project setup — dependency install, generated files — runs
-   inside the worktree, following the project's own instructions.
-   `references/baseline-contract.md` owns what "real" requires here: the
-   pre-run inspection, the distinct runtime identities, the pre/post capture,
-   and how each red cell is bound before work continues.
-
-   The rule that survives without the reference: a red cell you cannot
-   attribute blocks work. So do uncontained effects.
-
-10. **Report the record.** Hand over the completed
-    `assets/workspace-record.md` — identity, inventory, external gate inputs,
-    baseline evidence and side effects, runtime identities, and the task-owned
-    resources that may later be cleaned up.
+1. Claim distinct runtime identities (ports, databases, fixtures).
+2. Run project setup inside the worktree by the project's own instructions.
+3. Run the real baseline under `references/baseline-contract.md`: pre-run
+   inspection, pre/post capture, each red cell bound. Red cell you cannot
+   attribute, or an effect you did not contain → stop work.
+4. Hand the completed `assets/workspace-record.md` to whatever invoked this
+   skill: identity, inventory, external gate inputs, baseline evidence and
+   side effects, runtime identities, task-owned resources.
 
 ## Pressure points
 
@@ -174,7 +139,7 @@ whatever finishes the branch, cannot re-derive from the repository alone.
 | "I'll add `.worktrees/` to `.gitignore` and commit it here" | That is an edit on the shared branch. Exclude it locally, then commit the ignore rule on the task branch. |
 | "`worktree add` failed in the sandbox, so I'll switch in place" | Failing to isolate grants nothing. Report it; the user decides what the current checkout may carry. |
 
-## Checkpoint while you work
+## Step 5: Checkpoint while you work
 
 <EXTREMELY-IMPORTANT>
 COMMIT LOCALLY AS YOU GO — after each independently testable piece, not once at
@@ -182,20 +147,14 @@ the end. The authority is already granted; do not ask again for each checkpoint.
 A checkpoint never grants push, publication, or integration authority.
 </EXTREMELY-IMPORTANT>
 
-Committing is not the last step of the task. It is a step you owe after each
-independently testable piece, and the authority for it already exists: local
-task-branch commits are authorized repository edits unless higher-priority user
-or project policy withholds them or requires approval not yet given.
-
-11. **After each coherent piece a reviewer could accept or reject separately**,
-    invoke `verifying-completion`, run its smallest real gate, and commit
-    locally. Do not wait for the final candidate, and do not ask again for each
-    checkpoint.
-12. **Stop there.** A checkpoint is neither reviewed nor done and grants no
-    push, publication, or integration authority. `finishing-a-branch` may
-    rewrite its history only with authority established there. Hand it the
-    recorded workspace, base, and ownership; do not integrate, discard, delete,
-    or clean here.
+1. After each coherent piece a reviewer could accept or reject separately:
+   **REQUIRED SUB-SKILL:** invoke `verifying-completion`, run its smallest
+   real gate, commit locally. Do not wait for the final candidate. Do not ask
+   per checkpoint. Withhold only when direct user or project policy withholds.
+2. Candidate ready for integration → **REQUIRED SUB-SKILL:** invoke
+   `finishing-a-branch` with the recorded workspace, base, and ownership. Run
+   no push, publish, integrate, discard, delete, history rewrite, or cleanup
+   from this skill.
 
 | The thought | The reality |
 | --- | --- |
