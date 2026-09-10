@@ -35,8 +35,8 @@ push and pull request.
 | `name` no leading/trailing hyphen, no `--` | conforms | pattern check |
 | `name` matches parent directory | conforms | compared per skill |
 | `description` non-empty, ≤ 1024 chars | conforms | length check; longest is 460 |
-| Body ≤ 500 lines | conforms | line check; longest is 162 (32% of ceiling) |
-| Body < 5000 tokens recommended | conforms | token check; largest is ~1757 (35%) |
+| Body ≤ 500 lines | conforms | line check; longest is 160 (32% of ceiling) |
+| Body < 5000 tokens recommended | conforms | token check; largest is ~1697 (34%) |
 | File references relative to skill root | conforms | every path resolved in the install tree |
 | References one level deep, no nested chains | conforms | depth check |
 | `scripts/` / `references/` / `assets/` semantics | conforms | see *Directory conventions* |
