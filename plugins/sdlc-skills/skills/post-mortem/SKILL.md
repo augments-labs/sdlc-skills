@@ -5,88 +5,84 @@ description: "Use after a production escape, late defect, data loss, outage, sec
 
 # Post-Mortem
 
-`debugging` explains why the system failed. This explains why the failure
-escaped or grew, then measures whether corrective action reduces recurrence,
-detection, or impact risk. Reflection is not the gate; deployed and falsified
-controls are.
+Explain why the failure escaped or grew, then measure whether each corrective
+control reduces recurrence, detection, or impact risk. Take the code-level
+cause from `debugging`; do not re-derive it. Close on deployed and falsified
+controls, never on reflection.
 
 ## When to use
 
 - A failure reached users/production, escaped far downstream, caused material
   loss, or exposed a process failure worth correcting.
 - **Skip** an ordinary reproduced bug. Begin after the code-level cause and
-  immediate containment are known.
+  immediate containment are known; if the cause is still unknown, invoke
+  `debugging` first.
 
 ## Procedure
 
-1. **Protect the evidence before writing any of it down.** Fill the control and
-   evidence header of `assets/post-mortem-template.md` first — an incident
-   record concentrates logs, traces, and user data, so who may read it and how
-   long it survives are decisions to make before it exists.
+1. **Fill `Control and evidence handling` in `assets/post-mortem-template.md`
+   before writing any finding:** who may read the record, how long it
+   survives, redaction, and the expected reviewers and approver rules. Decide
+   this before the record concentrates logs, traces, and user data.
 
-2. **Reconstruct impact and timeline from artifacts, not memory.** Mark every
-   time as observed or estimated. A reconstructed timestamp that reads as a
-   measured one is how a timeline quietly becomes fiction.
+2. **Reconstruct `Summary and impact` and `Timeline` from artifacts, not
+   memory.** Mark every time as observed or estimated; never let an estimate
+   read as a measurement.
 
-3. **State the cause and the conditions around it.** Take the code-level root
-   cause from `debugging`, then fill in what made introduction or impact more
-   likely.
+3. **Fill `Root cause and contributing conditions`:** paste the code-level
+   cause from `debugging`, then write each condition that made introduction or
+   impact more likely. Name conditions, never a person, and keep several real
+   conditions separate instead of collapsing them into one tidy cause.
 
-   Two opposite failure modes here: naming a *person* where a condition belongs,
-   and collapsing several real conditions into one tidy single cause.
+4. **Fill `Escape-path audit`.** Freeze the expected gate and surface
+   inventory with its source digest, then write for each entry
+   `missing / too weak / skipped / stale / failed but ignored / held`, and an
+   accountable disposition for every omission.
 
-4. **Audit the escape path.** Freeze the expected gate and surface inventory
-   with its source digest, then compare what should have protected this against
-   what actually ran. Each entry lands as
-   `missing / too weak / skipped / stale / failed but ignored / held`, and every
-   omission needs an accountable disposition.
+5. **Fill `Risk-reduction claim` for each action:** which it buys — prevent,
+   detect earlier, limit blast radius, or recover faster — with baseline,
+   target, horizon, and residual risk. Never claim recurrence is impossible.
 
-5. **Define an honest risk-reduction claim.** For each action, say which it
-   buys — prevent, detect earlier, limit blast radius, or recover faster — and
-   state the residual risk. Never claim recurrence is impossible.
-
-6. **Propose corrective actions, then present them.** Each maps to a structural
-   cause and carries the fields the template's action rows require.
-
-   Every action stays `proposed`; writing one down authorizes nobody. State the
-   analysis path, impact, structural cause, escaped gate, and each corrective
-   action with owner and date. Ask one conversational question offering accept
-   the actions, request changes, reject the analysis, or cancel. Recommend the
-   answer supported by the evidence and action ownership, with one sentence of
+6. **Write each corrective action as `proposed`,** mapped to a structural
+   cause, with every field the template's action rows require. Then present
+   the analysis path, impact, structural cause, escaped gate, and each action
+   with owner and date. Ask one conversational question offering: accept the
+   actions, request changes, reject the analysis, or cancel. Recommend the
+   answer the evidence and action ownership support, with one sentence of
    reasoning, then stop.
 
-   Only complete trusted receipts accepting the exact scope and dates move an
-   action out of `proposed`. Record rejection, cancellation, or supersession
-   with its residual risk and replacement.
-7. **Falsify every corrective gate you implement.** Against the captured
-   incident or a representative controlled case, preserve raw evidence that the
-   gate fails on the bad case and passes on the good control — and that the
-   pre-fix version did *not* catch it.
+   Move an action out of `proposed` only on a complete trusted receipt
+   accepting the exact scope and dates. Record rejection, cancellation, or
+   supersession with its residual risk and replacement.
 
-8. **Track terminal receipts into enforcement.** A control is complete only in
+7. **Falsify every corrective gate you implement.** Fill `Targeted
+   fail-then-pass proof` with raw evidence that the gate fails on the captured
+   incident or a representative bad case, passes on the good control, and
+   that the pre-fix version did *not* catch it.
+
+8. **Track each control to enforcement on an identity-bound receipt** from
    the surface that will really enforce it — CI, runtime, review, release,
-   alerting, or recovery — and only on an identity-bound receipt from the
-   workflow that owns it. Never infer success from a summary. Changes to the
-   battery itself belong to `verification-strategy`, not to a duplicate gate
-   nobody owns.
+   alerting, or recovery. Never infer success from a summary. **Invoke
+   `verification-strategy`** for any change to the battery itself; do not add
+   a duplicate gate nobody owns.
 
-9. **Review effectiveness at the date you predeclared.** Compare baseline
-   against target, and check whether the gate ever actually ran. Mark it
-   effective, ineffective, or inconclusive; the last two reopen the action
+9. **At the predeclared date, review effectiveness:** compare baseline
+   against target and check the gate actually ran. Write effective,
+   ineffective, or inconclusive; reopen the action on either of the last two
    unless the exact approver rule accepts closure with residual risk.
 
-10. **Issue and store deliberately.** Return the immutable analysis alongside
-    its external lifecycle ledger, writing to the user-set path (or the
-    template's default) only under current storage authority. An in-repository
-    record is itself a new candidate. Never mutate an issued analysis to record
-    something that happened later.
+10. **Issue the immutable analysis alongside its `External lifecycle
+    ledger`,** writing to the user-set path, or the template's default, only
+    under current storage authority. Treat an in-repository record as a new
+    candidate. Never edit an issued analysis to record something that happened
+    later; append to the ledger.
 
 ## Action states
 
-The external ledger records `proposed → {owner-accepted | rejected | cancelled |
-superseded}`. Accepted:
+Record in the external ledger `proposed → {owner-accepted | rejected |
+cancelled | superseded}`, and for accepted:
 `implemented → falsified → deployed/enforced → effectiveness reviewed → effective → closed`.
-Ineffective/inconclusive reopens or needs direct residual-risk closure; no prose, merge, or local green skips a state.
+Let no prose, merge, or local green skip a state.
 
 ## Common mistakes
 
