@@ -1,6 +1,6 @@
 ---
 name: ui-ux-design
-description: "Use when a new or revised user interface still has open decisions about flow, state, hierarchy, responsive behaviour, accessibility, content, or visual direction, before it is implemented. An open visual direction is decided by comparing rendered variants side by side, then recorded in a versioned design section. Fires on design this screen, what should this look like, and how does the user get through this, even if nobody says UX or design. Skip backend-only work, and skip exact cosmetic edits whose direction is already decided."
+description: "Use when a new or revised user interface still has open decisions about flow, state, hierarchy, responsive behaviour, accessibility, content, or visual direction, before it is implemented. Fires on design this screen, what should this look like, and how does the user get through this, even if nobody says UX or design. Skip backend-only work and cosmetic edits whose direction is already decided."
 ---
 
 # UI/UX Design

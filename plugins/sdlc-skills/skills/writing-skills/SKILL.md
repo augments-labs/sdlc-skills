@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: "Use when creating or editing a skill in this library — the lean format, progressive disclosure to sibling files, and how to prove a skill actually works. Fires on add a skill for X and this skill isn't triggering, even if nobody says authoring. For AUTHORING skills, not for using them."
+description: "Use when creating or editing a skill in this library — its format, its sibling files, and how to prove it works. Fires on add a skill for X and this skill isn't triggering, even if nobody says authoring. Skip using a skill."
 ---
 
 # Writing Skills

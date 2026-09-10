@@ -1,6 +1,6 @@
 ---
 name: feasibility-check
-description: "Use before an accountable owner commits to a project or initiative, when whether it can actually be done under real technical, delivery, operational, security, data, or dependency constraints is still uncertain. Fires on can we actually build this, is this realistic by the deadline, and what would it take, even if nobody says feasibility. The commitment itself stays the owner's. Skip proven or trivially reversible approaches."
+description: "Use before an accountable owner commits to a project or initiative, when whether it can be done under real technical, delivery, operational, security, data, or dependency constraints is still uncertain. Fires on can we actually build this, is this realistic by the deadline, and what would it take, even if nobody says feasibility. Skip proven or trivially reversible approaches."
 ---
 
 # Feasibility Check

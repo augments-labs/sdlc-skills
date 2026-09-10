@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout, so an owned git worktree on a proven base exists, or the workspace the user or project prefers instead. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when the current checkout is already dedicated to this task."
+description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when the current checkout is already dedicated to this task."
 ---
 
 <EXTREMELY-IMPORTANT>

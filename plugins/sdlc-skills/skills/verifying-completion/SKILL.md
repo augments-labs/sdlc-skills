@@ -1,6 +1,6 @@
 ---
 name: verifying-completion
-description: "Use before any claim that work is complete, fixed, passing, done, or satisfactory, and before any commit or PR. Fires on that should do it, it's working now, and all set, even when no formal claim is made. Also use when evidence may be stale, partial, or bound to another state, and when a gate the claim depends on is unavailable."
+description: "Use before any claim that work is complete, fixed, passing, done, or satisfactory, before any commit or PR, and when evidence may be stale, partial, or bound to another state. Fires on that should do it, it's working now, and all set, even if no formal claim is made."
 ---
 
 # Verifying Completion

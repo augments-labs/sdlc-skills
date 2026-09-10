@@ -1,6 +1,6 @@
 ---
 name: coding-standards
-description: "Use once per project, or when conventions have drifted, to settle the conventions agents and humans both follow — domain vocabulary, naming, patterns to reach for, things to never do. Fires on a request for a style guide or house rules, on the codebase is inconsistent, and on how should we name this, even if nobody says standards or conventions. Skip when the project already has clear, followed standards, and when the question is proving the code correct — tests, quality gates, CI."
+description: "Use once per project, or when conventions have drifted, to settle the conventions agents and humans both follow — domain vocabulary, naming, patterns to reach for, things to never do. Fires on a request for a style guide or house rules, on the codebase is inconsistent, and on how should we name this, even if nobody says standards or conventions. Skip when clear standards already exist and are followed, and skip proving the code correct."
 ---
 
 # Coding Standards

@@ -1,6 +1,6 @@
 ---
 name: using-sdlc-skills
-description: "Use at every task opening, resume, or handoff, and again at every material change of state — a phase ends, a decision returns, feedback arrives — before any answer, question, exploration, or tool call that begins the work. Fires on any opening — build X, fix this, it's down, is it done, review this, plan this — even when nobody mentions skills or process. Never does the domain work itself."
+description: "Use at every task opening, resume, or handoff, and again at every material change of state — a phase ends, a decision returns, feedback arrives — before any answer, question, exploration, or tool call that begins the work. Fires on any opening — build X, fix this, it's down, is it done, review this, plan this — even if nobody mentions skills or process."
 ---
 
 <EXTREMELY-IMPORTANT>

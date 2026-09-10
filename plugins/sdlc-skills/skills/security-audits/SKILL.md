@@ -1,6 +1,6 @@
 ---
 name: security-audits
-description: "Use when a change touches a trust boundary, attacker-controlled input, authentication or authorization, secrets, sensitive data, isolation, a dependency, build or deploy exposure, availability, session handling, cryptography, or security-relevant reachability. Fires on anything touching login, tokens, permissions, uploads, or user-supplied input reaching a query or a shell, even if nobody says security. A generic security review, scanner, or ordinary code review is not a substitute. Skip only when evidence shows no security surface changed."
+description: "Use when a change touches a trust boundary, attacker-controlled input, authentication or authorization, secrets, sensitive data, isolation, a dependency, build or deploy exposure, availability, sessions, or cryptography. Fires on anything touching login, tokens, permissions, uploads, or user input reaching a query or a shell, even if nobody says security. Skip only when no security surface changed."
 ---
 
 # Security Audits

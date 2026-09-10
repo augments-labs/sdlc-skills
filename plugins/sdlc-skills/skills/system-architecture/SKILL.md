@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Use when approved requirements need a target system design before planning or implementation: how it splits into components, where the boundaries fall, how data moves through it, how it fails and recovers, and which seams are worth their cost. Fires on how should we structure this and what are the moving pieces, even if nobody says architecture. Covers the target design of a system, not the transition from an existing one. Skip a small feature whose structure fits inside its own task or plan."
+description: "Use when approved requirements need a target system design before planning or implementation: components, boundaries, data flow, failure and recovery, and which seams are worth their cost. Fires on how should we structure this and what are the moving pieces, even if nobody says architecture. Skip the transition from an existing system, and skip a small feature whose structure fits inside its own task or plan."
 ---
 
 # System Architecture

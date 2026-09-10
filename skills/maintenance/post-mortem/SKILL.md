@@ -1,6 +1,6 @@
 ---
 name: post-mortem
-description: "Use after a production escape, late defect, data loss, outage, security incident, or badly failed work cycle, once the immediate technical cause and containment are known and the open question is why the safeguards missed it or why the impact grew. Fires on how did this reach production, why didn't we catch this, and what do we change so it doesn't happen again, even if nobody says post-mortem. Skip while the technical cause is itself still unknown, and skip ordinary bugs."
+description: "Use after a production escape, late defect, data loss, outage, security incident, or badly failed work cycle, once the technical cause and containment are known and the open question is why the safeguards missed it or why the impact grew. Fires on how did this reach production, why didn't we catch this, and what do we change so it doesn't happen again, even if nobody says post-mortem. Skip while the technical cause is still unknown, and skip ordinary bugs."
 ---
 
 # Post-Mortem

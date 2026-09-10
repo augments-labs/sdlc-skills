@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: "Use before behavior-affecting implementation — features, fixes, refactors, migrations, generators, or configuration, including behavior meant to be preserved. Fires on any request to add, change, or fix behavior, even when the user names only the feature or the bug and never mentions tests or TDD. Skip only throwaway spikes and nonbehavioral content or configuration."
+description: "Use before behavior-affecting implementation — features, fixes, refactors, migrations, generators, or configuration, including behavior meant to be preserved. Fires on any request to add, change, or fix behavior, even if the user names only the feature or the bug and never mentions tests or TDD. Skip throwaway spikes and nonbehavioral content or configuration."
 ---
 
 # Test-Driven Development

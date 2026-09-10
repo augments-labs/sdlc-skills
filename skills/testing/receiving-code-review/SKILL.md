@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: "Use when identifiable review feedback arrives, from a human or another agent, before responding, editing, or resolving any finding. Fires on pasted review comments, a reviewer's list of concerns, and here is what CI flagged, even if nobody says code review. Also use when feedback is stale, ambiguous, or conflicting. A claimed or in-flight reviewer with no returned report is pending review, not feedback."
+description: "Use when identifiable review feedback arrives, from a human or another agent, before responding, editing, or resolving any finding, and when feedback is stale, ambiguous, or conflicting. Fires on pasted review comments, a reviewer's list of concerns, and here is what CI flagged, even if nobody says code review. Skip a claimed or in-flight review with no returned report."
 ---
 
 # Receiving Code Review
