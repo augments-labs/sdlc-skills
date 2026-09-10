@@ -27,10 +27,10 @@ skill that owns eliciting the still-open inputs.
   build. Fix it and continue to completion. Stopping to report a fixable
   obstacle and wait for instructions spends the user's turn on work that
   was already yours.
-- **Skipping never licenses a silent decision.** State a reversible, low-impact
-  assumption and its reason so the user can redirect. Material product, scope,
-  architecture, execution, destructive, or external-state choices stay pending
-  until the user decides them directly.
+- **Skipping never licenses a silent decision.** State an assumption that
+  falls in none of the categories below, with its reason, so the user can
+  redirect. Product, scope, architecture, execution, destructive, or
+  external-state choices stay pending until the user decides them directly.
 
 ## Step 1: Scan before you ask
 
