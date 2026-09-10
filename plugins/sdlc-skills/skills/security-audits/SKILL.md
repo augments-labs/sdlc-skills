@@ -5,10 +5,10 @@ description: "Use when a change touches a trust boundary, attacker-controlled in
 
 # Security Audits
 
-Reason about what an adversary can make the exact candidate do. The scope is the
-changed attack surface, not merely the changed lines: a one-line route or policy
-change can expose an old vulnerable path. A prior finding, a scanner summary, or
-a comment asserting a verdict is evidence to check — never the verdict to copy.
+Trace what an adversary can make the exact candidate do, from every
+attacker-controlled source to the sink it reaches. Audit the changed attack
+surface, not the changed lines. Never copy a prior finding, scanner summary,
+or comment as a verdict.
 
 ## When to use
 
@@ -17,93 +17,74 @@ a comment asserting a verdict is evidence to check — never the verdict to copy
 - **Skip** only after inspecting reachability and confirming that no security
   surface changed. “Small diff” and “internal refactor” are not evidence.
 
-## Procedure
+## Step 1: Freeze and model
 
-1. **Freeze the candidate and bind it to an identity.** Stop anything still
-   writing to it. Reuse a current `requesting-code-review` descriptor, or invoke
-   that skill and fill the review-candidate descriptor it owns. Invoke
-   `verifying-completion` for whichever exact-state gates apply, and join its
-   state identity byte-for-byte before auditing. An audit on its own is not a
-   breadth review and does not substitute for one.
-2. **Model the threat this change introduces.** Inventory the protected assets,
-   the trusted and untrusted actors, the entry points, the trust boundaries, the
-   privileges, the security assumptions, and the abuse cases. Give each a stable
-   ID and the source digest it was taken against.
+1. Stop anything still writing to the candidate.
+2. Reuse a current `requesting-code-review` descriptor, or invoke that skill
+   and fill its review-candidate descriptor.
+3. **REQUIRED SUB-SKILL:** invoke `verifying-completion` for the exact-state
+   gates that apply. Join its state identity byte-for-byte.
+4. Inventory the threat model: protected assets, trusted and untrusted actors,
+   entry points, trust boundaries, privileges, assumptions, abuse cases. Give
+   each a stable ID and the source digest it was taken against.
+5. For each assumption record: supporting evidence, how it is validated, its
+   owner, its expiry, and what happens if it is false.
 
-   An assumption is the part that quietly rots, so record for each one what
-   evidence or state supports it, how that gets validated, who owns it, when it
-   expires, and what happens when it turns out to be false.
-3. **Expand the scope by reachability.** Start from what the candidate changed,
-   then trace outward: old code that is newly reachable, callers and consumers,
-   shared serializers and guards, generated sources, data stores, dependencies,
-   the build and CI, configuration, deployment, and operational paths. Record why
-   each expansion is relevant. Pre-existing issues unrelated to this change stay
-   separate — note them, do not fold them into this verdict.
-4. **Trace each finding from source to effect.** Work through the nine category
-   checklists in `references/audit-checklists.md`, from authentication and
-   authorization through to dependencies, build, and deployment. Each one names
-   what it commonly misses.
+## Step 2: Trace
 
-   Every category is either covered or carries an accountable, approved omission
-   obtained through *When a category cannot be covered* below. And every finding
-   names three things: the attacker-controlled source, how it propagates, and the
-   security-sensitive sink or effect it actually reaches.
-5. **Run the security gates that exist.** Execute the assurance-matrix checks
-   that apply to every security-relevant platform, build mode, and environment
-   cell. Probes run under `verifying-completion`'s effect authority; never
-   exploit shared or production state without exact, direct authority for it. A
-   gate that is missing or stale is recorded as a blocker, not worked around, and
-   goes to the user through the section below.
-6. **Write findings bound to the revision.** The checklist file's *Writing the
-   finding* section is the record shape — one finding, one record, with the
-   severity scale it defines and the fields each finding owes.
+1. Expand scope by reachability from the changed code: newly reachable old
+   code, callers, shared serializers and guards, generated sources, data
+   stores, dependencies, build and CI, configuration, deployment. Record why
+   each expansion is relevant.
+2. Note pre-existing unrelated issues separately. Keep them out of this verdict.
+3. Work every category checklist in `references/audit-checklists.md`.
+4. Mark each category covered, or obtain an omission through Step 4.
+5. Write each finding in three parts: attacker-controlled source, propagation,
+   the sink or effect it actually reaches.
+6. Run the assurance-matrix security gates for every relevant platform, build
+   mode, and environment cell, under `verifying-completion`'s effect authority.
+   Never exploit shared or production state without exact, direct authority.
+7. Missing or stale gate: record a blocker and go to Step 4. Do not work
+   around it.
+8. Write findings in the shape of the checklist file's *Writing the finding*
+   section, bound to the revision. Fix = the smallest change that closes the
+   path. Sensitive evidence = redacted location or digest, never the value.
 
-   Two of those fields decide whether the finding is usable: the fix is the
-   smallest change that closes the path, not a re-architecture, and sensitive
-   evidence is recorded as a redacted location or digest, never as the value
-   itself.
-7. **Keep implementation, fix, and verdict in separate hands.** A `security
-   clear` verdict requires an auditor independent of whoever implemented the
-   candidate; where that independence is unavailable, the verdict is
-   `inconclusive`. Findings flow back through `receiving-code-review`, and
-   whoever writes a fix cannot certify their own correction: create a new
-   candidate, rerun the affected gates, and obtain an independent focused
-   security re-audit.
-8. **Dispatch that auditor through a real callable action.** “Running” means the
-   action returned a nonempty auditor or job receipt. A name in prose, an empty
-   target, and an empty status are not dispatch. If the action is unavailable,
-   refuses, or returns nothing, do not simulate the result and do not
-   self-certify — issue `inconclusive` with the gate left pending.
+## Step 3: Verdict
 
-   Poll the exact receipt until the deadline. A failure or a passed deadline puts
-   the attempt into cancellation-requested until the worker, its descendants, and
-   its effects have gone quiet; quarantine any partial output. A retry links its
-   predecessor, rejects that predecessor's late results and mutations, and stays
-   inconclusive until it comes back clear.
-9. **Issue the security verdict, and nothing broader.** One of `security clear`,
-   `security blocked`, or `inconclusive`, bound to the exact candidate and
-   review-input identities. Any security-relevant edit invalidates it. The
-   broader releasability decision belongs to release readiness, not here. End the
-   returned report with exactly one valid JSON line, copying both full descriptor
-   identities byte-for-byte:
+1. Dispatch an auditor independent of the implementer through a real callable
+   action. Dispatched = a nonempty receipt. Empty, refused, or unavailable:
+   issue `inconclusive` with the gate pending. Never self-certify.
+2. Poll the exact receipt to its deadline. Failure or passed deadline: write
+   `cancellation requested`, wait for quiet, quarantine partial output; a
+   retry links its predecessor and rejects its late results.
+3. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` for every finding
+   that comes back.
+4. After a fix: new candidate, rerun the affected gates, independent focused
+   re-audit. Never certify your own correction.
+5. Issue one verdict: `security clear`, `security blocked`, or
+   `inconclusive`, bound to the candidate and review-input identities.
+   `security clear` requires the independent auditor.
+6. Return it to the review that requested it. Leave releasability to
+   `release-readiness`. Any security-relevant edit invalidates the verdict.
+7. End the report with exactly one valid JSON line, both identities copied
+   byte-for-byte:
 
    ```text
    SDLC_SKILLS_SECURITY_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","verdict":"{{security clear | security blocked | inconclusive}}","report":"{{nonempty location or returned directly}}"}
    ```
 
-## When a category cannot be covered
+## Step 4: When a category cannot be covered
 
-Two things block coverage mid-audit: no gate exists for that category, or the
-probe that would settle it needs shared or production state you hold no authority
-to touch. Neither is yours to wave through — an omission the auditor approved for
-itself is the one nobody else knows to look at. State the candidate, blocked
-category and reason, and exposure. Ask one conversational question offering:
-authorize the exact probe with effects and blast radius, accept the omission
-with owner/expiry/compensation, or keep the candidate security-blocked.
-Recommend the safest evidence-supported answer with one sentence of reasoning,
-then stop.
+No gate exists, or the probe needs shared or production state you cannot
+touch. Do not approve the omission yourself.
 
-Silence is not acceptance and neither is urgency: an unanswered gap leaves the
-verdict `inconclusive`, never covered. An accepted omission binds to this exact
-candidate, and any security-relevant edit invalidates it along with the verdict.
-Missing auditor independence is not on this menu — step 7 already settles it.
+1. State the candidate, the blocked category and reason, and the exposure.
+2. Ask one question offering: authorize the exact probe with its effects and
+   blast radius; accept the omission with owner, expiry, and compensation;
+   keep the candidate security-blocked.
+3. Recommend the safest evidence-supported answer with one sentence. Stop.
+4. Unanswered, silence, urgency: verdict stays `inconclusive`.
+5. An accepted omission binds to this exact candidate and dies with the
+   verdict on any security-relevant edit.
+6. Missing auditor independence is not on this menu; Step 3 settles it.

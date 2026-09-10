@@ -15,43 +15,52 @@ Scope is decided by what you say no to. An unbounded project never ships — nam
 - **Skip** for a single feature. Use `interview-me` only when its intent or
   boundary is ambiguous; `spec-it` owns its detailed requirements and non-goals.
 
-## Procedure
+## Step 1: Cut the scope
 
-1. **Carry the non-negotiables first.** Bring forward goal guardrails, existing
-   contracts, preserved behavior/data, security, accessibility, compatibility,
-   operability, and recovery. These are constraints on every cut, not optional
-   capabilities to move out of scope.
-2. **In scope:** the smallest set of capabilities that achieves the approved
-   outcome under those constraints.
-3. **Explicitly out of scope:** tempting capabilities deliberately deferred.
-   Give each exclusion a stable ID, rationale, goal impact, owner, and revisit
-   trigger. Never put a preserved invariant or existing commitment here.
-4. **The MVP cut:** the thinnest version that still meets the goal **and every
-   non-negotiable**. Smaller but unsafe/incompatible is not an MVP.
-5. **Assumptions and dependencies:** for each, name its validation action, owner,
-   and expiry/decision point. A hidden project inside “assumes X” is scope.
-6. **Set change rules:** observations that abort this cut, changes material enough
-   to reopen approval, and who decides them.
-7. **Write the proposed `## Scope` section** into
-   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` (or the user-set path). Open
-   `assets/scope-section.md` and fill it — it carries the constraint, exclusion,
-   assumption, and change-rule tables along with the identity fields. Do not
-   replace the other approved sections; the section is immutable once its
-   identity is issued.
-8. **Present the cut for decision.** State the brief path, in-scope and excluded
-   work, thinnest version, and owned assumptions. Ask one conversational
-   question with four accepted answers: approve this boundary, request a scope
-   change, reject the cut, or cancel. Recommend the thinnest answer that still
-   reaches the approved goal, with one sentence of reasoning, then stop.
+Open `assets/scope-section.md` now. Each step fills its section.
 
-   Only one of the four hands off; praise, constraints, silence, and a partial
-   reply leave it pending. Record every lifecycle outcome externally. Once
-   identity is issued, never mutate it: a normative change creates a replacement,
-   contradiction reopens owners, and an approved successor invalidates stale
-   downstream bindings until owners revalidate or reconcile them.
+1. Carry the non-negotiables first: goal guardrails, existing contracts,
+   preserved behavior and data, security, accessibility, compatibility,
+   operability, recovery. Constraints on every cut, never candidates to
+   exclude.
+2. In scope → the smallest capability set that reaches the approved outcome
+   under those constraints.
+3. Out of scope → each deferred capability with stable ID, rationale, goal
+   impact, owner, revisit trigger. Never a preserved invariant or existing
+   commitment.
+4. MVP → the thinnest version meeting the goal and every non-negotiable.
+   Smaller but unsafe or incompatible → not an MVP.
+5. Per assumption and dependency: validation action, owner, expiry or
+   decision point. A hidden project inside "assumes X" is scope.
+6. Write the change rules: observations that abort this cut, changes that
+   reopen approval, who decides.
 
-After approval, route to `spec-it` only when detailed requirements are the next
-missing input; do not impose a phase that is already complete.
+## Step 2: Write and present
+
+1. Write the immutable `## Scope` section to
+   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+   preserving approved sections around it.
+2. Present and end the turn:
+
+   ```text
+   Scope {{path}} — version {{identity}}
+   In: {{n}} capabilities  Out: {{n}}  MVP: {{one line}}  Assumptions: {{n}} owned
+
+   1. Approve this boundary
+   2. Request a scope change
+   3. Reject the cut
+   4. Cancel
+
+   Recommendation: {{thinnest answer that reaches the goal}} — {{one sentence}}.
+   ```
+
+3. Only option 1 hands off. Praise, constraints, silence, a partial reply →
+   pending. Record lifecycle externally. Normative change → a replacement;
+   an approved successor invalidates stale downstream bindings until owners
+   revalidate. Never edit an issued identity.
+4. **REQUIRED SUB-SKILL:** on option 1, invoke `spec-it` when detailed
+   requirements are the next missing input. Never impose a phase already
+   complete.
 
 ## Common mistakes
 

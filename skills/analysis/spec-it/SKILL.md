@@ -15,54 +15,72 @@ Turn an intent into a requirements spec (SRS): gather and analyze what the softw
 - A reply that has not directly closed a pending material decision routes to
   `interview-me`; this skill cannot convert it into approved requirements.
 
-## Procedure
+## Step 1: Gather and state
 
-1. **Gather the inputs.** Pull the goal or brief (from planning), read the relevant existing code to see what's already there, and grill any genuine gap with `interview-me`. Don't invent what you could have found.
-2. **State the problem** in a line or two, and link the goal it serves.
-3. **Write functional requirements as testable behaviours.** Give each a stable
-   requirement ID that successors never recycle. Each is observable—"rejects an
-   expired token with a 401", not "good auth". Uncheckable is a wish.
-4. **Carry every applicable goal/scope guardrail and obligation.** Trace trust/
-   data, security, accessibility, compatibility, operational/recovery,
-   performance/resource, and supported platform/mode requirements. Add no
-   unbounded generic NFR list.
-5. **Give each requirement the cheapest honest acceptance form.** Read
-   [reference-forms.md](references/reference-forms.md). Use an executable gate
-   only when the observable contract is settled **and** project mutation is
-   authorized; use a disposable mockup for spatial/state requirements, a
-   source-fact + preserved-invariant + intentional-delta contract for existing
-   behavior, or a rubric for judgment. Prose is correct when richer form would
-   choose design or cost more ambiguity than it removes.
-6. **Do not promise an artifact that does not exist.** If authorized to create a
-   runnable criterion now, put it in the project's real gate and run it: new
-   behavior fails for the missing behavior; preserved behavior starts green and
-   later must be deliberately falsified by TDD. If interface or mutation
-   authority is open, specify the observable, intended gate, owner, and handoff
-   instead—never invent an interface or silently edit the project.
-7. **List the edge cases and scenarios** that break a naive build — empty input, concurrency, the unhappy paths.
-8. **Contract assumptions and dependencies.** Give each stable ID, evidence/
-   state, validation action, owner, freshness/expiry, and failure response.
-   Unresolved material state stays an open decision, never a hidden premise.
-9. **Surface the open questions and risks** — the unresolved ambiguities and requirement-level challenges that could derail the build. Naming them now is the cheapest they'll ever be.
-10. **State what is out of scope** — the requirements you are deliberately *not* covering this round.
-11. **Write the proposed spec** to
-    `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md` (or the user-set path). Open
-    `assets/spec-template.md` and fill it — it carries the identity fields, the
-    requirement table with each requirement's real artifact or future gate and
-    owner, and the decision-owner block. The spec is immutable once its identity
-    is issued.
-12. **Present the spec for decision.** State the path, requirement and open-
-    question counts, and excluded scope. Ask one conversational question with
-    four accepted answers: approve and hand off to design, request changes,
-    reject the requirements, or cancel. Recommend the answer best supported by
-    the unresolved-question state, with one sentence of reasoning, then stop.
+1. Pull the goal or brief. Read the relevant existing code. Genuine gap →
+   invoke `interview-me`. Invent nothing you could have found.
+2. State the problem in a line or two. Link the goal it serves.
 
-    Only one of the four hands off; praise, silence, and a partial reply leave
-    it pending. Record the outcome externally. An issued identity never mutates:
-    a normative change creates a proposed successor carrying a per-ID
-    `added / changed / removed / preserved` delta — removal needs its owning
-    approval — which invalidates stale downstream bindings until owners
-    revalidate or reconcile them.
+## Step 2: Write the requirements
+
+Open `assets/spec-template.md` now. Each step fills its section.
+
+1. Write each functional requirement as an observable behavior with a stable
+   ID that successors never recycle:
+
+   ```text
+   Right: R-07 rejects an expired token with a 401
+   Wrong: R-07 good auth
+   ```
+
+2. Carry every applicable guardrail and obligation: trust and data, security,
+   accessibility, compatibility, operational and recovery, performance and
+   resource, supported platforms and modes. No generic NFR list.
+3. Per requirement, choose the cheapest honest acceptance form from
+   `references/reference-forms.md`: executable gate, disposable mockup,
+   source-fact contract, rubric, or prose.
+4. Executable gate authorized now → write it in the project's real gate and
+   run it. New behavior → fails. Preserved behavior → green now, falsified
+   later by TDD. Interface or mutation authority open → write the
+   observable, intended gate, owner, handoff. Never invent an interface or
+   edit the project silently.
+5. List the edge cases and scenarios that break a naive build: empty input,
+   concurrency, unhappy paths.
+6. Per assumption and dependency: stable ID, evidence or state, validation
+   action, owner, expiry, failure response. Unresolved material state → an
+   open decision, never a hidden premise.
+7. List open questions, requirement-level risks, and what is out of scope
+   this round.
+
+## Step 3: Write and present
+
+1. Write the immutable spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md`
+   or the user-set path.
+2. High-stakes spec → run `references/spec-review.md` with a reviewer who is
+   not the sole author. Blocking.
+3. Present and end the turn:
+
+   ```text
+   Spec {{path}} — version {{identity}}
+   Requirements: {{n}}  Open questions: {{n}}  Out of scope: {{n}}
+
+   1. Approve and hand off to design
+   2. Request changes
+   3. Reject
+   4. Cancel
+
+   Recommendation: {{option the open-question state supports}} — {{one sentence}}.
+   ```
+
+4. Only option 1 hands off. Praise, silence, a partial reply → pending. A
+   reply that does not close a pending material decision → `interview-me`.
+   Record lifecycle externally. Normative change → a proposed successor with a
+   per-ID `added / changed / removed / preserved` delta. Never edit an issued
+   identity.
+5. **REQUIRED SUB-SKILL:** on option 1, invoke the next missing precondition:
+   `ui-ux-design`, `system-architecture`, or `data-model` for unresolved
+   non-trivial shape; otherwise `writing-plans`. Never impose a phase already
+   complete.
 
 ## Common mistakes
 
@@ -73,11 +91,3 @@ Turn an intent into a requirements spec (SRS): gather and analyze what the softw
 - Smuggling design or mutation in — a guessed endpoint, schema, internal call, or
   project edit is not made safe by calling it an acceptance criterion.
 - A thin happy-path spec with no edge cases, assumptions, or risks — that's exactly where builds break.
-
-For a high-stakes spec, the independent review in
-`references/spec-review.md` is mandatory before approval. The reviewer must not
-be the spec's sole author.
-
-After approval, re-route from the current phase and next missing precondition.
-Use design only for unresolved non-trivial shape and `writing-plans` only when
-an executable task contract is still missing.

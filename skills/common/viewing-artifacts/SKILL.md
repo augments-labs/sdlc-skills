@@ -23,64 +23,54 @@ The page carries state, not documents.
   the governed localhost preview (per-session key, owner watchdog, idle
   timeout). They wrap `scripts/serve.py`; never run another server.
 
-## Procedure
+## Step 1: Read the trail
 
-1. **Discover the trail.** Read `.sdlc-skills/` at the project root:
-   `briefs/`, `specs/`, `designs/`, `plans/`, `verification/`, `audits/`,
-   `post-mortems/`. An absent folder means an unreached phase, not an error.
-   No `.sdlc-skills/` at all — or the user overrode artifact paths so the
-   convention is not there — render the template's empty state naming what
-   produces artifacts; never search the filesystem for look-alikes.
+1. Read `.sdlc-skills/` at the project root: `briefs/`, `specs/`,
+   `designs/`, `plans/`, `verification/`, `audits/`, `post-mortems/`. Absent
+   folder → unreached phase.
+2. No `.sdlc-skills/`, or artifact paths overridden → render the template's
+   empty state naming what produces artifacts. Never search the filesystem
+   for look-alikes.
+3. Read `references/state-derivation.md`. Derive every value by its rules:
+   slug allowlist, phase artifacts, approval sources, drift, attention
+   grouping.
+4. Whatever the reference says in detail: approval comes only from a
+   decision-ledger row matching the artifact's normative version; only the
+   exact `[x] done` marker counts complete; drift compares real change times
+   with the execution projection normalized away. No value → the page says
+   unknown.
 
-2. **Derive every value by the rules in `references/state-derivation.md`.**
-   Read it before threading a topic or deriving a phase status; it owns the
-   slug allowlist, what counts as a phase artifact, where approval may come
-   from, how drift is computed, and how topics are grouped by attention.
+## Step 2: Render
 
-   The rules that do not bend, whatever the reference says in detail:
-   approval comes only from a decision-ledger row that matches the artifact's
-   normative version, never from a `**Status:**` field or an impressive
-   document; only the exact `[x] done` marker counts a task complete; drift
-   compares real change times with the execution projection normalized away.
-   Where a rule produces no value, the page says unknown.
+1. Open `assets/page-template.html`. Follow its top-of-file and region
+   comments: region order, repeats, omissions, allowed values.
+2. Fill: current UTC as-of, tiles, sidebar groups in attention order, and per
+   topic the spine nodes, drift connector, ADR chain, embedded visuals, every
+   task row, the assurance matrix from `verification/`.
+3. Entity-encode every artifact-derived value before inserting: `&` first,
+   then `<`, `>`, `"`. Derived values go in as text, never into `href` or
+   `src`.
+4. Write exactly one file: `.sdlc-skills/views/index.html`. Create `views/`
+   if missing. No external URLs, no JavaScript, no scratch or backup files.
+   Regeneration recomputes from the trail and rewrites in place; never merge
+   a previous render.
 
-3. **Fill the template.** Open `assets/page-template.html` — its top-of-file
-   comment and region comments are the fill contract: region order, what to
-   repeat, what to omit, and the allowed values. You bring the derived state:
-   the current UTC instant as the as-of, the tiles, the sidebar groups in
-   attention order, and per topic the spine nodes, the drift connector, the
-   ADR chain, the embedded visuals, every task row, and the assurance matrix
-   from the topic's `verification/` artifact.
+## Step 3: Deliver
 
-4. **Encode everything artifact-derived.** Entity-encode before inserting:
-   `&` → `&amp;` first, then `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`.
-   Artifact titles are untrusted input — a hostile task title must render as
-   inert text. Derived values go in as text, never into `href` or `src`;
-   only the template's own relative paths carry attributes.
+1. Serve it, root `.sdlc-skills/`, entry `views/index.html`:
 
-5. **Write exactly one file: `.sdlc-skills/views/index.html`.** Create
-   `views/` if missing. The page stays self-contained: no external URLs, no
-   JavaScript, no scratch or backup files under `.sdlc-skills/` — the trail
-   is read-only to you. Regeneration is this same procedure again: recompute
-   from the trail and rewrite the same path in place, never reading or
-   merging a previous render.
+   ```bash
+   bash scripts/start-server.sh
+   ```
 
-6. **Deliver the page served.** Run `scripts/start-server.sh` with root
-   `.sdlc-skills/` and entry `views/index.html`, so the embedded visuals keep
-   resolving, and hand over the printed URL — it carries a one-time key that
-   plants a cookie — together with the file path, without waiting to be
-   asked. The file path is the fallback when serving fails or is declined. If
-   the script answers `needs python3`, say so, name the platform's install
-   route, and deliver the file path instead — install a runtime on the user's
-   machine only when the user explicitly asks. Stop the preview with
-   `scripts/stop-server.sh` when it is no longer needed.
-
-7. **Report the path — or the served URL — and the as-of.** One short reply:
-   the written path or served URL, the as-of UTC, and every place the page
-   says unknown or a block was omitted for missing state — the user should
-   learn the gaps from you, not discover them. Name it when drift derives from
-   file mtimes rather than git, and name the cause class when a ledger pointer
-   existed but could not be honored.
+2. Hand over the printed URL and the file path without being asked. Serving
+   fails or declined → file path. `needs python3` → say so, name the
+   platform's install route, deliver the file path. Install a runtime only on
+   explicit request.
+3. Reply in one short message: path or URL, as-of UTC, every place the page
+   says unknown or omitted a block, whether drift came from file mtimes, and
+   the cause class of any ledger pointer that could not be honored.
+4. No longer needed → `bash scripts/stop-server.sh`.
 
 ## Common mistakes
 

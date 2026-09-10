@@ -13,43 +13,43 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 - Reached from `feasibility-check` (a killer risk) or `ui-ux-design` (a layout choice).
 - **Skip** when you already know the answer, or the question is vague — a prototype that answers the wrong question is pure waste.
 
-## Procedure
+## Step 1: Pre-register
 
-1. **Pre-register the experiment.** State one question, the falsifiable
-   pass/fail observation, the time-box and size-box, and what decision each
-   result changes. If these are vague, do not build.
-2. **Set the safety boundary.** Name the workspace and artifacts this probe owns,
-   the environment it runs in, and the class of data it touches. Prefer isolated
-   synthetic data.
+1. Write one question, the falsifiable pass/fail observation, the time-box
+   and size-box, and what decision each result changes. Vague → do not build.
+2. Name the workspace and artifacts this probe owns, its environment, the
+   data class it touches. Prefer isolated synthetic data.
+3. Bind disposal before building: allowed access and effects, evidence
+   retention, exact cleanup targets and their recoverability, cleanup owner,
+   current authority for creating and removing.
+4. Production-like data, real services, live traffic, running systems,
+   destructive cleanup → explicit authorization each, protections
+   proportional to risk.
 
-   Bind the disposal side before you build anything: what access and effects are
-   allowed, how long the evidence is kept, the exact cleanup targets and how
-   recoverable they are, who owns that cleanup, and the current authority covering
-   both creating this and removing it.
+## Step 2: Build and observe
 
-   Production-like data, real services, live traffic, probes against running
-   systems, and destructive cleanup each need explicit authorization and
-   protections proportional to the risk.
-3. **Build the smallest disposable probe.** Add only the driver, fixtures, and
-   instrumentation needed to observe the result. No reusable abstraction,
-   production integration, or generality kept “for later.”
-4. **For logic:** exercise the uncertain behavior through a tiny driver or
-   executable assertion. **For UI:** compare only the structurally different
-   populated variants needed to answer the registered visual question.
-5. **Stop on the declared boundary.** Record raw observations, environment,
-   limitations, and whether the predeclared criterion passed, failed, or stayed
-   inconclusive. Do not move the threshold after seeing the result.
-6. **Retain the result, not product code.** Store the question, evidence, and
-   decision durably; use `architecture-decisions` when it settles a
-   load-bearing choice. Rebuild any accepted behavior in the real code under
-   its normal tests, review, and verification gates—never lift prototype code.
-7. **Apply only the authorized cleanup disposition.** Pre-registered scratch
-   artifacts created solely inside an explicitly disposable boundary may be
-   removed when current authority covers the exact targets and effects.
-   Repository branch, worktree, ref, or workspace disposal routes through
-   `finishing-a-branch`; external or destructive cleanup needs its own current
-   scoped choice. Otherwise preserve the artifacts and report cleanup pending.
-   Never delete pre-existing, shared, user-owned, or ownership-uncertain state.
+1. Build the smallest disposable probe: driver, fixtures, instrumentation
+   only. No reusable abstraction, production integration, or generality.
+2. Logic → a tiny driver or executable assertion on the uncertain behavior.
+   UI → only the structurally different populated variants the registered
+   question needs.
+3. Stop at the declared boundary. Record raw observations, environment,
+   limitations, and `passed / failed / inconclusive` against the predeclared
+   criterion. Never move the threshold after seeing the result.
+
+## Step 3: Retain the result, dispose of the code
+
+1. Store question, evidence, and decision durably. Load-bearing choice
+   settled → invoke `architecture-decisions`.
+2. Rebuild accepted behavior in the real code under its normal tests, review,
+   and verification gates. Never lift prototype code.
+3. Remove only pre-registered scratch artifacts inside the disposable
+   boundary, under current authority for those exact targets. Repository
+   branch, worktree, ref, or workspace disposal → `finishing-a-branch`.
+   External or destructive cleanup → its own current scoped choice.
+   Otherwise preserve and report cleanup pending.
+4. Never delete pre-existing, shared, user-owned, or ownership-uncertain
+   state.
 
 ## Common mistakes
 
