@@ -5,134 +5,127 @@ description: "Use when approved requirements or a clearly multi-step task need a
 
 # Writing Plans
 
-Turn an aligned intent into an executable plan: a small durable **map** plus thin per-task **contracts**. Be ambitious on scope, light on implementation — pre-written code rots and produces a plan too long to read. The executor writes code at run time, with the most context.
+Write a small durable index plus one thin contract per task, get the exact
+version approved, then hand it to `executing-plans`. Leave the implementation
+to the executor: write what each task must make true and how that is judged,
+not the code.
 
 ## When to use
 
 - Detailed requirements are approved, or a precise task spans ≥3 steps or multiple files.
 - **Skip** for single-step or trivial changes — planning them costs more than doing them.
-- If intent is ambiguous, route to `interview-me`; if detailed verifiable behavior is missing, route to `spec-it`. A precise task needs neither ritual.
-- A high-risk target plan waits for approved, current migration and assurance
-  contracts. A plan you were authorized to write for the missing gate alone may
-  consume the exact proposed contract, but must exclude every piece of target
-  work. Unsettled facts stay recorded as evidence and are never promoted to
-  accepted deviations; establishing a gate neither approves the contract nor
-  satisfies the target's entry conditions.
-- Use separate plans for independent subsystems unless one cutover or rollback makes them one initiative.
+- Intent still ambiguous: invoke `interview-me` first. Verifiable behavior
+  still missing: invoke `spec-it` first. A precise task needs neither.
+- For a high-risk target, read the approved migration and assurance contracts
+  before writing a task. If they are missing, plan only the gate that is
+  missing, consuming the exact proposed contract, and put no target work in
+  the plan; record unsettled facts as evidence, never as accepted deviations.
+- Write separate plans for independent subsystems unless one cutover or
+  rollback makes them one initiative.
 
 ## Procedure
 
-1. **Bind the inputs before anything else.** Record the exact identity of every
-   approved input this plan consumes, and the rule that says when that identity
-   goes stale. Fill the header of `assets/index-template.md` first — it names the
-   bound inputs, the invalidation triggers, and the approval rule the plan owes.
+1. **Fill the header of `assets/index-template.md` first.** Write the exact
+   identity of every approved input this plan consumes, the rule that makes
+   each stale, the `Approval rule`, and the `Integration cadence`. Leave the
+   cadence at `plan end` unless the user directly asked for per-task
+   integration; then write `per task` and quote the instruction.
 
-   When an approved UI design contains **Selected visual references**, bind the
-   complete keyed collection in the index and copy each UI-bearing task's
-   applicable subset field for field — both templates carry the columns. Map
-   every Reference ID to its owning task and conformance evaluator IDs in
-   **Visual reference coverage**. A UI plan with a missing approved reference or
-   an uncovered Reference ID is not executable; return it to `ui-ux-design`
-   instead of reconstructing a preference from prose or conversation.
+   When the approved UI design carries **Selected visual references**, copy the
+   complete keyed collection into the index and map every Reference ID to an
+   owning task and conformance evaluator ID in **Visual reference coverage**.
+   If a reference is missing or a Reference ID has no owner, return the plan to
+   `ui-ux-design`; do not reconstruct a preference from prose.
 
-   Give every file and every side effect exactly one owning task. Where two tasks
-   would touch the same one, order them with an explicit dependency and name a
-   single transition owner. For homogeneous work — one transformation applied
-   across many items — bind the machine-readable inventory and the output
-   pattern instead of enumerating the items by hand.
+   Give every file and every side effect exactly one owning task. Where two
+   tasks would touch the same one, add an explicit dependency and name a single
+   transition owner. For one transformation applied across many items, bind the
+   machine-readable inventory and the output pattern instead of listing items.
 
-2. **Slice vertically, and size each task to its gate.** A task is one coherent
-   capability that can be evaluated on its own. Split only where a real gate
-   boundary falls; a split that leaves both halves sharing one verdict is not a
-   split.
+2. **Slice vertically, one evaluable capability per task.** Split only where a
+   real gate boundary falls; do not split where both halves would share one
+   verdict.
 
    For approved high-risk target work, read
-   `references/scalable-transformation.md` before slicing, and never redefine
-   transition policy the migration contract already owns. A plan limited to
-   gate-enabling prerequisites contains no target work at all.
+   `references/scalable-transformation.md` before slicing, and copy transition
+   policy from the migration contract rather than restating it.
 
-3. **Write a contract, not a transcript.** Each task gets a stable,
-   non-positional ID that is never renumbered or recycled, the files and effects
-   it exclusively owns, the tasks it depends on, and an interface stated as exact
-   **Consumes** and **Produces** names and types. That interface line is all a
-   later task's executor will see of this one.
+3. **Write each task from `assets/task-template.md` as a contract.** Fill
+   `Task ID` with a stable, non-positional ID; `Depends on`; `Files` and
+   `Exclusive ownership/effects`; `Context` as paths, not paraphrase; and the
+   interface as exact **Consumes** and **Produces** names and types — a later
+   task's executor sees only that line. Fill `Implementation disciplines` with
+   `test-driven-development` + `yagni`, or the exact carve-out.
 
-   Do not pre-write the implementation — the executor has the most context at run
-   time. Include exact code only where precision is fragile: a tricky regular
+   Include exact code only where precision is fragile: a tricky regular
    expression, a security check, a migration statement.
 
-4. **Give every task a precommitted evaluator.** Prefer one that executes and
-   returns a verdict on its own. Where nothing executable exists, name the rubric
-   and the observations that decide it, so the judgement is bound before the work
-   starts rather than argued after it.
+4. **Write a precommitted `Evaluator` for every task.** Prefer a command that
+   returns a verdict on its own; otherwise name the rubric, the evaluator, and
+   the observations that decide it. For a UI-bearing task, copy its
+   `Applicable visual references` field for field and give every Reference ID
+   a row in **Visual conformance gates**.
 
-   Every applicable Reference ID gets a conformance evaluator in the task's
-   **Visual conformance gates** table; functional tests may share that gate but
-   cannot replace the visual and structural invariants it judges.
+   Fill `Evaluator identity/owner` so the gate lives outside what the task may
+   mutate. If a task may edit its own gate, write the permitted scope and
+   require a RED run or deliberate falsification before any GREEN counts.
 
-   The evaluator's identity and owner live outside whatever the implementation
-   may mutate. If a task is allowed to edit its own gate, say so explicitly and
-   bound the permitted scope, and require a RED run or a deliberate falsification
-   before any GREEN result counts.
+5. **Fill `Suggested tier` per task** by applying the **Model selection**
+   section of `dispatching-parallel-agents` to the decisions that remain in
+   that task, with the reason.
 
-5. **Write the immutable proposal** to
-   `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`. Build `00-index.md` from
-   `assets/index-template.md`, and one thin task file per task from
-   `assets/task-template.md`. Both carry the identity, ledger, and successor
-   fields. Keep decision state, execution state, and evidence out of the
-   normative files, and make every normative change a successor rather than an
-   edit.
+6. **Write the immutable proposal** to
+   `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`: `00-index.md` plus one task
+   file per task. Keep approval, execution state, and evidence out of these
+   files; make every later normative change a successor file, never an edit.
 
-6. **Tag a capability tier per task.** Apply the **Model selection** section of
-   `dispatching-parallel-agents` to the decisions that remain in that task.
-   Record the suggested tier and reason; the dispatcher binds it to an available
-   model when the task runs.
+### Self-review before saving
 
-### Self-review before saving (inline, ~30s)
+7. **Check the plan against its inputs, by name, not from memory:**
 
-- **Trace each requirement and accepted risk gate to a task or phase by name** — don't skim from memory. An uncovered requirement/risk is a silent gap; a task tracing to neither is scope creep.
-- No undefined *scope*: `TBD`, `handle edge cases`, `similar to task N` each mean a task you haven't written. (Deferring *implementation* is fine; deferring *scope* is not.)
-- Every task has an executable Evaluator or controlled rubric; the plan has one top-level **Acceptance** check.
-- **Every Consumes resolves to a Produces** under the *same* name and type — a `clearLayers()` consumed but only `clearFullLayers()` produced is a build-time break — and no task violates a rule in the index's Constraints block.
-- Every selected Reference ID appears in Visual reference coverage with an
-  owning task that carries it and a matching conformance evaluator; no
-  reference is orphaned.
-- Independent tasks have disjoint files, data, effects, evaluators, and external
-  state; every overlap has an explicit dependency and single transition owner.
+   - Trace each requirement and accepted risk gate to a task or phase; fix any
+     uncovered requirement and cut any task tracing to nothing.
+   - Replace every `TBD`, `handle edge cases`, and `similar to task N` with the
+     task it hides; deferring implementation is fine, deferring scope is not.
+   - Confirm every task has an executable Evaluator or controlled rubric and the
+     index has one top-level **Acceptance** check.
+   - Resolve every Consumes to a Produces under the *same* name and type, and
+     check no task violates the index's Constraints block.
+   - Confirm every selected Reference ID appears in Visual reference coverage
+     with a carrying task and a matching conformance evaluator.
+   - Confirm independent tasks have disjoint files, data, effects, evaluators,
+     and external state, and every overlap has a dependency and one owner.
 
-### Present, then stop — the plan/execution handoff
+8. **For a high-risk plan, run `references/plan-review.md`** and resolve every
+   blocker before presenting.
 
-Only the user can confirm the plan's *direction*, and this is the cheapest moment to redirect. A hard gate, not a formality:
+### Present, then stop
 
-Show the complete index and exact plan version — goal, architecture,
-Constraints, Acceptance, trace, and task/phase list. Send them to the accountable
-owner or complete approver set. Ask one conversational question offering
-approve and then choose an execution mode, request changes, reject the plan, or
-cancel. Recommend the answer supported by the plan review and unresolved risks,
-with one sentence of reasoning, then stop.
+9. **Show the complete index and its exact `Normative version`** — goal,
+   architecture, Constraints, Acceptance, trace, and task/phase list — to the
+   owner the `Approval rule` names. Ask one conversational question offering:
+   approve and then choose an execution mode, request changes, reject, or
+   cancel. Recommend the answer the review and open risks support, with one
+   sentence of reasoning. Then end the turn. Do not invoke `executing-plans`,
+   create a workspace, or write code in this turn.
 
-Only on approval, and in a separate turn, ask one conversational mode question.
-Offer inline execution in this session or delegated execution by one fresh
-subagent per task in sequence. Explain the context trade-off briefly and
-recommend the mode supported by the harness capability and task boundaries.
+10. **Treat as not a go, and revise and re-ask:** earlier approval of another
+    version, praise, comments, constraints, partial answers, silence, or a
+    non-interactive session. Proceed unpaused only under a direct standing
+    order whose scope, owner, constraints, and mode explicitly cover unseen
+    plan versions; bind the exact produced version to that receipt first.
 
-Offer delegated only where the harness actually provides a subagent action; if
-it does not, say so and execute inline. Independent tasks do not select the
-mode — the user does. Conflicts follow the plan's decision rule.
-- A direct mode answer completes the handoff. Immediately invoke
-  `executing-plans` against the approved plan version before any workspace or
-  implementation action; choosing a mode is not execution by itself.
-- **Presenting and executing are separate turns**; require the direct version-and-mode approval above between them. Do not invoke `executing-plans`, create a task branch/workspace, or write code in the presentation turn.
-- **Not a go:** prior approval, praise, comments, constraints, partial answers,
-  silence, or a non-interactive session. Revise and re-ask.
-- **Proceed unpaused only** under a direct standing order whose scope, owner,
-  constraints, and mode explicitly cover unseen plan versions; bind the exact
-  produced version to that receipt before execution.
+11. **On approval, in a separate turn, ask one conversational mode question:**
+    inline in this session, or delegated to one fresh subagent per task in
+    sequence. Say the context trade-off in a sentence and recommend the mode
+    the harness supports. Offer delegated only if the harness has a subagent
+    action; otherwise say so and offer inline. The user picks the mode, not
+    the task shape.
 
-Record approval/mode externally with the current user-role answer or trusted
-version-bound receipt; the index cannot authenticate itself. Every normative
-change creates a proposed successor. An approved successor invalidates
-predecessor-bound reviews, tasks, and evidence until owner reconciliation;
-runtime state stays in its ledger.
+12. **Write the approval and the mode into the `External decision ledger`**
+    against the exact `Normative version`, with the user's answer or a
+    version-bound receipt. Write nothing about approval into the index itself.
 
-Before presenting a high-risk plan, run `references/plan-review.md` and resolve every blocker.
+13. **REQUIRED — on a direct mode answer, invoke `executing-plans`** against
+    the approved version before any workspace or implementation action. A mode
+    reply is not execution, and this skill writes no code.
