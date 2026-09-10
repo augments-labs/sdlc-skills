@@ -34,7 +34,8 @@ Open `assets/data-model-section.md` now. Each step fills its section.
    as "inapplicable" without it.
 2. Anything persists → note denormalized or cached data with source of truth,
    update boundary, drift repair. Existing-model change on the ordinary
-   route by `migration-strategy`'s four questions → define migration,
+   route by `migration-strategy`'s four questions (reviewability,
+   preservation, breadth, failure surfaces) → define migration,
    mixed-version, rollback. Classified high-risk → record domain
    constraints; `migration-strategy` owns the contract.
 3. Trace representative reads, writes, transitions, concurrent operations,

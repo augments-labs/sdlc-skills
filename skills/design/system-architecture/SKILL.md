@@ -54,8 +54,9 @@ Open `assets/architecture-section.md` now. Each step fills its section.
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it. Fill the header: identity,
    predecessor, approval rule, ledger location, stable ID delta.
-2. Classified high-risk by `migration-strategy`'s four questions, or marked
-   so by the user → run `references/design-review.md` before presenting.
+2. Classified high-risk on any of `migration-strategy`'s four questions
+   (reviewability, preservation, breadth, failure surfaces), or marked so
+   by the user → run `references/design-review.md` before presenting.
    Blocking.
 3. Present and end the turn:
 
