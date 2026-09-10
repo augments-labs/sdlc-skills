@@ -34,7 +34,7 @@ a minute you chose to spend.
    - shedding or redirecting traffic, draining an instance, opening a breaker
    - raising or lowering a limit, quota, or concurrency
    - blocking the triggering input, tenant, or job
-   - rolling back to the last known-good release — wide, usually needs approval
+   - rolling back to the last known-good release — wide, needs approval
 2. Read the runbook, deploy log, and config for them. Reading is not pulling.
 3. Lever not yours to pull (deploy, rollback, production data, customer-facing
    block) → escalate now with the Step 1 lines. That is the containment step.
