@@ -1,8 +1,8 @@
 # Control Vocabulary
 
-The terms the skills use for evidence, authority, and lifecycle — so the same
-concept is never two words, and one word is never two concepts. Load this when a
-skill uses a term below and the exact sense matters.
+The terms the skills use for evidence, authority, lifecycle, and risk — so the
+same concept is never two words, and one word is never two concepts. Load this
+when a skill uses a term below and the exact sense matters.
 
 ## Identity — five different things
 
@@ -84,3 +84,11 @@ Bare "identity" is correct only when every sense applies at once.
   the run that produced it did not reach a clean terminal state.
 - **Late result** — output arriving from a superseded attempt after its successor
   exists. Always rejected; it describes a state nothing is bound to any more.
+
+## Risk
+
+- **High-risk** — a change for which any of `migration-strategy`'s four
+  classification answers (reviewability, preservation, breadth, failure
+  surfaces) leaves the ordinary route, or that the user marks so.
+  Never a feeling about size: the answers are recorded, and "pending
+  classification" is high-risk until resolved.

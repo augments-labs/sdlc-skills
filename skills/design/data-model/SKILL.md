@@ -33,8 +33,10 @@ Open `assets/data-model-section.md` now. Each step fills its section.
    risk. Omitted lens → a skip record with that row's fields. Never drop one
    as "inapplicable" without it.
 2. Anything persists → note denormalized or cached data with source of truth,
-   update boundary, drift repair. Bounded existing-model change → define
-   migration, mixed-version, rollback. High-risk transition → record domain
+   update boundary, drift repair. Existing-model change on the ordinary
+   route by `migration-strategy`'s four questions (reviewability,
+   preservation, breadth, failure surfaces) → define migration,
+   mixed-version, rollback. Any answer off the ordinary route → record domain
    constraints; `migration-strategy` owns the contract.
 3. Trace representative reads, writes, transitions, concurrent operations,
    deletion, existing-data migration. Record the runnable query and result
