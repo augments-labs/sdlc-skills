@@ -112,8 +112,8 @@ self-certify a human-owned judgment.
   and the claim that gate supported is now unproven.
 - A flaky green is unexplained nondeterminism; route it through `debugging`.
 - Verified is not reviewed. A candidate at a completion or integration
-  boundary requires `requesting-code-review`; task-local evaluator
-  status is not that boundary unless its plan says so.
+  boundary requires `requesting-code-review`; task-local evaluator status
+  is not that boundary unless its plan says so.
 
 ## When tempted to skip
 
