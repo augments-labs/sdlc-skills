@@ -45,7 +45,7 @@ latest prompt need not repeat those for them to bind.
    abstraction, public extension point or config knob, verification system),
    or a strict challenge requested → dispatch `references/yagni-challenger.md`
    read-only and wait. `revise` or `decision` → blocked as written.
-   `inconclusive` → not clearance. Local, easily reversed choices stay inline.
+   `inconclusive` → not clearance.
 
 ## Step 2: Before calling it ready
 
