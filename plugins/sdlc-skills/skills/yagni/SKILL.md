@@ -5,77 +5,80 @@ description: "Use when code, files, flags, or dependencies are being removed as 
 
 # YAGNI — build only what's needed, and make it work
 
-YAGNI minimizes **scope**, never correctness or effort. A smaller solution that
-does not solve the accepted task is unfinished. Under pressure, aim the
-minimum-diff reflex at unnecessary surface, not at completion.
+Cut scope, never correctness. "Needed" means: satisfies the accepted task and
+every commitment it inherits — preserved behavior, durable data, public
+compatibility, supported environments, security, privacy, accessibility,
+observability, recovery, rollback, accepted assurance gates — and runs. The
+latest prompt need not repeat those for them to bind.
 
-## The one definition everything hangs on
+## When to use
 
-**"Needed" = satisfies the accepted task and every commitment it inherits, and
-runs.** Inherited commitments include preserved behavior and durable data,
-public compatibility and supported environments, security/privacy/accessibility,
-operational observability and recovery, rollback, and accepted assurance gates.
-Latest prompt need not repeat them.
+- Before the first edit of any behavior-affecting task, alongside
+  `test-driven-development`, and again before calling the work ready.
+- **Skip** a throwaway spike answering one question, and non-behavioral config
+  or content: nothing there has task behavior to scope.
 
-Cutting speculative scope is YAGNI. Cutting a requested or inherited guarantee
-is under-delivery wearing YAGNI as a costume. Code size breaks ties only between
-equal guarantees and lifecycle risk.
+## Before the first edit
 
-## Completion gate
+1. **Write the completion checklist** from the accepted task, the commitments
+   above, and the project's `coding-standards` exemplar — or, without one, the
+   nearest file already in the codebase that does the same kind of thing.
+   List names, structure, idioms, and where a non-obvious why is explained.
 
-Before the first edit, derive a checklist of what done will require — from the
-accepted contracts, and from the project's current `coding-standards` exemplar or,
-where there is none, the nearest analogue already in the codebase.
+2. **Trace the real flow before choosing where to change it.** Find the owner
+   of the behavior, not the first path that shows the symptom; fix that owner
+   once rather than one named path while its siblings stay broken. Unknown
+   cause: invoke `debugging` first.
 
-Before calling the work ready, read the lines you changed against that checklist:
-its names, its structure, its idioms, and where it explains a non-obvious why. A
-green test run does not waive a convention you can see in the file. Apply the
-standard only inside your own scope — where a neighbour has already drifted,
-report it rather than silently migrating it. `references/yagni-in-depth.md` holds
-the full craft checklist, the ladder worked through in depth, examples, and the
-carve-outs.
+3. **Walk the ladder for each piece of the change, and stop at the first rung
+   that holds:**
 
-Some choices are too enduring to make alone. Before committing to a material
-lasting surface — a new dependency, a service or process, a generalized
-abstraction, a public extension point or configuration knob, a verification
-system — or whenever a strict challenge is explicitly requested, dispatch
-`references/yagni-challenger.md` read-only. Local, easily reversed choices stay
-inline.
+   1. Speculative need → skip it and say so.
+   2. Something already in the codebase fits, with the same semantics, owner,
+      dependency, and support lifecycle → reuse it.
+   3. Standard library → use it.
+   4. A native feature or constraint → prefer it over owned machinery.
+   5. An installed dependency → use it; add none for a few lines.
+   6. One line → one line.
+   7. Only then, the minimum code that fully works.
 
-A `revise` or `decision` verdict blocks the proposal as it stands, and
-`inconclusive` is not clearance. No verdict it returns narrows the accepted scope
-or grants authority you did not already have.
+   Read `references/yagni-in-depth.md` when a rung is arguable: it works the
+   ladder through examples and lists the carve-outs.
 
-## Make the correct path the lazy path
+   Add no abstraction for hypothetical variation. One real volatile or
+   external boundary may earn a seam when it contains measured impedance, a
+   failure policy, or test isolation; implementation count alone decides
+   nothing.
 
-A stub is deferred work plus a bug and future re-reading. The cheapest path is
-the smallest complete solution now.
+4. **Before committing to a lasting surface** — a new dependency, a service or
+   process, a generalized abstraction, a public extension point or config
+   knob, a verification system — or when a strict challenge is requested,
+   dispatch `references/yagni-challenger.md` read-only and wait for its
+   verdict. `revise` or `decision` blocks the proposal as written;
+   `inconclusive` is not clearance. No verdict narrows the accepted scope or
+   grants authority you did not already have. Local, easily reversed choices
+   stay inline.
 
-## The ladder — stop at the first rung that holds
+## Before calling it ready
 
-1. **Needed at all?** Speculative need → skip it and say so.
-2. **Already a real fit?** Reuse only with semantic, owner, dependency, and
-   support/security-lifecycle equivalence.
-3. **Standard library?** Use it.
-4. **Native feature?** Prefer built-ins and constraints over owned machinery.
-5. **Installed dependency?** Use it; do not add one for a few lines.
-6. **One line?** One line.
-7. **Only then:** minimum code that fully works.
+1. **Read every line you changed against the checklist from step 1.** A green
+   test does not waive a convention you can see in the file. Apply the
+   standard inside your own scope only: where a neighbour has already drifted,
+   report it rather than migrating it silently.
 
-No abstraction for hypothetical variation. One real volatile/external boundary
-may justify a seam when it contains measured impedance, failure policy, or test
-isolation; implementation count alone neither requires nor forbids it.
+2. **Sort every candidate cut into one of two lists, and cut only from the
+   first.** *Minimal:* removes abstractions, files, dependencies, or lines
+   while every guarantee holds. *Unfinished:* removes behavior or an inherited
+   commitment, or leaves a stub, a TODO, an unhandled path, untested logic, or
+   unreadable code.
 
-## The ladder runs AFTER comprehension, never instead of it
+3. **Delete only what you have proved unused** — no static, runtime,
+   reflection, config, generated, or external consumer, or a completed
+   deprecation. An unknown stays, or goes to migration or refactor ownership.
 
-Trace the real flow before minimising. The smallest change in the wrong place is
-a second bug. Fix the root-cause owner once, not one named path while siblings
-stay broken; pair with `debugging` when cause is unknown.
-
-## Minimal ≠ unreadable — craft is not scope
-
-Minimise how much, never how well: use domain names, explain non-obvious why,
-and prefer simple over clever.
+4. **REQUIRED — invoke `verifying-completion`.** Real checks pass, implied
+   inputs work, and no required path has a stub or placeholder before the
+   claim leaves this skill.
 
 ## When you're tempted to call it done
 
@@ -110,15 +113,3 @@ and prefer simple over clever.
   external consumer absence or completed deprecation; unknowns stay or route to
   migration/refactor ownership.
 
-## Final cut audit
-
-**Minimal** removes abstractions, files, dependencies, or lines while preserving
-all guarantees. **Unfinished** removes behavior or inherited commitments, or
-leaves stubs, unhandled paths, untested logic, or unreadable code. Cut only from
-the first list.
-
-## The one exception
-
-A throwaway spike answering a single question, or non-behavioral config/content,
-has no task behavior to scope; minimise freely. Everything that affects behavior
-gets the full discipline.
