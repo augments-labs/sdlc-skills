@@ -2,6 +2,13 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [7.0.1] — 2026-09-10
+
+### Changed
+
+- **Every skill body is steps the agent performs.** Each body is `Step` sections of one-line acts, with every handoff a `REQUIRED SUB-SKILL` step at the point the flow reaches it and each question to the user in a fenced block. Rationalization tables, hard stops, and red-flag lists are unchanged.
+- **Descriptions are triggers only.** The rule sentences and procedure summaries are cut from every description; the situation, the phrases it fires on, and the skips stay. The longest description drops from 572 to 460 characters.
+
 ## [7.0.0] — 2026-09-09
 
 ### Changed
