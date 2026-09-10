@@ -18,67 +18,50 @@ latest prompt need not repeat those for them to bind.
 - **Skip** a throwaway spike answering one question, and non-behavioral config
   or content: nothing there has task behavior to scope.
 
-## Before the first edit
+## Step 1: Before the first edit
 
-1. **Write the completion checklist** from the accepted task, the commitments
-   above, and the project's `coding-standards` exemplar — or, without one, the
-   nearest file already in the codebase that does the same kind of thing.
-   List names, structure, idioms, and where a non-obvious why is explained.
-
-2. **Trace the real flow before choosing where to change it.** Find the owner
-   of the behavior, not the first path that shows the symptom; fix that owner
-   once rather than one named path while its siblings stay broken. Unknown
-   cause: invoke `debugging` first.
-
-3. **Walk the ladder for each piece of the change, and stop at the first rung
-   that holds:**
-
+1. Write the completion checklist from the accepted task, the commitments
+   above, and the project's `coding-standards` exemplar. No exemplar → the
+   nearest file in the codebase that does the same kind of thing. List names,
+   structure, idioms, where a non-obvious why is explained.
+2. Trace the real flow. Change the owner of the behavior, not the first path
+   that shows the symptom. Unknown cause → invoke `debugging` first.
+3. For each piece of the change, walk the ladder and stop at the first rung
+   that holds:
    1. Speculative need → skip it and say so.
-   2. Something already in the codebase fits, with the same semantics, owner,
-      dependency, and support lifecycle → reuse it.
+   2. Something in the codebase fits, same semantics, owner, dependency,
+      lifecycle → reuse it.
    3. Standard library → use it.
-   4. A native feature or constraint → prefer it over owned machinery.
-   5. An installed dependency → use it; add none for a few lines.
+   4. A native feature or constraint → use it over owned machinery.
+   5. An installed dependency → use it. Add none for a few lines.
    6. One line → one line.
    7. Only then, the minimum code that fully works.
 
-   Read `references/yagni-in-depth.md` when a rung is arguable: it works the
-   ladder through examples and lists the carve-outs.
+   Arguable rung → read `references/yagni-in-depth.md`.
+4. Add no abstraction for hypothetical variation. One real volatile or
+   external boundary earns a seam only for measured impedance, a failure
+   policy, or test isolation.
+5. Lasting surface (new dependency, service or process, generalized
+   abstraction, public extension point or config knob, verification system),
+   or a strict challenge requested → dispatch `references/yagni-challenger.md`
+   read-only and wait. `revise` or `decision` → blocked as written.
+   `inconclusive` → not clearance. Local, easily reversed choices stay inline.
 
-   Add no abstraction for hypothetical variation. One real volatile or
-   external boundary may earn a seam when it contains measured impedance, a
-   failure policy, or test isolation; implementation count alone decides
-   nothing.
+## Step 2: Before calling it ready
 
-4. **Before committing to a lasting surface** — a new dependency, a service or
-   process, a generalized abstraction, a public extension point or config
-   knob, a verification system — or when a strict challenge is requested,
-   dispatch `references/yagni-challenger.md` read-only and wait for its
-   verdict. `revise` or `decision` blocks the proposal as written;
-   `inconclusive` is not clearance. No verdict narrows the accepted scope or
-   grants authority you did not already have. Local, easily reversed choices
-   stay inline.
-
-## Before calling it ready
-
-1. **Read every line you changed against the checklist from step 1.** A green
-   test does not waive a convention you can see in the file. Apply the
-   standard inside your own scope only: where a neighbour has already drifted,
-   report it rather than migrating it silently.
-
-2. **Sort every candidate cut into one of two lists, and cut only from the
-   first.** *Minimal:* removes abstractions, files, dependencies, or lines
-   while every guarantee holds. *Unfinished:* removes behavior or an inherited
-   commitment, or leaves a stub, a TODO, an unhandled path, untested logic, or
-   unreadable code.
-
-3. **Delete only what you have proved unused** — no static, runtime,
-   reflection, config, generated, or external consumer, or a completed
-   deprecation. An unknown stays, or goes to migration or refactor ownership.
-
-4. **REQUIRED — invoke `verifying-completion`.** Real checks pass, implied
-   inputs work, and no required path has a stub or placeholder before the
-   claim leaves this skill.
+1. Read every changed line against the Step 1 checklist. A green test waives
+   no convention visible in the file. A neighbour already drifted → report it;
+   do not migrate it.
+2. Sort every candidate cut into two lists. Cut only from the first.
+   - *Minimal:* removes abstractions, files, dependencies, or lines while
+     every guarantee holds.
+   - *Unfinished:* removes behavior or an inherited commitment, or leaves a
+     stub, TODO, unhandled path, untested logic, unreadable code.
+3. Delete only what you proved unused: no static, runtime, reflection, config,
+   generated, or external consumer, or a completed deprecation. Unknown →
+   stays, or goes to migration or refactor ownership.
+4. **REQUIRED SUB-SKILL:** invoke `verifying-completion` before the claim
+   leaves this skill.
 
 ## When you're tempted to call it done
 
