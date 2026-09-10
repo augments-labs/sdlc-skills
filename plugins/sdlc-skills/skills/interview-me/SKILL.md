@@ -27,10 +27,10 @@ skill that owns eliciting the still-open inputs.
   build. Fix it and continue to completion. Stopping to report a fixable
   obstacle and wait for instructions spends the user's turn on work that
   was already yours.
-- **Skipping never licenses a silent decision.** State a reversible, low-impact
-  assumption and its reason so the user can redirect. Material product, scope,
-  architecture, execution, destructive, or external-state choices stay pending
-  until the user decides them directly.
+- **Skipping never licenses a silent decision.** State an assumption that
+  falls in none of the categories that follow, with its reason, so the user can
+  redirect. Product, scope, architecture, execution, destructive, or
+  external-state choices stay pending until the user decides them directly.
 
 ## Step 1: Scan before you ask
 
@@ -52,13 +52,13 @@ skill that owns eliciting the still-open inputs.
    3. Something else
    ```
 
-2. Wait for a direct answer before the next material question. See *What
+2. Wait for a direct answer before the next question. See *What
    closes a decision*.
 3. Use each answer to prune later questions. Aim for 3–6 total. More → say
    why first.
 4. Stop when another question would not change the outcome and every live
-   material decision has a direct answer. A general "go" answers no unnamed
-   choice.
+   decision in a category named under *When to use* has a direct answer. A
+   general "go" answers no unnamed choice.
 
 ## Step 3: Write the brief and present it
 
@@ -95,8 +95,9 @@ decision is still pending, and re-ask.
 
 Only an explicit answer, named option, or standing default the user granted for
 this decision class closes it. Approval covers only the visible version and named
-next step; a material revision reopens it. Changes requested, rejection,
-cancellation, or abandonment closes that exact decision without approval.
+next step; a revision to any decision, non-goal, or named next step reopens
+it. Changes requested, rejection, cancellation, or abandonment closes that
+exact decision without approval.
 Supersession requires an approved replacement.
 
 ## When an artifact carries the pending decision
