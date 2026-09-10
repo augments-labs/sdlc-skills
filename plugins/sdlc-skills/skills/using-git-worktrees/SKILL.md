@@ -80,8 +80,7 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
 2. Pick the mechanism, first that applies: user instruction → project
    guidance → harness-native worktree command or session flag (use the name
    above, confirm HEAD is the proven base, skip to Step 4) → a worktree you
-   create below. Never `git switch -c` or `git checkout -b` in a shared
-   checkout.
+   create below.
 3. Choose the directory and prove it is ignored. User-given path wins.
 
    ```bash
@@ -130,14 +129,13 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
 | --- | --- |
 | "I'll just inspect first" | For edit requests, branch/status is the first inspection. |
 | "It's only a small change" | Small changes still land on the wrong branch. Create the branch first. |
-| "git switch -c is lighter than a worktree" | Switching rewires the shared checkout — anyone else working in it is blocked until you switch back. A worktree is the default; switch in place only in a checkout dedicated to this task. |
 | "The harness made a detached checkout, so I'll add my own worktree" | First determine whether the host already owns isolation and cleanup. |
 | "I'll make the branch after the first edit" | After the edit, you may already have mixed unrelated state. |
 | "It looks like a plain checkout" | Looking is not detecting. `git-dir` against `common-dir`, plus the superproject check, is the inspection. |
 | "The harness has a worktree tool, but plain git is simpler" | The native tool owns the path, the ignore rule, and cleanup. A hand-made worktree beside it is a second thing to clean up. |
 | "`.worktrees` is surely ignored" | Surely is not `git check-ignore`. An unignored worktree appears in every status, grep, and commit from then on. |
 | "I'll add `.worktrees/` to `.gitignore` and commit it here" | That is an edit on the shared branch. Exclude it locally, then commit the ignore rule on the task branch. |
-| "`worktree add` failed in the sandbox, so I'll switch in place" | Failing to isolate grants nothing. Report it; the user decides what the current checkout may carry. |
+| "`worktree add` failed in the sandbox, so I'll work in place" | Failing to isolate grants nothing. Report it; the user decides what the current checkout may carry. |
 
 ## Step 5: Checkpoint while you work
 
