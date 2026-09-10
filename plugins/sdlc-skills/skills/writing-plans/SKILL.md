@@ -81,7 +81,8 @@ not the code.
    conformance evaluator.
 6. Confirm independent tasks have disjoint files, data, effects, evaluators,
    and external state; every overlap has a dependency and one owner.
-7. High-risk plan → run `references/plan-review.md`; resolve every blocker.
+7. Classified high-risk by `migration-strategy`'s four questions, or marked
+   so by the user → run `references/plan-review.md`; resolve every blocker.
 
 ## Step 4: Present, then stop
 

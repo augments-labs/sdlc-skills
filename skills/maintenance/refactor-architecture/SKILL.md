@@ -14,11 +14,12 @@ Improve the structure of code that already exists. The goal is **deep modules** 
 
 ## Step 1: Classify and measure
 
-1. Classify: bounded, reviewable structural refactor → stay here. High risk
-   by preservation breadth or failure surfaces → wait for an approved,
-   current migration and assurance contract and passed entry gates. An
-   authorized prerequisite consumes only its exact proposed contract; it
-   cannot edit the target, approve the contract, or satisfy entry.
+1. Classify with `migration-strategy`'s four questions and record the
+   answers. All four on the ordinary route → stay here. Any not → wait for
+   an approved, current migration and assurance contract and passed entry
+   gates. An authorized prerequisite consumes only its exact proposed
+   contract; it cannot edit the target, approve the contract, or satisfy
+   entry.
 2. Pin the exact source revision, the contracts it must honour, the external
    inputs it consumes.
 3. Inventory the surface and the friction with stable IDs. Trace callers,

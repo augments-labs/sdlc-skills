@@ -84,3 +84,11 @@ Bare "identity" is correct only when every sense applies at once.
   the run that produced it did not reach a clean terminal state.
 - **Late result** — output arriving from a superseded attempt after its successor
   exists. Always rejected; it describes a state nothing is bound to any more.
+
+## Risk
+
+- **High-risk** — a change for which any of `migration-strategy`'s four
+  classification answers (reviewability, preservation, breadth, failure
+  surfaces) leaves the ordinary route, or that the user or project marks so.
+  Never a feeling about size: the answers are recorded, and "pending
+  classification" is high-risk until resolved.

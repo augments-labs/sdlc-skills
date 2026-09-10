@@ -56,7 +56,8 @@ Open `assets/spec-template.md` now. Each step fills its section.
 
 1. Write the immutable spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md`
    or the user-set path.
-2. High-stakes spec → run `references/spec-review.md` with a reviewer who is
+2. Classified high-risk by `migration-strategy`'s four questions, or marked
+   so by the user → run `references/spec-review.md` with a reviewer who is
    not the sole author. Blocking.
 3. Present and end the turn:
 
