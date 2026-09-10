@@ -36,7 +36,9 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 ## Step 2: Choose depth and roles
 
 1. Write the depth into the descriptor:
-   - **Shallow:** self-review, trivial mechanical change only.
+   - **Shallow:** self-review. Only when the user, project policy, or the
+     plan's task row assigns it in writing. Never chosen here: the size of
+     the diff grants nothing.
    - **Standard:** one independent breadth reviewer plus relevant specialists.
    - **Deep:** breadth, specialists, `security-audits`, and an independent
      adversarial pass.
@@ -65,7 +67,8 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 ## Step 3: Dispatch and receive
 
-1. Shallow → run the self-review below; dispatch nothing.
+1. Shallow, with its written assignment recorded in the descriptor → run the
+   self-review below; dispatch nothing. No assignment → Standard.
 2. Otherwise read `references/code-reviewer.md`, attach the raw evidence from
    Step 1, and send it through the harness's dispatch action.
 3. Dispatched = the action returned a non-empty ID. Empty, refused, or
@@ -89,16 +92,16 @@ wait on one, until the dispatch action has returned a non-empty receipt.
     `executing-plans`. Run no push, PR, merge, keep, or discard here. The
     verdict is not the user's integration choice.
 
-## Self-review for trivial diffs
+## Self-review, assigned depth only
 
 - Write `self-reviewed: ready` or `self-reviewed: not ready` against the exact
   candidate digest, after reading the complete change and confirming it does
   only what was requested.
 - Account for untracked and generated files, and every affected caller.
 - Run a real structural gate against that exact candidate.
-- On `not ready`, do not hand off. Either the change was not trivial — go back
-  to step 3 and raise the depth — or there is a defect: fix it, then restart
-  at step 1.
+- On `not ready`, do not hand off. Either the assignment did not fit the
+  change — report that to whoever assigned it and raise the depth to Standard
+  — or there is a defect: fix it, then restart at step 1.
 
 ## Common mistakes
 
