@@ -1,13 +1,13 @@
 ---
 name: using-git-worktrees
-description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when the current checkout is already dedicated to this task."
+description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when detection shows you are already inside a linked worktree."
 ---
 
 <EXTREMELY-IMPORTANT>
-NEVER START REPO EDITS ON `main`/`master`, `dev`/`develop`, A RELEASE BRANCH, OR
-AN UNRELATED TASK BRANCH. Create or enter a dedicated workspace — a git
-worktree unless the user or project says otherwise — *before* the first edit,
-unless the user explicitly okayed the current checkout.
+NEVER START REPO EDITS IN A SHARED CHECKOUT — one where Step 1 reports
+`git-dir` equal to `common-dir` — WHATEVER BRANCH IT IS ON. Create or enter a
+dedicated workspace — a git worktree unless the user or project says otherwise —
+*before* the first edit, unless the user explicitly okayed the current checkout.
 </EXTREMELY-IMPORTANT>
 
 # Using Git Worktrees
@@ -19,7 +19,7 @@ down what you found there before you change anything.
 
 - You are about to edit files, implement a feature/fix/refactor, execute a plan, or dispatch agents.
 - Runtime or review isolation matters: parallel agents, risky changes, separate ports, databases, fixtures, or long-running app state.
-- **Skip** for read-only investigation, when the user explicitly says to stay in the current checkout, or when the current branch/workspace is already dedicated to this task with known ownership, base, and baseline.
+- **Skip** for read-only investigation, when the user explicitly says to stay in the current checkout, or when Step 1 reports a linked worktree (not a submodule) that this task or the harness's worktree tool created.
 
 ## Step 1: Detect what you are in
 
