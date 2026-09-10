@@ -12,6 +12,9 @@ descriptor and new invocation. This template is never copied into that workspace
   fields excluding this identity slot; any field change creates a successor}}`
 - **Mode:** `working tree with uncommitted candidate content | clean immutable
   checkpoint range | integrated result`
+- **Depth:** `shallow | standard | deep | high-risk transformation`
+  `{{for shallow: the assigning instruction, policy line, or plan task row,
+  quoted with its source; absent → standard}}`
 - **Intended base:** `{{immutable revision and freshness}}`
 - **Result identity:** `{{full HEAD/checkpoint/integrated revision, or full
   working-tree digest; never a shortened display prefix}}`

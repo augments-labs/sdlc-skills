@@ -100,8 +100,8 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 - Account for untracked and generated files, and every affected caller.
 - Run a real structural gate against that exact candidate.
 - On `not ready`, do not hand off. Either the assignment did not fit the
-  change — report that to whoever assigned it and raise the depth to Standard
-  — or there is a defect: fix it, then restart at step 1.
+  change — report that to the user, raise the depth to Standard, and restart
+  at Step 2 — or there is a defect: fix it, then restart at Step 1.
 
 ## Common mistakes
 
