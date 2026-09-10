@@ -22,87 +22,72 @@ wait on one, until the dispatch action has returned a non-empty receipt.
   it owns the role separation, and one review of an aggregate diff nobody can
   read does not satisfy it.
 
-## Procedure
+## Step 1: Verify and freeze
 
-1. **REQUIRED — invoke `verifying-completion`** and run the gates it requires
-   for this transition. Record the state identity, the raw output, and every
-   failure it returned. Review challenges that evidence; it never replaces it.
+1. **REQUIRED SUB-SKILL:** invoke `verifying-completion`. Run the gates it
+   requires for this transition. Keep the state identity, raw output, and
+   every failure. Review challenges that evidence; it never replaces it.
+2. Stop anything still writing to the candidate.
+3. Open `assets/review-candidate.md`. Fill every field: mode, identities,
+   complete inventory, artifact controls, terminal contract.
+4. Compare its result identity with the one from step 1. Different → back to
+   step 1.
 
-2. **Freeze the candidate.** Stop anything still writing to it. Then open
-   `assets/review-candidate.md` and fill every field: mode, identities, the
-   complete inventory, artifact controls, and the terminal contract. Compare
-   the result identity it produces with the one step 1 recorded; if they
-   differ, go back to step 1.
+## Step 2: Choose depth and roles
 
-3. **Write the depth and the roles into the descriptor.** Give every role a
-   stable ID, including each one you omit, and for an omission write the
-   evidence, the owner, the expiry, what compensates meanwhile, and who
-   approved it.
-
-   - **Shallow:** self-review, for a trivial mechanical change.
-   - **Standard:** one independent breadth reviewer, plus the relevant specialists.
-   - **Deep:** breadth, the relevant specialists and a security audit, and an
-     independent adversarial pass.
-   - **High-risk transformation:** read `references/high-risk-review.md` before
-     assigning anyone.
-
-   Before assigning a reviewer, apply the **Model selection** section of
-   `dispatching-parallel-agents` to that role's scope, uncertainty, and the
-   cost of a missed defect. Depth sets coverage and independence; it does not
-   demand the largest tier for every role.
-
-4. **Dispatch through a callable action.** Shallow: run the self-review below
-   and dispatch nothing. Otherwise read `references/code-reviewer.md`, attach
-   the raw evidence from step 1, and send it through the harness's dispatch
-   action.
-
-   Treat the review as dispatched only when the action returns a non-empty
-   ID. If it returns empty, refuses, or is unavailable, write the review as
-   pending and stop: do not review it yourself instead, and do not poll an
-   empty target. Poll the exact IDs to the descriptor's deadline; success is
-   exactly one current report.
-
-5. **Add the specialist passes the candidate's content requires.** Open each
-   file below when its condition holds, and add that role to step 3:
-
-   - `references/silent-failures-reviewer.md` — the candidate catches, retries,
-     falls back, or supplies a default that could swallow a failure
-   - `references/type-design-reviewer.md` — it introduces or changes a type,
-     interface, schema, or other shape callers bind to
-   - `references/test-coverage-reviewer.md` — it changes behavior that tests
-     are supposed to pin, or moves behavior between covered and uncovered code
-   - `references/comment-accuracy-reviewer.md` — it adds or edits comments,
-     docstrings, or prose that claims something about the code
+1. Write the depth into the descriptor:
+   - **Shallow:** self-review, trivial mechanical change only.
+   - **Standard:** one independent breadth reviewer plus relevant specialists.
+   - **Deep:** breadth, specialists, `security-audits`, and an independent
+     adversarial pass.
+   - **High-risk transformation:** read `references/high-risk-review.md`
+     before assigning anyone.
+2. Give every role a stable ID, including each one omitted. An omission
+   records evidence, owner, expiry, compensation, and approver.
+3. Add the specialist role whose condition holds; open its brief:
+   - `references/silent-failures-reviewer.md` — catches, retries, fallbacks,
+     or defaults that could swallow a failure
+   - `references/type-design-reviewer.md` — a new or changed type, interface,
+     schema, or shape callers bind to
+   - `references/test-coverage-reviewer.md` — behavior tests should pin, or
+     behavior moved between covered and uncovered code
+   - `references/comment-accuracy-reviewer.md` — comments, docstrings, or
+     prose that claims something about the code
    - `references/equivalence-reviewer.md` — high-risk equivalence
-   - `references/yagni-reviewer.md` — it adds or expands enduring owned
-     surface, or a simplification review was requested
+   - `references/yagni-reviewer.md` — new or expanded enduring surface, or a
+     requested simplification review
+4. Trust boundary changed → invoke `security-audits`. Audit of existing code →
+   `complexity-audit`. Challenge to the assurance strategy →
+   `verification-strategy`. A generic review never substitutes.
+5. Pick each reviewer's tier with the **Model selection** section of
+   `dispatching-parallel-agents`. Depth sets coverage and independence, not
+   the largest tier for every role.
 
-   A change to a trust boundary: invoke `security-audits`. Send an audit of
-   existing code to `complexity-audit` and a challenge to the assurance
-   strategy to `verification-strategy`; a generic review never substitutes for
-   a specialist's verdict.
+## Step 3: Dispatch and receive
 
-6. **Check the report covers the whole inventory,** including every
-   human-authored change in it. Where the report followed callers, contracts,
-   history, tests, or failures outward, confirm the evidence required it;
-   reject a report that wandered the repository.
-
-7. **Block on anything unreconciled.** A missing role, an open finding, an
-   inconclusive result, a non-success, or a conditional "ready" each block the
-   candidate. Write the verdict and the receipt with the full candidate and
-   context identities.
-
-8. **REQUIRED — invoke `receiving-code-review`** with every report before you
-   respond to it, disposition it, or conclude anything from it, including a
-   `not ready` that asks for no edit. After any fix, or any change to a bound
-   input, restart at step 1: a re-review is a fresh invocation with its own
-   identities and receipt, never an ad hoc dispatch.
-
-9. **REQUIRED — hand a `ready` verdict on, not an action.** At an integration
-   boundary invoke `finishing-a-branch`, which decides push, PR, merge, keep,
-   or discard; for a task inside a plan return to `executing-plans`. Run none
-   of those actions here, and do not treat the verdict as the user's
-   integration choice.
+1. Shallow → run the self-review below; dispatch nothing.
+2. Otherwise read `references/code-reviewer.md`, attach the raw evidence from
+   Step 1, and send it through the harness's dispatch action.
+3. Dispatched = the action returned a non-empty ID. Empty, refused, or
+   unavailable → write the review as pending and stop. Do not review it
+   yourself. Do not poll an empty target.
+4. Poll the exact IDs to the descriptor's deadline. Success = exactly one
+   current report.
+5. Check the report covers the whole inventory, including every
+   human-authored change. Reject a report that wandered the repository beyond
+   what the evidence required.
+6. Block on anything unreconciled: a missing role, an open finding, an
+   inconclusive result, a non-success, a conditional "ready".
+7. Write the verdict and receipt with the full candidate and context
+   identities.
+8. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
+   before responding to it, including a `not ready` that asks for no edit.
+9. After any fix or bound-input change → restart at Step 1. A re-review is a
+   fresh invocation with its own identities and receipt.
+10. **REQUIRED — hand a `ready` verdict on, not an action.** Integration
+    boundary → invoke `finishing-a-branch`. Task inside a plan → return to
+    `executing-plans`. Run no push, PR, merge, keep, or discard here. The
+    verdict is not the user's integration choice.
 
 ## Self-review for trivial diffs
 
