@@ -36,7 +36,7 @@ Open `assets/data-model-section.md` now. Each step fills its section.
    update boundary, drift repair. Existing-model change on the ordinary
    route by `migration-strategy`'s four questions (reviewability,
    preservation, breadth, failure surfaces) → define migration,
-   mixed-version, rollback. Classified high-risk → record domain
+   mixed-version, rollback. Any answer off the ordinary route → record domain
    constraints; `migration-strategy` owns the contract.
 3. Trace representative reads, writes, transitions, concurrent operations,
    deletion, existing-data migration. Record the runnable query and result

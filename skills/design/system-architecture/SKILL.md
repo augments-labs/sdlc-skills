@@ -54,10 +54,10 @@ Open `assets/architecture-section.md` now. Each step fills its section.
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it. Fill the header: identity,
    predecessor, approval rule, ledger location, stable ID delta.
-2. Classified high-risk on any of `migration-strategy`'s four questions
-   (reviewability, preservation, breadth, failure surfaces), or marked so
-   by the user → run `references/design-review.md` before presenting.
-   Blocking.
+2. Answer `migration-strategy`'s four questions (reviewability,
+   preservation, breadth, failure surfaces) and record the answers. Any off
+   the ordinary route, or the user marks the work high-risk → run
+   `references/design-review.md` before presenting. Blocking.
 3. Present and end the turn:
 
    ```text
@@ -90,6 +90,3 @@ Open `assets/architecture-section.md` now. Each step fills its section.
   risks on those surfaces.
 - Designing for hypothetical futures with no measured boundary pressure.
 - Generic vocabulary that hides the domain.
-
-For a high-risk design, use `references/design-review.md` before anyone plans
-against it.

@@ -16,11 +16,10 @@ Improve the structure of code that already exists. The goal is **deep modules** 
 
 1. Classify with `migration-strategy`'s four questions (reviewability,
    preservation, breadth, failure surfaces) and record the answers. All
-   four on the ordinary route → stay here. Any not → wait for
-   an approved, current migration and assurance contract and passed entry
-   gates. An authorized prerequisite consumes only its exact proposed
-   contract; it cannot edit the target, approve the contract, or satisfy
-   entry.
+   four on the ordinary route → stay here. Any not → wait for an approved,
+   current migration and assurance contract and passed entry gates. An
+   authorized prerequisite consumes only its exact proposed contract; it
+   cannot edit the target, approve the contract, or satisfy entry.
 2. Pin the exact source revision, the contracts it must honour, the external
    inputs it consumes.
 3. Inventory the surface and the friction with stable IDs. Trace callers,

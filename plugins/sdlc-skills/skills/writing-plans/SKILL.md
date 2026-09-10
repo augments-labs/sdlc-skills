@@ -16,7 +16,10 @@ not the code.
 - **Skip** for single-step or trivial changes — planning them costs more than doing them.
 - Intent still ambiguous: invoke `interview-me` first. Verifiable behavior
   still missing: invoke `spec-it` first. A precise task needs neither.
-- For a high-risk target, read the approved migration and assurance contracts
+- High-risk means any of `migration-strategy`'s four classification answers
+  (reviewability, preservation, breadth, failure surfaces) is off the
+  ordinary route, or the user marks the work so; record the answers. For a
+  high-risk target, read the approved migration and assurance contracts
   before writing a task. If they are missing, plan only the gate that is
   missing, consuming the exact proposed contract, and put no target work in
   the plan; record unsettled facts as evidence, never as accepted deviations.
@@ -81,9 +84,8 @@ not the code.
    conformance evaluator.
 6. Confirm independent tasks have disjoint files, data, effects, evaluators,
    and external state; every overlap has a dependency and one owner.
-7. Classified high-risk on any of `migration-strategy`'s four questions
-   (reviewability, preservation, breadth, failure surfaces), or marked so
-   by the user → run `references/plan-review.md`; resolve every blocker.
+7. High-risk by the recorded answers → run `references/plan-review.md`;
+   resolve every blocker.
 
 ## Step 4: Present, then stop
 
