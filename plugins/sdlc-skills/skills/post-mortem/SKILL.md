@@ -18,64 +18,69 @@ controls, never on reflection.
   immediate containment are known; if the cause is still unknown, invoke
   `debugging` first.
 
-## Procedure
+## Step 1: Control the record
 
-1. **Fill `Control and evidence handling` in `assets/post-mortem-template.md`
-   before writing any finding:** who may read the record, how long it
-   survives, redaction, and the expected reviewers and approver rules. Decide
-   this before the record concentrates logs, traces, and user data.
+1. Open `assets/post-mortem-template.md`. Fill `Control and evidence
+   handling` first: readers, lifetime, redaction, expected reviewers and
+   approver rules.
+2. Fill `Summary and impact` and `Timeline` from artifacts, not memory. Mark
+   every time `observed` or `estimated`.
 
-2. **Reconstruct `Summary and impact` and `Timeline` from artifacts, not
-   memory.** Mark every time as observed or estimated; never let an estimate
-   read as a measurement.
+## Step 2: Find the structural cause
 
-3. **Fill `Root cause and contributing conditions`:** paste the code-level
-   cause from `debugging`, then write each condition that made introduction or
-   impact more likely. Name conditions, never a person, and keep several real
-   conditions separate instead of collapsing them into one tidy cause.
+1. Fill `Root cause and contributing conditions`: paste the code-level cause
+   from `debugging`, then each condition that made introduction or impact
+   more likely. Name conditions, never a person. Keep several conditions
+   separate.
+2. Fill `Escape-path audit`: freeze the gate and surface inventory with its
+   source digest, then mark each entry `missing / too weak / skipped / stale /
+   failed but ignored / held`, with an accountable disposition per omission.
+3. Fill `Risk-reduction claim` per action: prevent, detect earlier, limit
+   blast radius, or recover faster, with baseline, target, horizon, residual
+   risk. Never claim recurrence is impossible.
 
-4. **Fill `Escape-path audit`.** Freeze the expected gate and surface
-   inventory with its source digest, then write for each entry
-   `missing / too weak / skipped / stale / failed but ignored / held`, and an
-   accountable disposition for every omission.
+## Step 3: Propose and get the actions accepted
 
-5. **Fill `Risk-reduction claim` for each action:** which it buys — prevent,
-   detect earlier, limit blast radius, or recover faster — with baseline,
-   target, horizon, and residual risk. Never claim recurrence is impossible.
+1. Write each corrective action as `proposed`, mapped to a structural cause,
+   every action-row field filled.
+2. Present and end the turn:
 
-6. **Write each corrective action as `proposed`,** mapped to a structural
-   cause, with every field the template's action rows require. Then present
-   the analysis path, impact, structural cause, escaped gate, and each action
-   with owner and date. Ask one conversational question offering: accept the
-   actions, request changes, reject the analysis, or cancel. Recommend the
-   answer the evidence and action ownership support, with one sentence of
-   reasoning, then stop.
+   ```text
+   Post-mortem {{identifier}}
+   Impact: {{one line}}  Structural cause: {{one line}}  Escaped gate: {{one line}}
+   Actions: {{each with owner and date}}
 
-   Move an action out of `proposed` only on a complete trusted receipt
-   accepting the exact scope and dates. Record rejection, cancellation, or
-   supersession with its residual risk and replacement.
+   1. Accept the actions
+   2. Request changes
+   3. Reject the analysis
+   4. Cancel
 
-7. **Falsify every corrective gate you implement.** Fill `Targeted
-   fail-then-pass proof` with raw evidence that the gate fails on the captured
-   incident or a representative bad case, passes on the good control, and
-   that the pre-fix version did *not* catch it.
+   Recommendation: {{the answer the evidence and ownership support}} — {{one sentence}}.
+   ```
 
-8. **Track each control to enforcement on an identity-bound receipt** from
-   the surface that will really enforce it — CI, runtime, review, release,
-   alerting, or recovery. Never infer success from a summary. **Invoke
-   `verification-strategy`** for any change to the battery itself; do not add
-   a duplicate gate nobody owns.
+3. Move an action out of `proposed` only on a complete trusted receipt for
+   the exact scope and dates. Record rejection, cancellation, or supersession
+   with its residual risk and replacement.
 
-9. **At the predeclared date, review effectiveness:** compare baseline
-   against target and check the gate actually ran. Write effective,
-   ineffective, or inconclusive; reopen the action on either of the last two
-   unless the exact approver rule accepts closure with residual risk.
+## Step 4: Prove and track the controls
 
-10. **Issue the immutable analysis alongside its `External lifecycle
-    ledger`,** writing to the user-set path, or the template's default, only
-    under current storage authority. Treat an in-repository record as a new
-    candidate. Never edit an issued analysis to record something that happened
-    later; append to the ledger.
+1. Falsify every corrective gate you implement. Fill `Targeted fail-then-pass
+   proof` with raw evidence: fails on the captured incident or a
+   representative bad case, passes on the good control, pre-fix version did
+   not catch it.
+2. Track each control to an identity-bound receipt from the surface that
+   enforces it: CI, runtime, review, release, alerting, recovery. Never infer
+   from a summary.
+3. **REQUIRED SUB-SKILL:** invoke `verification-strategy` for any change to
+   the battery itself. Add no duplicate gate nobody owns.
+4. At the predeclared date, compare baseline against target and check the
+   gate ran. Write `effective`, `ineffective`, or `inconclusive`. Reopen on
+   either of the last two unless the exact approver rule accepts closure with
+   residual risk.
+5. Issue the immutable analysis with its `External lifecycle ledger` to the
+   user-set path or the template default, under current storage authority.
+   In-repository record → a new candidate. Later events → append to the
+   ledger; never edit the issued analysis.
 
 ## Action states
 
