@@ -1,6 +1,6 @@
 ---
 name: finishing-a-branch
-description: "Use when implementation is complete, its required gates are green, and the work now needs an integration decision — push, open, update or merge a PR, integrate locally, keep, or discard — and whenever a user explicitly chooses to keep a branch or workspace, discard one, or close or reopen a PR. Fires on ship it, what do we do with this branch, and are we done here, even if nobody names a git operation. The integration path is the user's choice, never the agent's. Skip ordinary mid-development checkpoints."
+description: "Use when implementation is complete and its gates are green, and the work now needs an integration decision — push, open, update or merge a PR, integrate locally, keep, or discard — and whenever the user explicitly chooses to keep, discard, close, or reopen a branch, workspace, or PR. Fires on ship it, what do we do with this branch, and are we done here, even if nobody names a git operation. Skip mid-development checkpoints."
 ---
 
 # Finishing a Branch

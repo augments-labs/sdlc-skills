@@ -1,6 +1,6 @@
 ---
 name: migration-strategy
-description: "Use before planning or implementing a high-risk rewrite, migration, generated conversion, or wide behavior-preserving transformation — one whose output is impractical to review line by line, crosses ownership boundaries, or can fail at the platform, build, runtime, data, or cutover layer. Fires on port this to X, move us off Y, and regenerate this from Z, even if nobody says migration. Skip bounded changes, and skip target architecture, executable proof, test writing, and running the migration itself."
+description: "Use before planning or implementing a high-risk rewrite, migration, generated conversion, or wide behavior-preserving transformation — one whose output cannot be reviewed line by line, crosses ownership boundaries, or can fail at the platform, build, runtime, data, or cutover layer. Fires on port this to X, move us off Y, and regenerate this from Z, even if nobody says migration. Skip bounded changes."
 ---
 
 # Migration Strategy

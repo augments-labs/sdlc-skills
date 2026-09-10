@@ -1,6 +1,6 @@
 ---
 name: architecture-decisions
-description: "Use when a significant, hard-to-reverse technical choice is being weighed or has just been settled — a datastore, sync vs async, a framework, a public contract, an auth or security model — so it is recorded with its alternatives and consequences before anything is built on it. Fires on should we use X or Y, on a choice made in passing during discussion, and on a request to revisit an old one, even if nobody says ADR or decision record. Skip easily-reversible choices."
+description: "Use when a significant, hard-to-reverse technical choice is being weighed or has just been settled — a datastore, sync vs async, a framework, a public contract, an auth or security model. Fires on should we use X or Y, on a choice made in passing during discussion, and on a request to revisit an old one, even if nobody says ADR or decision record. Skip easily-reversible choices."
 ---
 
 # Architecture Decisions

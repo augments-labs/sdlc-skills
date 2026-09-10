@@ -1,6 +1,6 @@
 ---
 name: visual-ui-verification
-description: "Use before declaring any page, screen, view, or other UI-bearing candidate visually correct, done, or ready to ship. Also use when acceptance or release depends on how an integrated running GUI or TUI looks or responds across states, viewports, themes, or input paths. Fires on does this look right, is the UI done, and check the screen, even if nobody asks for a visual check. Skip isolated widget or snapshot assertions, nonvisual behavior, and open design decisions."
+description: "Use before declaring any page, screen, view, or other UI-bearing candidate visually correct, done, or ready to ship, and when acceptance or release depends on how a running GUI or TUI looks or responds across states, viewports, themes, or input paths. Fires on does this look right, is the UI done, and check the screen, even if nobody asks for a visual check. Skip isolated widget or snapshot assertions, nonvisual behavior, and open design decisions."
 ---
 
 # Visual UI Verification

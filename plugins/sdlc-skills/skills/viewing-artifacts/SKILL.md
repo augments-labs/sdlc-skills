@@ -1,6 +1,6 @@
 ---
 name: viewing-artifacts
-description: "Use when the state of an SDLC artifact trail needs to be seen at a glance instead of read file by file — progress across briefs, specs, designs, plans, and execution, what needs attention, and what drifted after a downstream artifact consumed it. Fires on show me the state of my specs and plans, where does my project stand, what needs attention, is my plan still in sync with the spec, and visualize the trail, even if nobody says artifact or viewer. Skip when a specific artifact must be read, written, or edited — viewing is read-only."
+description: "Use when the state of the artifact trail — briefs, specs, designs, plans, execution — needs to be seen at a glance instead of read file by file. Fires on show me the state of my specs and plans, where does my project stand, what needs attention, is my plan still in sync with the spec, and visualize the trail, even if nobody says artifact or viewer. Skip when one artifact must be read, written, or edited."
 ---
 
 # Viewing Artifacts

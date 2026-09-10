@@ -1,6 +1,6 @@
 ---
 name: containing-an-incident
-description: "Use this skill the moment a failure is reaching real users — an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data being corrupted or exposed, a customer-visible regression. Fires on it's down, customers are getting errors, something broke in production, and this started after the deploy, even when nobody says incident, outage, or severity. Skip when nothing is reaching users — a failing test, a bug caught in review, a defect nobody has hit. Skip once impact has stopped and the question is why the safeguards missed it; that is post-mortem."
+description: "Use the moment a failure is reaching real users — an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data corrupted or exposed, a customer-visible regression. Fires on it's down, customers are getting errors, something broke in production, and this started after the deploy, even if nobody says incident or outage. Skip a failing test, a bug caught in review, or a defect nobody has hit, and skip once impact has stopped."
 ---
 
 # Containing an Incident

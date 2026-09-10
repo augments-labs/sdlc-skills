@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: "Use when material intent has several plausible readings that no owning phase skill can safely settle, or when a pending material decision got neither an explicit answer nor an explicit cancellation — praise, constraints, silence, or a partial reply instead. Fires on a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Do not displace a skill merely because inputs its own procedure elicits are still open."
+description: "Use when material intent has several plausible readings that no owning phase skill can settle, or when a pending material decision got neither an explicit answer nor an explicit cancellation — praise, constraints, silence, or a partial reply instead. Fires on a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Skip inputs an owning skill's own procedure elicits."
 ---
 
 # Interview Me

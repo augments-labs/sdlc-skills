@@ -1,6 +1,6 @@
 ---
 name: refactor-architecture
-description: "Use when the structure of existing code is what makes change expensive, and that structure itself needs redesigning — tangled boundaries, logic sitting in the wrong layer, one small change touching many files. Fires on this codebase is a mess, everything imports everything, and every feature makes the next one slower, even if nobody says refactor or architecture. Skip designing a new system, quick local cleanups, and read-only audits that change nothing."
+description: "Use when the structure of existing code is what makes change expensive and that structure itself needs redesigning — tangled boundaries, logic in the wrong layer, one small change touching many files. Fires on this codebase is a mess, everything imports everything, and every feature makes the next one slower, even if nobody says refactor or architecture. Skip designing a new system, quick local cleanups, and read-only audits."
 ---
 
 # Refactor Architecture

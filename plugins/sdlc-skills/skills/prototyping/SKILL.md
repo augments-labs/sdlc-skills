@@ -1,6 +1,6 @@
 ---
 name: prototyping
-description: "Use when a design or feasibility question is genuinely uncertain and cheaper to answer by building a throwaway than by arguing about it — a tricky bit of logic, a layout choice, a library's real behaviour. Fires on let's just try it and see, spike this, and quick and dirty, I'll throw it away, even if nobody says prototype. Skip when you already know the answer."
+description: "Use when a design or feasibility question is genuinely uncertain and cheaper to answer by building a throwaway than by arguing about it — a tricky bit of logic, a layout choice, a library's real behaviour. Fires on let's just try it and see, spike this, and quick and dirty, I'll throw it away, even if nobody says prototype. Skip when the answer is already known."
 ---
 
 # Prototyping

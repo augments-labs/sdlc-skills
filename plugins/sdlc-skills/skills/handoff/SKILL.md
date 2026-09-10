@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Use when a session is ending or work is passing to a fresh session or another agent, so the next one resumes without re-deriving the goal, the state, the decisions, and the next step. Fires on I'm heading out, wrapping up for the day, context is getting full, and someone else is taking this over, even if nobody says handoff. Skip a finished, self-contained task that needs no continuation."
+description: "Use when a session is ending or work is passing to a fresh session or another agent. Fires on I'm heading out, wrapping up for the day, context is getting full, and someone else is taking this over, even if nobody says handoff. Skip a finished, self-contained task that needs no continuation."
 ---
 
 # Handoff

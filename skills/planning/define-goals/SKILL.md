@@ -1,6 +1,6 @@
 ---
 name: define-goals
-description: "Use at the start of a new project or initiative, before scoping or building, to pin down what it is for: the objective, the stakeholders, how success is measured, and the guardrails. Fires on we want to build X with no stated objective, even if nobody says goals. A vague or missing objective is the reason to use this, not a reason to go elsewhere first. Skip a single feature, and skip while a named decision or approval reply is still pending."
+description: "Use at the start of a new project or initiative, before scoping or building, to pin down what it is for: the objective, the stakeholders, how success is measured, and the guardrails. Fires on we want to build X with no stated objective, and on a vague or missing objective, even if nobody says goals. Skip a single feature, and skip while a decision or approval reply is pending."
 ---
 
 # Define Goals

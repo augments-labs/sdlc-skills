@@ -1,6 +1,6 @@
 ---
 name: spec-it
-description: "Use when settled intent for a goal or feature needs detailed requirements before design — what it must do, how each requirement is verified, and the assumptions and risks behind it. Fires on write up what this needs to do and what are the acceptance criteria, even if nobody says spec or requirements. Covers what the system must do, not how it is built. Skip when requirements already exist, and skip while a material decision or approval reply is pending."
+description: "Use when settled intent for a goal or feature needs detailed requirements before design — what it must do, how each requirement is verified, and the assumptions and risks behind it. Fires on write up what this needs to do and what are the acceptance criteria, even if nobody says spec or requirements. Skip how it is built, skip when requirements already exist, and skip while a decision or approval reply is pending."
 ---
 
 # Spec It

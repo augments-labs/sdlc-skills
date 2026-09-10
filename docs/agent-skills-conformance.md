@@ -34,7 +34,7 @@ push and pull request.
 | `name` 1–64 chars, lowercase `a-z0-9-` | conforms | charset + length check |
 | `name` no leading/trailing hyphen, no `--` | conforms | pattern check |
 | `name` matches parent directory | conforms | compared per skill |
-| `description` non-empty, ≤ 1024 chars | conforms | length check; longest is 572 |
+| `description` non-empty, ≤ 1024 chars | conforms | length check; longest is 460 |
 | Body ≤ 500 lines | conforms | line check; longest is 162 (32% of ceiling) |
 | Body < 5000 tokens recommended | conforms | token check; largest is ~1757 (35%) |
 | File references relative to skill root | conforms | every path resolved in the install tree |
@@ -54,7 +54,7 @@ router's body is resident from session start. That arithmetic justifies a tighte
 | `SKILL.md` body | ≤ 500 lines | 80–120 typical | warns over 200, **fails** over 500 |
 | Body tokens | < 5000 | ≈ 2000 | warns over 2500, **fails** over 5000 |
 | Body drift | — | ≈ 2000 | **fails** over 5000 in CI |
-| `description` | ≤ 1024 chars | ≈ 570 chars | **fails** over 1024 |
+| `description` | ≤ 1024 chars | ≈ 460 chars | **fails** over 1024 |
 
 The two token rows count differently and are not comparable: `check-skill.sh`
 scores a body against the standard's 5000 as words × 1.3, while

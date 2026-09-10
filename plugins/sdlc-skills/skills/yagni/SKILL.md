@@ -1,6 +1,6 @@
 ---
 name: yagni
-description: "Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when behavior-affecting implementation, including configuration, is being written or proposed; when scope drifts toward speculative or incomplete delivery; or when a proposal needs a strict pre-edit challenge. Fires on we might need this later and let's make it configurable, even if nobody says scope or YAGNI. Skip throwaway spikes and nonbehavioral content or configuration."
+description: "Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when behavior-affecting implementation or configuration is being written or proposed; when scope drifts toward speculative or incomplete delivery; or when a proposal needs a strict pre-edit challenge. Fires on we might need this later and let's make it configurable, even if nobody says scope or YAGNI. Skip throwaway spikes and nonbehavioral content or configuration."
 ---
 
 # YAGNI — build only what's needed, and make it work
