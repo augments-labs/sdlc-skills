@@ -62,23 +62,28 @@ debugging, and receiving review. For these only:
 - They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test (`references/testing.md`), not by sounding good.
 - Everything else (capability, template, reference, meta) has no temptation to counter — keep it lean.
 
-## Procedure
+## Step 1: Decide it is a skill
 
-1. **Confirm it should be a skill—and whether it is one.** Write one only if an
-   agent reliably gets this wrong without guidance. Plain prompt text or a
-   one-off? Do not. An exact fragile sequence belongs in a tested script. Split
-   activities only when each is independently invokable; otherwise keep one
+1. Write one only if an agent reliably gets this wrong without guidance.
+   Plain prompt text or a one-off → do not.
+2. An exact fragile sequence → a tested script, not prose.
+3. Split activities only when each is independently invokable. Otherwise one
    cohesive skill.
-2. Choose the phase folder (`planning`…`maintenance`) or `common/`, create `skills/<phase>/<name>/`, and copy `assets/skill-template.md` to start.
-3. Write `description` as a trigger first. Test it: does it say **when**, not **how**? If it lists steps, rewrite.
-4. Write the body: **When to use** (incl. Skip), `## Step N:` sections of
+
+## Step 2: Write it
+
+1. Choose the phase folder (`planning`…`maintenance`) or `common/`. Create
+   `skills/<phase>/<name>/` from `assets/skill-template.md`.
+2. Write `description` as a trigger. Test it: does it say **when**, not
+   **how**? Lists steps → rewrite.
+3. Write the body: **When to use** (incl. Skip), `## Step N:` sections of
    one-line acts (format rule 6), **Common mistakes**.
-5. Move anything heavy to a sibling file — `assets/` if the agent fills it in,
+4. Move anything heavy to a sibling: `assets/` if the agent fills it in,
    `references/` if the agent reads it.
-6. Verify the shape (below), then **prove the behavior at the failure surface** —
-   trigger, artifact/side effect, or pressured discipline. Read
-   `references/testing.md`; an agent explaining the rule is not evidence that it
-   follows it.
+5. Verify the shape (below). Then prove the behavior at the failure surface:
+   trigger, artifact or side effect, or pressured discipline. Read
+   `references/testing.md`. An agent explaining the rule is not evidence that
+   it follows it.
 
 ## Available scripts
 
