@@ -30,8 +30,8 @@ row numbers below for each concrete check.
 ## Step 2: Judge it
 
 Work every `Readiness rows` entry to **evidenced**, **not applicable with an
-approved disposition** (the row's owner accepts the rationale in writing), or
-**blocking**.
+approved disposition** (the row's owner accepts the rationale, recorded under
+the descriptor's approver rule), or **blocking**.
 
 1. Install, start, or load each member through the paths a real consumer
    uses. A green source tree is not artifact evidence.
