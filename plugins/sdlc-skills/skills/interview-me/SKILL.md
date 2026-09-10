@@ -32,38 +32,59 @@ skill that owns eliciting the still-open inputs.
   architecture, execution, destructive, or external-state choices stay pending
   until the user decides them directly.
 
-## Procedure
+## Step 1: Scan before you ask
 
-**1. Scan before you ask.** Read the request, then explore the codebase and context for what is already decided: conventions, similar features, libraries in use, naming. Never ask what the code already answers.
+1. Read the request. Search the codebase and context for what is already
+   decided: conventions, similar features, libraries in use, naming.
+2. Never ask what the code already answers.
 
-**2. Ask ONE question at a time.** For each open decision, in one short message:
-- state what you found ("you already use Zod for validation"),
-- name the exact artifact or operation the decision controls,
-- recommend a default with one line of reasoning.
+## Step 2: Ask one question at a time
 
-Prefer yes/no or a small multiple choice and name the accepted answers. Present
-them conversationally: state what you found, recommend a default with one line
-of reasoning, then offer two or three short answers including “something else”
-when free-form input is valid. Wait for a direct answer — see *What closes a
-decision* — before the next material one.
+1. For each open decision, send one short message and end the turn:
 
-**3. Use each answer to prune.** An answer often settles later questions — drop them. Aim for ~3–6 questions total. If you need more, say why first.
+   ```text
+   Found: {{what the code or context already settles}}
+   Decision: {{the exact artifact or operation it controls}}
+   Recommendation: {{default}} — {{one line of reasoning}}
 
-**4. Stop when another question would not change the outcome** and every still-live
-material decision has a direct answer. Do not turn a general “go” into answers to unnamed choices.
+   1. {{option}}
+   2. {{option}}
+   3. Something else
+   ```
 
-**5. Write an immutable proposed alignment brief** — a brief, not a spec. Fill
-`assets/brief-template.md`; it carries the goal, the decisions and their
-rationale, the non-goals, the open risks, and the identity and ledger fields.
+2. Wait for a direct answer before the next material question. See *What
+   closes a decision*.
+3. Use each answer to prune later questions. Aim for 3–6 total. More → say
+   why first.
+4. Stop when another question would not change the outcome and every live
+   material decision has a direct answer. A general "go" answers no unnamed
+   choice.
 
-Write it to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md`, or the path the
-user set, preserving the sections already approved around it. A tiny brief may
-stay inline alongside its decision record instead.
+## Step 3: Write the brief and present it
 
-**6. Present it for direct decision.** Record pending/changes-requested/approved/
-rejected/cancelled/superseded-by-approved identity externally; never mutate the
-proposed brief to mirror state. Only approval re-routes from the precondition this
-brief satisfied—draft authority is not approval and planning is not assumed.
+1. Fill `assets/brief-template.md`: goal, decisions with rationale,
+   non-goals, open risks, identity and ledger fields. A brief, not a spec.
+2. Write it to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the
+   user-set path, preserving approved sections around it. Tiny brief → inline
+   beside its decision record.
+3. Present and end the turn:
+
+   ```text
+   Brief {{path}} — version {{identity}}
+   Goal: {{one line}}  Decisions: {{n}}  Non-goals: {{n}}  Open risks: {{n}}
+
+   1. Approve
+   2. Request changes
+   3. Reject
+   4. Cancel
+
+   Recommendation: {{option}} — {{one sentence}}.
+   ```
+
+4. Record pending, changes-requested, approved, rejected, cancelled, or
+   superseded externally. Never edit the proposed brief to mirror state.
+5. Only approval re-routes from the precondition this brief satisfied. Return
+   to the skill that invoked this one; assume no planning.
 
 ## What closes a decision
 
