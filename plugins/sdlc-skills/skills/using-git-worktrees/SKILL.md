@@ -44,7 +44,7 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
    switch, or clean it.
 4. Write every resource and dirty change into the inventory: created by this
    task, or pre-existing/user-owned/shared/host-owned. Unknown → second
-   column. It blocks switching and cleanup. Never stash dirty state you do
+   column. It blocks cleanup. Never stash dirty state you do
    not own.
 5. Planning happened in another workspace → rerun 1 before the first product
    edit. Plan approval says nothing about code isolation.
