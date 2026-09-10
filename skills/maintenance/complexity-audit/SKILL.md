@@ -17,52 +17,46 @@ diagnosis, not permission to change code.
 - A whole-repository claim requires explicit whole-repository scope; otherwise
   name the bounded surface and make no wider claim.
 
-## Procedure
+## Step 1: Freeze
 
-1. **Freeze the target and your authority.** Open `assets/audit-report.md` and
-   fill its *What was frozen* block first — it names the identity, goal, path
-   boundary, guarantees in force, and admissible evidence this audit is bound to.
+1. Open `assets/audit-report.md`. Fill *What was frozen* first: identity,
+   goal, path boundary, guarantees in force, admissible evidence.
+2. Predeclare the report path
+   `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`, coordinator-owned,
+   outside the audited target's identity. Target drifts → stop or restart.
+3. Fill the inventory table: code, dependencies, configuration, build and
+   test machinery, generated sources, dynamic, reflection, and registration
+   paths, external consumers, operational ownership.
+4. Prefer one bounded audit. Large surface → partitions with stable IDs,
+   exclusive inventories, cross-boundary edges. Invoke
+   `dispatching-parallel-agents` only when read sets, resources, data
+   boundaries, and outputs reconcile independently.
 
-   The report is written to `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`,
-   owned by the coordinator, and predeclared outside the audited target's own
-   identity. If the target drifts from what you froze, stop or restart.
+## Step 2: Challenge read-only
 
-2. **Derive the inventory.** The template's inventory table is the checklist:
-   code, dependencies, configuration, build and test machinery, generated
-   sources, dynamic and reflection and registration paths, external consumers,
-   and operational ownership wherever that applies.
-3. **Partition only when necessary.** Prefer one bounded audit. For a large
-   surface, give partitions stable IDs, complete exclusive inventories, and
-   cross-boundary edges. Use `dispatching-parallel-agents` only when their read
-   sets, resources, data boundaries, and outputs are independently reconcilable.
-4. **Challenge read-only.** Read `references/yagni-auditor.md` and dispatch it
-   against each exact partition. A name or prompt is not dispatch; record real
-   receipts and terminal outcomes. Auditors return partition reports; the
-   coordinator alone writes the canonical audit. If no independent action is
-   available, an inline pass must say so; an explicitly requested independent
-   audit stays pending.
-5. **Reconcile coverage before writing any finding.** The template's
-   reconciliation block is what you owe: every partition, every exclusion, every
-   cross-boundary candidate, every duplicate, every failed attempt, and every
-   area left inconclusive.
-
-   Copy each dispatched auditor's valid terminal `SDLC_SKILLS_YAGNI_AUDIT`
-   receipt into the canonical audit verbatim. A receipt that is missing,
-   malformed, or bound to a different identity makes that partition
-   inconclusive. Never state a repository-wide conclusion from sampled or partial
+1. Read `references/yagni-auditor.md`. Dispatch it against each exact
+   partition. Record real receipts and terminal outcomes; a name or prompt is
+   not dispatch.
+2. No independent action available → write that an inline pass ran. An
+   explicitly requested independent audit stays pending.
+3. Fill the reconciliation block before any finding: every partition,
+   exclusion, cross-boundary candidate, duplicate, failed attempt,
+   inconclusive area.
+4. Copy each auditor's terminal `SDLC_SKILLS_YAGNI_AUDIT` receipt verbatim.
+   Missing, malformed, or bound to another identity → that partition is
+   inconclusive. Never state a repository-wide conclusion from partial
    coverage.
 
-6. **Publish decisions, not a deletion score.** Each finding is `keep`,
-   `simplify`, `remove`, `decision`, or `investigate`, and carries the evidence,
-   the guarantee at stake, the replacement, how that replacement is verified, and
-   what a migration or recovery would owe. The template's findings table holds
-   those columns. Line count is not authority.
-7. **Keep mutation separate.** The audit cannot apply or approve findings.
-   Accepted structural changes route to `refactor-architecture`; behavior work
-   follows its owning feature/bug route and produces a new verified candidate.
-   The private audit report is evidence, not an integration candidate: verify
-   its coverage, then stop. Review/branch finishing applies only if the user
-   separately asks to ship that report.
+## Step 3: Publish decisions
+
+1. Per finding: `keep`, `simplify`, `remove`, `decision`, or `investigate`,
+   with evidence, guarantee at stake, replacement, how it is verified, what a
+   migration or recovery owes. Line count is not authority.
+2. Apply or approve nothing. Accepted structural change → `refactor-architecture`.
+   Behavior work → its feature or bug route, producing a new verified
+   candidate.
+3. Verify the report's coverage, then stop. Review or branch finishing runs
+   only if the user separately asks to ship the report.
 
 ## Common mistakes
 
