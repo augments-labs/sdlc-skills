@@ -10,8 +10,9 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 ## When to use
 
 - You're about to change, debug, or extend a part of the codebase you don't know well.
-- **Skip** only when you already understand the region and affected surfaces;
-  one changed line can still alter a public, data, security, or release path.
+- **Skip** only when a Step 3 boundary record for this region exists and is
+  inside its freshness limit; one changed line can still alter a public,
+  data, security, or release path.
 
 ## Step 1: Set the boundary
 
@@ -35,8 +36,8 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 
 ## Step 3: State the boundaries
 
-1. Write what the region owns, what it delegates, where its seams are, which
-   downstream obligations a change must preserve.
+1. Write the boundary record: what the region owns, what it delegates, where
+   its seams are, which downstream obligations a change must preserve.
 2. Set a freshness limit. Past it, or a material input changed → revalidate
    affected claims before relying on them.
 3. Implementation finds a caller or surface the map never covered → stop and
