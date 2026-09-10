@@ -13,8 +13,8 @@ design the gates, review the change, integrate the branch, or decide release.
 
 - Before any claim that work is complete, fixed, passing, or done; before any
   commit, push, or PR; before moving to the next task of a plan.
-- **Never skip.** Scale the gate set down for a small change; do not scale the
-  discipline down. A one-line fix still runs the smallest gate that can fail.
+- **Never skip.** The gate set comes from Step 1.3, never from the size of
+  the change. A one-line fix still runs the smallest gate that can fail.
 - A candidate with an integrated UI adds `visual-ui-verification` to its gate
   set: automated checks passing does not make a screen visually correct.
 
@@ -93,7 +93,7 @@ design the gates, review the change, integrate the branch, or decide release.
 
 ## Manual acceptance
 
-When a requirement genuinely needs human judgment, use
+When the spec, plan, or user names a person as a requirement's acceptor, use
 `references/manual-acceptance.md`. An unrun row is pending, and the agent cannot
 self-certify a human-owned judgment.
 
@@ -111,9 +111,9 @@ self-certify a human-owned judgment.
   strictness setting, or excluding a path changes what ran, not what is true —
   and the claim that gate supported is now unproven.
 - A flaky green is unexplained nondeterminism; route it through `debugging`.
-- Verified is not reviewed. A non-trivial candidate at a completion or
-  integration boundary requires `requesting-code-review`; task-local evaluator
-  status is not that boundary unless its plan says so.
+- Verified is not reviewed. A candidate at a completion or integration
+  boundary requires `requesting-code-review`; task-local evaluator status
+  is not that boundary unless its plan says so.
 
 ## When tempted to skip
 
@@ -125,7 +125,7 @@ self-certify a human-owned judgment.
 | "The suite is green, so the code is covered" | Read what it asserted. A green that could not have been red covers nothing. |
 | "The agent said green" | A report is a claim; inspect raw state and output. |
 | "The summary says all passed" | Reconcile skipped tests, shards, and matrix cells. |
-| "It's a false positive" | That judgement is itself unverified. Rewrite the code until the checker agrees, or record an accepted deviation. |
+| "It's a false positive" | That judgement is itself unverified. Rewrite the code until the checker agrees, or record a deviation the gate's owner accepted in writing. |
 | "That finding predates my change" | Silencing it now makes it yours. Leave it red and disposition it, or fix it. |
 | "I committed it, so evidence is banked" | A checkpoint is neither review nor integration proof. |
 | "All checks are green, so done" | Green supports only the checks; independent review challenges completeness. |

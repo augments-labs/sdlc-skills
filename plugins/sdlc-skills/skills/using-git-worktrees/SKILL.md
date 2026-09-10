@@ -1,13 +1,13 @@
 ---
 name: using-git-worktrees
-description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when the current checkout is already dedicated to this task."
+description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when detection shows you are already inside a linked worktree."
 ---
 
 <EXTREMELY-IMPORTANT>
-NEVER START REPO EDITS ON `main`/`master`, `dev`/`develop`, A RELEASE BRANCH, OR
-AN UNRELATED TASK BRANCH. Create or enter a dedicated workspace — a git
-worktree unless the user or project says otherwise — *before* the first edit,
-unless the user explicitly okayed the current checkout.
+NEVER START REPO EDITS IN A SHARED CHECKOUT — one where Step 1 reports
+`git-dir` equal to `common-dir` — WHATEVER BRANCH IT IS ON. Create or enter a
+dedicated workspace — a git worktree unless the user or project says otherwise —
+*before* the first edit, unless the user explicitly okayed the current checkout.
 </EXTREMELY-IMPORTANT>
 
 # Using Git Worktrees
@@ -19,7 +19,7 @@ down what you found there before you change anything.
 
 - You are about to edit files, implement a feature/fix/refactor, execute a plan, or dispatch agents.
 - Runtime or review isolation matters: parallel agents, risky changes, separate ports, databases, fixtures, or long-running app state.
-- **Skip** for read-only investigation, when the user explicitly says to stay in the current checkout, or when the current branch/workspace is already dedicated to this task with known ownership, base, and baseline.
+- **Skip** for read-only investigation, when the user explicitly says to stay in the current checkout, or when Step 1 reports a linked worktree (not a submodule) that this task or the harness's worktree tool created.
 
 ## Step 1: Detect what you are in
 
@@ -44,7 +44,7 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
    switch, or clean it.
 4. Write every resource and dirty change into the inventory: created by this
    task, or pre-existing/user-owned/shared/host-owned. Unknown → second
-   column. It blocks switching and cleanup. Never stash dirty state you do
+   column. It blocks cleanup. Never stash dirty state you do
    not own.
 5. Planning happened in another workspace → rerun 1 before the first product
    edit. Plan approval says nothing about code isolation.
@@ -80,8 +80,7 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
 2. Pick the mechanism, first that applies: user instruction → project
    guidance → harness-native worktree command or session flag (use the name
    above, confirm HEAD is the proven base, skip to Step 4) → a worktree you
-   create below. Never `git switch -c` or `git checkout -b` in a shared
-   checkout.
+   create below.
 3. Choose the directory and prove it is ignored. User-given path wins.
 
    ```bash
@@ -130,14 +129,13 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
 | --- | --- |
 | "I'll just inspect first" | For edit requests, branch/status is the first inspection. |
 | "It's only a small change" | Small changes still land on the wrong branch. Create the branch first. |
-| "git switch -c is lighter than a worktree" | Switching rewires the shared checkout — anyone else working in it is blocked until you switch back. A worktree is the default; switch in place only in a checkout dedicated to this task. |
 | "The harness made a detached checkout, so I'll add my own worktree" | First determine whether the host already owns isolation and cleanup. |
 | "I'll make the branch after the first edit" | After the edit, you may already have mixed unrelated state. |
 | "It looks like a plain checkout" | Looking is not detecting. `git-dir` against `common-dir`, plus the superproject check, is the inspection. |
 | "The harness has a worktree tool, but plain git is simpler" | The native tool owns the path, the ignore rule, and cleanup. A hand-made worktree beside it is a second thing to clean up. |
 | "`.worktrees` is surely ignored" | Surely is not `git check-ignore`. An unignored worktree appears in every status, grep, and commit from then on. |
 | "I'll add `.worktrees/` to `.gitignore` and commit it here" | That is an edit on the shared branch. Exclude it locally, then commit the ignore rule on the task branch. |
-| "`worktree add` failed in the sandbox, so I'll switch in place" | Failing to isolate grants nothing. Report it; the user decides what the current checkout may carry. |
+| "`worktree add` failed in the sandbox, so I'll work in place" | Failing to isolate grants nothing. Report it; the user decides what the current checkout may carry. |
 
 ## Step 5: Checkpoint while you work
 

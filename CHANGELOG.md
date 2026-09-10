@@ -2,6 +2,14 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [7.0.2] — 2026-09-10
+
+### Changed
+
+- **A skip or exception binds to a check, an owner, or a written assignment — never to the agent's own reading.** `using-git-worktrees` no longer offers a branch in the current checkout as an alternative, and its skip fires only on the `git-dir` versus `common-dir` detection; an agent that judged the shared checkout "dedicated" and switched branches in it was the failure.
+- **"High-risk" is a recorded classification.** `writing-plans`, `spec-it`, `system-architecture`, `data-model`, and the control vocabulary bind it to `migration-strategy`'s four answers or the user marking the work so.
+- **Seven more bodies lose self-judged terms.** Shallow review depth needs a written assignment; "trivial", "small", "material", "usually", "genuinely", and "already understood" in `verifying-completion`, `interview-me`, `zoom-out`, `release-readiness`, `containing-an-incident`, and `yagni` become the condition, category, or approval each stood for.
+
 ## [7.0.1] — 2026-09-10
 
 ### Changed

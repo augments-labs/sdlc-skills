@@ -13,7 +13,7 @@ to, and what the suite looked like before you touched anything.
 | Branch or HEAD | {{branch-or-detached-revision}} |
 | Base | {{base-ref}} at {{revision}} |
 | Remote freshness | {{fetched-at}} / {{stale}} |
-| Isolation kind | worktree / harness-native workspace / branch in a dedicated checkout |
+| Isolation kind | worktree / harness-native workspace / user-okayed current checkout |
 | Ignore rule | `.gitignore` / `info/exclude` / outside the repository / native tool owns it |
 | Owner of the checkout | this task / user / host |
 
@@ -27,7 +27,7 @@ column may ever be cleaned up.
 | {{path-or-resource}} | {{path-or-resource}} |
 
 Unknown provenance goes in the right column. It is not a placeholder to resolve
-later — unknown provenance blocks switching and cleanup.
+later — unknown provenance blocks cleanup and any change to that checkout.
 
 ## Gate inputs outside the source tree
 
