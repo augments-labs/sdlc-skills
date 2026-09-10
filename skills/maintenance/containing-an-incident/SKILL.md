@@ -5,8 +5,9 @@ description: "Use this skill the moment a failure is reaching real users — an 
 
 # Containing an Incident
 
-Stop the impact first, understand it second. Every minute spent finding the cause
-while users are failing is a minute you chose to spend.
+Stop the impact first and prove it stopped from the outside; leave the cause
+to `debugging`. Every minute spent finding the cause while users are failing is
+a minute you chose to spend.
 
 ## When to use
 
@@ -66,20 +67,18 @@ while users are failing is a minute you chose to spend.
    what it costs while it holds, what reversing it takes, and who owns that.
    Unrecorded mitigation becomes a permanent mystery.
 
-8. **Now hand off.** With the impact stopped, `debugging` owns the cause and
-   `post-mortem` owns why it escaped. Both are cheaper from here — the pressure
-   is off and you can afford to be thorough.
+8. **Report three things, and call nothing resolved:** what stopped, what is
+   still true — the feature is still broken — and what the mitigation costs
+   while it stays in place. Containment closes nothing.
+
+9. **REQUIRED — with the impact stopped, invoke `debugging`** for the cause,
+   and once cause and containment are known, invoke `post-mortem` for why it
+   escaped. Fill the record's `Still open` lines with both handoffs. Do not
+   diagnose from this skill; both are cheaper once the pressure is off.
 
 When none of this fits cleanly — no lever exists, the damage is already done,
 containment would destroy the only evidence, or the lever helps some users and
 hurts others — read `references/hard-containments.md`.
-
-## Containment is not resolution
-
-Stopping the bleeding closes nothing. The feature is still broken, the mitigation
-is still load-bearing, and something is now running in a degraded configuration
-that nobody else knows about. Report all three: what stopped, what is still true,
-and what the mitigation costs while it stays in place.
 
 ## When you are tempted to skip it
 
