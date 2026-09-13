@@ -1,78 +1,51 @@
 # Activation: routing and enforcement
 
-SDLC skills is useful only when the agent reaches the applicable skill and the
-result then passes a real project gate. Those are different problems.
+The agent must reach the applicable skill, then produce a result that meets the
+project's gates. Those are different claims with different evidence.
 
-## Routing is probabilistic
+## How routing works
 
-Routing between skills is distributed across the skills themselves. Each
-description is the trigger that gets a skill loaded; each body names its
-preconditions, its skips, and where it hands off when its work ends — stated
-once, where the work actually is. No resident surface restates those
-transitions: a transition written twice gives the copies a chance to drift, and
-when a central text and a skill body both point somewhere, neither pointer
-reads as binding.
+Catalogue names and descriptions nominate skills for the current situation.
+Explicit user requests and handoffs from loaded skills also cause invocation;
+a downstream skill need not match the original opening. Descriptions therefore
+focus on when a skill applies, including boundaries with neighboring skills.
+The body supplies its procedure, preconditions, skips, and next owner.
 
-What is injected at session start is the `using-sdlc-skills` entry skill as
-**resident context**, not a pointer to it, re-applied on the lifecycle events
-where a harness reports that context was lost — start, resume, clear. Not after
-compaction: compaction carries loaded context forward, so re-injection there
-would be redundant. It covers the one moment distributed routing cannot: before any
-skill is loaded, when the invoke-before-acting mandate has to already be
-present.
+The resident `using-sdlc-skills` router requires loading applicable bodies before
+action and checking routing again when state changes. Its entry examples help
+start the work; the current owning skill governs the actual transition. A body
+already loaded and current can be applied without another read. A candidate
+skill is set aside according to its own scope or skip conditions.
 
-The body-not-pointer distinction is the whole design. A pointer buys only a
-*request*: that the agent spend a discretionary tool call loading the entry
-skill before working. Injecting the body costs more per context epoch and
-removes that discretionary step: the entry mandate is already present.
+For a high-risk transformation, for example, `migration-strategy` classifies the
+work and establishes the required assurance entry conditions. A generic opening
+classifier cannot substitute for that assessment.
 
-The entry-skill body is one of two resident surfaces, and they do different
-jobs. The other is the descriptions: whichever skill fires, fires because its
-description matched the opening, so a description carries the vocabulary of the
-situation and nothing else. Emphasis has no work to do there — it does not make
-a trigger match — and every character it spends is one not spent on a context
-that would. Firm language goes in the body, which is read only once the skill
-has been reached.
+## Instructions do not enforce invocation
 
-This is still persuasion applied to a nondeterministic generator. Resident text
-raises the odds that the right skill fires; it cannot prove one fired or that its
-output is correct. A thin live harness smoke measures activation for a particular
-run — nothing more.
+Adapters supply the full router body as session context, removing a separate
+step to load that body. They register no tool, prompt, or turn-end enforcement
+hooks. Packaging and lifecycle details belong in
+[`harness-support.md`](harness-support.md).
 
-For a wide or preservation-sensitive transformation, `migration-strategy`'s own
-trigger and classification rubric send the work through it and
-`verification-strategy` before ordinary feature implementation. That boundary
-lives in the skill contracts. A generic prompt classifier cannot reliably
-decide project risk.
+Resident instructions can influence a non-deterministic agent; they do not prove
+that another skill loaded or that its procedure was followed. A live activation
+observation describes one run in its harness and conditions. Reading a body,
+following it, and producing an acceptable result are separate observations.
 
-## Gates decide whether artifacts advance
+## Gates govern the result
 
-Tests, compilers, static analysis, review verdicts, coverage thresholds,
-differential checks, release checks, and rollback criteria operate on artifacts
-or promotion state. Projects wire the applicable gates into CI, protected
-integration paths, and release controls.
+Tests, compilers, static analysis, controlled review, differential checks, and
+release criteria inspect artifacts or promotion state. Projects bind applicable
+gates to specific candidates and wire them into CI, protected integration paths,
+and release controls. The commands, thresholds, environments, and failure
+responses belong to the adopting project; this library supplies no universal
+project CI template.
 
-SDLC skills does not ship a universal project CI template. The commands, platforms,
-thresholds, and failure responses are properties of the adopting project.
+Acceptance supports the claims covered by those checks and decisions. A green
+but incomplete check does not establish an untested requirement. Keep raw
+failures, missing evidence, and uncertainty visible.
 
-## Session-start-only activation
-
-Every adapter carries routing through its session-start mechanism. No adapter
-registers tool, prompt, or turn-end hooks. The entry skill requires loading
-requested or potentially relevant skills before responding, asking questions,
-exploring files, planning, or executing commands. Catalogue descriptions help
-select a skill; its loaded body supplies the instructions.
-
-An already-loaded body can be applied directly. A candidate is set aside only
-after its scope or skip conditions have been checked. This keeps the obligation
-in resident context without adding repeated lifecycle interventions.
-
-This policy supplies no deterministic skill-invocation enforcement. The adopting
-project's artifact and promotion gates remain responsible for correctness.
-
-## The honest line
-
-Routing evidence says what one nondeterministic run did. A deterministic
-structural check says whether packaging or script logic satisfies its exact
-contract. Only the adopting project's real gates can establish whether generated
-code is fit to advance.
+Structural checks establish packaging and script predicates. Behavioral tests
+observe sampled actions and outputs. Neither is a substitute for the other; see
+[`testing.md`](testing.md) for interpreting their results.

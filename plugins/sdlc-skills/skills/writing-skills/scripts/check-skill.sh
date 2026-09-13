@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
-# Check one skill directory against the Agent Skills standard.
-#
-# Read-only. Portable: it checks any standard skill directory, including one
-# outside this repository, and depends on nothing but coreutils and awk.
-#
-# The repository-wide gate enforces house rules on top of this. This script
-# checks only what the standard itself requires, so an author can run it on a
-# skill anywhere and get the same verdict.
+# Check one skill directory with the library's format and policy profile.
+# Field extraction handles this library's metadata shape, not all YAML or
+# optional standard metadata. Uses system tools and executes bundled --help;
+# checking an untrusted skill is therefore not a passive read-only operation.
 
 set -uo pipefail
 
@@ -14,7 +10,7 @@ usage() {
   cat <<'EOF'
 Usage: bash scripts/check-skill.sh [OPTIONS] SKILL_DIR
 
-Check a skill directory against the Agent Skills standard. Read-only.
+Check a skill directory with the library's format and policy profile.
 
 Options:
   --format FORMAT   Output format: tsv, json (default: tsv)
@@ -28,15 +24,16 @@ Checks:
   description  present, non-empty, at most 1024 characters
   body         at most 500 lines and under 5000 tokens (recommended ceiling)
   references   every relative link from SKILL.md resolves inside the skill
-  scripts      every bundled script is executable and answers --help
+  scripts      executes bundled scripts with --help; warns if not executable
 
 Output (tsv):
   One row per finding: LEVEL <tab> CHECK <tab> DETAIL
-  LEVEL is `fail` (violates the standard) or `warn` (allowed, worth knowing).
+  LEVEL is `fail` (fails this profile) or `warn` (allowed, worth knowing).
+  This is field extraction, not full YAML/optional-metadata validation.
   Findings go to stdout; progress and errors go to stderr.
 
 Exit codes:
-  0  conforms (warnings may still be present)
+  0  passes this profile (warnings may still be present)
   1  one or more `fail` findings
   2  bad arguments, or SKILL_DIR is not a directory
   3  a required tool is missing
@@ -132,12 +129,12 @@ else
 
   # --- body size --------------------------------------------------------------
   body_lines="$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -l | tr -d ' ')"
-  [ "$body_lines" -le 500 ] || finding fail body-lines "body is $body_lines lines; the standard's ceiling is 500"
+  [ "$body_lines" -le 500 ] || finding fail body-lines "body is $body_lines lines; the house ceiling is 500"
   # Token estimate: words plus punctuation runs, ~1.3x. Deliberately rough — it
   # only has to catch a body approaching 5000, not price a request.
   words="$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -w | tr -d ' ')"
   tokens=$(( words * 13 / 10 ))
-  [ "$tokens" -lt 5000 ] || finding fail body-tokens "body is ~$tokens tokens; the standard's ceiling is 5000"
+  [ "$tokens" -lt 5000 ] || finding fail body-tokens "body is ~$tokens tokens; the house ceiling is 5000"
 
   # --- presentation -------------------------------------------------------------
   # The guidance asks for concise, stepwise instructions an agent can scan, and

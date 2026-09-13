@@ -36,9 +36,14 @@ Why the alternatives lose: {{the reason, not the preference}}
 
 ## Removals
 
-| Surface removed | Why it is provably redundant | Invariant it carried | Where that invariant now lives |
+| Proposed removal | Current consumers and migration slice | Invariant to preserve | Removal-entry gate and owner |
 | --- | --- | --- | --- |
-| {{module, interface, or file}} | {{evidence of absence across every consumer path}} | {{what it guaranteed}} | {{the surviving gate, and how that gate was falsified}} |
+| {{module, interface, or file}} | {{current inventory; slice that moves each consumer, or current absence evidence}} | {{what it guarantees}} | {{future absence check, surviving falsifiable gate, and owner}} |
+
+This proposal declares removal-entry criteria; it does not claim their results.
+After consumers move, record actual absence and preservation evidence in the
+execution ledger before removal. Existing consumers do not block proposing
+their migration, and approval of the proposal does not authorize early deletion.
 
 ## Slices
 

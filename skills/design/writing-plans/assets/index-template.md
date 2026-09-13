@@ -88,9 +88,10 @@ Task IDs are stable, never renumbered or recycled; filenames may stay ordered.
 Mirror the external ledger as a checkbox plus its exact state label:
 
 - `[x] done` counts toward completion.
-- `[x] done with concerns` counts only after every concern is classified as
-  non-blocking or accepted by its owning deviation/exclusion and compensating
-  gate; until then use `[ ] done with concerns`.
+- `[ ] done with concerns` remains incomplete. Once every concern is
+  classified as non-blocking or accepted by its owning deviation/exclusion and
+  compensating gate, record `done` and mirror `[x] done`. Retain concern history
+  in the external ledger; do not use `[x] done with concerns`.
 - `[ ] todo`, `[ ] in progress`, `[ ] blocked`, `[ ] needs context`,
   `[ ] cancelled`, and `[ ] superseded` do not count toward completion.
 
