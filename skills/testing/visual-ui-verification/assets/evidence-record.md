@@ -9,7 +9,8 @@ per required observation; use stable `{{double-curly}}` values.
 - **Candidate:** `{{immutable source/artifact identity, or working-tree digest
   covering staged, unstaged, untracked, and relevant ignored inputs}}`
 - **Launch path:** `{{command or controlled action}}`
-- **Acceptance source:** `{{requirements, UI state IDs, rubric identity}}`
+- **Acceptance source:** `{{approved full design path/version, requirements and
+  rubric identity; include flows, states, conditions and decisions outside any preview}}`
 - **Selected visual references:** `{{keyed collection applicable to this
   candidate, copied field for field from the approved design and, when
   plan-bound, the approved plan; or not applicable}}`
@@ -33,6 +34,15 @@ per required observation; use stable `{{double-curly}}` values.
 - **Invalidation:** `{{candidate, input, environment, rubric, or tool changes}}`
 
 ## Scenario matrix
+
+Map every applicable design obligation here by stable ID or version plus section
+and condition. Name its observation row or other owning gate and actual result.
+Unmapped or unrun obligations remain pending, including when no visual comparison
+was needed. Do not infer coverage from a similar screenshot.
+
+| Design obligation | Observation row or other gate | Evidence/result |
+| --- | --- | --- |
+| `{{ID or version + section/condition}}` | `{{VQA row or gate ID}}` | `{{receipt and pass / fail / pending}}` |
 
 | Row | Journey/state | Size | Theme/input/platform | Raw capture + digest | Rendered frame + digest | Observation | Defects | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |

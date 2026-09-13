@@ -68,6 +68,12 @@ only mutable projection.
 
 ## Trace
 
+Include every applicable approved UI flow, state, decision, condition and
+acceptance check, even when absent from a preview or no variants were compared.
+Use its stable ID or design version plus section/condition. Assign an owning
+task and gate; the finished interface must satisfy these alongside reference
+conformance. Link the approved source instead of paraphrasing away its details.
+
 | Requirement or accepted risk gate | Owning task/phase | Evaluator |
 | --- | --- | --- |
 | {{ID and source}} | {{task/phase}} | {{command, rubric, or assurance gate ID}} |
