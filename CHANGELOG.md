@@ -2,6 +2,10 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [8.0.0] — 2026-09-14
+
+Rename `verifying-completion` to `verification-before-completion`; update explicit invocations when upgrading. Clarify skill selection and bounded handoffs, preserve approved UI requirements through finished-interface acceptance, and align templates, artifact state and documentation so work can finish without losing its decisions.
+
 ## [7.0.2] — 2026-09-10
 
 ### Changed
