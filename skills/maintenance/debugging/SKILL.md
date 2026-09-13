@@ -62,7 +62,7 @@ nothing is bleeding; the report rarely says "incident".
    authority. Never write code to stand in for one of those.
 5. Rerun the same loop against the before state, the control, and the fixed
    state. Run the project gates the change requires.
-6. **REQUIRED SUB-SKILL:** invoke `verifying-completion` and read the raw
+6. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` and read the raw
    output through it before saying fixed. Report what the evidence shows and
    what it leaves uncertain.
 7. Clean up only the exact targets your authority covers. Instrumentation or
@@ -84,7 +84,7 @@ finding, not the answer. Update the model or escalate with the ledger.
 - Never call an intermittent bug fixed from one green run or zero failures in an
   undeclared sample.
 - Never declare fixed without rerunning the registered loop and reading raw
-  output through `verifying-completion`.
+  output through `verification-before-completion`.
 
 ## When tempted to guess
 

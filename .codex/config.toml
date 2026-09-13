@@ -1,0 +1,44 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Keep commands inside the workspace sandbox. Eligible requests to cross that
+# boundary go to Codex's automatic reviewer; the sandbox still applies unless
+# that reviewer allows the specific request.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+approvals_reviewer = "auto_review"
+
+# Allow deeper reasoning when reconciling skill contracts and review evidence.
+model_reasoning_effort = "high"
+
+# Credit Codex's contributions using the supported instruction setting.
+developer_instructions = """
+When creating or editing a commit for work you contributed, preserve existing
+trailers and include a Co-authored-by trailer exactly once, separated from the
+body by a blank line. Use the exact active model ID as the author name and
+noreply@openai.com as the email: Co-authored-by: <active-model-id> <noreply@openai.com>
+Resolve the model ID from the current session; never write the placeholder or
+guess an ID. Preserve attribution from other models that contributed.
+"""
+
+# Use cached web search when checking external documentation.
+web_search = "cached"
+
+[features]
+memories = false
+
+[agents]
+# Limit nesting for V1 agents; V2 ignores max_depth.
+# Review independence comes from the assigned scope and review procedure.
+max_depth = 2
+max_concurrent_threads_per_session = 5
+
+[shell_environment_policy]
+# Codex otherwise retains variables whose names contain KEY, SECRET or TOKEN.
+# Commands get the ordinary shell environment, less those secret-shaped names.
+ignore_default_excludes = false
+
+[sandbox_workspace_write]
+# Permit outbound connections from sandboxed commands, including the manual
+# live behavioral runners. This permission is not limited to their services;
+# code run by a build or test can use it too.
+network_access = true

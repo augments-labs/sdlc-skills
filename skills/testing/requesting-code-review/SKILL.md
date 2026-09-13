@@ -29,7 +29,7 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    rows only when the candidate, bound inputs/environment, gate requirements,
    and evidence freshness still match.
 3. Missing or stale rows → **REQUIRED SUB-SKILL:** invoke
-   `verifying-completion` to obtain evidence for this review, then resume here.
+   `verification-before-completion` to obtain evidence for this review, then resume here.
    Keep failures and pending results: they permit review, never readiness.
 4. Open `assets/review-candidate.md`. Fill every field: mode, identities,
    complete inventory, artifact controls, terminal contract.

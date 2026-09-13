@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Does the implementation cycle reach its DONE boundary on ordinary bounded work?
 #
-# `verifying-completion` owns the claim that work is finished, and `yagni` — which
+# `verification-before-completion` owns the claim that work is finished, and `yagni` — which
 # loads on every implementation task — names it in its own body: "confirm through
-# `verifying-completion`". That in-body handoff fired ZERO times in five live runs
+# `verification-before-completion`". That in-body handoff fired ZERO times in five live runs
 # on this fixture and opening, while every one of those runs made exactly the
 # claim the skill's description fires on ("Done", "6/6 tests passing"). A body
 # statement cannot route a skill, and prose asking for a discretionary tool call
@@ -72,10 +72,10 @@ scenario_assert() {
   # as a silent miss, which reads as a routing failure that never occurred.
   events="$(bh_chain "$stream" 2>/dev/null)"
 
-  if printf '%s\n' "$events" | grep -q 'verifying-completion'; then
-    pass "verifying-completion fired before the run reported done"
+  if printf '%s\n' "$events" | grep -q 'verification-before-completion'; then
+    pass "verification-before-completion fired before the run reported done"
   else
-    fail "verifying-completion never fired — the cycle ended at green, not at done"
+    fail "verification-before-completion never fired — the cycle ended at green, not at done"
   fi
 
   echo "  skill chain seen:"; printf '%s\n' "${events:--none-}" | sed 's/^/    /'

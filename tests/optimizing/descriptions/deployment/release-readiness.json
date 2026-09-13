@@ -22,7 +22,7 @@
 
   {"split": "train", "should_trigger": false, "expect": "finishing-a-branch",
    "query": "The branch is reviewed and green but not merged yet. Merge it."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "Is the implementation finished? Not thinking about deployment yet."},
   {"split": "train", "should_trigger": false, "expect": "post-mortem",
    "query": "Last week's release took the site down for 40 minutes. We know what broke — why did our process let it out?"},
@@ -36,7 +36,7 @@
    "query": "We have no pre-release gates at all. I want to design what should block a promotion."},
   {"split": "validation", "should_trigger": false, "expect": "none",
    "query": "This is a documentation-only repo with nothing deployable in it. Fix the broken links in docs/."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "Nothing is being released — I just need to know whether this work is genuinely complete before I commit it."},
   {"split": "validation", "should_trigger": false, "expect": "post-mortem",
    "query": "The last release caused an outage. The cause is known and contained; I want to know why our checks missed it."}

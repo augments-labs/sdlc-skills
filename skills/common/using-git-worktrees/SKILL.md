@@ -146,7 +146,7 @@ A checkpoint never grants push, publication, or integration authority.
 </EXTREMELY-IMPORTANT>
 
 1. After each coherent piece a reviewer could accept or reject separately:
-   **REQUIRED SUB-SKILL:** invoke `verifying-completion`, run its smallest
+   **REQUIRED SUB-SKILL:** invoke `verification-before-completion`, run its smallest
    real gate, commit locally. Do not wait for the final candidate. Do not ask
    per checkpoint. Withhold only when direct user or project policy withholds.
 2. Candidate ready for integration → **REQUIRED SUB-SKILL:** invoke

@@ -62,7 +62,7 @@ latest prompt need not repeat those for them to bind.
 3. Delete only what you proved unused: no static, runtime, reflection, config,
    generated, or external consumer, or a completed deprecation. Unknown →
    stays, or goes to migration or refactor ownership.
-4. **REQUIRED SUB-SKILL:** invoke `verifying-completion` before the claim
+4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` before the claim
    leaves this skill.
 
 ## When you're tempted to call it done
@@ -84,7 +84,7 @@ latest prompt need not repeat those for them to bind.
 - **Minimal ≠ incomplete.** Smaller breaks ties only between solutions that both
   solve the task and run.
 - Before done: real checks pass, implied inputs work, and no required path has a
-  stub/TODO/placeholder; confirm through `verifying-completion`.
+  stub/TODO/placeholder; confirm through `verification-before-completion`.
 - Never cut trust-boundary validation, data-loss prevention, security,
   accessibility, or explicit user scope.
 - **Never minimise away:** preservation, compatibility/parity, durable-data

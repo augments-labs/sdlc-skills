@@ -35,7 +35,7 @@ remote, discard, or cleanup mutation.
    ```
 
 2. Bind what the script cannot see, with identities: the
-   `verifying-completion` evidence for this revision; the
+   `verification-before-completion` evidence for this revision; the
    `requesting-code-review` verdict on this digest (shallow `self-reviewed:
    ready`, or the required independent review with no blocker); the live
    remote or PR state.

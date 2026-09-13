@@ -22,7 +22,7 @@ or comment as a verdict.
 1. Stop anything still writing to the candidate.
 2. Reuse a current `requesting-code-review` descriptor, or invoke that skill
    and fill its review-candidate descriptor.
-3. **REQUIRED SUB-SKILL:** invoke `verifying-completion` for the exact-state
+3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the exact-state
    gates that apply. Join its state identity byte-for-byte.
 4. Inventory the threat model: protected assets, trusted and untrusted actors,
    entry points, trust boundaries, privileges, assumptions, abuse cases. Give
@@ -42,7 +42,7 @@ or comment as a verdict.
 5. Write each finding in three parts: attacker-controlled source, propagation,
    the sink or effect it actually reaches.
 6. Run the assurance-matrix security gates for every relevant platform, build
-   mode, and environment cell, under `verifying-completion`'s effect authority.
+   mode, and environment cell, under `verification-before-completion`'s effect authority.
    Never exploit shared or production state without exact, direct authority.
 7. Missing or stale gate: record a blocker and go to Step 4. Do not work
    around it.

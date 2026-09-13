@@ -5,7 +5,7 @@ Expanded checks behind the readiness gate in `../SKILL.md`. Loaded on demand —
 For each item: what *good* looks like, how to check it concretely from the repo, and the most common way it silently fails.
 
 The release-input descriptor supplies the stable expected row inventory and
-effect contract. Run controlled actions through `verifying-completion`; its
+effect contract. Run controlled actions through `verification-before-completion`; its
 attempt ledger owns execution, quiescence, raw evidence, and pre/post effects.
 This reference owns which release rows must exist and how their results affect
 the promotion verdict. Never run a mutating drill against shared or production
@@ -23,7 +23,7 @@ state without exact direct authority.
 ## 2. Acceptance criteria verified
 
 - **Good:** every criterion in the spec or issue maps to an observed result — a passing check, a reproduced behaviour, a screenshot — not to "the code looks right."
-- **Check:** list the criteria verbatim, then name the evidence for each one. Any criterion whose evidence is "should" or "in theory" is unverified — run it now (see `verifying-completion`).
+- **Check:** list the criteria verbatim, then name the evidence for each one. Any criterion whose evidence is "should" or "in theory" is unverified — run it now (see `verification-before-completion`).
 - **Silent failure:** the criteria were verified on a branch that then changed. A late "small fix" invalidated the earlier verification and nobody re-ran it.
 
 ## 3. Migrations have exercised recovery

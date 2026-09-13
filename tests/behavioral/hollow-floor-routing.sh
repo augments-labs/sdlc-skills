@@ -8,7 +8,7 @@
 # found it. Everything an agent is asked to do here can be done correctly while
 # the project stays blind.
 #
-# `verifying-completion` owns the claim this bites on: its gate step for reading
+# `verification-before-completion` owns the claim this bites on: its gate step for reading
 # raw output says to read what the gate asserted, not only how it exited, and
 # that a green which could not have gone red is not evidence to cite. The turn-end
 # guard is what reliably gets that skill loaded; before it, the skill fired in 0

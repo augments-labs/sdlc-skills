@@ -54,6 +54,6 @@
     "./skills/testing/security-audits",
     "./skills/testing/verification-strategy",
     "./skills/testing/visual-ui-verification",
-    "./skills/testing/verifying-completion"
+    "./skills/testing/verification-before-completion"
   ]
 }

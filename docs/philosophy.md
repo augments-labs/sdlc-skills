@@ -52,7 +52,7 @@ the evidence and authority it records.
 | Skill | The generator | The gate (where truth lives) |
 | ----- | ------------- | ---------------------------- |
 | `test-driven-development` | the model writing code | the test passing — watched to fail first |
-| `verifying-completion` | the model claiming "done" | running the check and reading the output |
+| `verification-before-completion` | the model claiming "done" | running the check and reading the output |
 | `writing-plans` / `executing-plans` | the model doing a task | the per-task Evaluator and the plan Acceptance |
 | `debugging` | the model's hypothesis | the reproduction loop |
 | planning and design skills | the model proposing intent or structure | exact-version review, rubric, and direct accountable decision |

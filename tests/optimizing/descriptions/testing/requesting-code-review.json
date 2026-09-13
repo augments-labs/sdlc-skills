@@ -22,7 +22,7 @@
 
   {"split": "train", "should_trigger": false, "expect": "receiving-code-review",
    "query": "The reviewer left twelve comments on my PR. Work through them."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "I think the feature's finished. Is it actually done?"},
   {"split": "train", "should_trigger": false, "expect": "finishing-a-branch",
    "query": "Reviewed and approved. Merge it and clean up the branch."},
@@ -38,6 +38,6 @@
    "query": "Set up a CODEOWNERS file so the platform team gets auto-requested on infra changes."},
   {"split": "train", "should_trigger": false, "expect": "receiving-code-review",
    "query": "The review already came back with findings. Handle them properly before touching anything."},
-  {"split": "validation", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "validation", "should_trigger": false, "expect": "verification-before-completion",
    "query": "Before any review, I want to know whether the gates actually passed on this exact revision."}
 ]

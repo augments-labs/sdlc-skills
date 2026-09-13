@@ -1,9 +1,9 @@
 ---
-name: verifying-completion
+name: verification-before-completion
 description: "Use before any claim that work is complete, fixed, passing, done, or satisfactory, before any commit or PR, and when evidence may be stale, partial, or bound to another state. Fires on that should do it, it's working now, and all set, even if no formal claim is made."
 ---
 
-# Verifying Completion
+# Verification Before Completion
 
 Run the gate, read its raw output, and claim only what that output supports
 for the exact state it ran on. This skill produces evidence; it does not

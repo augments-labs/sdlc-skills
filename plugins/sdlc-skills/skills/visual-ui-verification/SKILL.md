@@ -63,7 +63,7 @@ candidate. Never return "looks good".
    an approved design successor replaces the binding.
 6. File each defect in `Defects`: severity, requirement violated, matrix row
    and frame, impact, reproduction.
-7. Human-owned criterion or exception: follow `verifying-completion`'s
+7. Human-owned criterion or exception: follow `verification-before-completion`'s
    manual-acceptance contract. Only its trusted user-origin receipt passes
    that row.
 
