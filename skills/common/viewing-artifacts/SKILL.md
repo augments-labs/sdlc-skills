@@ -34,11 +34,10 @@ The page carries state, not documents.
 3. Read `references/state-derivation.md`. Derive every value by its rules:
    slug allowlist, phase artifacts, approval sources, drift, attention
    grouping.
-4. Whatever the reference says in detail: approval comes only from a
-   decision-ledger row matching the artifact's normative version; only the
-   exact `[x] done` marker counts complete; drift compares real change times
-   with the execution projection normalized away. No value → the page says
-   unknown.
+4. Match each section's normative version and location to its decision ledger;
+   preserve its own decision vocabulary. Only the exact `[x] done` marker
+   counts complete. Compare consumed identities for drift; timestamps alone
+   indicate possible staleness, never prove freshness. No value → unknown.
 
 ## Step 2: Render
 
@@ -77,7 +76,7 @@ The page carries state, not documents.
 - Treating `**Status:** proposed`, or an impressive document, as approval → approval lives only in a matching ledger row; otherwise the page says unknown.
 - Counting `[x] done with concerns` as done → only the exact `[x] done` counts; every other label counts separately.
 - Pasting artifact prose into nodes or tiles → the page carries state; prose stays behind open-file links.
-- Flagging drift from a checkbox-only plan update → normalize the execution projection before comparing times.
+- Inferring drift from timestamps alone or a checkbox-only update → compare the consumed normative content; label time-only evidence as possible staleness.
 - Hunting the filesystem when the convention is absent or overridden → render the empty state naming what produces artifacts.
 - Starting an ad-hoc server (`python3 -m http.server`, a dev-server forward) to show the page → the key gate and self-terminating lifecycle are the contract; use `scripts/start-server.sh` or deliver the plain file path.
 - Linkifying a URL found in artifact text, or adding a script for interactivity → self-containment: no external requests, no JavaScript; navigation is pure CSS.

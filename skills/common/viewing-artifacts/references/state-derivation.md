@@ -20,12 +20,12 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
 
 - **No artifact** → a pending node naming what produces it; no fabricated
   dates or counts.
-- **Presence plus a `**Status:** draft|proposed` field** → the artifact exists.
+- **Presence** → the artifact exists, even without a `**Status:**` field.
   Decision state is external; its `**Normative version:**` identity is what
-  approval binds to. A `**Status:** proposed` field is never approval.
-- **Section-level state, file-level freshness.** A brief or design file may
-  hold several sections — goals, scope, ADRs — each with its own normative
-  identity and ledger row. Derive state per section, freshness per file.
+  approval binds to. A draft or proposed label is never approval.
+- **Derive state and dependencies per section.** Shared files can hold goals,
+  scope, feasibility, or ADRs with separate identities and ledger rows. A
+  change in one section does not invalidate an unrelated section's approval.
 - **Execute** derives from the plan index's checkbox rows. Only the exact marker
   `[x] done` counts complete; `[x] done with concerns`, `blocked`,
   `in progress`, `needs context`, `cancelled`, `superseded`, and `todo` each
@@ -34,14 +34,21 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
 
 ## Approval comes only from the decision ledger
 
-Follow the artifact's `**External decision ledger:**` pointer. An ADR section
-carries `**External lifecycle ledger:**` instead, whose states are the ADR
-vocabulary: accepted, in force, retired, superseded.
+Follow the section's ledger pointer and preserve its vocabulary:
+
+- `**External decision ledger:**` — pending, changes requested, approved,
+  cancelled, or superseded.
+- `**External lifecycle ledger:**` on an ADR — pending, accepted, in force,
+  retired, or superseded.
+- `**External condition and decision ledger:**` on feasibility — go, go-if,
+  no-go, or cancel, plus each condition's pending, satisfied, or failed state.
+  Render go-if with its unmet conditions; recording the decision does not
+  satisfy them. Unknown conditions stay unknown, not ready.
 
 Parse best-effort and only the markdown-table form. The matching row is the one
-whose `Identity` equals the artifact's normative version *and* whose location
-points at that artifact — the same identity string on another file's row is a
-different decision.
+whose `Identity` equals the normative version and whose location and section
+identify that content. The same identity on another file or section is a
+different decision. Preserve a missing or ambiguous section match as unknown.
 
 Any of these renders approval `external/unknown` (pill `pending`, content
 `… unknown`): a missing pointer, a missing ledger file, non-table content, an
@@ -57,20 +64,24 @@ Omit the block when the topic has no decision records.
 
 ## Drift
 
-Per artifact file, the last-change time is `git log -1 --format=%ct -- '<path>'`
-with the path single-quoted, so an artifact-derived name never reaches the shell
-unquoted. Outside a git repository, fall back to the file's mtime and say so in
-the report — mtimes are blind where times are equal.
+Compare the upstream identity or content bound by the downstream artifact with
+the current normative content, including uncommitted changes. A mismatch proves
+drift for that dependency; a matching checked identity establishes freshness
+only for that dependency. Never trust a reused version label over changed
+content. Normalize the plan index's mutable task checkboxes and execution
+labels away; keep task definitions and other normative content in the check.
 
-Drift is an artifact newer than a downstream artifact that consumed it — a spec
-edited after the plan written against it. Checkbox ticks and status labels in
-the plan index are the mutable execution projection, not a normative change:
-normalize them away before comparing, so a checkbox-only plan update never
-flags. Equal times flag nothing.
+When the consumed identity or content is unavailable, report freshness unknown.
+File times can raise **possible staleness**, not prove drift or freshness: a
+later unrelated section, an uncommitted edit, or equal timestamps defeat that
+inference. For tracked history use `git log -1 --format=%ct --` with the path as
+a separate argument. Never interpolate artifact text into shell code. Outside
+Git, use mtime only as that qualified signal and disclose the fallback.
 
 ## Attention grouping
 
-Needs attention first — drift flags, blocked tasks, decisions derivably pending
+Needs attention first — drift or possible-staleness flags, blocked tasks,
+unmet feasibility conditions, decisions derivably pending
 from a parsed ledger row — and its first topic is the preselected one. Then
 Waiting: active, nothing flagged. Then Complete: everything reached is done,
 nothing flagged. With no attention topics, preselect the first waiting, else the
