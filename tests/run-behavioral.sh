@@ -18,17 +18,13 @@
 #                 Running RED by hand before editing works exactly once.
 #   --arm none    loads NO skills at all — a bare agent on the same opening.
 #
-# RED vs GREEN is the regression question: did my edit change anything?
-# NONE vs GREEN is the value question: is the skill doing the work, or would
-# the model have done this unaided? A skill whose assertions pass just as well
-# on NONE is spending context for nothing, however well written it is. That is
-# the arm that can retire a skill, and the only one that can.
+# RED vs GREEN compares the complete library versions on one scenario. NONE
+# observes the bare agent. Keep every sampled result: a passing control does not
+# erase a reported failure or prove a skill unnecessary. The complete-library
+# comparison does not isolate one skill's contribution.
 #
-# Each arm also reports what it COST — wall clock, and tokens where the harness's
-# own stream reports them. Value is a ratio, not a pass rate: a skill that lifts
-# the assertions but triples the tokens is a different trade from one that is
-# both better and cheaper, and a pass rate alone cannot tell those apart. Run two
-# arms and the difference between their cost lines is the price of the skill.
+# Cost lines report total run time and available token telemetry. Their
+# difference includes generated work and tool use, not only loaded skill text.
 #
 # Real API calls, roughly a full agent task per arm. Manual tool, never CI.
 #
@@ -49,7 +45,7 @@ tests/run-behavioral.sh — did the skill change what got BUILT?
   --arm WHICH       green | red | none                   (required)
                       green  skills from the working tree (your edit)
                       red    skills from a worktree at --base (the before)
-                      none   no skills at all (is the skill earning its context?)
+                      none   no skills at all (observe the unaided agent)
   --base REF        git ref the red arm checks out       (default: origin/dev)
   --timeout SEC     per-arm wall clock                   (default: 1800)
   --tier TIER       small | medium | large — overrides the scenario's model

@@ -47,7 +47,7 @@ mapfile -t skills < <(find skills -name SKILL.md | sort)
 # script would produce no findings and every skill would pass — so prove it is
 # there and runnable before trusting a silent result.
 CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh
-[ -f "$CONFORMANCE" ] || { echo "missing $CONFORMANCE — the standard's checks are delegated to it"; exit 2; }
+[ -f "$CONFORMANCE" ] || { echo "missing $CONFORMANCE — the skill-format checks are delegated to it"; exit 2; }
 bash "$CONFORMANCE" --help >/dev/null 2>&1 || { echo "$CONFORMANCE does not run"; exit 2; }
 
 for skill in "${skills[@]}"; do
@@ -55,18 +55,9 @@ for skill in "${skills[@]}"; do
   name_dir=$(basename "$dir")
   echo "• $skill"
 
-  # What the STANDARD requires — frontmatter shape, name/directory agreement,
-  # the 1024-character description limit, the 500-line and 5000-token body
-  # ceilings, resolvable links, and bundled scripts that answer `--help` — is
-  # checked by the skill-conformance script this library ships, not by a second
-  # copy of those rules here. One implementation means the two cannot disagree,
-  # and it puts the shipped script on the CI path instead of taking its
-  # correctness on trust. Everything below this call is a HOUSE rule the
-  # standard does not cover.
-  # Both severities are surfaced. Reading only `fail` would discard a whole
-  # class of findings — presentation, register, anything the script is confident
-  # enough to flag but not to block on — and discarding them silently is the
-  # same failure mode as delegating to a checker that is not there.
+  # Delegate the shared format and policy profile: required field extraction,
+  # names, sizes, links, presentation, and executable script help. This is not
+  # full YAML/optional-metadata validation. Preserve warnings as well as errors.
   while IFS=$'\t' read -r level check detail; do
     case "$level" in
       fail) err  "$check: $detail" ;;
@@ -179,9 +170,8 @@ if [ -n "$preview_dirs" ]; then
   done
 fi
 
-# The standard splits support files by what the agent does with them. A template
-# it fills in and emits is a static resource; documentation it reads to decide is
-# not. Keep the two from drifting back together.
+# House layout: fill-in templates go in assets/; lookup guidance goes in
+# references/. This makes the standard's suggested organization a local rule.
 echo "• templates live in assets/, not references/"
 while IFS= read -r ref; do
   # The file's own opening sentence is the honest classifier: a template tells
@@ -189,7 +179,7 @@ while IFS= read -r ref; do
   opening="$(grep -m1 -v '^#\|^$' "$ref")"
   case "$opening" in
     [Ff]ill*|[Cc]opy\ this*|[Uu]se\ this\ template*|[Ww]rite\ the\ completed*|[Cc]reate\ one\ row*)
-      err "$ref: opens as a fill-in template — the standard puts document templates in assets/";;
+      err "$ref: opens as a fill-in template — house policy puts document templates in assets/";;
   esac
 done < <(find skills -path '*/references/*.md' -type f | sort)
 
