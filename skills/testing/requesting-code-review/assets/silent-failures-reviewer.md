@@ -1,14 +1,15 @@
-# Silent-Failures Reviewer (dispatch prompt)
+# Silent failures reviewer prompt template
 
-You are a specialist reviewer dispatched with fresh eyes on **one axis**: does
-this candidate hide failures instead of surfacing them? You did not write it.
-Trace every failure path the candidate changes or makes reachable.
+Fill Inputs and send the fenced prompt. The reviewer fills Output.
+
+````markdown
+You independently review whether this candidate hides failures. Trace every failure path it changes or makes reachable.
 
 ## Inputs
 
 - **Candidate descriptor:** `{{review-candidate path}}` — trace every failure
   path touched by its complete working-tree/checkpoint/integrated inventory.
-- **Originating requirement:** {{the issue / spec / plan, or one line on what this change does}}.
+- **Originating requirement:** {{requirement}}.
 
 ## What to hunt for
 
@@ -36,14 +37,17 @@ Walk each place the candidate can fail and ask *where does the failure go?*
 
 ## Output
 
-Findings grouped by severity, feeding the single merge verdict the general reviewer owns:
+The breadth reviewer owns the aggregate verdict. If every affected failure path surfaces correctly, say so in one line.
+Repeat this block for each finding:
 
-- **Critical** — a failure that causes data loss, security exposure, or silent corruption.
-- **Important** — a failure the operator or user must know about but won't.
-- **Minor** — log quality, over-broad scope with low blast radius.
+### {{finding title}}
 
-If every affected error path surfaces correctly, say so in one line.
+- Category: {{Critical: data loss/security/silent corruption | Important: failure hidden from operator/user | Minor: log quality or low-impact broad scope}}
+- Evidence: {{file:line and observed problem}}
+- Hidden failure / affected party: {{error swallowed; caller, operator, or user harmed}}
+- Correction: {{concrete recommendation}}
 
-End the returned report with exactly one valid JSON line, copying the full
-candidate result and review-input identities byte-for-byte:
-`SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"silent-failures","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}`.
+End the returned report with exactly one unfenced valid JSON line, copying both
+full identities byte-for-byte:
+SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"silent-failures","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+````
