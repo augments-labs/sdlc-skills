@@ -1,6 +1,7 @@
 # Equivalence reviewer prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/review-report.md`; send the
+fenced prompt. The reviewer fills the report.
 
 ````markdown
 Review the exact high-risk candidate independently of its implementer.
@@ -37,6 +38,9 @@ copy, attempt, effect, restoration, cleanup, and pre/post-state contract.
 
 ## Output
 
+Complete the supplied report template with Role `equivalence` and Verdict
+`supported`, `not_supported`, `supported_after_fixes`, or `inconclusive`.
+
 Repeat the finding block; use “none” when clear. Bind the report to both exact
 identities. Never infer equivalence from compilation or aggregate green alone.
 
@@ -47,13 +51,10 @@ identities. Never infer equivalence from compilation or aggregate green alone.
 - Evidence: {{source and target observations; reproduction or gate}}
 - Correction: {{required change}}
 
-### Assessment
+Write only at the descriptor's assigned report location outside the candidate,
+then return that location; if no safe location exists, return the full report.
 
-- Equivalence: {{supported | not supported | supported after fixes}}
-- Candidate / review inputs: {{both full identities}}
-- Report: {{location or returned directly}}
+## Report template
 
-End the returned report with exactly one unfenced valid JSON line, copying both
-identities byte-for-byte:
-SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"equivalence","verdict":"{{supported | not_supported | supported_after_fixes | inconclusive}}","report":"{{location or returned directly}}"}
+{{report template}}
 ````

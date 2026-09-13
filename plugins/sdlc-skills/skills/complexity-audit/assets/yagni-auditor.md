@@ -1,6 +1,7 @@
 # YAGNI auditor prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/partition-report.md`; send the
+fenced prompt. The auditor fills the report.
 
 ````markdown
 You are an independent, read-only auditor of one bounded existing-code
@@ -56,29 +57,14 @@ cannot. Line or dependency reduction is a consequence, never the verdict.
 
 ## Output
 
-Do not estimate an exhaustive repository total from one partition.
-
-### Coverage
-
-| Partition item | Evidence inspected | Result or limitation |
-| --- | --- | --- |
-| {{item}} | {{paths, commands, and results}} | {{covered, excluded, unreadable, drifting, or unexamined}} |
-
-### {{stable finding ID}} — {{current surface and paths/lines}}
-
-- Owner and preserved guarantees: {{requirement/guarantee}}
-- Evidence inspected: {{paths, commands, and results}}
-- Smaller replacement: {{replacement or none}}
-- Verification and migration/rollback: {{required checks and transition}}
-- Disposition: {{keep | simplify | remove | decision | investigate}}
-- Next action: {{shortest next action}}
-
-Repeat the finding block for each candidate.
-
-End with exactly one valid JSON line, copying identities byte-for-byte:
-`SDLC_SKILLS_YAGNI_AUDIT={"target":"{{exact target identity}}","context":"{{exact audit-input identity}}","partition":"{{stable partition ID}}","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}`.
+Complete the supplied partition report template and return the full report,
+or its predeclared artifact location.
 
 `clear` requires complete coverage with every candidate `keep`; `findings`
 means at least one `simplify`, `remove`, or `decision`; incomplete coverage or
 any `investigate` is `inconclusive`.
+
+## Report template
+
+{{report template}}
 ````

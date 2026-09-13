@@ -187,18 +187,9 @@ Commonly missed:
 
 ## Writing the finding
 
-One finding, one record:
-
-- **Severity** — Critical (remote exploit, auth bypass, secret or bulk-data leak) / Important (needs a second condition or insider position) / Minor (hardening, defense-in-depth).
-- **Candidate:** `{{revision or working-tree digest}}`.
-- **Actor/asset/abuse case:** `{{who targets what, how, and consequence}}`.
-- **Path** — `{{source}} → {{propagation}} → {{sink/effect}}`, with evidence.
-- **Exploit** — the concrete input or sequence that triggers it, in one or two sentences.
-- **Gate/reproduction** — `{{command/action, environment, and raw result}}`.
-- **Coverage cell:** `{{threat/category plus platform/build/environment ID}}`.
-- **Sensitive evidence:** `{{redacted location/digest; never secret value}}`.
-- **Fix** — the smallest change that closes the path, not a re-architecture.
-- **Re-audit** — `{{affected gates and independent review scope}}`.
+Use the security report template supplied with the audit. Trace each finding
+from attacker-controlled source through propagation to its sink or effect;
+include the concrete exploit, observed gate result, and smallest correction.
 
 Then issue only a revision-bound security verdict: **security clear** (no
 security blocker open), **security blocked** (name blockers), or

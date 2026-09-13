@@ -1,7 +1,8 @@
 # Assurance challenger prompt template
 
-Fill Inputs and append the fenced prompt to the filled broad code-reviewer
-prompt. The reviewer fills Output; its receipt replaces the broad receipt.
+Fill Inputs and Report template from `assets/assurance-report.md`; append the
+fenced prompt to the filled broad code-reviewer prompt. The reviewer fills its
+assurance section within the broad report.
 
 ````markdown
 Challenge assurance as a distinct axis: generic code quality review cannot
@@ -55,20 +56,16 @@ establish that a gate can fail or protects its named promotion.
 
 ## Output
 
-Add this coverage table to the reviewer-owned report. Record every challenged
-risk and attack, including unrun and inconclusive cells. Findings name the
-violated matrix cell and shortest repair.
-
-| Risk/matrix cell and attack | Command or artifact | Raw result location | Result or limitation |
-| --- | --- | --- | --- |
-| {{cell and attack}} | {{what you inspected or ran}} | {{evidence location}} | {{result, unrun, or inconclusive}} |
+Complete the supplied assurance section within the broad review report. Record
+every challenged risk and attack, including unrun and inconclusive cells.
+Findings name the violated matrix cell and shortest repair.
 
 `clear` requires every applicable cell and claimed promotion to be accounted
-for; an unrun cell is `inconclusive`. Missing either assurance member means
-generic breadth review only. A path, label, combined prose identity, shortened
-digest, or mismatched matrix version is invalid.
+for; an unrun cell is `inconclusive`. Missing Matrix version or Assurance
+verdict means generic breadth review only. A path, label, combined prose
+identity, shortened digest, or mismatched matrix version is invalid.
 
-End the returned response with exactly one unfenced valid JSON line, copying
-identities byte-for-byte:
-SDLC_SKILLS_REVIEW_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","verdict":"{{ready | not_ready | ready_after_fixes}}","report":"{{location or returned directly}}","assurance":"{{clear | findings | inconclusive}}","assurance_version":"{{exact normative matrix version}}"}
+## Report template
+
+{{report template}}
 ````

@@ -1,6 +1,7 @@
 # Code reviewer prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/review-report.md`; send the
+fenced prompt. The reviewer fills the report.
 
 ````markdown
 You independently review this candidate on two axes: project standards and the originating requirement. Give an honest verdict supported by evidence.
@@ -60,44 +61,25 @@ You independently review this candidate on two axes: project standards and the o
 
 ## Output
 
-Write the full report outside the candidate at the descriptor's assigned path,
-or return it inline if no safe path exists. Use this structure; repeat findings:
+Complete the supplied report template with Role `breadth` and Verdict
+`ready`, `not_ready`, or `ready_after_fixes`. Report Standards and Spec
+separately, including supported strengths. Repeat this finding block:
 
-### Coverage
-
-| File/range | Evidence and traversal reason | Result or limitation |
-| --- | --- | --- |
-| {{reviewed range}} | {{what you read or ran}} | {{finding or clean result}} |
-
-### Assessments
-
-- Standards: {{conformance and supported strengths}}
-- Spec: {{requirement coverage, omissions, and unrequested scope}}
-
-### Findings
-
-#### {{finding title, or none}}
+### {{finding title}}
 
 - Severity: {{Critical: bugs/security/data loss | Important: behavior/architecture/tests | Minor: style/naming/clarity}}
 - Disposition: {{blocking | advisory}}
 - Evidence: {{file:line, observed failure, and what you read or ran}}
 - Correction: {{concrete fix}}
 
-### Readiness
+Missing, failed, or inconclusive required verification prevents readiness.
+A conditional verdict remains non-ready until a new verified and reviewed
+candidate exists.
 
-- Candidate: {{exact result identity}}
-- Review inputs: {{exact review-input identity}}
-- Verdict: {{ready | not_ready | ready_after_fixes}}
-- Shortest path to readiness: {{corrections or none}}
-- Report: {{location or returned directly}}
+Write only at the descriptor's assigned report location outside the candidate,
+then return that location; if no safe location exists, return the full report.
 
-If saved separately, return only findings, both full identities, shortest path
-to readiness, and report location. Otherwise return the full report, including
-clean coverage and traversal. Missing, failed, or inconclusive required
-verification prevents readiness. A conditional verdict remains non-ready until
-a new verified and reviewed candidate exists.
+## Report template
 
-End the returned response with exactly one unfenced valid JSON line. Copy both
-full identities byte-for-byte; prose does not bind the verdict:
-SDLC_SKILLS_REVIEW_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","verdict":"{{ready | not_ready | ready_after_fixes}}","report":"{{location or returned directly}}"}
+{{report template}}
 ````

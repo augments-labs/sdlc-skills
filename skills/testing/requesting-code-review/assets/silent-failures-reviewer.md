@@ -1,6 +1,7 @@
 # Silent failures reviewer prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/review-report.md`; send the
+fenced prompt. The reviewer fills the report.
 
 ````markdown
 You independently review whether this candidate hides failures. Trace every failure path it changes or makes reachable.
@@ -37,6 +38,9 @@ Walk each place the candidate can fail and ask *where does the failure go?*
 
 ## Output
 
+Complete the supplied report template with Role `silent-failures` and Verdict
+`clear`, `findings`, or `inconclusive`.
+
 The breadth reviewer owns the aggregate verdict. If every affected failure path surfaces correctly, say so in one line.
 Repeat this block for each finding:
 
@@ -47,7 +51,10 @@ Repeat this block for each finding:
 - Hidden failure / affected party: {{error swallowed; caller, operator, or user harmed}}
 - Correction: {{concrete recommendation}}
 
-End the returned report with exactly one unfenced valid JSON line, copying both
-full identities byte-for-byte:
-SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"silent-failures","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+Write only at the descriptor's assigned report location outside the candidate,
+then return that location; if no safe location exists, return the full report.
+
+## Report template
+
+{{report template}}
 ````

@@ -73,22 +73,26 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 1. Shallow, with its written assignment recorded in the descriptor → run the
    self-review below; dispatch nothing. No assignment → Standard.
 2. Otherwise open `assets/code-reviewer.md` and each selected specialist
-   template. Fill Inputs from the descriptor and raw evidence; leave Output
-   fields for the reviewer. Send only each fenced prompt through the harness's
-   dispatch action.
+   template. Fill Inputs from the descriptor and raw evidence; insert
+   `assets/review-report.md` into its Report template slot. Leave the report
+   fields for the reviewer. Send each filled fenced prompt through the
+   harness's dispatch action.
 3. Dispatched = the action returned a non-empty ID. Empty, refused, or
    unavailable → write the review as pending and stop. Do not review it
    yourself. Do not poll an empty target.
 4. Poll the exact IDs to the descriptor's deadline. Success = exactly one
    current report.
-5. Check the report covers the whole inventory, including every
-   human-authored change. Reject a report that wandered the repository beyond
-   what the evidence required.
+5. Read each returned report, opening its file if only a location was returned.
+   Match Candidate, Review inputs, Role, and the role's allowed Verdict to the
+   frozen request. Missing, unreadable, conflicting, or mismatched fields →
+   pending. Check the complete inventory and every human-authored change;
+   reject unrelated traversal.
 6. Block readiness on anything unreconciled: missing or failed verification,
    a missing role, an open finding, an inconclusive result, a non-success,
    a conditional "ready".
-7. Write the verdict and receipt with the full candidate and context
-   identities.
+7. Record each report's location and disposition in the external review ledger.
+   A report is the reviewer's assessment; keep the tool-issued dispatch ID as
+   the evidence that the reviewer was actually dispatched.
 8. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
    before responding to it, including a `not ready` that asks for no edit.
 9. After any fix or bound-input change → restart at Step 1. A re-review is a
