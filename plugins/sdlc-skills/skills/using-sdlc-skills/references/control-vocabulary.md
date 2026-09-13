@@ -35,8 +35,9 @@ Bare "identity" is correct only when every sense applies at once.
 
 - **Gate** — anything that must accept a result before it may advance. The
   umbrella term; every item below is a kind of gate.
-- **Evaluator** — the specific executable check a task or plan names as its gate
-  (a command, a suite, a threshold).
+- **Evaluator** — the specific check a task or plan names as its gate: an
+  executable command or a controlled judgment rubric with explicit criteria,
+  an accountable evaluator, and recorded observations.
 - **Oracle** — the thing that says what the *right* answer is, independent of the
   implementation under test. A characterization or differential baseline is an
   oracle; the implementation's current output is not.

@@ -33,7 +33,9 @@ Review the requirements spec in Inputs. Flag **only** issues that would lead to 
 
 1. **Testable** — every functional requirement is a behaviour that can pass or fail, not a wish ("rejects an expired token with a 401", not "good auth").
 2. **Acceptance criteria** — every requirement has at least one, and it is a real check, not a restatement of the requirement.
-3. **What, not how** — no design or implementation smuggled into the requirements (a named cache, a specific endpoint). Flag it; don't fix it.
+3. **Requirement boundary** — flag unsupported implementation choices. Preserve
+   a named endpoint, protocol, or interface when an approved requirement or
+   existing public contract makes it an acceptance obligation.
 4. **Complete vs the goal** — every part of the stated goal has a requirement, and every requirement traces back to the goal (no gaps, no orphans).
 5. **No contradictions** — no two requirements, or a requirement and its criterion, that can't both hold.
 6. **The form is honest and it exists** — every referenced test, mockup,
