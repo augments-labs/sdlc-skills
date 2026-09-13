@@ -1,23 +1,21 @@
 # Writing Skills — Reference
 
-## Why the format is strict
+## Where detail belongs
 
-Every line of a SKILL.md loads into context each time the skill fires. A 300-line skill invoked ten times in a session is 3,000 lines of overhead. The cost is real and measured: loading a whole library at startup can burn 20k+ tokens before any work begins, and audits of verbose skill libraries routinely find most lines cuttable with zero behavior loss. We pay only for what changes behavior.
+A loaded body competes for context with the task and other instructions. Keep
+what changes action and load supporting detail when needed. Reusing a current
+body is not another load; token claims must describe actual text and execution.
 
-## When verbosity earns its tokens
-
-Not all length is bloat. A token-cutting pass can strip most lines from a skill library and claim "no behavioral loss" — but that usually measures only *activation* (which depends solely on the `description`), never *compliance under pressure*. For one skill type the verbose part is the active ingredient: in **discipline skills**, the rationalization table is what changes behavior, not decoration. The split:
-
-- **Capability / template / reference / meta** — no temptation to counter. Lean. Verbosity here is genuine bloat.
-- **Discipline** (for example routing, TDD, YAGNI, verifying completion,
-  debugging, receiving review) — counters a tempted agent's excuses. The table
-  stays in the body. Justify each line with a pressure test, never a static read.
-
-Our large token wins come from architecture (lazy loading, no uniform ceremony, per-task plans, light bootstrap), not from gutting discipline skills — so conceding this point costs us nothing.
+A concise capability can still need examples or constraints. Discipline skills
+also keep the pressure controls that stop tempting omissions: rationalization
+tables and red flags belong in context when they are needed. Shortening one
+requires relevant behavioral evidence; a description score cannot establish
+that its body still holds under pressure.
 
 ## Descriptions: trigger, not summary
 
-The description is the *only* text the runtime reads when deciding whether to load a skill. Two failure modes:
+Catalogue names and descriptions guide initial selection. Explicit user requests
+and loaded handoffs can also cause invocation. Two description failure modes:
 
 - **Too vague** → the skill never fires when it should.
 - **A workflow summary** → the model reads the summary, assumes it knows the procedure, and skips the skill body. Incomplete execution.
@@ -43,7 +41,9 @@ Link references only **one level deep** from SKILL.md. Deeper chains (SKILL → 
 
 ## Complexity gate
 
-The most common real-world complaint about heavy skill libraries is uniform ceremony on tiny tasks. Every skill states when to skip itself. A two-line config change must not trigger a seven-step process.
+State applicability and scale-down conditions so small work gets proportionate
+guidance. Required gates may have no skip; use their smallest meaningful check.
+Line count alone does not establish the risk or scope of a configuration change.
 
 ## How much to write
 
@@ -51,12 +51,15 @@ Match instruction density to how constrained the task is:
 
 - **One correct sequence** (a fragile path) → bundle a tested script; prose drifts.
 - **A preferred pattern** → give pseudocode or a worked shape, but allow variation.
-- **Open-ended / exploratory** → principles only; over-specifying flexible work makes it brittle.
+- **Open-ended / exploratory** → state the objective, useful method and stop;
+  allow judgment where several approaches satisfy them.
 
 ## Prose hygiene
 
 - **One term per concept.** Choose "extract" and don't also write "pull"/"get"/"retrieve" — the model may treat each synonym as a distinct operation.
-- **Imperative for discipline, plain for guidance.** Discipline skills use hard imperatives (`Write the test before any implementation code.`); collaborative skills avoid them so they don't override the model's contextual judgment. Weak `Consider writing tests first.` → strong `Write the test before any implementation code.`
+- **Match control to the consequence.** State required actions directly. Use
+  emphasis at a fragile boundary or tempting omission; let flexible methods
+  vary within the accepted scope. Do not turn ordinary advice into a hard stop.
 
 ## Naming
 

@@ -42,12 +42,12 @@ SHADOWED_COMMANDS='^(review|init|compact|clear|help|config|status|commit|test|ru
 mapfile -t skills < <(find skills -name SKILL.md | sort)
 [ ${#skills[@]} -eq 0 ] && { echo "no skills found under skills/"; exit 2; }
 
-# The standard's checks are delegated to the conformance script this library
+# Shared format and policy checks are delegated to the checker this library
 # ships (see the per-skill loop). Delegation fails open — a moved or renamed
 # script would produce no findings and every skill would pass — so prove it is
 # there and runnable before trusting a silent result.
 CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh
-[ -f "$CONFORMANCE" ] || { echo "missing $CONFORMANCE — the standard's checks are delegated to it"; exit 2; }
+[ -f "$CONFORMANCE" ] || { echo "missing $CONFORMANCE — the skill-format checks are delegated to it"; exit 2; }
 bash "$CONFORMANCE" --help >/dev/null 2>&1 || { echo "$CONFORMANCE does not run"; exit 2; }
 
 for skill in "${skills[@]}"; do
@@ -55,18 +55,9 @@ for skill in "${skills[@]}"; do
   name_dir=$(basename "$dir")
   echo "• $skill"
 
-  # What the STANDARD requires — frontmatter shape, name/directory agreement,
-  # the 1024-character description limit, the 500-line and 5000-token body
-  # ceilings, resolvable links, and bundled scripts that answer `--help` — is
-  # checked by the skill-conformance script this library ships, not by a second
-  # copy of those rules here. One implementation means the two cannot disagree,
-  # and it puts the shipped script on the CI path instead of taking its
-  # correctness on trust. Everything below this call is a HOUSE rule the
-  # standard does not cover.
-  # Both severities are surfaced. Reading only `fail` would discard a whole
-  # class of findings — presentation, register, anything the script is confident
-  # enough to flag but not to block on — and discarding them silently is the
-  # same failure mode as delegating to a checker that is not there.
+  # Delegate the shared format and policy profile: required field extraction,
+  # names, sizes, links, presentation, and executable script help. This is not
+  # full YAML/optional-metadata validation. Preserve warnings as well as errors.
   while IFS=$'\t' read -r level check detail; do
     case "$level" in
       fail) err  "$check: $detail" ;;
@@ -79,8 +70,8 @@ for skill in "${skills[@]}"; do
   # name must not shadow a common harness slash command.
   [ -n "$fname" ] && echo "$fname" | grep -qiE "$SHADOWED_COMMANDS" && err "name '$fname' shadows a common harness command — rename to avoid mis-invocation"
 
-  # House size targets, tighter than the standard's ceilings because many skills
-  # coexist in one session — and only ever warnings.
+  # Advisory house size targets keep a multi-skill catalogue concise; exceeding
+  # these targets produces warnings, separate from the enforced profile limits.
   #
   # The line target was once a hard failure at 120, and that was a mistake with a
   # visible cost: authors bought line count by dropping articles and verbs until
@@ -143,10 +134,10 @@ while IFS= read -r ref; do
     err "$ref: not referenced directly from $skill_file"
 done < <(find skills \( -path '*/references/*.md' -o -path '*/assets/*.md' \) -type f | sort)
 
-# That a bundled script is executable and answers `--help` is the standard's
-# rule, already checked per skill above. These two are the house additions: an
-# agent that cannot find the script in SKILL.md never runs it, and a `--help`
-# that omits exit codes leaves the caller unable to branch on the result.
+# The checker enforces executable permission and successful `--help` as house
+# policy. These additional house checks require direct disclosure in SKILL.md
+# so the agent can find the script, and documented exit codes so it can act on
+# the result. The standard does not require this interface.
 echo "• every bundled script is disclosed and documents its exit codes"
 while IFS= read -r s; do
   skill_file="$(dirname "$(dirname "$s")")/SKILL.md"
@@ -179,9 +170,8 @@ if [ -n "$preview_dirs" ]; then
   done
 fi
 
-# The standard splits support files by what the agent does with them. A template
-# it fills in and emits is a static resource; documentation it reads to decide is
-# not. Keep the two from drifting back together.
+# House layout: fill-in templates go in assets/; lookup guidance goes in
+# references/. This makes the standard's suggested organization a local rule.
 echo "• templates live in assets/, not references/"
 while IFS= read -r ref; do
   # The file's own opening sentence is the honest classifier: a template tells
@@ -189,7 +179,7 @@ while IFS= read -r ref; do
   opening="$(grep -m1 -v '^#\|^$' "$ref")"
   case "$opening" in
     [Ff]ill*|[Cc]opy\ this*|[Uu]se\ this\ template*|[Ww]rite\ the\ completed*|[Cc]reate\ one\ row*)
-      err "$ref: opens as a fill-in template — the standard puts document templates in assets/";;
+      err "$ref: opens as a fill-in template — house policy puts document templates in assets/";;
   esac
 done < <(find skills -path '*/references/*.md' -type f | sort)
 
