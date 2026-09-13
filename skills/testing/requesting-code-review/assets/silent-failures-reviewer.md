@@ -41,7 +41,7 @@ Walk each place the candidate can fail and ask *where does the failure go?*
 Complete the supplied report template with Role `silent-failures` and Verdict
 `clear`, `findings`, or `inconclusive`.
 
-The breadth reviewer owns the aggregate verdict. If every affected failure path surfaces correctly, say so in one line.
+Return this axis verdict to the requesting coordinator, who reconciles all roles and owns the aggregate verdict. If every affected failure path surfaces correctly, say so in one line.
 Repeat this block for each finding:
 
 ### {{finding title}}

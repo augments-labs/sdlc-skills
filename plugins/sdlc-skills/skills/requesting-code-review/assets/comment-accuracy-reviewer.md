@@ -37,7 +37,7 @@ You independently review whether comments and docstrings in this candidate tell 
 Complete the supplied report template with Role `comment-accuracy` and Verdict
 `clear`, `findings`, or `inconclusive`.
 
-The breadth reviewer owns the aggregate verdict. If accurate and useful, say so in one line. Note any well-placed why comments.
+Return this axis verdict to the requesting coordinator, who reconciles all roles and owns the aggregate verdict. If accurate and useful, say so in one line. Note any well-placed why comments.
 Repeat this block for each finding:
 
 ### {{finding title}}

@@ -42,7 +42,7 @@ Note the deliberate choice: a loan is never deleted and never edited into a new 
 ## Relationships
 
 - **Book 1—N Copy.** A copy belongs to exactly one book. Ownership: Book owns Copy; withdrawing a book withdraws its copies. Deleting a Book with loan history is not allowed — history must stay readable.
-- **Patron 1—N Loan.** A loan names exactly one patron. Ownership: the loan's lifecycle is independent — a closed loan outlives nothing and nothing; it is a record, not a possession.
+- **Patron 1—N Loan.** A loan names exactly one patron. Ownership: the loan's lifecycle is independent — a closed loan remains a historical record under the retention policy; closing it or anonymizing the patron does not delete it.
 - **Copy 1—N Loan (over time), Copy 1—0..1 open Loan (at any instant).** This is the relationship everyone gets wrong: the *lifetime* cardinality is one-to-many, but the *at-any-moment* cardinality is one-to-one. Both must be written down; the second is the invariant below.
 
 ## State transitions
@@ -64,7 +64,7 @@ Rules that must always hold — each becomes a constraint where the store can en
 
 1. A copy has **at most one open loan** (`returned_at` is null). Enforce with a uniqueness constraint over open loans per copy — application checks alone race under concurrency.
 2. `due_at` is always **after** `checked_out_at`; `returned_at`, when present, is **at or after** `checked_out_at`.
-3. A patron has **at most five open loans**. This one is a policy, not a structural rule — enforce it in the borrow operation, cover it with a test, and expect it to change; don't bake "five" into the schema.
+3. A patron has **at most five open loans**. This one is a policy, not a structural rule — enforce it atomically in the borrow operation, cover concurrent borrows with a test, and expect it to change; don't bake "five" into the schema.
 4. `Copy.status` **agrees with** the loans: `on_loan` requires exactly one open
    loan; an open loan requires `on_loan` or `lost`; `available` and `withdrawn`
    require no open loan. `lost` may have zero or one open loan because a copy can
@@ -87,19 +87,24 @@ loan cannot derive whether a copy was lost or withdrawn.
 - **Identity and tenancy:** identifiers are stable and globally unique. This
   single-library example has no tenant boundary; if branches become tenants,
   uniqueness, access, and transfer rules must be remodeled rather than assumed.
-- **Concurrency and retry:** two simultaneous borrow attempts serialize on the
-  copy and the open-loan uniqueness constraint is the final guard. A retried
-  request carries an idempotency key so it cannot create two loans.
+- **Concurrency and retry:** borrow checks the patron limit and copy state and
+  creates the loan in one transaction. Serialize all open-loan changes for a
+  patron, then lock the copy in a consistent order; locking only the copy lets
+  a patron at four loans borrow two different copies concurrently. The
+  open-loan uniqueness constraint guards each copy. An idempotency key prevents
+  a retried request from creating a second loan.
 - **Time and ordering:** timestamps use one defined time basis. A late return
   event cannot close a newer loan for the same copy; the operation names the
   loan identity, not merely the copy.
 - **Retention and privacy:** loan history is retained; patron deletion
   anonymizes identifying attributes under a stated retention policy while
   preserving referential integrity.
-- **Compatibility and migration:** adding `Copy.status` begins by deriving and
-  checking it against loans, supports the mixed-version interval, and rolls
-  back by returning reads to the loan-derived value. A reconciliation query
-  reports every disagreement before and after cutover.
+- **Compatibility and migration:** derive occupancy from loans and import
+  lost/withdrawn disposition from its authoritative records; missing disposition
+  is unresolved, never inferred from loan history. During mixed versions and
+  rollback, preserve that disposition and reconcile occupancy against loans.
+  Revert a reader only to a version that understands both facts; a loan-only
+  reader is not a valid rollback target.
 
 The design records the representative transaction tests and reconciliation
 query that prove these claims. Until those evaluators run against representative

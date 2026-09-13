@@ -1,12 +1,13 @@
 # Executing Plans — Subagent Dispatch
 
-Dispatching a task to a subagent gives it a fresh context window. Reach for it
-when your context is filling or one task is large and self-contained, then
-offload, gate its Evaluator, and move on sequentially. A small fully specified
-task is faster inline; do not dispatch it or invent an independent task reviewer.
-This never waives final done-boundary classification or shallow self-review.
+Use a fresh worker for each task when the selected execution mode is delegated.
+Wait for its result, run the task's acceptance gate, then dispatch the next
+task. Small size does not silently change that selected mode to inline.
 
-*One-at-a-time offload, not fan-out.* "Self-contained" means the task carries no inherited history — not that it is independent of the *other* tasks. When several tasks are independent *of each other* and could run at once, fan them out with `dispatching-parallel-agents` instead — it owns the independence check and the combined verification.
+A self-contained packet carries all the context its worker needs; the task may
+still depend on earlier tasks. Concurrency is a separate decision: only an
+approved parallel mode uses `dispatching-parallel-agents` to establish exclusive
+writes and reconcile results. Preserve final review classification in every mode.
 
 ## The dispatch packet
 

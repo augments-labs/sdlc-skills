@@ -23,8 +23,9 @@ Never write decision state, review state, or build progress into this section.
 ### Trace
 
 Every requirement, preserved obligation, and material risk maps to something that
-carries it. An unmapped row blocks approval. Evaluator references point at gates
-the assurance matrix owns — do not redefine them here.
+carries it. An unmapped row blocks approval. Reference the existing requirement
+or project gates, including the assurance matrix where applicable. Do not
+redefine a gate or require a new matrix just to fill this section.
 
 | Requirement / obligation / risk | Owning component | Interface | Evaluator reference |
 | --- | --- | --- | --- |
@@ -81,7 +82,7 @@ Implementation count alone neither requires nor forbids a seam.
 
 | ID | Decision | Hard to reverse because | Where it is recorded |
 | --- | --- | --- | --- |
-| {{D-001}} | {{the choice}} | {{what it locks in}} | {{ADR path, or interview-me if still open}} |
+| {{D-001}} | {{the choice}} | {{what it locks in}} | {{accepted ADR where its owning skill requires one; otherwise this decision row, or the unresolved decision owner}} |
 
 ### Open risks
 
