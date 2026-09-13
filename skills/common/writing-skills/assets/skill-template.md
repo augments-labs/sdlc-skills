@@ -1,6 +1,6 @@
 ---
 name: {{skill-name-kebab}}
-description: Use when {{trigger conditions — when this applies}}. {{One sentence on what it does.}} Skip when {{negative trigger}}.
+description: Use when {{plain trigger conditions}}. {{Optional near-miss exclusion, only when a real one exists.}}
 ---
 
 # {{Skill Title}}
@@ -16,12 +16,15 @@ description: Use when {{trigger conditions — when this applies}}. {{One senten
 
 1. {{one-line act}}
 2. {{condition}} → {{act}}
-3. **REQUIRED SUB-SKILL:** invoke `{{skill}}` {{at this point; what this skill never does itself}}
+3. {{When a handoff is needed: REQUIRED SUB-SKILL, its entry condition, input,
+   return value, and the caller step that resumes. Omit otherwise.}}
 
 ## Step 2: {{name the act}}
 
 1. {{one-line act}}
-2. Present and end the turn:
+2. {{Only when an unresolved material decision needs the user's answer,
+   present the choices and wait. Reuse a current answer already given.
+   Omit this step for work with no such decision.}}
 
    ```text
    {{the exact question}}

@@ -14,7 +14,7 @@
 # Flags and exit codes: --help.
 #
 # CI runs this with --max 5000 (see .github/workflows/validate.yml) — aligned
-# with the standard's own body ceiling. Below it, ≈2000 remains the house
+# with the house body budget. Below it, ≈2000 remains the house
 # target a body is expected to justify in review; this report is the number
 # that justification argues from. The gate sat at 1600 while bodies were
 # written in a telegraphic register; a body that spells its rules out in
@@ -24,8 +24,8 @@
 # diff, where a reviewer can see it.
 #
 # This is the chars/4 estimator. check-skill.sh scores bodies against the
-# standard's own 5000-token ceiling using words x 1.3; the two numbers are in
-# different units and are not comparable.
+# house 5000-token limit using words x 1.3; compare each estimator only with
+# its own prior values. This script measures full SKILL.md files.
 
 set -uo pipefail
 cd "$(dirname "$0")/../.." || exit 2
@@ -55,7 +55,7 @@ approx() { local c; c=$(wc -m <"$1"); echo $(((c + 3) / 4)); }
 
 # Measure what actually ships: run the injector and take the context it emits,
 # rather than a copy that can drift from it. The injected text is the whole
-# `using-sdlc-skills` body, so this number is the real per-session floor.
+# `using-sdlc-skills` body. This measures emitted text, not session billing.
 nudge_src="scripts/sh/session-start.sh"
 nudge="$(mktemp)"; trap 'rm -f "$nudge"' EXIT
 if command -v jq >/dev/null 2>&1; then
