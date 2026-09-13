@@ -1,6 +1,6 @@
 ---
 name: dispatching-parallel-agents
-description: "Use when two or more work items can run concurrently with disjoint file ownership, mutable state, and outputs — unrelated bugs, independent features, parallel research. Fires on do these at the same time and can several agents work on this, even if nobody says parallel or concurrent. Skip shared generators, manifests, or runtime state, dependent outputs, and work quicker to do inline."
+description: "Use when independent work can run concurrently with exclusive writes, separate mutable resources, and no dependence on another worker's output. Shared reads of frozen inputs are allowed. Skip coupled writes, runtime state, dependent outputs, or work quicker to do inline."
 ---
 
 # Dispatching Parallel Agents
@@ -11,8 +11,9 @@ yourself before anything integrates.
 
 ## When to use
 
-- Two or more pieces of work that are **provably independent**: disjoint files, disjoint state, and no "B needs A's result."
-- **Skip** shared files or dependencies, output ordering, and work that is
+- Two or more independent tasks: exclusive writes and mutable resources, with
+  no task needing another's output. Overlapping reads of frozen inputs are safe.
+- **Skip** overlapping writes, shared mutable state, dependent outputs, and work that is
   quicker done inline. Sequence it in the current task or plan; `executing-plans`
   is for an approved plan only.
 
@@ -22,7 +23,7 @@ yourself before anything integrates.
    fails a line:
    - **Base** — same immutable revision, or an explicitly ordered dependency
      revision.
-   - **Files** — exclusive paths, including generated outputs, manifests,
+   - **Writes** — exclusive paths, including generated outputs, manifests,
      lockfiles, shared fixtures, tests. A truly shared file gets one later
      integration owner and no concurrent editor.
    - **State** — disjoint ports, databases, fixtures. A server or migrations

@@ -1,6 +1,6 @@
 ---
 name: debugging
-description: "Use before proposing or applying a fix to any bug, test failure, flaky or intermittent result, or unexpected behavior whose technical cause is unknown. Fires on it's broken, this doesn't work, and why is it doing that, even if nobody says debug. Skip a one-line error whose cause and complete effect are directly visible, and skip explaining how a known, contained production failure escaped its safeguards."
+description: "Use before proposing or applying a fix to any bug, test failure, flaky or intermittent result, or unexpected behavior whose technical cause is unknown. Fires on it's broken, this doesn't work, and why is it doing that. Skip a one-line error whose cause and complete effect are directly visible, and skip explaining how a known, contained production failure escaped its safeguards."
 ---
 
 # Debugging
@@ -10,8 +10,11 @@ cause survives, and only then fix. Treat intermittence as a different evidence
 model, never as permission to guess and patch.
 
 Before the first step, check whether the failure is reaching real users right
-now. If it is, invoke `containing-an-incident` first and return here once
-nothing is bleeding; the report rarely says "incident".
+now. If it is, invoke `containing-an-incident` first. Return after containment,
+or with its recorded fallback: exhausted safe levers, residual impact, and
+incident/escalation owner. Continue diagnosis under that disposition; do not
+bounce back for unchanged residual impact. New or worsened impact or a newly
+available lever reopens containment.
 
 ## Step 1: Frame the investigation
 

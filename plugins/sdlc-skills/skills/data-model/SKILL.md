@@ -1,6 +1,6 @@
 ---
 name: data-model
-description: "Use when the domain needs modeling before design or code — the concepts a system stores or computes over: entities, relationships, state transitions, and the invariants that keep them true. Fires for a stateless engine (pricing, rules, workflow) as much as for schema design, and on what are the core objects here, even if nobody says data model or schema. Skip a feature that adds no domain concepts."
+description: "Use when domain concepts, relationships, state transitions, or invariants need to be introduced, changed, or removed before implementation, including stateless rules and pricing engines. Skip when those semantics remain unchanged or are already settled for this task."
 ---
 
 # Data Model
@@ -10,7 +10,9 @@ Model the domain before the code that manipulates it. A domain model is more tha
 ## When to use
 
 - The work introduces or changes domain concepts — persistent entities, or the in-memory ones a stateless engine computes over (pricing, rules, workflow).
-- **Skip** for a feature that adds no domain concepts (a pure UI tweak, plumbing between existing models).
+- **Skip** when domain concepts, relationships, transitions, and invariants are
+  unchanged or already settled for this task. Existing concepts can still need
+  remodeling; adding no new entity is not a skip.
 
 ## Step 1: Model the domain
 

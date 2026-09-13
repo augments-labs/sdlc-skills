@@ -53,7 +53,7 @@ A test can exist and still not protect:
 Complete the supplied report template with Role `test-coverage` and Verdict
 `clear`, `findings`, or `inconclusive`.
 
-The breadth reviewer owns the aggregate verdict. If the change is well covered, say so in one line.
+Return this axis verdict to the requesting coordinator, who reconciles all roles and owns the aggregate verdict. If the change is well covered, say so in one line.
 Repeat this block for each finding:
 
 ### {{finding title}}

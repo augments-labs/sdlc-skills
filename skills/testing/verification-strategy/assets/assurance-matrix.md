@@ -22,7 +22,8 @@ sets another durable location.
 - **Migration contract:** `{{version, or reason not applicable}}`
 - **Assurance author:** `{{person/process}}`
 - **Independent assurance challenger:** `{{required independent role/process,
-  attempt ID, deadline, timeout/cancel owner/action, report/verdict; or exact
+  deadline, timeout/cancel owner/action, required report/verdict; actual attempt
+  receipts and outcomes stay in the External challenge ledger; or exact
   accountable exception with consequence, compensating gate, and expiry}}`
 - **External challenge ledger:** `{{predeclared reviewer-owned location outside
   the matrix candidate; predecessor/successor attempts, cancellation-requested/

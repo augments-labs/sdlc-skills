@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: "Use when approved requirements or a clearly multi-step task need an executable, per-task plan before implementation — ordered tasks, their dependencies, and how each one is known to be done. Fires on break this down, lay out the steps first, and this is too big to do in one go, even if nobody says plan. Skip single-step or trivial work."
+description: "Use when approved requirements or a clearly multi-step task need an executable, per-task plan before implementation — ordered tasks, their dependencies, and how each one is known to be done. Fires on break this down, lay out the steps first, and this is too big to do in one go. Skip single-step or trivial work."
 ---
 
 # Writing Plans
@@ -51,8 +51,9 @@ not the code.
 2. Open `assets/task-template.md` for each task. Fill `Task ID` (stable,
    non-positional), `Depends on`, `Files`, `Exclusive ownership/effects`,
    `Context` as paths.
-3. Fill **Consumes** and **Produces** with exact names and types. A later
-   executor sees only that line.
+3. Fill **Consumes** from earlier tasks' exact **Produces** names and types.
+   Put existing code and external input artifacts in **Context**; do not invent
+   producer tasks for inputs that already exist.
 4. Fill `Implementation disciplines`: `test-driven-development` + `yagni`, or
    the exact carve-out.
 5. Include exact code only where precision is fragile: a tricky regex, a
@@ -130,4 +131,3 @@ not the code.
 7. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke `executing-plans`
    against the approved version before any workspace or implementation
    action. This skill writes no code.
-

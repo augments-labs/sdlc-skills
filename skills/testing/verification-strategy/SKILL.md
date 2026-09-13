@@ -1,6 +1,6 @@
 ---
 name: verification-strategy
-description: "Use to establish or repair a project's correctness battery, before high-risk work whose assurance is absent, stale, or unfalsifiable, and again on changed risk, an escaped defect, or a hollow gate. Fires on how should we test this project, our tests don't catch anything, and what should CI run, even if nobody says strategy. Skip a bounded feature, and skip writing or running an already-defined gate."
+description: "Use to establish or repair a project's correctness battery, before high-risk work whose assurance is absent, stale, or unfalsifiable, and again on changed risk, an escaped defect, or a hollow gate. Fires on how should we test this project, our tests don't catch anything, and what should CI run. Skip a bounded feature, and skip writing or running an already-defined gate."
 ---
 
 # Verification Strategy

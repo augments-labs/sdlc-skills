@@ -301,6 +301,77 @@ A repo with an .sdlc-skills/ trail for the viewing-artifacts scenario.
 EOF
 }
 
+# Inspect the template's rendered state carriers, not raw ledger-label proximity.
+# Parameters also let a retained single-topic page calibrate these same checks.
+_viewer_state_check() { # page topic terminal ADR IDs (id:state,...) unbound node
+  python3 - "$@" <<'PY_STATE'
+from html.parser import HTMLParser
+from pathlib import Path
+import re, sys
+
+class Node:
+    def __init__(self, tag='', attrs=()):
+        self.tag, self.attrs, self.children, self.parent = tag, dict(attrs), [], None
+    def text(self):
+        if self.tag in ('script', 'style'): return ''
+        return ' '.join(c.text() if isinstance(c, Node) else c for c in self.children)
+    def walk(self):
+        yield self
+        for c in self.children:
+            if isinstance(c, Node): yield from c.walk()
+    def has(self, cls): return cls in self.attrs.get('class', '').split()
+
+class Page(HTMLParser):
+    def __init__(self):
+        super().__init__(); self.root = Node(); self.stack = [self.root]
+    def handle_starttag(self, tag, attrs):
+        n = Node(tag, attrs); n.parent = self.stack[-1]; n.parent.children.append(n)
+        if tag not in ('area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'):
+            self.stack.append(n)
+    def handle_endtag(self, tag):
+        for i in range(len(self.stack)-1, 0, -1):
+            if self.stack[i].tag == tag:
+                del self.stack[i:]; break
+    def handle_data(self, text): self.stack[-1].children.append(text)
+
+page, topic, terminals, unbound = sys.argv[1:]
+p = Page(); p.feed(Path(page).read_text())
+panes = [n for n in p.root.walk() if n.tag == 'section' and n.attrs.get('id', '').endswith(topic)]
+assert len(panes) == 1, 'exactly one requested topic pane must be rendered'
+pane = panes[0]
+for pair in filter(None, terminals.split(',')):
+    identity, expected = pair.split(':')
+    # Find a record with this identity, a decision pill, and no other ADR identity.
+    records = [n for n in pane.walk() if set(re.findall(r'\bADR-\d+\b', n.text())) == {identity}
+               and any(c.has('pill') for c in n.walk())]
+    assert records, identity + ': missing interpreted decision'
+    record = min(records, key=lambda n: len(n.text()))
+    states = ' '.join(c.text() for c in record.walk() if c.has('pill')).lower()
+    assert re.search(r'\b' + expected + r'\b', states), identity + ': decision pill is not ' + expected
+    assert not re.search(r'\b(unknown|unsupported|proposed|pending)\b', states), identity + ': conflicting lifecycle state'
+    context = ' '.join(max(records, key=lambda n: len(n.text())).text().split()).lower()
+    assert not re.search(r'lifecycle.{0,50}(unknown|unsupported)|unsupported.{0,30}lifecycle', context), identity + ': contradictory lifecycle interpretation'
+    print(identity + ': ' + expected)
+if unbound:
+    nodes = [n for n in pane.walk() if n.has('node') and any(
+        c.tag == 'h4' and re.match(r'^' + re.escape(unbound) + r'\b', c.text().strip()) for c in n.walk())]
+    assert len(nodes) == 1, 'unbound dependency node must be rendered once'
+    # Inspect this dependency's node and following connectors, stopping at the
+    # next phase node so another dependency cannot supply or contradict it.
+    result = ' '.join(nodes[0].text().split()).lower()
+    following = nodes[0].parent.children
+    nearby = []
+    for sibling in following[following.index(nodes[0])+1:]:
+        if isinstance(sibling, Node):
+            if sibling.has('node'): break
+            nearby.extend(n.text() for n in sibling.walk() if n.has('conn'))
+    connectors = ' '.join(nearby).lower()
+    assert re.search(r'freshness.{0,60}unknown|unknown.{0,60}freshness|possible.staleness', result), 'unbound freshness must be explicit'
+    assert not re.search(r'\b(drift(?:ed)?|fresh|aligned|up.to.date)\b', result + ' ' + connectors), 'unbound dependency presents a conclusive state'
+    print(unbound + ': unbound freshness disclosed without a conclusive state')
+PY_STATE
+}
+
 scenario_assert() {
   local d="$1" page html base mut untracked nviews
   cd "$d" || return 2
@@ -341,18 +412,18 @@ scenario_assert() {
   # Bound spec-v1 -> spec-v2 is real drift even at equal Git timestamps.
   # Billing has no consumed spec binding: it must disclose unknown/possible
   # staleness rather than infer proven drift or freshness from time ordering.
-  local auth_pane billing_pane auth_text billing_text
+  local auth_pane billing_pane
   auth_pane="$(printf '%s' "$html" | perl -0777 -ne 'print $1 if /(<section\b[^>]*id="topic-[^"]*auth-overhaul".*?<\/section>)/s' | tr '\n' ' ')"
   billing_pane="$(printf '%s' "$html" | perl -0777 -ne 'print $1 if /(<section\b[^>]*id="topic-[^"]*billing-retry".*?<\/section>)/s' | tr '\n' ' ')"
-  auth_text="$(printf '%s' "$auth_pane" | perl -pe 's/<[^>]+>/ /g; s/\s+/ /g')"
-  billing_text="$(printf '%s' "$billing_pane" | perl -pe 's/<[^>]+>/ /g; s/\s+/ /g')"
   assert_contains "$auth_pane" 'class="conn"' "identity-bound drift rendered in auth-overhaul"
   assert_contains "$auth_pane" 'spec-v1.*spec-v2|spec-v2.*spec-v1' "drift explains the consumed/current identity mismatch"
-  assert_not_contains "$billing_pane" 'class="conn"[^>]*>[^<]*drift' "unbound billing dependency has no proven-drift connector"
-  assert_contains "$billing_text" 'freshness.{0,60}unknown|unknown.{0,60}freshness|possible.staleness' "unbound freshness is explicitly unknown or possible staleness"
+  if _viewer_state_check "$page" auth-overhaul 'ADR-015:rejected,ADR-016:cancelled' '' \
+      && _viewer_state_check "$page" billing-retry '' Plan; then
+    pass "interpreted terminal states and unbound freshness are consistent"
+  else
+    fail "interpreted terminal states or unbound freshness are incorrect"
+  fi
   assert_contains "$billing_pane" 'rejected' "ordinary rejected design decision preserved"
-  assert_contains "$auth_text" 'ADR-015.{0,100}rejected' "ADR rejected state preserved"
-  assert_contains "$auth_text" 'ADR-016.{0,100}cancelled' "ADR cancelled state preserved"
 
   # attention grouping and underivable state honesty
   assert_contains "$html" 'needs attention' "attention grouping present"

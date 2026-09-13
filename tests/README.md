@@ -3,10 +3,10 @@
 Everything that observes the library actually running. Inside it, one question
 splits the work: **is the correct answer known before the run?**
 
-The runners at this level are **gates** — the answer is known, so red means
-something broke and somebody has to act. Nothing at this level is tuned,
-compared against a previous number, or judged. That is `optimizing/`, one
-directory down, and keeping the two apart is the point of the arrangement.
+The runners at this level check labeled expectations. Offline predicates are
+deterministic; live agent behavior is sampled. Investigate a failing assertion,
+and distinguish it from a timeout, unavailable provider, or invalid observation.
+`optimizing/` holds exploratory measurements used to tune descriptions.
 
 ## Layout
 
@@ -48,18 +48,19 @@ confinement, and clean stop. Both run in CI. The live runners never do.
 
 ## The live runners, and what each one is for
 
-`run-behavioral.sh` runs a skill for real and reads the artifact it produced.
-Its RED/GREEN pair is the gate in this directory; its `--arm none` is the one
-measurement that shares a runner with a gate, because it asks whether a skill
-earns its context rather than whether anything broke. The arms, the cost model,
-and how to write a scenario are in `behavioral/README.md`.
+`run-behavioral.sh` runs a real agent and inspects the artifact it produced.
+RED/GREEN compares library versions; `--arm none` observes the bare agent. A
+passing sample cannot establish absence of a problem or redundancy of a skill.
+The arms and scenario format are in `behavioral/README.md`; `docs/testing.md`
+owns their interpretation and cost limits.
 
 `optimizing/descriptions/test-triggering-on-queries.sh` asks the separate
 question of whether a *description* fires, and has its own price tag —
 `optimizing/README.md`.
 
 Both bind to `harnesses/<name>.sh`, which holds only what differs per CLI. Adding
-a harness should touch nothing outside that directory; see `harnesses/README.md`.
+a harness also requires its install/routing adapter and validation; see
+`harnesses/README.md` and `docs/harness-support.md`.
 
 ## Honest limits
 

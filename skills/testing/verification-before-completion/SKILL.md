@@ -55,8 +55,10 @@ design the gates, review the change, integrate the branch, or decide release.
    Run missing or invalidated rows fresh. Shared effects → in sequence;
    disjoint effects → in parallel. Record why each reused row still applies.
 3. Timeout or mid-run failure: wait until its processes and effects stop,
-   move its leftovers out of the candidate, start a new linked run that
-   ignores late output.
+   preserve its result and isolate owned leftovers. Before a linked retry,
+   identify the changed intervention and remaining attempt budget. Repeated
+   failure under unchanged conditions → diagnose or return pending; never
+   keep rerunning until a sample passes. Reject late output.
 4. Unwanted mutation: restore and rerun, or record it as pending.
 5. Read the raw output. Record the run in its row and its handling under
    `Evidence controls`. Redact only the copy shown to the user.
@@ -69,8 +71,10 @@ design the gates, review the change, integrate the branch, or decide release.
    bash scripts/state-identity.sh --compare "$before"
    ```
 
-   Non-zero → the source moved; rerun from Step 1.4. Zero → reconcile the
-   other `State` inputs yourself.
+   Non-zero → the source moved. Identify the writer or normalization before
+   recapturing from Step 1.4. Repeated drift → stabilize the input under current
+   authority or return pending with its evidence; do not chase moving digests.
+   Zero → reconcile the other `State` inputs yourself.
 
 ## Step 3: Claim and route
 
