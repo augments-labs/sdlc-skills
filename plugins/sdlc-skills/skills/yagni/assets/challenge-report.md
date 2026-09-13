@@ -21,6 +21,7 @@ Repeat the surface block for every assigned surface.
 - Lifecycle trade-off: {{comparison}}
 - Disposition: {{keep | simplify | decision | investigate}}
 - Next action: {{shortest next action}}
+
 ## Limitations
 
 {{unexamined surface, missing evidence, or uncertainty; or none}}
