@@ -58,7 +58,7 @@ reading the code, a coverage number, or the builder's opinion.
 ## Step 4: Challenge, then hand over the decision
 
 1. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with the prompt in
-   `references/assurance-challenger.md`, before approval. Keep the candidate
+   `assets/assurance-challenger.md`, before approval. Keep the candidate
    read-only.
 2. Blocker: correct a successor, reverify, rechallenge until clear or
    concretely blocked.
