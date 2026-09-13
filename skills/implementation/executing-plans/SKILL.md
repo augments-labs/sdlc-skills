@@ -46,14 +46,19 @@ runtime identities.
 
 For every task, confirm:
 
-- each `Consumes` names an earlier task's `Produces`
+- each `Consumes` names an earlier task's exact `Produces`; existing code and
+  external input artifacts belong in `Context`, not an invented producer task
 - each `Depends on` names a task that is not cancelled
-- the task does not edit the evaluator that judges it
+- the task does not edit its judge unless the approved `Evaluator identity/owner`
+  explicitly permits the exact change and requires pre-change RED or deliberate
+  falsification; undeclared or weakened criteria block execution
 - `Implementation disciplines` is filled
 - UI task: `Applicable visual references` match the index's `Selected visual
   references` field for field; run each freshness evaluator now
 
-Any failure: report the field and the task. Do not start the loop.
+Record the checked input/output mappings and evaluator ownership in the existing
+execution ledger before the first edit. Any failure: report the field and task;
+do not start it under an invalid contract.
 
 - Phases or shards in the index: read `references/phase-queues.md` and follow it.
 - High-risk task: blocked until its migration and assurance contracts are
@@ -87,15 +92,20 @@ mode; switching needs the user's direct answer.
    - `done with concerns` — a gate raised something not yet proved
      non-blocking; keep it out of the completion count
    - `blocked` or `needs context` — with blocker, owner, next gate
+   Mirror only the task row's checkbox and adjacent label. **Do not change the
+   index's `Status` header or normalize it out of the normative identity.**
 7. After parallel work: rerun the combined gate on the merged state before any
    of its tasks is `done`.
 8. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then
    `finishing-a-branch`. Return after it records its decision.
-9. Go to step 1 with the next task. Do not report, ask, or pause at `done`.
+9. Go to step 1 with the next ready task. Do not report, ask, or pause at `done`.
+   Later `todo` tasks are expected. A blocked task does not block independent
+   ready work; retain its blocker and skip it until its entry condition changes.
    Leave the loop only when:
    - every task is `done` → Step 5
-   - the ledger holds any other state → report it, end the turn
+   - no authorized ready task can advance → report the unresolved states,
+     their blockers and required next conditions
    - a task needs a normative change (scope, interface, evaluator, phase,
      ownership, mode) → write the proposed successor, ask for reapproval,
      end the turn

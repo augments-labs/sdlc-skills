@@ -25,6 +25,14 @@ descriptor and new invocation. This template is never copied into that workspace
   and every bound external state supplied to reviewers}}`
 - **Status:** `frozen for review`
 - **Originating requirements:** `{{exact versions}}`
+- **Continuation:** `{{caller and exact pending step; plan/executor and cadence;
+  review-only or unfinished checkpoint; or completed standalone implementation
+  / integration awaiting a branch choice. Record any already settled choice
+  and the state it covers. A terminal handoff has no pending caller step.}}`
+- **Review history:** `{{delivery task, agreed scope and acceptance, prior rounds
+  and candidate identities, stable causal finding IDs, dispositions/evidence,
+  and remaining finite repair budget. Preserve across successor descriptors;
+  changing the candidate or reviewer does not start a new delivery task.}}`
 - **Design/migration/assurance contracts:** `{{exact versions or N/A reasons}}`
 - **Raw verification evidence:** `{{commands, outputs, state, timestamps}}`
 - **Review artifacts:** `{{reviewer-owned paths outside the candidate workspace,
@@ -119,9 +127,17 @@ mutating checks; never probe shared or production state without direct authority
 | --- | --- | --- | --- | --- |
 | `{{RV-001}}` | `{{breadth/specialist/adversarial/security}}` | `{{identity/action or pending}}` | `{{N/A, or rationale/evidence, owner, expiry/revisit, compensating gate, approval}}` | `{{attempt/receipt/report/verdict fields}}` |
 
-Every required role and attempt remains accounted. The aggregate is not ready
-while any role is missing, findings-bearing, inconclusive, failed, timed out,
-cancelled, or awaiting quiescence/disposition.
+Account for every required role and attempt. Missing or inconclusive coverage,
+failed attempts, unresolved blocking findings, and pending dispositions prevent
+readiness. Retain original findings-bearing reports and reconcile their current
+external dispositions; advisory text alone is not a blocker. Never waive a
+required obligation by relabeling it advisory.
+
+For a successor review, include the prior coverage, dispositions, exact delta,
+and affected obligations. Verify corrections and regressions; reopen a disposed
+finding only with new contradictory evidence or a changed binding. Keep genuine
+new defects within the accepted target visible; do not turn preferences into
+new acceptance criteria. A new identity does not erase the repair budget.
 
 Reviewers account for the complete candidate inventory and read all
 human-authored changes. Here that includes every direct source change typed by a
