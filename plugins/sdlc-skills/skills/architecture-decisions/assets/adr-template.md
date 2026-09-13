@@ -109,6 +109,9 @@ force; owner decision and absence gate required for retirement}}
 
 ## Worked example
 
+This proposed example assumes its independent challenge has completed and is
+recorded externally. The owner's decision and adoption evidence are still pending.
+
 ```markdown
 ## ADR: Background jobs run on a database-backed queue, not an external broker
 
@@ -131,9 +134,9 @@ current-load observation `obs-jobs-2026-07-01`, valid for 90 days.
 2026-07-05; report must challenge operations and reversal. The review owner
 cancels on deadline and confirms quiescence before reassignment.
 
-**External challenge ledger:** controlled review record `review-024` will bind
-actual dispatch receipts, terminal outcomes and finding dispositions to
-`adr-jobs-r2`; issuing this proposal records no review result.
+**External challenge ledger:** controlled review record `review-024`; actual
+dispatch receipts, terminal outcomes and finding dispositions bind to
+`adr-jobs-r2` there, outside this proposal.
 
 **Challenge artifact controls:** internal data only; approved repository read,
 controlled report store, 90-day retention; review owner may delete that exact

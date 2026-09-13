@@ -33,6 +33,8 @@ The library owns many *copies* of each *book*. A *patron* borrows a copy; a *loa
 - `id` — unique identifier.
 - `copy_id` — reference to Copy, required.
 - `patron_id` — reference to Patron, required.
+- `request_key` — borrow request identifier, required; unique with `patron_id`
+  across retained loans. Reuse for another copy is rejected.
 - `checked_out_at` — timestamp, required.
 - `due_at` — timestamp, required.
 - `returned_at` — timestamp, optional. **Null semantics: null means the loan is still open.** This one column is how "currently held" and "overdue" are answered, so its meaning must be stated, not implied.
@@ -91,8 +93,11 @@ loan cannot derive whether a copy was lost or withdrawn.
   creates the loan in one transaction. Serialize all open-loan changes for a
   patron, then lock the copy in a consistent order; locking only the copy lets
   a patron at four loans borrow two different copies concurrently. The
-  open-loan uniqueness constraint guards each copy. An idempotency key prevents
-  a retried request from creating a second loan.
+  open-loan uniqueness constraint guards each copy. Persist `request_key` in
+  that transaction under the patron/key uniqueness constraint. Check for replay
+  before applying new-borrow eligibility rules: a matching patron/key/copy returns
+  the original loan identity, even after return; a different copy is rejected.
+  Exercise simultaneous duplicates and replay after return in transaction tests.
 - **Time and ordering:** timestamps use one defined time basis. A late return
   event cannot close a newer loan for the same copy; the operation names the
   loan identity, not merely the copy.
