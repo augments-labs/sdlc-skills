@@ -79,7 +79,7 @@ mode; switching needs the user's direct answer.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
    raw diff, result revision, and evaluator output, never its summary.
-5. **REQUIRED SUB-SKILL:** invoke `verifying-completion` on that exact state:
+5. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on that exact state:
    the `Evaluator`, every `VCONF` row, `visual-ui-verification` for an
    integrated UI.
 6. Append the task state to the ledger and mirror the index checkbox:
@@ -106,7 +106,7 @@ mode; switching needs the user's direct answer.
 The last `done` closes the loop, not the plan. It opens no PR. In the
 authoritative workspace, in order:
 
-1. **REQUIRED SUB-SKILL:** invoke `verifying-completion`: the index's
+1. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`: the index's
    `Acceptance` check plus every task evaluator, on the exact integrated
    revision. Task ledgers are not evidence for this state.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision.

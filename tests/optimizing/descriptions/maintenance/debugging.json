@@ -38,6 +38,6 @@
    "query": "Someone reported they can see another tenant's invoices by changing the id in the URL. Look at the authorization on that endpoint."},
   {"split": "train", "should_trigger": false, "expect": "post-mortem",
    "query": "We know exactly what broke and why, technically. The question is how it got past review and staging."},
-  {"split": "validation", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "validation", "should_trigger": false, "expect": "verification-before-completion",
    "query": "Nothing's broken — I just want confirmation that the fix I already made is genuinely done and passing."}
 ]

@@ -8,7 +8,7 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 - **A skip or exception binds to a check, an owner, or a written assignment — never to the agent's own reading.** `using-git-worktrees` no longer offers a branch in the current checkout as an alternative, and its skip fires only on the `git-dir` versus `common-dir` detection; an agent that judged the shared checkout "dedicated" and switched branches in it was the failure.
 - **"High-risk" is a recorded classification.** `writing-plans`, `spec-it`, `system-architecture`, `data-model`, and the control vocabulary bind it to `migration-strategy`'s four answers or the user marking the work so.
-- **Seven more bodies lose self-judged terms.** Shallow review depth needs a written assignment; "trivial", "small", "material", "usually", "genuinely", and "already understood" in `verifying-completion`, `interview-me`, `zoom-out`, `release-readiness`, `containing-an-incident`, and `yagni` become the condition, category, or approval each stood for.
+- **Seven more bodies lose self-judged terms.** Shallow review depth needs a written assignment; "trivial", "small", "material", "usually", "genuinely", and "already understood" in `verification-before-completion`, `interview-me`, `zoom-out`, `release-readiness`, `containing-an-incident`, and `yagni` become the condition, category, or approval each stood for.
 
 ## [7.0.1] — 2026-09-10
 
@@ -58,11 +58,11 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 ### Added
 
-- **A turn-end guard on the done boundary.** When a session has changed code and `verifying-completion` has not run since, the turn is blocked with the reason rather than ending on an unverified completion claim. It fires on the change, not on the wording, and goes quiet once honoured; a turn that pauses to ask you something is left alone. Measured: 0 of 5 bare runs reached the done boundary having verified; 3 of 3 did with the guard active.
+- **A turn-end guard on the done boundary.** When a session has changed code and `verification-before-completion` has not run since, the turn is blocked with the reason rather than ending on an unverified completion claim. It fires on the change, not on the wording, and goes quiet once honoured; a turn that pauses to ask you something is left alone. Measured: 0 of 5 bare runs reached the done boundary having verified; 3 of 3 did with the guard active.
 
 ### Changed
 
-- **`verifying-completion` reads what a gate asserted, not only how it exited.** A suite that goes green over assertions that could never go red is no longer citable as evidence for the code it covers — the agent says so in the claim and names repairing it as separate scope. Measured: a hollow project gate survived bounded feature work unremarked in 4 of 6 runs before, 0 of 6 after.
+- **`verification-before-completion` reads what a gate asserted, not only how it exited.** A suite that goes green over assertions that could never go red is no longer citable as evidence for the code it covers — the agent says so in the claim and names repairing it as separate scope. Measured: a hollow project gate survived bounded feature work unremarked in 4 of 6 runs before, 0 of 6 after.
 
 ## [6.2.8] — 2026-08-26
 
@@ -153,7 +153,7 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 ### Added
 
-- **A silenced gate is not a passed gate.** `verifying-completion` now stops an agent reaching green by suppressing a finding, loosening a strictness setting, or excluding a path: that changes what ran, not what is true, and the claim the gate supported is unproven.
+- **A silenced gate is not a passed gate.** `verification-before-completion` now stops an agent reaching green by suppressing a finding, loosening a strictness setting, or excluding a path: that changes what ran, not what is true, and the claim the gate supported is unproven.
 - **Coding standards set each automated check's strictness and its warning budget.** A tool left at its permissive default admits the very code the standard means to reject, and every level costs more to raise the longer a codebase grows underneath the looser one.
 
 ## [6.0.2] — 2026-08-12
@@ -166,7 +166,7 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 ### Added
 
-- **Three skills bundle a script** where every run had been re-deriving the same facts by hand: branch state in `finishing-a-branch`, source identity in `verifying-completion`, and conformance in `writing-skills` — whose `check-skill.sh` checks any standard skill directory, including one outside this repository.
+- **Three skills bundle a script** where every run had been re-deriving the same facts by hand: branch state in `finishing-a-branch`, source identity in `verification-before-completion`, and conformance in `writing-skills` — whose `check-skill.sh` checks any standard skill directory, including one outside this repository.
 - **A conformance record** (`docs/agent-skills-conformance.md`) stating what the Agent Skills standard requires and where this library is deliberately stricter. The gate re-measures its numbers against the tree, so the record cannot drift into a claim that merely reads as checked.
 
 ### Removed
@@ -244,7 +244,7 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 ### Added
 
-- **`verification-strategy` skill (testing)** — designs the project's verification battery once per project, and again whenever the proof of correctness comes into question: acceptance behaviour tests against observable behaviour, a falsifiability audit with a closing mutation check, metric floors that fail the build (never targets), and CI wiring. Strict boundary: test mechanics stay with `test-driven-development`, honest claims with `verifying-completion`, per-feature gates with `writing-plans`' Evaluators. Activation 5/5 across all three harnesses; behavioural pair on Kimi — GREEN builds acceptance tests, a mutation floor, and a CI workflow (suite goes red when behaviour is gutted); RED fails the floor assertion as designed.
+- **`verification-strategy` skill (testing)** — designs the project's verification battery once per project, and again whenever the proof of correctness comes into question: acceptance behaviour tests against observable behaviour, a falsifiability audit with a closing mutation check, metric floors that fail the build (never targets), and CI wiring. Strict boundary: test mechanics stay with `test-driven-development`, honest claims with `verification-before-completion`, per-feature gates with `writing-plans`' Evaluators. Activation 5/5 across all three harnesses; behavioural pair on Kimi — GREEN builds acceptance tests, a mutation floor, and a CI workflow (suite goes red when behaviour is gutted); RED fails the floor assertion as designed.
 
 ### Changed
 
@@ -317,7 +317,7 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 - **`yagni` now chains from `test-driven-development` at the implementation moment.** TDD's GREEN step invokes it, and `using-sdlc-skills` names the pair — the router line is the load-bearing anchor (live A/B on both harnesses; the body sentence alone did not fire). `yagni`'s trigger rewritten: build MORE than asked vs deliver LESS than asked, no more, no less.
 - **Five triggers de-vagued**, rewritten from their own bodies' vocabulary: `release-readiness` (names its real gate signals), `writing-plans` ("alignment brief" → a brief from `interview-me`/`spec-it`), `refactor-architecture` (concrete friction symptoms), `spec-it` and `feasibility-check` (Skip clauses added). Re-measured 10/10 on both harnesses.
-- **Checkpoint commits.** `using-task-branches` and `verifying-completion` now tell an agent to bank verified work on the task branch as it goes — uncommitted work is one power cut from gone.
+- **Checkpoint commits.** `using-task-branches` and `verification-before-completion` now tell an agent to bank verified work on the task branch as it goes — uncommitted work is one power cut from gone.
 
 ### Added
 
@@ -374,14 +374,14 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 ### Added
 
-- **Done-boundary `Stop` re-nudge.** New `hooks/claude-code/stop-nudge.sh`, wired as a `Stop` hook, closes the long-standing "the verify/review skills don't fire after a long task" gap: SDLC skills routes once at SessionStart, but the done boundary arrives at turn-end with nothing to re-route. When a turn wraps up claiming the work is done, the hook re-routes **once** to `using-sdlc-skills` → `verifying-completion` (and, at a feature boundary, `requesting-code-review` / `finishing-a-branch`). It is a *routing* re-nudge, not a gate: it blocks no action, certifies no verdict, fires at most once (`stop_hook_active` guard), reads only the Stop payload, and fails open. Disable by removing the `Stop` entry from `hooks/claude-code/hooks.json`. Proof: offline `tests/harness/claude-code/test-stop-nudge.sh` + `2026-07-01-stop-nudge-done-boundary.md`.
+- **Done-boundary `Stop` re-nudge.** New `hooks/claude-code/stop-nudge.sh`, wired as a `Stop` hook, closes the long-standing "the verify/review skills don't fire after a long task" gap: SDLC skills routes once at SessionStart, but the done boundary arrives at turn-end with nothing to re-route. When a turn wraps up claiming the work is done, the hook re-routes **once** to `using-sdlc-skills` → `verification-before-completion` (and, at a feature boundary, `requesting-code-review` / `finishing-a-branch`). It is a *routing* re-nudge, not a gate: it blocks no action, certifies no verdict, fires at most once (`stop_hook_active` guard), reads only the Stop payload, and fails open. Disable by removing the `Stop` entry from `hooks/claude-code/hooks.json`. Proof: offline `tests/harness/claude-code/test-stop-nudge.sh` + `2026-07-01-stop-nudge-done-boundary.md`.
 - **Review-depth ladder in `requesting-code-review`.** Shallow / Standard / Deep tiers keyed to a change's risk and blast radius (not wall-clock), with an adversarial refute-pass at the Deep tier.
 - **Plan-as-contract in `writing-plans`.** Per-task Consumes/Produces interface blocks, an index-level Constraints block, reviewer-gate task sizing, and an Execution Handoff (inline vs subagent-driven) at the present-and-pause.
 
 ### Changed
 
 - **Leaner skill triggers (~620 always-loaded tokens).** 26 skill `description`s drop the embedded what-it-does summary that buried the trigger — which, per `writing-skills` doctrine, made the model follow the summary and skip the body; the `Use when…` trigger, the `Skip…` clause, and genuine this-vs-that disambiguation stay. Re-measured on the harness; the four ALWAYS discipline triggers were left untouched (trimming `yagni` measurably dropped its activation, so it was reverted). Record: `2026-07-01-description-token-efficiency.md`.
-- **Explicit gap handoffs between adjacent skills** — `verifying-completion` → `requesting-code-review`, `spec-it` → design, `finishing-a-branch` → `release-readiness`, and others — so a chain does not stall half-done.
+- **Explicit gap handoffs between adjacent skills** — `verification-before-completion` → `requesting-code-review`, `spec-it` → design, `finishing-a-branch` → `release-readiness`, and others — so a chain does not stall half-done.
 - **`executing-plans` de-serialized.** Three execution modes (inline / sequential offload / parallel fan-out), user-posture honoring, and per-task gate cadence clarified (sequential default; independent tasks fan out).
 - **`yagni` relocated** `skills/implementation/` → `skills/common/` as a cross-cutting discipline — the invocation address `sdlc-skills:yagni` is unchanged — plus a consent-based never-work-on-`main` guard in `using-git-worktrees`, and a slimmer `using-sdlc-skills` router.
 
@@ -428,7 +428,7 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 ### Changed
 
-- **The four discipline triggers fire by default, not on invitation.** `debugging`, `test-driven-development`, `verifying-completion`, and `receiving-code-review` were rewritten from gentle "Use when…" descriptions to imperative "ALWAYS invoke…" ones. The driver was real use: gentle descriptions under-fire because the SessionStart nudge decays over a long session while the always-loaded catalogue does not — so the firing pressure belongs in the descriptions, the one surface that stays salient. Only the descriptions changed (discipline bodies untouched, so no behavioural re-prove owed); triggering re-measured at positive **3/3** each. The cost is real and **accepted**: the firm framing over-fires on trivial cases its own exception exempts (firm `debugging` routed a one-line error **3/3** vs a gentle baseline of **2/3 NONE**) — firing over ceremony-avoidance, recorded honestly in `tests/triggering/`.
+- **The four discipline triggers fire by default, not on invitation.** `debugging`, `test-driven-development`, `verification-before-completion`, and `receiving-code-review` were rewritten from gentle "Use when…" descriptions to imperative "ALWAYS invoke…" ones. The driver was real use: gentle descriptions under-fire because the SessionStart nudge decays over a long session while the always-loaded catalogue does not — so the firing pressure belongs in the descriptions, the one surface that stays salient. Only the descriptions changed (discipline bodies untouched, so no behavioural re-prove owed); triggering re-measured at positive **3/3** each. The cost is real and **accepted**: the firm framing over-fires on trivial cases its own exception exempts (firm `debugging` routed a one-line error **3/3** vs a gentle baseline of **2/3 NONE**) — firing over ceremony-avoidance, recorded honestly in `tests/triggering/`.
 
 ### Added
 
@@ -478,7 +478,7 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 ### Fixed
 
-- **Code review now reaches the "done" boundary.** A field failure showed work being reported complete with every gate green but the diff unreviewed. `requesting-code-review`'s trigger is now event-conditioned (fires at the done boundary — complete/commit/merge/PR — not only when you already want fresh eyes), and `verifying-completion` hands off to independent review once its gate passes instead of ending the chain at "verified". Proven old-vs-new in `tests/triggering/requesting-code-review.md` (the skill's first activation record) and `tests/behavioral/verifying-completion.md` (0/2 → 3/3 on the handoff; flaky-green hard-stop unregressed).
+- **Code review now reaches the "done" boundary.** A field failure showed work being reported complete with every gate green but the diff unreviewed. `requesting-code-review`'s trigger is now event-conditioned (fires at the done boundary — complete/commit/merge/PR — not only when you already want fresh eyes), and `verification-before-completion` hands off to independent review once its gate passes instead of ending the chain at "verified". Proven old-vs-new in `tests/triggering/requesting-code-review.md` (the skill's first activation record) and `tests/behavioral/verification-before-completion.md` (0/2 → 3/3 on the handoff; flaky-green hard-stop unregressed).
 - **Docs: deterministic boundary interrupts stay project-local.** New `harness-support.md` section on why blocking commit/merge hooks belong in your own project config, not in SDLC skills core.
 
 ## [1.0.1] — 2026-06-10

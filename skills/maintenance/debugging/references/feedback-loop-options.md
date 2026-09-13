@@ -31,7 +31,7 @@ network, or mutation access.
 Calibrate before inference: the frozen loop observes the known failing state and
 rejects the good/neighbor control at the intended observation. Keep a stable-ID,
 append-only hypothesis/intervention/attempt ledger outside the descriptor. Run
-actions through `verifying-completion`; overlapping effects are sequential unless
+actions through `verification-before-completion`; overlapping effects are sequential unless
 proved disjoint. Failure, deadline, cancellation, or lost response stays
 `cancellation-requested` until worker, descendants, and effects quiesce. Quarantine
 partial/late output and link a retry only after reconciling actual state.

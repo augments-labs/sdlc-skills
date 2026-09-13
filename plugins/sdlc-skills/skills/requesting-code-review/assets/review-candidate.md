@@ -69,7 +69,7 @@ the report's candidate value with labels or a second identity.
 Stop candidate writers before computing the result identity. Compare it with
 the exact state identity carried by every relied-on verification row. Any
 mismatch or later mutation invalidates the evidence and returns the frozen state
-to `verifying-completion`; never attach evidence from one identity to another.
+to `verification-before-completion`; never attach evidence from one identity to another.
 
 ## Complete candidate inventory
 

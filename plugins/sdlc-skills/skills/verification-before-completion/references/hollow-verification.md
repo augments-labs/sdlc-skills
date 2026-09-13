@@ -1,4 +1,4 @@
-# Verifying Completion — Hollow Verification
+# Verification Before Completion — Hollow Verification
 
 A check can pass and still prove nothing. The ways that happens, and how to catch them.
 

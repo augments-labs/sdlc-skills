@@ -62,11 +62,11 @@ unbroken; it owns no transition itself.
    - Any request to add, change, or fix behavior → `test-driven-development`
      and `yagni` before the first edit, with `using-git-worktrees` ahead of
      both so that edit lands in an owned workspace.
-   - "Is it done, ready, safe to ship?" → `verifying-completion`, then the
+   - "Is it done, ready, safe to ship?" → `verification-before-completion`, then the
      review and release skills its handoffs name.
    - About to push, open or merge a PR, or integrate a branch — including as
      the last step of a plan or under a standing "don't ask" directive →
-     `verifying-completion`, `requesting-code-review`, then
+     `verification-before-completion`, `requesting-code-review`, then
      `finishing-a-branch`, which owns that decision. The git command is not
      the step; the gate is.
    - A new project or initiative → `define-goals`, and the planning chain

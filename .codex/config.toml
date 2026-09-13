@@ -1,0 +1,50 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Keep commands inside the workspace sandbox. Eligible requests to cross that
+# boundary go to Codex's automatic reviewer; the sandbox still applies unless
+# that reviewer allows the specific request.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+approvals_reviewer = "auto_review"
+
+# The rules are stated once and enforced across every crate; a change that
+# respects them usually has to be reasoned about, not pattern matched.
+model_reasoning_effort = "high"
+
+# Credit Codex's contributions using the supported instruction setting.
+developer_instructions = """
+When creating or editing a commit for work you contributed, preserve existing
+trailers and include a Co-authored-by trailer exactly once, separated from the
+body by a blank line. Use the exact active model ID as the author name and
+noreply@openai.com as the email: Co-authored-by: <active-model-id> <noreply@openai.com>
+Resolve the model ID from the current session; never write the placeholder or
+guess an ID. Preserve attribution from other models that contributed.
+"""
+
+# Rust answers age badly — a crate's API moves between minor versions and the
+# search result outlives it.
+web_search = "cached"
+
+[features]
+memories = false
+
+[agents]
+# A shallow tree keeps reviews independent rather than turning one task into an
+# unbounded chain of delegated context.
+max_depth = 2
+max_concurrent_threads_per_session = 5
+
+[shell_environment_policy]
+# Codex otherwise retains variables whose names contain KEY, SECRET or TOKEN.
+# Commands get the ordinary shell environment, less those secret-shaped names.
+ignore_default_excludes = false
+
+[sandbox_workspace_write]
+# Commands in this sandbox may make outbound connections. Cargo needs that on a
+# clean checkout to reach crates.io, but the permission is not domain-limited:
+# code run by a build or test can use it too.
+#
+# cargo also writes outside the workspace, to $CARGO_HOME (~/.cargo by default)
+# for the registry cache. If a build fails on a read-only path rather than on
+# the network, add that directory to `writable_roots` here.
+network_access = true

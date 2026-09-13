@@ -45,7 +45,7 @@ under the exact approver rule; silence is blocking.
 
 ## External attempt and evidence ledger
 
-Execute each controlled action through `verifying-completion`. Record stable
+Execute each controlled action through `verification-before-completion`. Record stable
 attempt ID, release-input ID, row/member ID, command/tool and environment/data
 identities, start/end, terminal state, raw-output identity/location, and complete
 pre/post effects. Shared or production mutation needs exact direct authority;

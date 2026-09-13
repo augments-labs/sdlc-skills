@@ -20,7 +20,7 @@
   {"split": "validation", "should_trigger": true,
    "query": "passing this to another agent now — make sure they get the goal, decisions and next step without asking me"},
 
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "That's everything, the task is finished. Commit it."},
   {"split": "train", "should_trigger": false, "expect": "executing-plans",
    "query": "Resume the plan we paused last week — I want to keep working, not write notes."},
@@ -36,7 +36,7 @@
    "query": "Add my name to the AUTHORS file — I joined in March and never did it."},
   {"split": "validation", "should_trigger": false, "expect": "writing-plans",
    "query": "Before I stop, break the remaining work into tasks so it's actually executable later."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "This is finished, not paused. Confirm the gates actually passed before I claim it's done."},
   {"split": "validation", "should_trigger": false, "expect": "dispatching-parallel-agents",
    "query": "Two independent bugs, separate files, no shared state. Can they be worked at the same time?"}

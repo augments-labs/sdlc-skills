@@ -36,7 +36,7 @@
    "query": "Read .sdlc-skills/plans/reporting/index.md and tell me exactly what task 01 says."},
   {"split": "validation", "should_trigger": false, "expect": "none",
    "query": "Stand up a hosted status page the whole team can hit, not something local on my machine."},
-  {"split": "validation", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "validation", "should_trigger": false, "expect": "verification-before-completion",
    "query": "The work is finished — verify the gates actually passed before I report status upward."},
   {"split": "validation", "should_trigger": false, "expect": "finishing-a-branch",
    "query": "Implementation's done and gates are green. What's left before this branch can land?"}

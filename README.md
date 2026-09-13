@@ -72,7 +72,7 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | design | `writing-plans` | Convert approved inputs into independently loadable contracts; high-risk plans may build missing gates first but cannot start target phases before entry |
 | implementation | `test-driven-development` | Let a failing behavior gate lead new behavior and a deliberately falsified independent green oracle lead preservation work |
 | implementation | `executing-plans` | Advance a directly approved plan through evaluator-backed task, shard, phase, and integrated state transitions |
-| testing | `verifying-completion` | Bind a real check and its raw output to the exact state, artifact, environment, platform, and build mode before making a claim |
+| testing | `verification-before-completion` | Bind a real check and its raw output to the exact state, artifact, environment, platform, and build mode before making a claim |
 | testing | `requesting-code-review` | Freeze an exact candidate and challenge it with risk-scaled independent review, including separate equivalence and adversarial roles for high-risk transformations |
 | testing | `receiving-code-review` | Inventory and verify every revision-bound finding, resolve conflicts by evidence, and re-review any changed candidate |
 | testing | `security-audits` | Audit the changed attack surface and trust boundaries with threat-specific gates; a separate fixer cannot self-approve the security verdict |

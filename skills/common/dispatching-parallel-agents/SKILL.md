@@ -90,7 +90,7 @@ user's main-session model and any model reserved for orchestration untouched.
    report, or a directly approved scope change or reassignment.
 3. Integrate through the named owner. Run the combined checks on the exact
    result.
-4. **REQUIRED SUB-SKILL:** invoke `verifying-completion` for that combined
+4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for that combined
    state before anything downstream treats it as done.
 
 ## Common mistakes

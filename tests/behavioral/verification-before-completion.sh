@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Behavioural scenario: verifying-completion.
+# Behavioural scenario: verification-before-completion.
 #
 # The failure this catches: a static gate reports a real violation in the file
 # the task forces the agent to touch, and the cheap path to green is to silence

@@ -126,7 +126,7 @@ the skill exists to prevent:
 | Skill | Script | What was being re-derived |
 | --- | --- | --- |
 | `finishing-a-branch` | `branch-state.sh` | commit counts, dirty inventory, worktree ownership, recoverability — the values its menu and discard block interpolate |
-| `verifying-completion` | `state-identity.sh` | the source digest evidence is bound to, and whether it drifted while the gate ran |
+| `verification-before-completion` | `state-identity.sh` | the source digest evidence is bound to, and whether it drifted while the gate ran |
 | `writing-skills` | `check-skill.sh` | conformance itself: frontmatter, name, description, body ceilings, presentation, reference resolution |
 | `viewing-artifacts` | `serve.py`, `start-server.sh` / `stop-server.sh` | the governed localhost preview — session key, owner watchdog, idle timeout, PID-safe stop; an ad-hoc server reinvents each, badly |
 | `ui-ux-design` | `serve.py`, `start-server.sh` / `stop-server.sh` | the same preview for comparison surfaces; copies are byte-identical, pinned by the gate |

@@ -110,7 +110,7 @@ from this handoff alone.
 
 ## Suggested skills
 - test-driven-development — the sweep scheduling has no failing test yet; write one first
-- verifying-completion — before claiming the idle-expiry behaviour works
+- verification-before-completion — before claiming the idle-expiry behaviour works
 
 ## References
 - plan directory from writing-plans: docs/plans/session-expiry/

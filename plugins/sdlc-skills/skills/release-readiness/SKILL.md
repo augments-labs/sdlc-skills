@@ -35,7 +35,7 @@ the descriptor's approver rule), or **blocking**.
 
 1. Install, start, or load each member through the paths a real consumer
    uses. A green source tree is not artifact evidence.
-2. **REQUIRED SUB-SKILL:** invoke `verifying-completion`. Run every gate
+2. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`. Run every gate
    protecting this promotion over its expected inventory; reconcile against
    what actually ran (row 11).
 3. Exercise cutover and recovery by observation, including the claimed
