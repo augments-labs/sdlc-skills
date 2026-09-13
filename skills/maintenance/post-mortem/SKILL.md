@@ -1,6 +1,6 @@
 ---
 name: post-mortem
-description: "Use after a production escape, late defect, data loss, outage, security incident, or badly failed work cycle, once the technical cause and containment are known and the open question is why the safeguards missed it or why the impact grew. Fires on how did this reach production, why didn't we catch this, and what do we change so it doesn't happen again, even if nobody says post-mortem. Skip while the technical cause is still unknown, and skip ordinary bugs."
+description: "Use after a production escape, material loss, incident, or failed work cycle to explain why safeguards missed it or impact grew. Fires on how did this reach production and what prevents another failed handoff. Establish any technical cause and immediate containment first; a process-only failure needs its event evidence. Skip ordinary bugs and ongoing uncontained impact."
 ---
 
 # Post-Mortem
@@ -8,15 +8,16 @@ description: "Use after a production escape, late defect, data loss, outage, sec
 Explain why the failure escaped or grew, then measure whether each corrective
 control reduces recurrence, detection, or impact risk. Take the code-level
 cause from `debugging`; do not re-derive it. Close on deployed and falsified
-controls, never on reflection.
+controls, never on reflection. For a process-only failure, use the observed
+event and decision trail; do not invent a code defect to enter this skill.
 
 ## When to use
 
 - A failure reached users/production, escaped far downstream, caused material
   loss, or exposed a process failure worth correcting.
-- **Skip** an ordinary reproduced bug. Begin after the code-level cause and
-  immediate containment are known; if the cause is still unknown, invoke
-  `debugging` first.
+- **Skip** an ordinary reproduced bug. For technical incidents, establish the
+  technical cause and immediate containment first; unknown technical cause →
+  `debugging`. A process-only failure begins from its evidenced events.
 
 ## Step 1: Control the record
 
@@ -28,8 +29,9 @@ controls, never on reflection.
 
 ## Step 2: Find the structural cause
 
-1. Fill `Root cause and contributing conditions`: paste the code-level cause
-   from `debugging`, then each condition that made introduction or impact
+1. Fill `Root cause and contributing conditions`: cite the technical cause
+   from `debugging` when applicable, or the process-failure evidence, then each
+   condition that made introduction or impact
    more likely. Name conditions, never a person. Keep several conditions
    separate.
 2. Fill `Escape-path audit`: freeze the gate and surface inventory with its

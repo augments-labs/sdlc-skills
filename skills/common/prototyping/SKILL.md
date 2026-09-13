@@ -1,6 +1,6 @@
 ---
 name: prototyping
-description: "Use when a design or feasibility question is genuinely uncertain and cheaper to answer by building a throwaway than by arguing about it — a tricky bit of logic, a layout choice, a library's real behaviour. Fires on let's just try it and see, spike this, and quick and dirty, I'll throw it away, even if nobody says prototype. Skip when the answer is already known."
+description: "Use when a design or feasibility question is genuinely uncertain and cheaper to answer by building a throwaway than by arguing about it — a tricky bit of logic, a layout choice, a library's real behaviour. Fires on let's just try it and see, spike this, and quick and dirty, I'll throw it away. Skip when the answer is already known."
 ---
 
 # Prototyping
@@ -39,10 +39,14 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 
 ## Step 3: Retain the result, dispose of the code
 
-1. Store question, evidence, and decision durably. Load-bearing choice
-   settled → invoke `architecture-decisions`.
-2. Rebuild accepted behavior in the real code under its normal tests, review,
-   and verification gates. Never lift prototype code.
+1. Store the question, evidence, limitations and decision consequences durably.
+   A settled load-bearing choice with no pending caller → **REQUIRED SUB-SKILL:**
+   invoke `architecture-decisions` and apply its entry conditions.
+2. Return observations to the caller's pending decision. A UI experiment informs
+   `ui-ux-design`; it does not select the product direction or authorize its
+   implementation. Before scratch cleanup, retain any frame or artifact the
+   approved design binds as immutable evidence. Product implementation, when
+   authorized, rebuilds behavior under its normal gates; never lift prototype code.
 3. Remove only pre-registered scratch artifacts inside the disposable
    boundary, under current authority for those exact targets. Repository
    branch, worktree, ref, or workspace disposal → `finishing-a-branch`.

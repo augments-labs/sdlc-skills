@@ -72,7 +72,8 @@ Every row has a source and confidence. Estimates are labeled.
 
 ## Root cause and contributing conditions
 
-- **Code/system cause from debugging:** `{{reproduction and root-cause evidence}}`
+- **Technical cause:** `{{reproduction/root-cause evidence from debugging, or
+  not applicable with evidence that the failure is process-only}}`
 - **Trigger:** `{{input/event/state}}`
 - **Technical conditions:** `{{architecture/data/concurrency/config/etc.}}`
 - **Environment/dependency conditions:** `{{runtime/deploy/provider/etc.}}`

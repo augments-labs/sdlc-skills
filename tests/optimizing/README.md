@@ -16,7 +16,7 @@ test suite that happens to be written in JSON.
 ```
 tests/optimizing/descriptions/
   test-triggering-on-queries.sh   scores a DESCRIPTION: queries x runs -> trigger rate
-  <phase>/<skill>.json            20 scored queries: 10 positive, 10 near-miss
+  <phase>/<skill>.json            at least 20 balanced positive/near-miss queries
 ```
 
 The runner is self-contained: it opens a session per query repetition, points it
@@ -32,12 +32,12 @@ tests/optimizing/descriptions/test-triggering-on-queries.sh --harness claude-cod
 
 ## Anyone can run this, and it spends your own quota
 
-**One skill at the defaults is 60 live calls** — 20 queries repeated 3 times —
+**A 20-query set at the defaults is 60 CLI invocations** — each repeated 3 times —
 billed to whatever account your harness CLI is logged into, and `--all` is
 roughly 2,000. Nothing about it is free and nothing about it runs in CI.
 
 Always price a selection with `--dry-run` first; it prints the exact call count
-and calls nothing. The table further down has measured wall-clock figures.
+and calls nothing. Runtime varies with the harness, query, and stopping limit.
 
 ## A trigger rate is not a pass mark
 
@@ -74,7 +74,8 @@ Practical consequences:
 Drop a JSON array at `descriptions/<phase>/<skill>.json`. The filename is the
 contract — no registration, no code change. Each entry needs `query`,
 `should_trigger`, and `split`; every negative also needs `expect`, naming the
-route it should have taken instead (`"none"` if there isn't one).
+expected neighbouring activity (`"none"` if there is none). This field is
+diagnostic; the scorer does not evaluate that activity.
 
 **Nothing enforces the shape of a set — that is on the reader.** A set is only
 worth the money it costs to run if it can actually decide something: at least
@@ -85,14 +86,18 @@ they are ever run through and prove nothing. Check the shape when you edit a set
 a live run cannot tell you the set was broken.
 
 **The near-misses are the point.** A description firing on its own happy-path
-opening proves nothing, because every description does that. A negative earns
-its place by genuinely sharing vocabulary with the description while belonging
-to a different skill. Negatives also carry `expect` — the route they *should*
-have taken — so a greedy description and a real gap in the library stay
-distinguishable in the report.
+opening proves nothing, because every description does that. The runner observes the subject anywhere in the bounded skill chain, including
+a prerequisite or an on-demand read for model selection. Another skill owning
+the opening does not make a valid negative if that workflow legitimately calls
+the subject later. Write near-misses where the subject remains outside the
+requested boundary; a natural stopping point can make that boundary explicit.
+Do not tell the agent which skill to avoid. Keep general explanations alongside
+real adjacent work; explanations alone make an easy, unrepresentative set.
 
-Each query is pinned to `train` or `validation` in the file itself, so the
-holdout can never be quietly reshuffled into the training data.
+Keep each query's `train` or `validation` assignment. Correcting an ambiguous
+query changes the measurement: restart comparison on the revised set and
+disclose the change; old rates are not comparable. Do not move validation
+failures into training or call either split an untouched held-out test.
 
 **Ground the query in the fixture whenever the verb presupposes what it names.**
 Asking to *add* `src/utils/money.ts` works whether or not that path exists;
@@ -103,25 +108,14 @@ description. `tests/fixtures.sh` says what actually exists.
 
 ## What this costs, before you run it
 
-Every call here hits a paid API, and the matrix multiplies fast. Measured on
-this repository:
+Each repetition is a paid CLI invocation; one invocation can make several model
+requests and tool calls. For a 20-query set, three repetitions means 60
+invocations, or 24 for an eight-query validation split. The exact all-library
+count changes with the corpus: use `--dry-run`, not a historical total.
 
-| Selection | API calls | Per call | Wall clock |
-| --- | --- | --- | --- |
-| One skill, validation split, 3 runs | 24 | ~1–2 min | ~25–50 min |
-| One skill, every query, 3 runs | 60 | ~1–2 min | ~1–2 h |
-| `--all`, validation only, 3 runs | 792 | ~1–2 min | **~20 h** |
-| `--all`, every query, 3 runs | 1980 | ~1–2 min | **~50 h** |
-
-`--dry-run` prints the exact call count for any selection before you spend it.
-Neither full sweep is a routine run: a description is revised one skill at a
-time, so measure the skill you touched.
-
-The wall-clock column assumes `--jobs 1`. Repetitions of a single query are
-independent, so `--jobs` fans them out and the default of 3 divides those times
-by roughly three — measured at 123s for three concurrent negatives against 360s
-of serial worst case, with no refusals. The call count does not change, only how
-long you wait for it.
+A description is revised one skill at a time. Run only the affected selection;
+a full sweep is not a routine gate. `--jobs` runs repetitions concurrently. It
+changes elapsed time and resource contention, not the planned invocation count.
 
 Negatives dominate that clock. A positive stops the moment the expected skill
 fires; a negative has nothing to wait for and runs to `--max-turns` or the
@@ -130,23 +124,25 @@ timeout, so the back half of a set costs multiples of the front half.
 **Keep `--jobs` equal across runs you intend to compare.** Concurrency does not
 change what is measured, but it can change whether a call completes, and a
 timeout scores as "did not fire" rather than being dropped from the denominator.
-A before/after pair split across two concurrency levels is confounded, and the
-artifact of that looks exactly like a description regression.
+A before/after pair split across concurrency levels is confounded. Retain
+timeout and truncation counts separately: bounded non-observation is not proof
+that the skill would never fire.
 
 ## The sibling loop, and why it is not here
 
-The standard also describes an output-quality loop: run a skill on a task, judge
-the artifact, revise, repeat. This repository measures that question in
-`tests/run-behavioral.sh --arm none` instead, and deliberately did not build a
-second implementation of it.
+Output behavior is a different question from activation. Use the smallest
+relevant `tests/run-behavioral.sh` scenario or a temporary controlled probe.
+`--arm none` observes the bare agent; `--arm red --base REV` observes the prior
+library; `--arm green` observes the current library. Installed arms normally
+expose the whole library, so disclose a probe that instead loads only its
+intended skill. A passing bare or prior-library sample does not erase a
+reported failure or a source contradiction.
 
-The reason is that the pieces already here are the stronger form. A `git
-worktree` at `--base` gives a reproducible before-arm where a copied snapshot
-does not, and an exit-code verdict is not written by the agent that wants it
-green. What that loop offers beyond this is aggregation across repetitions —
-worth taking — and an LLM judge, which is worth less than the mechanical check it
-would replace. Building the rest would make the evaluator larger than the thing
-evaluated, which the repository's proportionality rule forbids.
+Freeze fixture, evaluator, skill sources, and allowed effects before comparing
+arms. Evaluate the actual artifact or side effect mechanically where possible;
+use a controlled rubric where the claim needs judgment. Neither an exit code
+nor an agent's assurance alone proves that the intended behavior was observed.
+`docs/testing.md` owns the behavioral workflow and its limits.
 
 ## Honest limits
 

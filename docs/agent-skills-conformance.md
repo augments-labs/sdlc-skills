@@ -18,7 +18,7 @@ adds packaging and house-policy checks.
 | `name`: 1–64 lowercase letters, digits, or hyphens | Length and character checks |
 | No leading/trailing hyphen or consecutive hyphens | Pattern check |
 | `name` matches its directory | Per-directory comparison |
-| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 460 |
+| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 452 |
 
 The checker does not validate every optional metadata field or every YAML form.
 A green result establishes its implemented checks, not full validation of any
@@ -33,7 +33,7 @@ under a stricter house rule is not automatically a standard violation.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 160 (32% of ceiling) |
+| Body lines | At most 500; longest is 162 (32% of ceiling) |
 | Estimated body tokens | Under 5000 by the skill checker; largest is ~1708 |
 | Typical body size | Aim near 80–120 lines; longer discipline bodies need relevant behavioral evidence |
 | Presentation | The checker warns on long undifferentiated prose; keep readable sentences |
@@ -107,7 +107,7 @@ Query sets live at `tests/optimizing/descriptions/{{phase}}/{{skill}}.json`.
 The current corpus contains 34 sets for 36 skills. The always-applicable router
 has no negative class; `containing-an-incident` also has no set. Existing sets
 usually contain 10 positive and 10 near-miss negative queries; `executing-plans`
-currently has 13 positives and 10 negatives. These are tuning inputs, not a
+currently has 13 positives and 13 negatives. These are tuning inputs, not a
 mandatory coverage matrix.
 
 The runner repeats queries through a fixture and the installed library. It

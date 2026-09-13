@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: "Use when creating or editing a skill in this library — its format, its sibling files, and how to prove it works. Fires on add a skill for X and this skill isn't triggering, even if nobody says authoring. Skip using a skill."
+description: "Use when creating or editing a skill in this library — its format, its sibling files, and how to prove it works. Fires on add a skill for X and this skill isn't triggering. Skip using a skill."
 ---
 
 # Writing Skills

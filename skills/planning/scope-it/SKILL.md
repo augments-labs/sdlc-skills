@@ -1,6 +1,6 @@
 ---
 name: scope-it
-description: "Use after the goals are set and before design, to draw a project's boundary: what is in, what is explicitly out, and the smallest cut that still meets the goal. Fires on what goes in v1, what should we cut, and this is getting too big, even if nobody says scope. Skip a single feature, unresolved ambiguity about intent, and detailed feature requirements."
+description: "Use when a project's goals are set and its delivery boundary needs defining or revising: what is in, out, and sufficient for the goal. Includes scope growth during delivery. Skip single-feature requirements, unresolved intent, and implementation-level speculative additions."
 ---
 
 # Scope It
