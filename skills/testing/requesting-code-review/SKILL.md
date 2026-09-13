@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: "Use when an exact candidate reaches a done or integration boundary, or an independent review of one frozen state is explicitly requested. Fires on review this, is this ready to merge, and take a look before I push, even if nobody says code review. Skip an unfinished reversible checkpoint unless review was explicitly requested, and skip an explicit keep, discard, close, or reopen."
+description: "Use when an exact candidate reaches a done or integration boundary, or an independent review of one frozen state is explicitly requested. Fires on review this, is this ready to merge, and take a look before I push. Skip an unfinished reversible checkpoint unless review was explicitly requested, and skip an explicit keep, discard, close, or reopen."
 ---
 
 # Requesting Code Review
