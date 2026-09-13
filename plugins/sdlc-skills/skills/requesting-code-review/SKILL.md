@@ -32,7 +32,10 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    `verification-before-completion` to obtain evidence for this review, then resume here.
    Keep failures and pending results: they permit review, never readiness.
 4. Open `assets/review-candidate.md`. Fill every field: mode, identities,
-   complete inventory, artifact controls, terminal contract.
+   complete inventory, artifact controls, terminal contract, continuation,
+   review history. Retain that history across successor candidates.
+   Record a caller only when it has a step awaiting this verdict. A skill
+   whose work ended at this handoff is not a pending return step.
 5. Compare its result identity with the verification evidence. Different →
    back to step 1. Review challenges the evidence; it never replaces it.
 
@@ -63,7 +66,9 @@ wait on one, until the dispatch action has returned a non-empty receipt.
      requested simplification review
 4. Trust boundary changed → invoke `security-audits`. Audit of existing code →
    `complexity-audit`. Challenge to the assurance strategy →
-   `verification-strategy`. A generic review never substitutes.
+   `verification-strategy`. When the recorded caller owns that activity,
+   use its supplied brief and keep its return step; never invoke it
+   recursively. A generic review never substitutes.
 5. Pick each reviewer's tier with the **Model selection** section of
    `dispatching-parallel-agents`. Depth sets coverage and independence, not
    the largest tier for every role.
@@ -87,20 +92,32 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    frozen request. Missing, unreadable, conflicting, or mismatched fields →
    pending. Check the complete inventory and every human-authored change;
    reject unrelated traversal.
-6. Block readiness on anything unreconciled: missing or failed verification,
-   a missing role, an open finding, an inconclusive result, a non-success,
-   a conditional "ready".
+6. Block readiness while required current verification or role coverage is
+   missing, failed, inconclusive, or conditional, or a blocking finding or
+   attempt's effects remain unresolved. Retain every failed attempt; an accepted
+   linked successor can satisfy its current role once effects are reconciled.
+   Reconcile advisory dispositions without adding acceptance criteria.
 7. Record each report's location and disposition in the external review ledger.
    A report is the reviewer's assessment; keep the tool-issued dispatch ID as
    the evidence that the reviewer was actually dispatched.
 8. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
    before responding to it, including a `not ready` that asks for no edit.
-9. After any fix or bound-input change → restart at Step 1. A re-review is a
-   fresh invocation with its own identities and receipt.
-10. **REQUIRED — hand a `ready` verdict on, not an action.** Integration
-    boundary → invoke `finishing-a-branch`. Task inside a plan → return to
-    `executing-plans`. Run no push, PR, merge, keep, or discard here. The
-    verdict is not the user's integration choice.
+9. Before another round, apply `receiving-code-review`'s convergence check.
+   Retry permitted and candidate or bound inputs changed → restart at Step 1
+   with fresh identities and receipt. Carry prior coverage and dispositions;
+   focus successor review on fixes, affected paths, and regressions.
+10. **REQUIRED — continue a `ready` verdict through the recorded owner:**
+    - caller awaiting this review → return to its pending step; never invoke
+      the caller recursively
+    - task or plan owned by `executing-plans` → return there; it owns cadence
+      and plan-end finishing
+    - review-only request, unfinished checkpoint, or unchanged state with an
+      already settled branch choice → return the verdict
+    - completed standalone implementation or integration boundary with an
+      unsettled branch choice → invoke `finishing-a-branch`, even without a
+      user request for a Git action
+    Run no push, PR, merge, keep, or discard here. A ready verdict does not
+    choose an integration action.
 
 ## Self-review, assigned depth only
 

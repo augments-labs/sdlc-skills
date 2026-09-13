@@ -1,6 +1,6 @@
 # Hard containments
 
-Read when step 2 or step 4 does not resolve cleanly. Each shape below changes
+Read when selecting or proving a containment lever does not resolve cleanly. Each shape below changes
 *what containment means*, not whether it comes first.
 
 ## No lever exists
@@ -60,7 +60,7 @@ Blocking the tenant that triggers the bug takes that tenant offline entirely.
   and record that you chose it, with the trade named.
 - Prefer a lever that can be scoped: one tenant, one region, one plan, one route.
 - When the harms are genuinely comparable, this is not your call alone. It is an
-  authority question, and step 3 already covers it: escalate with both sides
+  authority question: escalate with both sides
   stated, and keep looking for a narrower lever while you wait.
 
 ## You cannot tell whether it is contained
@@ -81,5 +81,5 @@ rollback overwritten by the next release, a limit reset by autoscaling.
 
 Containment has to survive the systems that fight it: pin the flag in the source
 of truth, block the deploy pipeline, or hold the release. Otherwise you are not
-contained, you are between recurrences — and the record from step 7 is what
+contained, you are between recurrences — and the containment record is what
 tells the next person why the flag must stay off.

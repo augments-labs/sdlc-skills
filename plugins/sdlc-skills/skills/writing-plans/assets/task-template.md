@@ -50,6 +50,9 @@ homogeneous item.}}
 - **Consumes:** {{names, signatures, data shapes this task takes from earlier tasks — or "nothing"}}
 - **Produces:** {{the exact names and types later tasks will rely on — another task's executor sees only this line to learn them}}
 
+List existing code, approved documents and external fixtures in **Context**.
+**Consumes** records only dependencies on outputs of earlier plan tasks.
+
 {{Don't pre-write the implementation — the executor writes it at run time with full context. Include exact code ONLY where precision is fragile (tricky regex, security check, migration SQL).}}
 
 ## Evaluator
