@@ -12,7 +12,7 @@
   {
     "split": "train",
     "should_trigger": true,
-    "query": "Research all three caching libraries in parallel — they don't depend on each other."
+    "query": "Research all three caching libraries in parallel \u2014 they don't depend on each other."
   },
   {
     "split": "train",
@@ -47,13 +47,13 @@
   {
     "split": "validation",
     "should_trigger": true,
-    "query": "i've got the docs rewrite and the flaky test investigation and they don't overlap at all — run them concurrently?"
+    "query": "i've got the docs rewrite and the flaky test investigation and they don't overlap at all \u2014 run them concurrently?"
   },
   {
     "split": "train",
     "should_trigger": false,
-    "expect": "writing-plans",
-    "query": "These steps depend on each other in sequence. Write the plan with the dependencies made explicit."
+    "expect": "inline explanation",
+    "query": "Explain in chat the dependency order of these steps: deploy consumes build output, and build consumes generated sources. Stop before writing an executable plan or starting work."
   },
   {
     "split": "train",
@@ -64,8 +64,8 @@
   {
     "split": "train",
     "should_trigger": false,
-    "expect": "executing-plans",
-    "query": "Work through the plan directory. Tasks 01, 02 and 03 build on each other in order."
+    "expect": "inline explanation",
+    "query": "Tasks 01, 02 and 03 form a strict dependency chain. Explain their order in chat from the supplied dependency list; stop before creating a plan, executing tasks, or reviewing a candidate."
   },
   {
     "split": "train",
@@ -100,8 +100,8 @@
   {
     "split": "train",
     "should_trigger": false,
-    "expect": "executing-plans",
-    "query": "The approved plan has twelve tasks and they must go in order, each one feeding the next. Start executing it."
+    "expect": "inline explanation",
+    "query": "The supplied twelve-task dependency list is a strict chain, each task feeding the next. Explain why its order is fixed, in chat only; stop before planning execution or assigning workers."
   },
   {
     "split": "validation",
