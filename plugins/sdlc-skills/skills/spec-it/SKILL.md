@@ -59,7 +59,7 @@ Open `assets/spec-template.md` now. Each step fills its section.
 2. Answer `migration-strategy`'s four questions (reviewability,
    preservation, breadth, failure surfaces) and record the answers. Any off
    the ordinary route, or the user marks the work high-risk → run
-   `references/spec-review.md` with a reviewer who is not the sole author.
+   `assets/spec-review.md` with a reviewer who is not the sole author.
    Blocking.
 3. Present and end the turn:
 

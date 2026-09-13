@@ -34,7 +34,7 @@ diagnosis, not permission to change code.
 
 ## Step 2: Challenge read-only
 
-1. Read `references/yagni-auditor.md`. Dispatch it against each exact
+1. Read `assets/yagni-auditor.md`. Dispatch it against each exact
    partition. Record real receipts and terminal outcomes; a name or prompt is
    not dispatch.
 2. No independent action available → write that an inline pass ran. An

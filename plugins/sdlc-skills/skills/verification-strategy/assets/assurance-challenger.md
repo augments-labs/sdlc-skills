@@ -1,16 +1,18 @@
-# Assurance challenger
+# Assurance challenger prompt template
 
-Combine this contract with the broad code-reviewer prompt. It is a distinct
-assurance axis: generic code quality review cannot establish that a gate can
-fail or that it protects its named promotion.
+Fill Inputs and append the fenced prompt to the filled broad code-reviewer
+prompt. The reviewer fills Output; its receipt replaces the broad receipt.
+
+````markdown
+Challenge assurance as a distinct axis: generic code quality review cannot
+establish that a gate can fail or protects its named promotion.
 
 ## Inputs
 
-- The full exact candidate and review-input identities and read-only descriptor.
-- The exact proposed assurance-matrix version and catalogue dispositions.
-- Raw green, controlled-red, restoration-green, and execution-inventory
-  evidence; summaries are claims to challenge.
-- The protected promotion and its external invocation owner.
+- Candidate: {{read-only descriptor with full exact candidate and review-input identities, matching the broad prompt}}
+- Assurance matrix and catalogue dispositions: {{paths and exact normative matrix version}}
+- Evidence: {{raw green, controlled-red, restoration-green, and execution-inventory locations; summaries are claims}}
+- Protected promotion: {{promotion and external invocation owner}}
 
 ## Challenge
 
@@ -53,13 +55,20 @@ fail or that it protects its named promotion.
 
 ## Output
 
-Record every challenged risk and attack, command or artifact inspected, raw
-result location, candidate identity, and any unrun or inconclusive cell in the
-reviewer-owned report. Findings name the violated matrix cell and shortest
-repair. Return the broad reviewer's exact candidate-and-context receipt with
-added `"assurance":"clear|findings|inconclusive"` and
-`"assurance_version":"{{exact normative matrix version}}"` members. `clear`
-requires every applicable cell and claimed promotion to be accounted for; an
-unrun cell is `inconclusive`, not clear. A receipt without both exact members is
+Add this coverage table to the reviewer-owned report. Record every challenged
+risk and attack, including unrun and inconclusive cells. Findings name the
+violated matrix cell and shortest repair.
+
+| Risk/matrix cell and attack | Command or artifact | Raw result location | Result or limitation |
+| --- | --- | --- | --- |
+| {{cell and attack}} | {{what you inspected or ran}} | {{evidence location}} | {{result, unrun, or inconclusive}} |
+
+`clear` requires every applicable cell and claimed promotion to be accounted
+for; an unrun cell is `inconclusive`. Missing either assurance member means
 generic breadth review only. A path, label, combined prose identity, shortened
 digest, or mismatched matrix version is invalid.
+
+End the returned response with exactly one unfenced valid JSON line, copying
+identities byte-for-byte:
+SDLC_SKILLS_REVIEW_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","verdict":"{{ready | not_ready | ready_after_fixes}}","report":"{{location or returned directly}}","assurance":"{{clear | findings | inconclusive}}","assurance_version":"{{exact normative matrix version}}"}
+````
