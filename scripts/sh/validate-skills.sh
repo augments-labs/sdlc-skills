@@ -42,7 +42,7 @@ SHADOWED_COMMANDS='^(review|init|compact|clear|help|config|status|commit|test|ru
 mapfile -t skills < <(find skills -name SKILL.md | sort)
 [ ${#skills[@]} -eq 0 ] && { echo "no skills found under skills/"; exit 2; }
 
-# The standard's checks are delegated to the conformance script this library
+# Shared format and policy checks are delegated to the checker this library
 # ships (see the per-skill loop). Delegation fails open — a moved or renamed
 # script would produce no findings and every skill would pass — so prove it is
 # there and runnable before trusting a silent result.
@@ -70,8 +70,8 @@ for skill in "${skills[@]}"; do
   # name must not shadow a common harness slash command.
   [ -n "$fname" ] && echo "$fname" | grep -qiE "$SHADOWED_COMMANDS" && err "name '$fname' shadows a common harness command — rename to avoid mis-invocation"
 
-  # House size targets, tighter than the standard's ceilings because many skills
-  # coexist in one session — and only ever warnings.
+  # Advisory house size targets keep a multi-skill catalogue concise; exceeding
+  # these targets produces warnings, separate from the enforced profile limits.
   #
   # The line target was once a hard failure at 120, and that was a mistake with a
   # visible cost: authors bought line count by dropping articles and verbs until
@@ -134,10 +134,10 @@ while IFS= read -r ref; do
     err "$ref: not referenced directly from $skill_file"
 done < <(find skills \( -path '*/references/*.md' -o -path '*/assets/*.md' \) -type f | sort)
 
-# That a bundled script is executable and answers `--help` is the standard's
-# rule, already checked per skill above. These two are the house additions: an
-# agent that cannot find the script in SKILL.md never runs it, and a `--help`
-# that omits exit codes leaves the caller unable to branch on the result.
+# The checker enforces executable permission and successful `--help` as house
+# policy. These additional house checks require direct disclosure in SKILL.md
+# so the agent can find the script, and documented exit codes so it can act on
+# the result. The standard does not require this interface.
 echo "• every bundled script is disclosed and documents its exit codes"
 while IFS= read -r s; do
   skill_file="$(dirname "$(dirname "$s")")/SKILL.md"

@@ -56,8 +56,10 @@ Match the form to the need (see `references/reference.md` for how much detail ea
    to the user, and the right-versus-wrong shape of an output, in a fenced
    block; put a command in a `bash` block only where running it is the act.
    Every retry names its owner, observable progress, finite attempt/resource
-   boundary, and unresolved outcome. Preserve history across revisions and
-   return to a pending caller instead of invoking it recursively.
+   boundary, and unresolved outcome. Before retrying, apply an evidence-supported
+   correction or obtain new discriminating evidence; naming a possible fix is
+   not applying it. Preserve history across revisions and return to a pending
+   caller instead of invoking it recursively.
    Cut every line that fails "would the agent get this wrong without it?".
 
 ## Discipline skills are the exception
