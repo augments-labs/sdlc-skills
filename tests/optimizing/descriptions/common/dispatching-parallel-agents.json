@@ -1,43 +1,112 @@
 [
-  {"split": "train", "should_trigger": true,
-   "query": "These four bugs are completely independent and touch different files. Work them at the same time."},
-  {"split": "train", "should_trigger": true,
-   "query": "Give these three tickets to separate agents and run them concurrently."},
-  {"split": "train", "should_trigger": true,
-   "query": "Research all three caching libraries in parallel — they don't depend on each other."},
-  {"split": "train", "should_trigger": true,
-   "query": "Six services each need the same lint fix applied. Different repos, no shared files. Fan it out."},
-  {"split": "train", "should_trigger": true,
-   "query": "can we do the frontend bug and the backend bug at the same time? theyre unrelated"},
-  {"split": "validation", "should_trigger": true,
-   "query": "Two unrelated things this afternoon: the CSV parser bug and the new admin route. Run them side by side."},
-  {"split": "validation", "should_trigger": true,
-   "query": "Tasks 05 through 09 in the plan are independent. Can they go concurrently?"},
-  {"split": "validation", "should_trigger": true,
-   "query": "I want three different agents to each review this from a different angle at once."},
-  {"split": "train", "should_trigger": true,
-   "query": "Three unrelated bugs in three different files, none of them share state. Can we work them at the same time?"},
-  {"split": "validation", "should_trigger": true,
-   "query": "i've got the docs rewrite and the flaky test investigation and they don't overlap at all — run them concurrently?"},
-
-  {"split": "train", "should_trigger": false, "expect": "writing-plans",
-   "query": "These steps depend on each other in sequence. Write the plan with the dependencies made explicit."},
-  {"split": "train", "should_trigger": false, "expect": "test-driven-development",
-   "query": "Rename this one variable in one file. Trivial, just do it."},
-  {"split": "train", "should_trigger": false, "expect": "executing-plans",
-   "query": "Work through the plan directory. Tasks 01, 02 and 03 build on each other in order."},
-  {"split": "train", "should_trigger": false, "expect": "none",
-   "query": "What's the difference between concurrency and parallelism? I always get asked this in interviews."},
-  {"split": "train", "should_trigger": false, "expect": "test-driven-development",
-   "query": "Both of these changes edit src/config/index.ts. Do them one at a time so they don't clash."},
-  {"split": "validation", "should_trigger": false, "expect": "requesting-code-review",
-   "query": "The work's done and green. Get it reviewed before it merges."},
-  {"split": "validation", "should_trigger": false, "expect": "none",
-   "query": "How many CPU cores does this machine have? Checking before I set the jest worker count."},
-  {"split": "validation", "should_trigger": false, "expect": "debugging",
-   "query": "Two tests fail when run together but pass individually. Work out what they're sharing."},
-  {"split": "train", "should_trigger": false, "expect": "executing-plans",
-   "query": "The approved plan has twelve tasks and they must go in order, each one feeding the next. Start executing it."},
-  {"split": "validation", "should_trigger": false, "expect": "handoff",
-   "query": "Two agents worked on this yesterday. Write up the combined state so a fresh session can pick it up."}
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "These four bugs are completely independent and touch different files. Work them at the same time."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Give these three tickets to separate agents and run them concurrently."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Research all three caching libraries in parallel \u2014 they don't depend on each other."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Six services each need the same lint fix applied. Different repos, no shared files. Fan it out."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "can we do the frontend bug and the backend bug at the same time? theyre unrelated"
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "Two unrelated things this afternoon: the CSV parser bug and the new admin route. Run them side by side."
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "Tasks 05 through 09 in the plan are independent. Can they go concurrently?"
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "I want three different agents to each review this from a different angle at once."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Three unrelated bugs in three different files, none of them share state. Can we work them at the same time?"
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "i've got the docs rewrite and the flaky test investigation and they don't overlap at all \u2014 run them concurrently?"
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "inline explanation",
+    "query": "Explain in chat the dependency order of these steps: deploy consumes build output, and build consumes generated sources. Stop before writing an executable plan or starting work."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "Explain whether renaming one local variable needs multiple workers. I only want the reasoning; do not edit or start a work cycle."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "inline explanation",
+    "query": "Tasks 01, 02 and 03 form a strict dependency chain. Explain their order in chat from the supplied dependency list; stop before creating a plan, executing tasks, or reviewing a candidate."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "What's the difference between concurrency and parallelism? I always get asked this in interviews."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "test-driven-development",
+    "query": "Both proposed changes would write src/config/index.ts. Outline their required sequence and return it before execution or review."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "Explain what information belongs in a review request. This is a general process question with no candidate or reviewers to dispatch."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "How many CPU cores does this machine have? Checking before I set the jest worker count."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "debugging",
+    "query": "Two tests fail only together. Reproduce their shared-state interference locally and return the diagnosis before fixing or reviewing it."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "inline explanation",
+    "query": "The supplied twelve-task dependency list is a strict chain, each task feeding the next. Explain why its order is fixed, in chat only; stop before planning execution or assigning workers."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "handoff",
+    "query": "Two agents worked on this yesterday. Write up the combined state so a fresh session can pick it up."
+  }
 ]

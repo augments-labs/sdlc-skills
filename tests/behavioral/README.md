@@ -12,26 +12,21 @@ suite can never go red.
 
 ## The arms
 
-**RED vs GREEN is the gate.** RED loads the skills from a `git worktree` at
-`--base`, GREEN from the working tree, so the before-arm stays reproducible after
-the change is committed. The question has a known answer: what built before must
-still build. Red means somebody has to act.
+RED installs the complete library from a worktree at `--base`; GREEN installs
+it from the working tree. This preserves the baseline source after committing
+an edit, not deterministic model behavior. Compare the same relevant scenario
+and fixed evaluator under matching conditions.
 
-**`--arm none` is a measurement, not a gate.** NONE loads no skills at all, and
-asks whether the skill is worth its context — one whose assertions pass just as
-well without it is spending tokens for nothing. That is the only arm that can
-retire a skill, and it has no correct answer in advance, so read a red NONE arm
-the way you would read anything under `tests/optimizing/`: a number to compare,
-not a regression.
+`--arm none` installs no skills and observes the bare agent. A passing sample
+can narrow a failure claim, but cannot erase an observed failure or establish
+that a skill is useless. Keep current contract gaps distinct from sampled
+behavior. This interface does not remove one skill from an otherwise identical
+library, so it does not isolate that skill's contribution.
 
-Each arm prints a **cost** line — wall clock, and tokens where the harness
-reports them — because the value question has two sides. A skill that lifts the
-assertions and triples the tokens is a different trade from one that is better
-and cheaper, and a pass/fail verdict hides that. Run two arms and compare their
-cost lines; nothing aggregates them for you, deliberately. Counts come from each
-CLI's own stream via `adapter_usage`, so a harness that reports none says "tokens
-not reported by this harness" instead of printing a misleading `0`. That is
-currently kimi, whose `stream-json` carries no usage object at all.
+Each arm prints total wall time and token usage when the adapter reports it.
+The difference includes generated work and tool use, not just skill text. An
+adapter without usage telemetry says so instead of printing zero. Report all
+passes, failures, and inconclusive attempts; `docs/testing.md` owns interpretation.
 
 ## Writing one
 

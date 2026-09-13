@@ -1,6 +1,6 @@
 ---
 name: security-audits
-description: "Use when a change touches a trust boundary, attacker-controlled input, authentication or authorization, secrets, sensitive data, isolation, a dependency, build or deploy exposure, availability, sessions, or cryptography. Fires on anything touching login, tokens, permissions, uploads, or user input reaching a query or a shell, even if nobody says security. Skip only when no security surface changed."
+description: "Use when a change touches a trust boundary, attacker-controlled input, authentication or authorization, secrets, sensitive data, isolation, a dependency, build or deploy exposure, availability, sessions, or cryptography. Fires on anything touching login, tokens, permissions, uploads, or user input reaching a query or a shell. Skip only when no security surface changed."
 ---
 
 # Security Audits
@@ -22,7 +22,7 @@ or comment as a verdict.
 1. Stop anything still writing to the candidate.
 2. Reuse a current `requesting-code-review` descriptor, or invoke that skill
    and fill its review-candidate descriptor.
-3. **REQUIRED SUB-SKILL:** invoke `verifying-completion` for the exact-state
+3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the exact-state
    gates that apply. Join its state identity byte-for-byte.
 4. Inventory the threat model: protected assets, trusted and untrusted actors,
    entry points, trust boundaries, privileges, assumptions, abuse cases. Give
@@ -42,18 +42,19 @@ or comment as a verdict.
 5. Write each finding in three parts: attacker-controlled source, propagation,
    the sink or effect it actually reaches.
 6. Run the assurance-matrix security gates for every relevant platform, build
-   mode, and environment cell, under `verifying-completion`'s effect authority.
+   mode, and environment cell, under `verification-before-completion`'s effect authority.
    Never exploit shared or production state without exact, direct authority.
 7. Missing or stale gate: record a blocker and go to Step 4. Do not work
    around it.
-8. Write findings in the shape of the checklist file's *Writing the finding*
-   section, bound to the revision. Fix = the smallest change that closes the
-   path. Sensitive evidence = redacted location or digest, never the value.
+8. Fill `assets/security-report.md` with revision-bound findings. Fix = the
+   smallest change that closes the path. Sensitive evidence = redacted location
+   or digest, never the value.
 
 ## Step 3: Verdict
 
-1. Dispatch an auditor independent of the implementer through a real callable
-   action. Dispatched = a nonempty receipt. Empty, refused, or unavailable:
+1. Include `assets/security-report.md` with the independent auditor's
+   instructions and dispatch through a real callable action.
+   Dispatched = a nonempty tool-issued ID. Empty, refused, or unavailable:
    issue `inconclusive` with the gate pending. Never self-certify.
 2. Poll the exact receipt to its deadline. Failure or passed deadline: write
    `cancellation requested`, wait for quiet, quarantine partial output; a
@@ -62,17 +63,15 @@ or comment as a verdict.
    that comes back.
 4. After a fix: new candidate, rerun the affected gates, independent focused
    re-audit. Never certify your own correction.
-5. Issue one verdict: `security clear`, `security blocked`, or
+5. Read the auditor's completed report. Match Candidate and Review inputs
+   byte-for-byte to the descriptor, Role to `security`, and Verdict to step 6.
+   Missing, unreadable, conflicting, or mismatched fields → `inconclusive`.
+6. Issue one verdict: `security clear`, `security blocked`, or
    `inconclusive`, bound to the candidate and review-input identities.
    `security clear` requires the independent auditor.
-6. Return it to the review that requested it. Leave releasability to
-   `release-readiness`. Any security-relevant edit invalidates the verdict.
-7. End the report with exactly one valid JSON line, both identities copied
-   byte-for-byte:
-
-   ```text
-   SDLC_SKILLS_SECURITY_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","verdict":"{{security clear | security blocked | inconclusive}}","report":"{{nonempty location or returned directly}}"}
-   ```
+7. Return the report or its location to the requesting review. Leave
+   releasability to `release-readiness`. Any security-relevant edit invalidates
+   the verdict.
 
 ## Step 4: When a category cannot be covered
 

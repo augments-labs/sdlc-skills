@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Use when approved requirements need a target system design before planning or implementation: components, boundaries, data flow, failure and recovery, and which seams are worth their cost. Fires on how should we structure this and what are the moving pieces, even if nobody says architecture. Skip the transition from an existing system, and skip a small feature whose structure fits inside its own task or plan."
+description: "Use when approved requirements need a target system design before planning or implementation: components, boundaries, data flow, failure and recovery, and which seams are worth their cost. Fires on how should we structure this and what are the moving pieces. Skip the transition from an existing system, and skip a small feature whose structure fits inside its own task or plan."
 ---
 
 # System Architecture
@@ -57,7 +57,7 @@ Open `assets/architecture-section.md` now. Each step fills its section.
 2. Answer `migration-strategy`'s four questions (reviewability,
    preservation, breadth, failure surfaces) and record the answers. Any off
    the ordinary route, or the user marks the work high-risk → run
-   `references/design-review.md` before presenting. Blocking.
+   `assets/design-review.md` before presenting. Blocking.
 3. Present and end the turn:
 
    ```text

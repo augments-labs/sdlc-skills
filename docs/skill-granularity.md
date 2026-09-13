@@ -24,7 +24,9 @@ Gathering requirements, analyzing them, identifying challenges, and writing the 
 
 ## Don't split for its own sake
 
-Several tiny skills that always run together, feeding one artifact, are **fragmentation** — the same box-filling we avoid by not shipping document templates for prose specs. Default to one cohesive skill; let a sub-activity earn its own door only by being independently useful.
+Several tiny skills that always run together can fragment one coherent task.
+Default to one skill unless a sub-activity is independently useful. An output
+template can preserve required information without making each section a skill.
 
 ## Cross-cutting techniques are a third case
 

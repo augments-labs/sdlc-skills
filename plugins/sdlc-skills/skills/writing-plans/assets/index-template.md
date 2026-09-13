@@ -68,6 +68,12 @@ only mutable projection.
 
 ## Trace
 
+Include every applicable approved UI flow, state, decision, condition and
+acceptance check, even when absent from a preview or no variants were compared.
+Use its stable ID or design version plus section/condition. Assign an owning
+task and gate; the finished interface must satisfy these alongside reference
+conformance. Link the approved source instead of paraphrasing away its details.
+
 | Requirement or accepted risk gate | Owning task/phase | Evaluator |
 | --- | --- | --- |
 | {{ID and source}} | {{task/phase}} | {{command, rubric, or assurance gate ID}} |
@@ -82,9 +88,10 @@ Task IDs are stable, never renumbered or recycled; filenames may stay ordered.
 Mirror the external ledger as a checkbox plus its exact state label:
 
 - `[x] done` counts toward completion.
-- `[x] done with concerns` counts only after every concern is classified as
-  non-blocking or accepted by its owning deviation/exclusion and compensating
-  gate; until then use `[ ] done with concerns`.
+- `[ ] done with concerns` remains incomplete. Once every concern is
+  classified as non-blocking or accepted by its owning deviation/exclusion and
+  compensating gate, record `done` and mirror `[x] done`. Retain concern history
+  in the external ledger; do not use `[x] done with concerns`.
 - `[ ] todo`, `[ ] in progress`, `[ ] blocked`, `[ ] needs context`,
   `[ ] cancelled`, and `[ ] superseded` do not count toward completion.
 

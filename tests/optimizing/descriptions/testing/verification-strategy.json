@@ -22,7 +22,7 @@
 
   {"split": "train", "should_trigger": false, "expect": "test-driven-development",
    "query": "Write the test for the discount rule and then implement it. The gates for this project are already defined."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "I've run all the defined gates and they're green. Can I call this done?"},
   {"split": "train", "should_trigger": false, "expect": "debugging",
    "query": "This specific test fails intermittently. Find out why — I'm not redesigning our test strategy today."},

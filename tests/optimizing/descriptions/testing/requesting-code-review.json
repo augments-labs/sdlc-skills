@@ -1,43 +1,112 @@
 [
-  {"split": "train", "should_trigger": true,
-   "query": "Implementation's done and the gates are green. I want independent eyes on it before it merges."},
-  {"split": "train", "should_trigger": true,
-   "query": "Can you review the changes on this branch? Evidence is attached, I just want a second opinion."},
-  {"split": "train", "should_trigger": true,
-   "query": "Before I open the PR, get someone to look over the diff properly."},
-  {"split": "train", "should_trigger": true,
-   "query": "The refactor is complete and verified. Review it — it touched authentication so be thorough."},
-  {"split": "train", "should_trigger": true,
-   "query": "review this please, its ready as far as i can tell"},
-  {"split": "validation", "should_trigger": true,
-   "query": "This is the candidate for release. I want a proper independent review of exactly this state, nothing else."},
-  {"split": "validation", "should_trigger": true,
-   "query": "I'd like a review focused on whether the tests actually cover the new branching logic."},
-  {"split": "validation", "should_trigger": true,
-   "query": "The migration code is finished and the preservation gates passed. Get it reviewed before we materialise the branch."},
-  {"split": "train", "should_trigger": true,
-   "query": "This candidate is at a done boundary and the completion evidence is in hand. Get it independently reviewed."},
-  {"split": "validation", "should_trigger": true,
-   "query": "can you arrange a proper review of exactly this state before i push anything"},
-
-  {"split": "train", "should_trigger": false, "expect": "receiving-code-review",
-   "query": "The reviewer left twelve comments on my PR. Work through them."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
-   "query": "I think the feature's finished. Is it actually done?"},
-  {"split": "train", "should_trigger": false, "expect": "finishing-a-branch",
-   "query": "Reviewed and approved. Merge it and clean up the branch."},
-  {"split": "train", "should_trigger": false, "expect": "security-audits",
-   "query": "This change touches token validation. I want a proper security assessment, not a general code read."},
-  {"split": "train", "should_trigger": false, "expect": "none",
-   "query": "What's a reasonable size for a PR? Ours are always 2000 lines and reviewers hate it."},
-  {"split": "validation", "should_trigger": false, "expect": "complexity-audit",
-   "query": "Nothing's changed recently — I just want an audit of whether src/scheduler/ is more complicated than it needs to be."},
-  {"split": "validation", "should_trigger": false, "expect": "test-driven-development",
-   "query": "I'm halfway through the feature and nowhere near done. Keep going on the retry logic."},
-  {"split": "validation", "should_trigger": false, "expect": "none",
-   "query": "Set up a CODEOWNERS file so the platform team gets auto-requested on infra changes."},
-  {"split": "train", "should_trigger": false, "expect": "receiving-code-review",
-   "query": "The review already came back with findings. Handle them properly before touching anything."},
-  {"split": "validation", "should_trigger": false, "expect": "verifying-completion",
-   "query": "Before any review, I want to know whether the gates actually passed on this exact revision."}
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Implementation's done and the gates are green. I want independent eyes on it before it merges."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Can you review the changes on this branch? Evidence is attached, I just want a second opinion."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Before I open the PR, get someone to look over the diff properly."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "The refactor is complete and verified. Review it — it touched authentication so be thorough."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "review this please, its ready as far as i can tell"
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "This is the candidate for release. I want a proper independent review of exactly this state, nothing else."
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "I'd like a review focused on whether the tests actually cover the new branching logic."
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "The migration code is finished and the preservation gates passed. Get it reviewed before we materialise the branch."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "This candidate is at a done boundary and the completion evidence is in hand. Get it independently reviewed."
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "can you arrange a proper review of exactly this state before i push anything"
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "receiving-code-review",
+    "query": "The reviewer left twelve comments. Classify which are actionable and return the disposition list before edits or another review."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "verification-before-completion",
+    "query": "Inventory the evidence for this revision and report which required gates are missing. Return that ledger to me before any independent review or overall completion judgment."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "finishing-a-branch",
+    "query": "Reviewed and approved. Merge it and clean up the branch."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "security-audits",
+    "query": "For the proposed token-validation change, first inventory the trust boundaries and evidence a security assessment needs. Return that inventory before freezing or dispatching a candidate review."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "What's a reasonable size for a PR? Ours are always 2000 lines and reviewers hate it."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "complexity-audit",
+    "query": "Nothing's changed recently — I just want an audit of whether src/scheduler/ is more complicated than it needs to be."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "test-driven-development",
+    "query": "I'm halfway through the retry feature. Write the next failing test and show its actual failure; stop there, before implementation or completion review."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "Explain how a CODEOWNERS rule can request the platform team on infra changes. Give me a rule example; do not edit the repository."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "receiving-code-review",
+    "query": "The review already came back with findings. Handle them properly before touching anything."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "verification-before-completion",
+    "query": "Before any review, I want to know whether the gates actually passed on this exact revision."
+  }
 ]

@@ -16,4 +16,4 @@ Shared terms for `refactor-architecture` (and `system-architecture`), so the sam
 
 ## The deletion test
 
-To tell a deep module from a shallow one: imagine deleting it and inlining its work into every caller. If that **concentrates** complexity the module was holding, it earns its depth — keep it. If the complexity merely **relocates** unchanged, the module is shallow — collapse it.
+To tell a deep module from a shallow one: imagine deleting it and inlining its work into every caller. If that **spreads** complexity the module was holding, it earns its depth — keep it. If the complexity merely **relocates** unchanged, the module is shallow — collapse it.

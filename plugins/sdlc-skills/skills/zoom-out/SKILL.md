@@ -1,6 +1,6 @@
 ---
 name: zoom-out
-description: "Use before working in a region of the codebase whose structure you have not established — its modules, their callers, and the project's own vocabulary. Fires whenever a request names an unfamiliar file, module, or area, and on any structural question — what reaches this, what it reaches, how a change travels through it — even if nobody asks to be oriented. Skip when the area is already understood."
+description: "Use before changing or debugging code whose structure and callers have not been established for this task, or when asked how a change travels through the codebase. Skip only when a current boundary record covers the region and its inputs."
 ---
 
 # Zoom Out

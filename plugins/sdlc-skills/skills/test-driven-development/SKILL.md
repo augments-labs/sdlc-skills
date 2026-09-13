@@ -80,7 +80,7 @@ change. Watch it happen; keep the output.
 2. Restore only the mutations this task made whose pre-state you recorded.
    Leave anything else pending for `finishing-a-branch`. Never delete
    inherited, shared, or user state to manufacture a cycle.
-3. **REQUIRED SUB-SKILL:** invoke `verifying-completion` on the exact state
+3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on the exact state
    you are about to call done. This cycle's gate is one row of its ledger,
    not the ledger.
 4. Return to whatever invoked this skill: a plan task, a worktree checkpoint,

@@ -1,43 +1,112 @@
 [
-  {"split": "train", "should_trigger": true,
-   "query": "I'm out of context and have to stop here. Write up where things stand so the next session can pick it up."},
-  {"split": "train", "should_trigger": true,
-   "query": "Wrapping up for the day on this branch. Leave notes so tomorrow-me knows where I stopped."},
-  {"split": "train", "should_trigger": true,
-   "query": "Handing this over to Sam in the morning. What do they need to know?"},
-  {"split": "train", "should_trigger": true,
-   "query": "This conversation is getting long. Summarise state, decisions and next step before we lose it."},
-  {"split": "train", "should_trigger": true,
-   "query": "gotta go, dump everything important somewhere so i dont lose it"},
-  {"split": "validation", "should_trigger": true,
-   "query": "I have to stop halfway through the plan. Write down where I am so someone else can take over."},
-  {"split": "validation", "should_trigger": true,
-   "query": "Spinning up a fresh session after this. Make sure it won't have to re-derive all the decisions we just made."},
-  {"split": "validation", "should_trigger": true,
-   "query": "Pausing this work for two weeks. Record enough that I don't have to reconstruct it from the diff."},
-  {"split": "train", "should_trigger": true,
-   "query": "I'm stopping for the day mid-refactor. Write up state so tomorrow's session doesn't re-derive all of this."},
-  {"split": "validation", "should_trigger": true,
-   "query": "passing this to another agent now — make sure they get the goal, decisions and next step without asking me"},
-
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
-   "query": "That's everything, the task is finished. Commit it."},
-  {"split": "train", "should_trigger": false, "expect": "executing-plans",
-   "query": "Resume the plan we paused last week — I want to keep working, not write notes."},
-  {"split": "train", "should_trigger": false, "expect": "finishing-a-branch",
-   "query": "Done and reviewed. Merge it and clean up."},
-  {"split": "train", "should_trigger": false, "expect": "post-mortem",
-   "query": "The project's over and it went badly. I want the retrospective, not a status note."},
-  {"split": "train", "should_trigger": false, "expect": "none",
-   "query": "What should a good engineering handover document contain, in general? Writing a team template."},
-  {"split": "validation", "should_trigger": false, "expect": "dispatching-parallel-agents",
-   "query": "Give these three independent bugs to separate agents and run them at the same time."},
-  {"split": "validation", "should_trigger": false, "expect": "none",
-   "query": "Add my name to the AUTHORS file — I joined in March and never did it."},
-  {"split": "validation", "should_trigger": false, "expect": "writing-plans",
-   "query": "Before I stop, break the remaining work into tasks so it's actually executable later."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
-   "query": "This is finished, not paused. Confirm the gates actually passed before I claim it's done."},
-  {"split": "validation", "should_trigger": false, "expect": "dispatching-parallel-agents",
-   "query": "Two independent bugs, separate files, no shared state. Can they be worked at the same time?"}
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "I'm out of context and have to stop here. Write up where things stand so the next session can pick it up."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Wrapping up for the day on this branch. Leave notes so tomorrow-me knows where I stopped."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "Handing this over to Sam in the morning. What do they need to know?"
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "This conversation is getting long. Summarise state, decisions and next step before we lose it."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "gotta go, dump everything important somewhere so i dont lose it"
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "I have to stop halfway through the plan. Write down where I am so someone else can take over."
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "Spinning up a fresh session after this. Make sure it won't have to re-derive all the decisions we just made."
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "Pausing this work for two weeks. Record enough that I don't have to reconstruct it from the diff."
+  },
+  {
+    "split": "train",
+    "should_trigger": true,
+    "query": "I'm stopping for the day mid-refactor. Write up state so tomorrow's session doesn't re-derive all of this."
+  },
+  {
+    "split": "validation",
+    "should_trigger": true,
+    "query": "passing this to another agent now — make sure they get the goal, decisions and next step without asking me"
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "verification-before-completion",
+    "query": "That's everything, the task is finished. Commit it."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "executing-plans",
+    "query": "Resume the plan we paused last week — I want to keep working, not write notes."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "finishing-a-branch",
+    "query": "Done and reviewed. Merge it and clean up."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "post-mortem",
+    "query": "The project's over and it went badly. I want the retrospective, not a status note."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "What should a good engineering handover document contain, in general? Writing a team template."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "dispatching-parallel-agents",
+    "query": "Give these three independent bugs to separate agents and run them at the same time."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "none",
+    "query": "Add my name to the AUTHORS file — I joined in March and never did it."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "writing-plans",
+    "query": "Break the remaining requirements into executable tasks. I will keep this session open to review the plan; no responsibility transfer is happening yet."
+  },
+  {
+    "split": "train",
+    "should_trigger": false,
+    "expect": "verification-before-completion",
+    "query": "This is finished, not paused. Confirm the gates actually passed before I claim it's done."
+  },
+  {
+    "split": "validation",
+    "should_trigger": false,
+    "expect": "dispatching-parallel-agents",
+    "query": "Two independent bugs, separate files, no shared state. Can they be worked at the same time?"
+  }
 ]

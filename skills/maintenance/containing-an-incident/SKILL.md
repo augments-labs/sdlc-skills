@@ -1,6 +1,6 @@
 ---
 name: containing-an-incident
-description: "Use the moment a failure is reaching real users — an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data corrupted or exposed, a customer-visible regression. Fires on it's down, customers are getting errors, something broke in production, and this started after the deploy, even if nobody says incident or outage. Skip a failing test, a bug caught in review, or a defect nobody has hit, and skip once impact has stopped."
+description: "Use the moment a failure is reaching real users — an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data corrupted or exposed, a customer-visible regression. Fires on it's down, customers are getting errors, something broke in production, and this started after the deploy. Skip a failing test, a bug caught in review, or a defect nobody has hit, and skip once impact has stopped."
 ---
 
 # Containing an Incident
@@ -16,8 +16,8 @@ a minute you chose to spend.
   burned.
 - **Skip** when nothing is reaching users: a red test, a bug found in review, a
   defect nobody has hit. That is `debugging`.
-- **Skip** once impact has stopped and the open question is why the safeguards
-  missed it. That is `post-mortem`.
+- **Skip** once impact has stopped: unknown technical cause → `debugging`;
+  known cause and why safeguards missed it → `post-mortem`.
 - Not sure whether users are affected? Answering that *is* step 1, and it is
   fast. Do not resolve the doubt by starting to read code.
 
@@ -40,12 +40,16 @@ a minute you chose to spend.
    block) → escalate now with the Step 1 lines. That is the containment step.
 4. Pull the narrowest lever that works. Cannot state its effect in one
    sentence → do not pull it.
+5. No safe authorized lever remains, or a lever risks evidence or other users
+   → read `references/hard-containments.md` now. Record the exhausted options,
+   residual impact, and escalation; do not keep selecting the same lever.
 
 ## Step 3: Prove it stopped
 
 1. Read the signal from Step 1 again. Returned to normal → contained.
-2. Signal unchanged → not contained. Back to Step 2. The action taken proves
-   nothing.
+2. Signal unchanged → not contained. Record the attempted lever and result;
+   return to Step 2 only for a different justified intervention. Exhausted
+   options → its hard-containment fallback. The action taken proves nothing.
 3. Cheap to capture → save a failing example, the logs, or the current
    configuration before a rollback or restart erases it. Seconds, not
    minutes. Never delay containment for evidence.
@@ -65,9 +69,9 @@ a minute you chose to spend.
 3. **REQUIRED SUB-SKILL:** invoke `debugging` for the cause. Once cause and
    containment are known, invoke `post-mortem`. Write both into the record's
    `Still open` lines. Diagnose nothing from this skill.
-4. No lever, damage already done, containment destroys the only evidence, or
-   the lever helps some users and hurts others → read
-   `references/hard-containments.md`.
+4. Hard-containment fallback → pass residual impact, attempted levers, and
+   incident/escalation owner to `debugging`. New or worsened impact or a newly
+   available lever reopens containment; unchanged residual impact does not.
 
 ## When you are tempted to skip it
 
@@ -86,7 +90,7 @@ a minute you chose to spend.
 
 ## Red flags
 
-Each of these means stop and go to step 2:
+Without a recorded hard-containment fallback, stop and go to step 2 for these:
 
 - You are reading source code and users are still failing.
 - You know which flag or release would stop it, and it is still not pulled.

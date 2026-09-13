@@ -1,6 +1,6 @@
 ---
 name: yagni
-description: "Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when behavior-affecting implementation or configuration is being written or proposed; when scope drifts toward speculative or incomplete delivery; or when a proposal needs a strict pre-edit challenge. Fires on we might need this later and let's make it configurable, even if nobody says scope or YAGNI. Skip throwaway spikes and nonbehavioral content or configuration."
+description: "Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when behavior-affecting implementation or configuration is being written or proposed; when scope drifts toward speculative or incomplete delivery; or when a proposal needs a strict pre-edit challenge. Fires on we might need this later and let's make it configurable. Skip throwaway spikes and nonbehavioral content or configuration."
 ---
 
 # YAGNI — build only what's needed, and make it work
@@ -43,9 +43,11 @@ latest prompt need not repeat those for them to bind.
    policy, or test isolation.
 5. Lasting surface (new dependency, service or process, generalized
    abstraction, public extension point or config knob, verification system),
-   or a strict challenge requested → dispatch `references/yagni-challenger.md`
-   read-only and wait. `revise` or `decision` → blocked as written.
-   `inconclusive` → not clearance.
+   or a strict challenge requested → fill `assets/yagni-challenger.md` with
+   `assets/challenge-report.md`, dispatch read-only, and wait. Read the report;
+   match Proposal and Challenge inputs to the request. Missing, mismatched,
+   conflicting, or invalid verdict → inconclusive. `revise` or `decision` →
+   blocked as written. `inconclusive` → not clearance.
 
 ## Step 2: Before calling it ready
 
@@ -60,7 +62,7 @@ latest prompt need not repeat those for them to bind.
 3. Delete only what you proved unused: no static, runtime, reflection, config,
    generated, or external consumer, or a completed deprecation. Unknown →
    stays, or goes to migration or refactor ownership.
-4. **REQUIRED SUB-SKILL:** invoke `verifying-completion` before the claim
+4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` before the claim
    leaves this skill.
 
 ## When you're tempted to call it done
@@ -82,7 +84,7 @@ latest prompt need not repeat those for them to bind.
 - **Minimal ≠ incomplete.** Smaller breaks ties only between solutions that both
   solve the task and run.
 - Before done: real checks pass, implied inputs work, and no required path has a
-  stub/TODO/placeholder; confirm through `verifying-completion`.
+  stub/TODO/placeholder; confirm through `verification-before-completion`.
 - Never cut trust-boundary validation, data-loss prevention, security,
   accessibility, or explicit user scope.
 - **Never minimise away:** preservation, compatibility/parity, durable-data

@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: "Use when an exact candidate reaches a done or integration boundary, or an independent review of one frozen state is explicitly requested. Fires on review this, is this ready to merge, and take a look before I push, even if nobody says code review. Skip an unfinished reversible checkpoint unless review was explicitly requested, and skip an explicit keep, discard, close, or reopen."
+description: "Use when an exact candidate reaches a done or integration boundary, or an independent review of one frozen state is explicitly requested. Fires on review this, is this ready to merge, and take a look before I push. Skip an unfinished reversible checkpoint unless review was explicitly requested, and skip an explicit keep, discard, close, or reopen."
 ---
 
 # Requesting Code Review
@@ -24,14 +24,20 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 ## Step 1: Verify and freeze
 
-1. **REQUIRED SUB-SKILL:** invoke `verifying-completion`. Run the gates it
-   requires for this transition. Keep the state identity, raw output, and
-   every failure. Review challenges that evidence; it never replaces it.
-2. Stop anything still writing to the candidate.
-3. Open `assets/review-candidate.md`. Fill every field: mode, identities,
-   complete inventory, artifact controls, terminal contract.
-4. Compare its result identity with the one from step 1. Different → back to
-   step 1.
+1. Stop anything still writing to the candidate.
+2. Read the available verification evidence and raw results. Reuse required
+   rows only when the candidate, bound inputs/environment, gate requirements,
+   and evidence freshness still match.
+3. Missing or stale rows → **REQUIRED SUB-SKILL:** invoke
+   `verification-before-completion` to obtain evidence for this review, then resume here.
+   Keep failures and pending results: they permit review, never readiness.
+4. Open `assets/review-candidate.md`. Fill every field: mode, identities,
+   complete inventory, artifact controls, terminal contract, continuation,
+   review history. Retain that history across successor candidates.
+   Record a caller only when it has a step awaiting this verdict. A skill
+   whose work ended at this handoff is not a pending return step.
+5. Compare its result identity with the verification evidence. Different →
+   back to step 1. Review challenges the evidence; it never replaces it.
 
 ## Step 2: Choose depth and roles
 
@@ -46,21 +52,23 @@ wait on one, until the dispatch action has returned a non-empty receipt.
      before assigning anyone.
 2. Give every role a stable ID, including each one omitted. An omission
    records evidence, owner, expiry, compensation, and approver.
-3. Add the specialist role whose condition holds; open its brief:
-   - `references/silent-failures-reviewer.md` — catches, retries, fallbacks,
+3. Add each applicable specialist role; open its prompt template:
+   - `assets/silent-failures-reviewer.md` — catches, retries, fallbacks,
      or defaults that could swallow a failure
-   - `references/type-design-reviewer.md` — a new or changed type, interface,
+   - `assets/type-design-reviewer.md` — a new or changed type, interface,
      schema, or shape callers bind to
-   - `references/test-coverage-reviewer.md` — behavior tests should pin, or
+   - `assets/test-coverage-reviewer.md` — behavior tests should pin, or
      behavior moved between covered and uncovered code
-   - `references/comment-accuracy-reviewer.md` — comments, docstrings, or
+   - `assets/comment-accuracy-reviewer.md` — comments, docstrings, or
      prose that claims something about the code
-   - `references/equivalence-reviewer.md` — high-risk equivalence
-   - `references/yagni-reviewer.md` — new or expanded enduring surface, or a
+   - `assets/equivalence-reviewer.md` — high-risk equivalence
+   - `assets/yagni-reviewer.md` — new or expanded enduring surface, or a
      requested simplification review
 4. Trust boundary changed → invoke `security-audits`. Audit of existing code →
    `complexity-audit`. Challenge to the assurance strategy →
-   `verification-strategy`. A generic review never substitutes.
+   `verification-strategy`. When the recorded caller owns that activity,
+   use its supplied brief and keep its return step; never invoke it
+   recursively. A generic review never substitutes.
 5. Pick each reviewer's tier with the **Model selection** section of
    `dispatching-parallel-agents`. Depth sets coverage and independence, not
    the largest tier for every role.
@@ -69,28 +77,47 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 1. Shallow, with its written assignment recorded in the descriptor → run the
    self-review below; dispatch nothing. No assignment → Standard.
-2. Otherwise read `references/code-reviewer.md`, attach the raw evidence from
-   Step 1, and send it through the harness's dispatch action.
+2. Otherwise open `assets/code-reviewer.md` and each selected specialist
+   template. Fill Inputs from the descriptor and raw evidence; insert
+   `assets/review-report.md` into its Report template slot. Leave the report
+   fields for the reviewer. Send each filled fenced prompt through the
+   harness's dispatch action.
 3. Dispatched = the action returned a non-empty ID. Empty, refused, or
    unavailable → write the review as pending and stop. Do not review it
    yourself. Do not poll an empty target.
 4. Poll the exact IDs to the descriptor's deadline. Success = exactly one
    current report.
-5. Check the report covers the whole inventory, including every
-   human-authored change. Reject a report that wandered the repository beyond
-   what the evidence required.
-6. Block on anything unreconciled: a missing role, an open finding, an
-   inconclusive result, a non-success, a conditional "ready".
-7. Write the verdict and receipt with the full candidate and context
-   identities.
+5. Read each returned report, opening its file if only a location was returned.
+   Match Candidate, Review inputs, Role, and the role's allowed Verdict to the
+   frozen request. Missing, unreadable, conflicting, or mismatched fields →
+   pending. Check the complete inventory and every human-authored change;
+   reject unrelated traversal.
+6. Block readiness while required current verification or role coverage is
+   missing, failed, inconclusive, or conditional, or a blocking finding or
+   attempt's effects remain unresolved. Retain every failed attempt; an accepted
+   linked successor can satisfy its current role once effects are reconciled.
+   Reconcile advisory dispositions without adding acceptance criteria.
+7. Record each report's location and disposition in the external review ledger.
+   A report is the reviewer's assessment; keep the tool-issued dispatch ID as
+   the evidence that the reviewer was actually dispatched.
 8. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
    before responding to it, including a `not ready` that asks for no edit.
-9. After any fix or bound-input change → restart at Step 1. A re-review is a
-   fresh invocation with its own identities and receipt.
-10. **REQUIRED — hand a `ready` verdict on, not an action.** Integration
-    boundary → invoke `finishing-a-branch`. Task inside a plan → return to
-    `executing-plans`. Run no push, PR, merge, keep, or discard here. The
-    verdict is not the user's integration choice.
+9. Before another round, apply `receiving-code-review`'s convergence check.
+   Retry permitted and candidate or bound inputs changed → restart at Step 1
+   with fresh identities and receipt. Carry prior coverage and dispositions;
+   focus successor review on fixes, affected paths, and regressions.
+10. **REQUIRED — continue a `ready` verdict through the recorded owner:**
+    - caller awaiting this review → return to its pending step; never invoke
+      the caller recursively
+    - task or plan owned by `executing-plans` → return there; it owns cadence
+      and plan-end finishing
+    - review-only request, unfinished checkpoint, or unchanged state with an
+      already settled branch choice → return the verdict
+    - completed standalone implementation or integration boundary with an
+      unsettled branch choice → invoke `finishing-a-branch`, even without a
+      user request for a Git action
+    Run no push, PR, merge, keep, or discard here. A ready verdict does not
+    choose an integration action.
 
 ## Self-review, assigned depth only
 

@@ -1,6 +1,6 @@
 ---
 name: spec-it
-description: "Use when settled intent for a goal or feature needs detailed requirements before design — what it must do, how each requirement is verified, and the assumptions and risks behind it. Fires on write up what this needs to do and what are the acceptance criteria, even if nobody says spec or requirements. Skip how it is built, skip when requirements already exist, and skip while a decision or approval reply is pending."
+description: "Use when settled intent needs detailed requirements and acceptance criteria, including a revision to an existing spec. Skip when current requirements already cover the requested work, when choosing implementation details, or while a material intent decision is pending."
 ---
 
 # Spec It
@@ -59,7 +59,7 @@ Open `assets/spec-template.md` now. Each step fills its section.
 2. Answer `migration-strategy`'s four questions (reviewability,
    preservation, breadth, failure surfaces) and record the answers. Any off
    the ordinary route, or the user marks the work high-risk → run
-   `references/spec-review.md` with a reviewer who is not the sole author.
+   `assets/spec-review.md` with a reviewer who is not the sole author.
    Blocking.
 3. Present and end the turn:
 

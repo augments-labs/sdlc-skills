@@ -5,13 +5,13 @@
 # deriving it. The trail's approval state lives outside the artifacts by
 # design, so a confident page is easy and a truthful one is work. The checks
 # below are mechanical: exact rollup counts against a planted `[x] done with
-# concerns` trap, a drift flag that only real per-file git times can produce,
+# concerns` trap, identity-bound drift despite equal timestamps,
 # `unknown` where no ledger row exists, encoded hostile content, and a spec
 # body sentence that must NOT appear — the page carries state, not documents.
 #
 # The runner makes ONE baseline commit, which would flatten every git-log
-# timestamp. So setup plants its own dated commits (spec rev 2 newer than the
-# plan = the drift case) and deliberately leaves README.md uncommitted. Not
+# timestamp. Setup binds the plan to spec-v1, then records spec-v2 at the
+# same Git time as the plan, and leaves README.md uncommitted. Not
 # because seeding would die: bh_seed_fixture has no `set -e`, so on an empty
 # stage the runner's baseline commit fails SILENTLY and the run continues —
 # but then no `scenario baseline` commit exists, and the read-only assertion
@@ -96,6 +96,18 @@ Keep signed bearer tokens.
 - **External decision ledger:** .sdlc-skills/decision-ledger.md
 
 Passkeys replace tokens; ADR-014 supersedes ADR-009.
+
+## ADR: ADR-015 recovery mail
+
+- **Normative version:** adr-015-v1
+- **Predecessor:** none
+- **External lifecycle ledger:** .sdlc-skills/decision-ledger.md
+
+## ADR: ADR-016 recovery SMS
+
+- **Normative version:** adr-016-v1
+- **Predecessor:** none
+- **External lifecycle ledger:** .sdlc-skills/decision-ledger.md
 EOF
   git add .sdlc-skills
   GIT_AUTHOR_DATE='2026-08-01T09:00:00Z' GIT_COMMITTER_DATE='2026-08-01T09:00:00Z' \
@@ -108,6 +120,10 @@ EOF
 - **Normative version:** plan-v1
 - **External decision ledger:** .sdlc-skills/decision-ledger.md
 
+## Context
+
+Consumed .sdlc-skills/specs/2026-07-28-auth-overhaul.md at normative identity spec-v1.
+
 ## Tasks
 
 - [ ] `T-001` — scaffold session store   ·   `01-scaffold-store.md`   ·   `todo`
@@ -118,7 +134,8 @@ EOF
   GIT_AUTHOR_DATE='2026-08-04T09:00:00Z' GIT_COMMITTER_DATE='2026-08-04T09:00:00Z' \
     _sdlc_commit 'auth-overhaul: plan' || return 2
 
-  # spec rev 2 — NEWER than the plan: this is the drift the page must flag
+  # The consumed spec-v1 differs from current spec-v2; equal times cannot hide drift.
+  perl -0pi -e 's/Normative version:\*\* spec-v1/Normative version:** spec-v2/; s/Predecessor:\*\* none/Predecessor:** spec-v1/' .sdlc-skills/specs/2026-07-28-auth-overhaul.md
   cat >> .sdlc-skills/specs/2026-07-28-auth-overhaul.md <<'EOF'
 
 ## Addendum (rev 2)
@@ -126,7 +143,7 @@ EOF
 | R2 | recovery codes for locked-out users | prose | — |
 EOF
   git add .sdlc-skills
-  GIT_AUTHOR_DATE='2026-08-09T09:00:00Z' GIT_COMMITTER_DATE='2026-08-09T09:00:00Z' \
+  GIT_AUTHOR_DATE='2026-08-04T09:00:00Z' GIT_COMMITTER_DATE='2026-08-04T09:00:00Z' \
     _sdlc_commit 'auth-overhaul: spec rev 2 (drift)' || return 2
 
   # --- topic 2: billing-retry — executing, vocabulary traps, matrix, visuals
@@ -262,6 +279,11 @@ EOF
 | goals-v1 | `## Goals` | .sdlc-skills/briefs/2026-07-28-auth-overhaul.md | approved | session | 2026-08-01 |
 | plan-v1 | `## Plan` | .sdlc-skills/plans/2026-08-02-billing-retry/00-index.md | approved | session | 2026-08-07 |
 | goals-v1 | `## Goals` | .sdlc-skills/briefs/2026-08-11-rate-limiting.md | approved | session | 2026-08-11 |
+| arch-v1 | `## System architecture` | .sdlc-skills/designs/2026-08-02-billing-retry.md | rejected | session | 2026-08-07 |
+| adr-009-v1 | `## ADR: ADR-009 token sessions` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | superseded | session | 2026-08-04 |
+| adr-014-v1 | `## ADR: ADR-014 passkey sessions` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | accepted | session | 2026-08-04 |
+| adr-015-v1 | `## ADR: ADR-015 recovery mail` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | rejected | session | 2026-08-04 |
+| adr-016-v1 | `## ADR: ADR-016 recovery SMS` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | cancelled | session | 2026-08-04 |
 EOF
   git add .sdlc-skills
   GIT_AUTHOR_DATE='2026-08-14T09:00:00Z' GIT_COMMITTER_DATE='2026-08-14T09:00:00Z' \
@@ -277,6 +299,77 @@ EOF
 
 A repo with an .sdlc-skills/ trail for the viewing-artifacts scenario.
 EOF
+}
+
+# Inspect the template's rendered state carriers, not raw ledger-label proximity.
+# Parameters also let a retained single-topic page calibrate these same checks.
+_viewer_state_check() { # page topic terminal ADR IDs (id:state,...) unbound node
+  python3 - "$@" <<'PY_STATE'
+from html.parser import HTMLParser
+from pathlib import Path
+import re, sys
+
+class Node:
+    def __init__(self, tag='', attrs=()):
+        self.tag, self.attrs, self.children, self.parent = tag, dict(attrs), [], None
+    def text(self):
+        if self.tag in ('script', 'style'): return ''
+        return ' '.join(c.text() if isinstance(c, Node) else c for c in self.children)
+    def walk(self):
+        yield self
+        for c in self.children:
+            if isinstance(c, Node): yield from c.walk()
+    def has(self, cls): return cls in self.attrs.get('class', '').split()
+
+class Page(HTMLParser):
+    def __init__(self):
+        super().__init__(); self.root = Node(); self.stack = [self.root]
+    def handle_starttag(self, tag, attrs):
+        n = Node(tag, attrs); n.parent = self.stack[-1]; n.parent.children.append(n)
+        if tag not in ('area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'):
+            self.stack.append(n)
+    def handle_endtag(self, tag):
+        for i in range(len(self.stack)-1, 0, -1):
+            if self.stack[i].tag == tag:
+                del self.stack[i:]; break
+    def handle_data(self, text): self.stack[-1].children.append(text)
+
+page, topic, terminals, unbound = sys.argv[1:]
+p = Page(); p.feed(Path(page).read_text())
+panes = [n for n in p.root.walk() if n.tag == 'section' and n.attrs.get('id', '').endswith(topic)]
+assert len(panes) == 1, 'exactly one requested topic pane must be rendered'
+pane = panes[0]
+for pair in filter(None, terminals.split(',')):
+    identity, expected = pair.split(':')
+    # Find a record with this identity, a decision pill, and no other ADR identity.
+    records = [n for n in pane.walk() if set(re.findall(r'\bADR-\d+\b', n.text())) == {identity}
+               and any(c.has('pill') for c in n.walk())]
+    assert records, identity + ': missing interpreted decision'
+    record = min(records, key=lambda n: len(n.text()))
+    states = ' '.join(c.text() for c in record.walk() if c.has('pill')).lower()
+    assert re.search(r'\b' + expected + r'\b', states), identity + ': decision pill is not ' + expected
+    assert not re.search(r'\b(unknown|unsupported|proposed|pending)\b', states), identity + ': conflicting lifecycle state'
+    context = ' '.join(max(records, key=lambda n: len(n.text())).text().split()).lower()
+    assert not re.search(r'lifecycle.{0,50}(unknown|unsupported)|unsupported.{0,30}lifecycle', context), identity + ': contradictory lifecycle interpretation'
+    print(identity + ': ' + expected)
+if unbound:
+    nodes = [n for n in pane.walk() if n.has('node') and any(
+        c.tag == 'h4' and re.match(r'^' + re.escape(unbound) + r'\b', c.text().strip()) for c in n.walk())]
+    assert len(nodes) == 1, 'unbound dependency node must be rendered once'
+    # Inspect this dependency's node and following connectors, stopping at the
+    # next phase node so another dependency cannot supply or contradict it.
+    result = ' '.join(nodes[0].text().split()).lower()
+    following = nodes[0].parent.children
+    nearby = []
+    for sibling in following[following.index(nodes[0])+1:]:
+        if isinstance(sibling, Node):
+            if sibling.has('node'): break
+            nearby.extend(n.text() for n in sibling.walk() if n.has('conn'))
+    connectors = ' '.join(nearby).lower()
+    assert re.search(r'freshness.{0,60}unknown|unknown.{0,60}freshness|possible.staleness', result), 'unbound freshness must be explicit'
+    assert not re.search(r'\b(drift(?:ed)?|fresh|aligned|up.to.date)\b', result + ' ' + connectors), 'unbound dependency presents a conclusive state'
+    print(unbound + ': unbound freshness disclosed without a conclusive state')
+PY_STATE
 }
 
 scenario_assert() {
@@ -316,11 +409,21 @@ scenario_assert() {
   assert_contains "$html" '5/9|5 of 9' "billing-retry rollup counts only exact \`[x] done\` (5)"
   assert_not_contains "$html" '6/9|6 of 9' "the \`[x] done with concerns\` trap was not counted as done"
 
-  # drift: only real per-file git times put spec rev 2 after the plan. The
-  # pin is the drift connector's class — contractually omitted when there is
-  # no drift; a bare `drift` match was vacuous (the page's own CSS is full
-  # of the word)
-  assert_contains "$html" 'class="conn"' "drift flagged (spec rev 2 newer than the plan)"
+  # Bound spec-v1 -> spec-v2 is real drift even at equal Git timestamps.
+  # Billing has no consumed spec binding: it must disclose unknown/possible
+  # staleness rather than infer proven drift or freshness from time ordering.
+  local auth_pane billing_pane
+  auth_pane="$(printf '%s' "$html" | perl -0777 -ne 'print $1 if /(<section\b[^>]*id="topic-[^"]*auth-overhaul".*?<\/section>)/s' | tr '\n' ' ')"
+  billing_pane="$(printf '%s' "$html" | perl -0777 -ne 'print $1 if /(<section\b[^>]*id="topic-[^"]*billing-retry".*?<\/section>)/s' | tr '\n' ' ')"
+  assert_contains "$auth_pane" 'class="conn"' "identity-bound drift rendered in auth-overhaul"
+  assert_contains "$auth_pane" 'spec-v1.*spec-v2|spec-v2.*spec-v1' "drift explains the consumed/current identity mismatch"
+  if _viewer_state_check "$page" auth-overhaul 'ADR-015:rejected,ADR-016:cancelled' '' \
+      && _viewer_state_check "$page" billing-retry '' Plan; then
+    pass "interpreted terminal states and unbound freshness are consistent"
+  else
+    fail "interpreted terminal states or unbound freshness are incorrect"
+  fi
+  assert_contains "$billing_pane" 'rejected' "ordinary rejected design decision preserved"
 
   # attention grouping and underivable state honesty
   assert_contains "$html" 'needs attention' "attention grouping present"

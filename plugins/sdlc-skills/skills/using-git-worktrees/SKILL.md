@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: "Use before the first repository edit — a feature, fix, refactor, plan step, or dispatched agent work — or whenever work needs isolation from the current checkout. Fires on start on this ticket and let's build X inside a repository, even if nobody says branch or worktree. Skip read-only work, and skip when detection shows you are already inside a linked worktree."
+description: "Use before the first repository edit or when work needs an isolated checkout and owned resources. Also applies to local task checkpoints. Reuse a linked worktree only when this task or the harness owns it; skip workspace creation there, not checkpoint discipline. Skip read-only work."
 ---
 
 <EXTREMELY-IMPORTANT>
@@ -19,7 +19,9 @@ down what you found there before you change anything.
 
 - You are about to edit files, implement a feature/fix/refactor, execute a plan, or dispatch agents.
 - Runtime or review isolation matters: parallel agents, risky changes, separate ports, databases, fixtures, or long-running app state.
-- **Skip** for read-only investigation, when the user explicitly says to stay in the current checkout, or when Step 1 reports a linked worktree (not a submodule) that this task or the harness's worktree tool created.
+- **Skip creation** when the user explicitly says to stay, or Step 1 confirms
+  a linked worktree owned by this task or the harness. Reuse its current workspace
+  and baseline record; retain Step 5 checkpoints and handoff. Skip read-only work.
 
 ## Step 1: Detect what you are in
 
@@ -146,7 +148,7 @@ A checkpoint never grants push, publication, or integration authority.
 </EXTREMELY-IMPORTANT>
 
 1. After each coherent piece a reviewer could accept or reject separately:
-   **REQUIRED SUB-SKILL:** invoke `verifying-completion`, run its smallest
+   **REQUIRED SUB-SKILL:** invoke `verification-before-completion`, run its smallest
    real gate, commit locally. Do not wait for the final candidate. Do not ask
    per checkpoint. Withhold only when direct user or project policy withholds.
 2. Candidate ready for integration → **REQUIRED SUB-SKILL:** invoke

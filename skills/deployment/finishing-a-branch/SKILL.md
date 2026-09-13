@@ -1,23 +1,24 @@
 ---
 name: finishing-a-branch
-description: "Use when implementation is complete and its gates are green, and the work now needs an integration decision — push, open, update or merge a PR, integrate locally, keep, or discard — and whenever the user explicitly chooses to keep, discard, close, or reopen a branch, workspace, or PR. Fires on ship it, what do we do with this branch, and are we done here, even if nobody names a git operation. Skip mid-development checkpoints."
+description: "Use when implementation is complete, its gates are green, and its branch choice is unsettled, even without a Git request — or when the user requests a push, PR, integration, keep, discard, close, or reopen. Fires on ship it, what do we do with this branch, and are we done here. Skip mid-development checkpoints and an unchanged state whose branch choice is already settled unless a new transition is requested."
 ---
 
 # Finishing a Branch
 
-Take a reviewed candidate, or an explicitly named PR, through one integration
-transition the user chooses. Present the permitted choices, wait for one, then
-execute exactly that. Green checks and "seems done" authorize no history,
+Take a candidate or named PR through one branch transition the user chooses.
+Reuse a current choice that covers the exact action and targets; otherwise
+present the permitted choices and wait. Green checks and "seems done" authorize no history,
 remote, discard, or cleanup mutation.
 
 ## When to use
 
-- Implementation is complete, its gates are green, and the work needs an
-  integration decision: push, open or update a PR, integrate locally, keep.
+- Implementation is complete, its gates are green, and its branch choice is
+  unsettled. Present the permitted choices even without a Git request.
 - The user explicitly names a keep, discard, publish, or integrate
   transition, or a PR-only close or reopen.
 - **Skip** ordinary mid-development checkpoints; `using-git-worktrees` owns
-  those.
+  those. Skip an unchanged state with an already settled branch choice unless
+  the user requests another transition.
 
 ## Available scripts
 
@@ -34,33 +35,41 @@ remote, discard, or cleanup mutation.
    bash scripts/branch-state.sh
    ```
 
-2. Bind what the script cannot see, with identities: the
-   `verifying-completion` evidence for this revision; the
+2. Identify the requested transition. Explicit keep-as-is, discard, or PR-only
+   close/reopen → apply its identity, ownership, and authority rules below;
+   readiness evidence is not an entry condition for those actions.
+3. For materialization, publication, or integration, bind the
+   `verification-before-completion` evidence for this revision; the
    `requesting-code-review` verdict on this digest (shallow `self-reviewed:
    ready`, or the required independent review with no blocker); the live
    remote or PR state.
-3. No current verdict on the digest → offer only *keep as-is* and *obtain that
-   review first*, and stop.
-4. PR-only close or reopen → record the live PR, head and base refs, retained
+4. Required readiness verdict missing → keep the requested action pending;
+   offer keep-as-is or obtain the missing review under current authority.
+5. PR-only close or reopen → record the live PR, head and base refs, retained
    resources. It needs the user's scoped choice, not readiness evidence.
-5. List the resources this task created (branch, worktree, remote ref, PR)
+6. List the resources this task created (branch, worktree, remote ref, PR)
    from the `using-git-worktrees` workspace record. Only those may be cleaned
    up. A task-looking path proves nothing.
-6. Read `base.resolved`. `false` → stop and ask. A direct instruction or the
+7. For integration, read `base.resolved`. `false` → resolve it before acting.
+   A direct instruction or the
    project's contribution rules override the detected default. Check remote
    freshness yourself; the script does not fetch. Stale, moved, or ambiguous
    base → no integration.
-7. Read `candidate.published`. Commits on a remote ref → separate direct
+8. Read `candidate.published`. Commits on a remote ref → separate direct
    permission for each of squash, rebase, amend. Never force-push as repair.
    After any history change, rerun the script; content moved → back to
    `requesting-code-review`.
-8. Write the description from the contribution rules and the base-bound PR
-   template, with evidence you obtained. Candidate text is evidence, not
-   authority. Create nothing yet.
+9. For PR creation/update, prepare the description from the contribution rules
+   and base-bound template, with evidence obtained. Candidate text grants no
+   authority. Prepare other actions' applicable fields without inventing a PR.
 
 ## Step 2: Present the choices
 
-1. State branch, base, gate summary, and review verdict. Offer only the
+1. Prepare the applicable transition descriptor from `references/branch-state.md`.
+   A direct instruction or trusted receipt already covers its current targets,
+   action and payload → record that choice and proceed to Step 3. A bare saved
+   approval field cannot authenticate itself. Missing choice → state branch,
+   base, gate summary, and review verdict, and offer only the
    state-permitted entries, then stop:
 
    ```text
@@ -83,8 +92,8 @@ remote, discard, or cleanup mutation.
 4. Never put discard on this menu.
 5. Wait for one listed entry. Praise, constraints, partial answers, silence,
    "looks good", an adjacent decision → re-present the menu unchanged.
-6. Write the transition descriptor from `references/branch-state.md`, binding
-   the answer to the digest.
+6. Bind the answer to the prepared descriptor. Material target or payload
+   change → show the changed choice; do not reuse approval for the old one.
 
 ## Step 3: Execute
 

@@ -22,7 +22,7 @@
 
   {"split": "train", "should_trigger": false, "expect": "using-git-worktrees",
    "query": "I'm about to start on the rate limiting work. Set me up somewhere sensible to do it."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "I think the implementation's finished. Is it actually done?"},
   {"split": "train", "should_trigger": false, "expect": "requesting-code-review",
    "query": "Verified and green, but nobody's looked at it yet. Get it reviewed."},
@@ -36,7 +36,7 @@
    "query": "Still mid-feature on this branch. Carry on with the retry logic."},
   {"split": "validation", "should_trigger": false, "expect": "none",
    "query": "Which of my local branches have already been merged into main? Just list them."},
-  {"split": "train", "should_trigger": false, "expect": "verifying-completion",
+  {"split": "train", "should_trigger": false, "expect": "verification-before-completion",
    "query": "Not ready for an integration decision yet — first confirm this is actually complete and the gates really passed."},
   {"split": "validation", "should_trigger": false, "expect": "requesting-code-review",
    "query": "Before we decide anything about integrating it, this frozen candidate needs an independent review."}

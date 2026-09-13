@@ -25,6 +25,14 @@ descriptor and new invocation. This template is never copied into that workspace
   and every bound external state supplied to reviewers}}`
 - **Status:** `frozen for review`
 - **Originating requirements:** `{{exact versions}}`
+- **Continuation:** `{{caller and exact pending step; plan/executor and cadence;
+  review-only or unfinished checkpoint; or completed standalone implementation
+  / integration awaiting a branch choice. Record any already settled choice
+  and the state it covers. A terminal handoff has no pending caller step.}}`
+- **Review history:** `{{delivery task, agreed scope and acceptance, prior rounds
+  and candidate identities, stable causal finding IDs, dispositions/evidence,
+  and remaining finite repair budget. Preserve across successor descriptors;
+  changing the candidate or reviewer does not start a new delivery task.}}`
 - **Design/migration/assurance contracts:** `{{exact versions or N/A reasons}}`
 - **Raw verification evidence:** `{{commands, outputs, state, timestamps}}`
 - **Review artifacts:** `{{reviewer-owned paths outside the candidate workspace,
@@ -50,9 +58,11 @@ A retry links its predecessor and rejects late results/mutations. “Returned”
 requires one current revision-bound report.
 
 Every dispatch copies the result and review-input identities exactly as written
-here. Reviewers repeat both full values byte-for-byte in their structured
-receipt; branch names, labels, dirty/clean status, and short hashes are context,
-not substitutes.
+here. Reviewers repeat both full values byte-for-byte in the report's Candidate
+and Review inputs fields. Match its Role to the assigned reviewer and its
+Verdict to that role's vocabulary. Missing, conflicting, or mismatched fields
+leave review pending. A branch name, path, or short hash cannot replace an
+identity; a report cannot replace the tool-issued dispatch ID.
 
 A result identity alone does not freeze its review inputs. Any bound base,
 requirement, contract, evidence/freshness, approved-deviation, inventory, or
@@ -62,12 +72,12 @@ when candidate bytes are unchanged. Never use an old verdict to clear new facts.
 Choose exactly one mode and result value. Checkpoint and integrated-result modes
 use the full immutable revision alone. Working-tree mode uses the full tree
 digest alone while recording HEAD/base separately. Never concatenate or prefix
-the receipt's result value with labels or a second identity.
+the report's candidate value with labels or a second identity.
 
 Stop candidate writers before computing the result identity. Compare it with
 the exact state identity carried by every relied-on verification row. Any
 mismatch or later mutation invalidates the evidence and returns the frozen state
-to `verifying-completion`; never attach evidence from one identity to another.
+to `verification-before-completion`; never attach evidence from one identity to another.
 
 ## Complete candidate inventory
 
@@ -117,9 +127,19 @@ mutating checks; never probe shared or production state without direct authority
 | --- | --- | --- | --- | --- |
 | `{{RV-001}}` | `{{breadth/specialist/adversarial/security}}` | `{{identity/action or pending}}` | `{{N/A, or rationale/evidence, owner, expiry/revisit, compensating gate, approval}}` | `{{attempt/receipt/report/verdict fields}}` |
 
-Every required role and attempt remains accounted. The aggregate is not ready
-while any role is missing, findings-bearing, inconclusive, failed, timed out,
-cancelled, or awaiting quiescence/disposition.
+Account for every required role and attempt. Missing, failed, or inconclusive
+current coverage, unresolved effects or blocking findings, and pending required
+dispositions prevent readiness. Retain failed and timed-out predecessors with
+their dispositions; a quiescent, accepted linked successor may supply current
+coverage without erasing that history. Retain findings-bearing reports and
+reconcile their current dispositions. Advisory text alone is not a blocker;
+never waive a required obligation by relabeling it advisory.
+
+For a successor review, include the prior coverage, dispositions, exact delta,
+and affected obligations. Verify corrections and regressions; reopen a disposed
+finding only with new contradictory evidence or a changed binding. Keep genuine
+new defects within the accepted target visible; do not turn preferences into
+new acceptance criteria. A new identity does not erase the repair budget.
 
 Reviewers account for the complete candidate inventory and read all
 human-authored changes. Here that includes every direct source change typed by a

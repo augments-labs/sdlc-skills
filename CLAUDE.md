@@ -98,10 +98,11 @@ it on every push and PR. Run it before you commit:
 bash scripts/sh/validate-skills.sh
 ```
 
-For a single skill, and for the standard's own rules rather than this
-repository's, `skills/common/writing-skills/scripts/check-skill.sh` checks any
-skill directory — including one outside this repo — and reports findings with an
-exit code.
+For one skill, `skills/common/writing-skills/scripts/check-skill.sh` applies the
+checker's format and house-policy profile, including outside this repository.
+It extracts the library's frontmatter subset rather than parsing all YAML, and
+executes bundled scripts with `--help`. See `docs/agent-skills-conformance.md`
+for coverage and effects before checking an unfamiliar skill.
 
 Rule 4 (behavior) has no deterministic gate — that is the honest limit. Which
 live run answers which question, and what a red result means on each side of
@@ -120,20 +121,21 @@ folder from the canonical order in `README.md` (or `common/`), and run
 `scripts/sh/validate-skills.sh`, which adds the house rules on top of the
 standard's.
 
-**Prove the failure before you author, not after.** A gap in what the library
-documents is not a gap in what an agent does. Reading the catalogue for holes
-finds absences reliably and predicts behaviour badly — an absence tells you what
-nobody wrote, never what an agent gets wrong without it. So where the failure can
-be reproduced at all, reproduce it first: run the scenario against a bare agent,
-`--arm none`, and watch it fail. A pass means there is nothing to prevent and the
-skill would be ceremony; "no skill is needed here" is the finding, so report it
-and stop. Where there is no failure to reproduce, authoring rule 4 already
-governs.
+**Start from failure evidence before authoring.** Record observed sessions,
+current contract gaps, and unmeasured candidates separately. Where a realistic
+scenario can exercise the problem, run it first: `--arm none` observes the bare
+agent, while `--arm red` observes the current library. A bare-agent failure does
+not show that an existing skill fails or that a new skill is needed.
 
-A red on `--arm none` is necessary and not sufficient. It shows that a *bare*
-agent fails, never that the current skills do — only `--arm red` answers that,
-and a skill duplicating one already in the catalogue is what that second run
-catches. `docs/testing.md` owns which run answers which question.
+A passing sample means the failure was not observed under those conditions. It
+does not erase reported failures, resolve contradictory instructions, or prove
+that a skill is unnecessary. Narrow the measured claim and retain the other
+evidence; do not tune the opening just to obtain RED. Where no behavioral
+failure can be exercised, authoring rule 4 governs the evidence class.
+
+Both library arms install the complete library. Compare the intended change
+under fixed conditions and report all outcomes without attributing the whole
+library's benefit or cost to one skill. `docs/testing.md` owns interpretation.
 
 ## Editing a skill
 

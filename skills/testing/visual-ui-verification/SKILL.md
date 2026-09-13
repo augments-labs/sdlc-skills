@@ -22,15 +22,18 @@ candidate. Never return "looks good".
 2. Write the candidate as an immutable source or artifact identity, or a
    working-tree digest covering staged, unstaged, untracked, and relevant
    ignored inputs. Keep the record outside that identity.
-3. Copy every applicable **Selected visual reference** from the approved UI
-   design, field for field. Plan-bound: match each to its plan task and
-   conformance evaluator.
+3. Read the approved design itself: flows, states, conditions, decisions and
+   acceptance checks. Map each applicable obligation to a required observation
+   or its other owning gate; a preview is only part of that contract. Copy its
+   **Selected visual references** field for field. Plan-bound: match the
+   obligations and references to their tasks and conformance evaluators.
 4. Run each Freshness evaluator:
    - `pass` → capture
    - `mismatch` → restore the binding and rerun, or obtain a design successor
      (plus a plan successor when plan-bound)
    - `unavailable` or `error` → verdict pending until repaired and rerun
-5. Any missing field → verdict pending.
+5. Missing source, field, or obligation coverage → verdict pending. A design
+   with no compared visual reference still has its approved UI obligations.
 
 ## Step 2: Capture
 
@@ -58,12 +61,13 @@ candidate. Never return "looks good".
 4. Inspect every frame with a media-capable observer against the accepted UI
    criteria: hierarchy, legibility, clipping and overflow, focus, contrast,
    content extremes, state feedback, visible recovery controls.
-5. Judge conformance to each selected visual reference explicitly. A
-   rejected layout, hierarchy, or interaction fails, however polished, unless
-   an approved design successor replaces the binding.
+5. Judge the finished candidate against every mapped design obligation and
+   selected reference. Matching the preview does not pass an untested flow,
+   recovery state or condition. An unapproved layout or interaction fails,
+   however polished, unless an approved successor replaces the binding.
 6. File each defect in `Defects`: severity, requirement violated, matrix row
    and frame, impact, reproduction.
-7. Human-owned criterion or exception: follow `verifying-completion`'s
+7. Human-owned criterion or exception: follow `verification-before-completion`'s
    manual-acceptance contract. Only its trusted user-origin receipt passes
    that row.
 

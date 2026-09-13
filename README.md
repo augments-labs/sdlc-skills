@@ -1,20 +1,22 @@
 # SDLC skills
 
-A collection of rigorous, phase-organized and context-routed SDLC skills that
-tether autonomous agents to real engineering gates.
-
-SDLC skills is a cross-platform library of **opt-in engineering skills** for coding agents, organized by the phases of the software development life cycle. It gives agents real engineering discipline while staying lean and leaving *you* in control of the process.
+SDLC skills is a cross-platform library of engineering skills for coding agents,
+organized by the phases of the software development life cycle. Skills guide the
+work; external checks and accountable decisions govern its results.
 
 ## Philosophy
 
-- **Toolbox, not pipeline.** The skills are tools you reach for when they apply — the phase folders are a map for discovery, not a sequence you must walk in order. What is *not* optional is reaching for the one that fits: skipping a skill that applies is the mistake the library exists to prevent. You own the path; the routing keeps you from walking past the tool you needed.
-- **Earn every line.** A skill loads into context each time it fires, so it carries only what changes behavior; templates, examples, and rationale live in sibling files loaded on demand. Low token cost is a consequence of that discipline — not a goal that overrides correctness, so discipline skills keep what they need to hold the line under pressure.
-- **Any harness, any model.** Skills refer to capability *tiers* (small / medium / large), never vendor model names, and assume no specific harness's tooling — so the same skill behaves the same wherever it is loaded. Claude Code, Codex CLI, and Kimi Code CLI all have adapter tests; behavioral pressure records are still added per harness.
-- **Alongside intelligence, not in its way.** Executable correctness claims leave
-  the model through executable gates; judgment and authority leave through
-  explicit revision-bound decisions or controlled rubrics. A skill never turns
-  confidence into its own verdict. Otherwise it defers to contextual judgment,
-  and every skill states when to *skip* it so ceremony scales down.
+- **Toolbox, not pipeline.** Phase folders help discovery. Use the skills that
+  apply to the current task; their preconditions and handoffs determine the path.
+- **Earn every line.** Keep instructions concise and load supporting files when
+  needed. Reuse a current skill body already in context. Discipline skills keep
+  the pressure controls their behavioral evidence supports.
+- **Portable instructions.** Skills use capability tiers and portable actions.
+  Adapters bind them to each harness; discovery and behavior still need evidence
+  from that environment.
+- **Claims need evidence.** Executable checks support correctness claims;
+  revision-bound decisions or controlled rubrics govern judgment and authority.
+  Scale effort through each skill's own rules, preserving required gates.
 
 Every skill here is a standard **Agent Skills** skill — a directory holding a
 `SKILL.md` with YAML frontmatter, loadable by any compliant agent, needing no
@@ -51,7 +53,8 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | Phase | Skill | What it does |
 | ----- | ----- | ------------ |
 | common | `using-sdlc-skills` | Route from the current task state and real preconditions; high-risk transformations cannot bypass their migration and assurance entry gates |
-| common | `writing-skills` | The lean format every skill follows, and how to prove a skill actually works |
+| common | `writing-skills` | Author concise skills and evaluate their behavior |
+| common | `viewing-artifacts` | View the state and consistency of briefs, specs, designs, plans, and execution in a local artifact viewer |
 | planning | `define-goals` | At project kickoff — pin the objective and measurable success criteria into the project brief |
 | planning | `scope-it` | Draw the boundary — what's in, what's explicitly out, the MVP cut |
 | planning | `feasibility-check` | Assess whole-initiative achievability and give the accountable owner an evidence-bound go / no-go / go-if recommendation |
@@ -72,7 +75,7 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | design | `writing-plans` | Convert approved inputs into independently loadable contracts; high-risk plans may build missing gates first but cannot start target phases before entry |
 | implementation | `test-driven-development` | Let a failing behavior gate lead new behavior and a deliberately falsified independent green oracle lead preservation work |
 | implementation | `executing-plans` | Advance a directly approved plan through evaluator-backed task, shard, phase, and integrated state transitions |
-| testing | `verifying-completion` | Bind a real check and its raw output to the exact state, artifact, environment, platform, and build mode before making a claim |
+| testing | `verification-before-completion` | Bind a real check and its raw output to the exact state, artifact, environment, platform, and build mode before making a claim |
 | testing | `requesting-code-review` | Freeze an exact candidate and challenge it with risk-scaled independent review, including separate equivalence and adversarial roles for high-risk transformations |
 | testing | `receiving-code-review` | Inventory and verify every revision-bound finding, resolve conflicts by evidence, and re-review any changed candidate |
 | testing | `security-audits` | Audit the changed attack surface and trust boundaries with threat-specific gates; a separate fixer cannot self-approve the security verdict |
@@ -86,15 +89,9 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | maintenance | `complexity-audit` | Audit a bounded existing module or codebase for accidental complexity through read-only, evidence-bound keep, simplify, remove, decision, and investigate findings |
 | maintenance | `refactor-architecture` | Improve measured structural friction under a falsified preservation gate and reversible, reviewable slices |
 
-Every SDLC phase ships at least one skill, alongside the cross-cutting `common/` tools.
+## Installation and support
 
-## Status
-
-Early and growing. All seven SDLC phases — planning, analysis, design,
-implementation, testing, deployment, and maintenance — now ship at least one
-working skill, alongside the nine `common` skills: orientation, skill-authoring,
-scope discipline, and the cross-cutting tools (interviewing, prototyping,
-zoom-out, handoff, git worktrees, and parallel dispatch).
+The catalogue contains 36 skills across all seven phases and `common/`.
 
 Three harnesses have adapters:
 
@@ -113,48 +110,31 @@ adopt them — each proven by its own tests when added; see
 
 Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`.
 
-## Proactive Skill Use
+## Proactive skill use
 
-A coding agent treats an installed skill library as available-but-optional and walks past it unless you name a skill. So SDLC skills pairs each adapter with the strongest honest routing support that harness can prove.
+Each adapter supplies the full `using-sdlc-skills` body through its session-start
+mechanism. The router requires applicable skills to load before action;
+catalogue names and descriptions identify candidates, while explicit requests
+and loaded skill handoffs also direct invocation. Current bodies already in
+context can be reused.
 
-Every adapter injects the **full `using-sdlc-skills` entry-skill body** as session context — Claude Code and Codex through a `SessionStart` hook, Kimi Code through `sessionStart.skill` — re-applied only where the harness reports context was actually lost: start, resume, clear. No adapter re-injects after compaction, because compaction carries loaded context forward and re-injection would be redundant cost.
+This is an instruction to a non-deterministic agent, not enforced invocation.
+Project tests, review, CI, and release controls govern whether results advance.
+See [`docs/activation.md`](docs/activation.md) for the distinction.
 
-It used to inject a ~90-token *pointer* asking the agent to invoke the router before working. That is one discretionary tool call, and a discretionary call can be skipped — it was skipped on this very repository, on exactly the kind of task the router governs. Injecting the body costs ~1,500 approx tokens per context epoch and removes the skippable step: the routing rules are simply resident. The text is read from the canonical skill at runtime, never copied, so editing the skill cannot silently stop shipping it.
-
-Session start is the only activation mechanism. No adapter registers
-`PreToolUse`, `PostToolUse`, `Stop`, or other tool, prompt, or turn-end hooks.
-The resident entry skill requires relevant skills to load before any response
-or action, including preliminary questions and file checks. Catalogue names and
-descriptions identify candidates; they do not replace the loaded instructions.
-`scripts/sh/validate-skills.sh` checks this activation contract across adapters.
-
-Routing remains an instruction to the agent. Project tests, review, CI, and
-release gates establish whether the resulting artifacts can advance.
-
-On Codex, SDLC skills ships a plugin adapter and local marketplace metadata, and the plugin bundles its own hooks (`plugins/sdlc-skills/hooks/hooks.json`) that run the same injector on `SessionStart`; the injector itself drops compact-source invocations, since Codex's hook cannot filter by source. The skills install through Codex, durable repo guidance still comes through `AGENTS.md`, and the Codex harness test observes activation by watching the agent read the installed `SKILL.md` file from the plugin cache.
-
-On Kimi Code, SDLC skills ships a plugin manifest (`.kimi-plugin/plugin.json`)
-whose `sessionStart.skill` loads the `using-sdlc-skills` router into every new
-and resumed session, and whose `skillInstructions` bind the skills' tool language
-to Kimi's real tools — including the dispatch action — whenever a plugin skill
-loads. The manifest points at the canonical phase directories directly, with no
-mirror.
-
-It registers no `PostCompact` hook: compaction carries loaded context forward,
-so re-applying the entry skill there would be redundant — see
+Adapters register no tool, prompt, or turn-end hooks and do not re-inject after
+compaction. The current lifecycle policy, its evidence limits, and the packaging
+step that keeps the Codex mirror current are documented once in
 [`docs/harness-support.md`](docs/harness-support.md).
 
-The routing is **non-negotiable by default, not a gentle suggestion** where a
-harness supports it. The discipline behind it — the rationalizations named as
-signals to check rather than skip, the red-flags, the procedure — lives in the
-`using-sdlc-skills` skill, and that is exactly the text the adapters inject;
-`scripts/sh/session-start.sh` reads it from the skill rather than restating it.
+## Contributing and testing
 
-Changing that injector or its activation policy is behavior-shaping work and must
-be re-proved. See [`docs/activation.md`](docs/activation.md)
-for how routing (firm persuasion) and enforcement (deterministic gates) fit
-together. Harness hooks are adapter-specific; the skills themselves stay portable
-Markdown.
+Read [`CLAUDE.md`](CLAUDE.md) before changing the library. It defines the PR
+requirements, authoring policy, and structural gate. For skill changes, use
+`writing-skills` and run only the behavioral scenarios relevant to the change.
+Report passes, failures, and inconclusive runs: a passing sample cannot erase a
+reported failure or prove that a skill is unnecessary. See
+[`docs/testing.md`](docs/testing.md) for what each test can establish.
 
 ## Acknowledgements
 

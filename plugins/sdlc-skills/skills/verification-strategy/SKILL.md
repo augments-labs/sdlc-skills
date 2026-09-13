@@ -1,6 +1,6 @@
 ---
 name: verification-strategy
-description: "Use to establish or repair a project's correctness battery, before high-risk work whose assurance is absent, stale, or unfalsifiable, and again on changed risk, an escaped defect, or a hollow gate. Fires on how should we test this project, our tests don't catch anything, and what should CI run, even if nobody says strategy. Skip a bounded feature, and skip writing or running an already-defined gate."
+description: "Use to establish or repair a project's correctness battery, before high-risk work whose assurance is absent, stale, or unfalsifiable, and again on changed risk, an escaped defect, or a hollow gate. Fires on how should we test this project, our tests don't catch anything, and what should CI run. Skip a bounded feature, and skip writing or running an already-defined gate."
 ---
 
 # Verification Strategy
@@ -57,9 +57,11 @@ reading the code, a coverage number, or the builder's opinion.
 
 ## Step 4: Challenge, then hand over the decision
 
-1. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with the prompt in
-   `references/assurance-challenger.md`, before approval. Keep the candidate
-   read-only.
+1. Fill `assets/assurance-challenger.md` with `assets/assurance-report.md`.
+   **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with this addendum,
+   before approval. Keep the candidate read-only. Read the returned assurance
+   section; missing or mismatched Matrix version, or a verdict other than
+   `clear` → approval blocked.
 2. Blocker: correct a successor, reverify, rechallenge until clear or
    concretely blocked.
 3. Present the matrix and stop:

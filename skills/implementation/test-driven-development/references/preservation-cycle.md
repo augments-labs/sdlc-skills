@@ -71,5 +71,5 @@ non-behavioral metadata may skip TDD but still runs its structural validator.
 Retain source/target and pre/post effect identities, corpus digest, deliberate
 divergence, observed red, restoration comparison/green, slice result, approved
 deviations, and every required platform/build-mode result. Hand these checks to
-`verifying-completion`; this reference defines the TDD cycle, not a completion
+`verification-before-completion`; this reference defines the TDD cycle, not a completion
 claim.

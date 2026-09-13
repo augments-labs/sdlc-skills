@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Use when a session is ending or work is passing to a fresh session or another agent. Fires on I'm heading out, wrapping up for the day, context is getting full, and someone else is taking this over, even if nobody says handoff. Skip a finished, self-contained task that needs no continuation."
+description: "Use when a session is ending mid-work or responsibility for continuing the task passes to a fresh session or another agent. Fires on I'm heading out, context is getting full, and someone else is taking over. Skip finished tasks and bounded worker assignments whose coordinator remains responsible."
 ---
 
 # Handoff
@@ -11,8 +11,11 @@ says it may go.
 
 ## When to use
 
-- A conversation is ending mid-work, or work is passing to a fresh session or a different agent.
+- A conversation is ending mid-work, or responsibility for continuing it passes
+  to a fresh session or a different agent.
 - **Skip** when the task is finished and self-contained — there's nothing to resume.
+- **Skip** bounded worker assignments while the coordinator retains the task;
+  use the dispatch packet and return contract for those.
 
 ## Step 1: Settle the destination
 

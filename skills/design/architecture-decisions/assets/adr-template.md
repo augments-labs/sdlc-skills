@@ -33,8 +33,9 @@ external-fact identities plus freshness/invalidation rules}}
 external invalidation state, and revalidation/reconciliation gate}}
 
 **Independent challenge contract:** {{reviewer other than sole author, or exact
-current design-review identity that covers this ADR; attempt ID, deadline,
-timeout/cancel owner/action, required report and verdict}}
+current design-review identity that covers this ADR; deadline,
+timeout/cancel owner/action, required report and verdict; actual dispatch receipts
+stay in the External challenge ledger}}
 
 **External challenge ledger:** {{reviewer-owned location; attempt lineage,
 cancellation-requested/quiescent state, quarantined partials, report, findings,
@@ -57,9 +58,8 @@ code will actually do — not "we'll explore X" but "X does Y"}}
 
 **Alternatives considered:**
 
-- {{option}} — {{why rejected: what it assumes, where it breaks, what ruled it
-  out}}
-- {{option}} — {{why rejected}}
+- {{alternative}} — {{why rejected: what it assumes, where it breaks, what
+  ruled it out; repeat for each real alternative}}
 
 **Evidence and uncertainty:** {{sources/versions; confidence; assumptions; what
 observation or date reopens the decision}}
@@ -93,7 +93,7 @@ force; owner decision and absence gate required for retirement}}
   every conformance/terminal transition; an ADR cannot self-authenticate.
 - **Context** — only what a reader needs to judge the decision without re-running the investigation. A requirement, a measured constraint ("p99 must stay under 200 ms"), an existing commitment ("the rest of the system is synchronous"). Opinions and aspirations don't belong here.
 - **Decision** — concrete enough that someone could verify it against the code. "Retries happen at the queue consumer with exponential backoff" is a decision; "we'll make messaging robust" is a wish.
-- **Alternatives considered** — at least two real options, each with the reason it lost. This is the load-bearing section: it stops a later reader from re-opening a settled question and from silently reversing the decision. "Rejected: can't do X" beats "X is nicer."
+- **Alternatives considered** — compare at least two real options in total, including the selected Decision. Give the reason each alternative lost. This is the load-bearing section: it stops a later reader from re-opening a settled question and from silently reversing the decision. "Rejected: can't do X" beats "X is nicer."
 - **Status quo/defer** — evaluate it when viable; otherwise state the evidence
   that disqualifies it rather than silently assuming change.
 - **Consequences** — honest about both directions: what you gain *and* what you now own (an operational burden, a migration path, a capability you gave up). A decision with only upsides was not examined.
@@ -108,6 +108,9 @@ force; owner decision and absence gate required for retirement}}
   stay in the external ledger.
 
 ## Worked example
+
+This proposed example assumes its independent challenge has completed and is
+recorded externally. The owner's decision and adoption evidence are still pending.
 
 ```markdown
 ## ADR: Background jobs run on a database-backed queue, not an external broker
@@ -127,19 +130,21 @@ current-load observation `obs-jobs-2026-07-01`, valid for 90 days.
 
 **Downstream impact:** initial decision; no predecessor-bound consumers.
 
-**Independent challenge contract:** platform reviewer `reviewer-12`, attempt
-`adr-review-024-a1`, due 2026-07-05; report must challenge operations and reversal.
+**Independent challenge contract:** platform reviewer role `reviewer-12`, due
+2026-07-05; report must challenge operations and reversal. The review owner
+cancels on deadline and confirms quiescence before reassignment.
 
-**External challenge ledger:** controlled review record `review-024` binds the
-quiescent successful attempt and resolved findings to `adr-jobs-r2`.
+**External challenge ledger:** controlled review record `review-024`; actual
+dispatch receipts, terminal outcomes and finding dispositions bind to
+`adr-jobs-r2` there, outside this proposal.
 
 **Challenge artifact controls:** internal data only; approved repository read,
 controlled report store, 90-day retention; review owner may delete that exact
 report after expiry and recovery is not required.
 
-**External lifecycle ledger:** controlled decision record `decision-024` binds
-the lead's acceptance and current in-force conformance evidence to
-`adr-jobs-r2`.
+**External lifecycle ledger:** controlled decision record `decision-024` will
+bind the lead's decision and later conformance evidence to `adr-jobs-r2`;
+approval and adoption remain pending until those events occur.
 
 **Context:** The service must send emails and run report generation outside the
 request path. Load today is tens of jobs per hour, run by a two-person team

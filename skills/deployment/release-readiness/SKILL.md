@@ -1,6 +1,6 @@
 ---
 name: release-readiness
-description: "Use when an integrated candidate is about to be promoted to a release, deployment, or publication — the first release of a project, a version bump, a package publish, a production deploy, or a rollout stage expansion. Fires on ship it, cut a release, publish the package, and is this safe to deploy, even if nobody says release. Skip internal work with no release surface."
+description: "Use when an integrated candidate is about to be promoted to a release, deployment, or publication — the first release of a project, a version bump, a package publish, a production deploy, or a rollout stage expansion. Fires on ship it, cut a release, publish the package, and is this safe to deploy. Skip internal work with no release surface."
 ---
 
 # Release Readiness
@@ -35,7 +35,7 @@ the descriptor's approver rule), or **blocking**.
 
 1. Install, start, or load each member through the paths a real consumer
    uses. A green source tree is not artifact evidence.
-2. **REQUIRED SUB-SKILL:** invoke `verifying-completion`. Run every gate
+2. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`. Run every gate
    protecting this promotion over its expected inventory; reconcile against
    what actually ran (row 11).
 3. Exercise cutover and recovery by observation, including the claimed
