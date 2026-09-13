@@ -127,11 +127,13 @@ mutating checks; never probe shared or production state without direct authority
 | --- | --- | --- | --- | --- |
 | `{{RV-001}}` | `{{breadth/specialist/adversarial/security}}` | `{{identity/action or pending}}` | `{{N/A, or rationale/evidence, owner, expiry/revisit, compensating gate, approval}}` | `{{attempt/receipt/report/verdict fields}}` |
 
-Account for every required role and attempt. Missing or inconclusive coverage,
-failed attempts, unresolved blocking findings, and pending dispositions prevent
-readiness. Retain original findings-bearing reports and reconcile their current
-external dispositions; advisory text alone is not a blocker. Never waive a
-required obligation by relabeling it advisory.
+Account for every required role and attempt. Missing, failed, or inconclusive
+current coverage, unresolved effects or blocking findings, and pending required
+dispositions prevent readiness. Retain failed and timed-out predecessors with
+their dispositions; a quiescent, accepted linked successor may supply current
+coverage without erasing that history. Retain findings-bearing reports and
+reconcile their current dispositions. Advisory text alone is not a blocker;
+never waive a required obligation by relabeling it advisory.
 
 For a successor review, include the prior coverage, dispositions, exact delta,
 and affected obligations. Verify corrections and regressions; reopen a disposed

@@ -92,10 +92,11 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    frozen request. Missing, unreadable, conflicting, or mismatched fields →
    pending. Check the complete inventory and every human-authored change;
    reject unrelated traversal.
-6. Block readiness on missing or failed required verification, a missing role,
-   an unresolved blocking finding, an inconclusive result, or a conditional
-   "ready". Reconcile advisory dispositions without making optional improvements
-   new acceptance criteria.
+6. Block readiness while required current verification or role coverage is
+   missing, failed, inconclusive, or conditional, or a blocking finding or
+   attempt's effects remain unresolved. Retain every failed attempt; an accepted
+   linked successor can satisfy its current role once effects are reconciled.
+   Reconcile advisory dispositions without adding acceptance criteria.
 7. Record each report's location and disposition in the external review ledger.
    A report is the reviewer's assessment; keep the tool-issued dispatch ID as
    the evidence that the reviewer was actually dispatched.
