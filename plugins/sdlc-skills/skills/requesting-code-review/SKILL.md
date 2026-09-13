@@ -24,14 +24,17 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 ## Step 1: Verify and freeze
 
-1. **REQUIRED SUB-SKILL:** invoke `verifying-completion`. Run the gates it
-   requires for this transition. Keep the state identity, raw output, and
-   every failure. Review challenges that evidence; it never replaces it.
-2. Stop anything still writing to the candidate.
-3. Open `assets/review-candidate.md`. Fill every field: mode, identities,
+1. Stop anything still writing to the candidate.
+2. Read the available verification evidence and raw results. Reuse required
+   rows only when the candidate, bound inputs/environment, gate requirements,
+   and evidence freshness still match.
+3. Missing or stale rows → **REQUIRED SUB-SKILL:** invoke
+   `verifying-completion` to obtain evidence for this review, then resume here.
+   Keep failures and pending results: they permit review, never readiness.
+4. Open `assets/review-candidate.md`. Fill every field: mode, identities,
    complete inventory, artifact controls, terminal contract.
-4. Compare its result identity with the one from step 1. Different → back to
-   step 1.
+5. Compare its result identity with the verification evidence. Different →
+   back to step 1. Review challenges the evidence; it never replaces it.
 
 ## Step 2: Choose depth and roles
 
@@ -79,8 +82,9 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 5. Check the report covers the whole inventory, including every
    human-authored change. Reject a report that wandered the repository beyond
    what the evidence required.
-6. Block on anything unreconciled: a missing role, an open finding, an
-   inconclusive result, a non-success, a conditional "ready".
+6. Block readiness on anything unreconciled: missing or failed verification,
+   a missing role, an open finding, an inconclusive result, a non-success,
+   a conditional "ready".
 7. Write the verdict and receipt with the full candidate and context
    identities.
 8. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report

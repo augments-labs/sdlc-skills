@@ -30,8 +30,8 @@ design the gates, review the change, integrate the branch, or decide release.
    mid-conversation. Write a disposition beside each: delivered, pending,
    blocked, or declined with a reason. Four of five delivered is not done.
 2. Open `assets/evidence-ledger.md`. Write the claim and its transition in
-   `Claim`: task green, integrated acceptance, reviewed candidate, or
-   releasable artifact.
+   `Claim`: task green, review evidence, integrated acceptance, or releasable
+   artifact. Record the requesting skill and pending step, if any.
 3. List the required gates from the task or plan `Evaluator` rows and the
    assurance matrix's cadence for this transition, one row each in `Results`.
    A gate missing, planned, blocked, or omitted without a reason → claim
@@ -50,8 +50,10 @@ design the gates, review the change, integrate the branch, or decide release.
 
 1. Before each gate, write in its `Results` row what it may touch and under
    whose authority.
-2. Run each required gate fresh. Shared effect boundary → in sequence.
-   Disjoint → in parallel. Never reuse an earlier run.
+2. Reuse an existing row only after matching its source state, bound
+   inputs/environment, gate requirements, and freshness to this transition.
+   Run missing or invalidated rows fresh. Shared effects → in sequence;
+   disjoint effects → in parallel. Record why each reused row still applies.
 3. Timeout or mid-run failure: wait until its processes and effects stop,
    move its leftovers out of the candidate, start a new linked run that
    ignores late output.
@@ -84,6 +86,8 @@ design the gates, review the change, integrate the branch, or decide release.
    Commit, CI, and review gates bind to their own revision. A checkpoint is
    neither reviewed nor merge-ready.
 5. **REQUIRED — route by the transition:**
+   - another skill requested evidence → return the ledger, including unmet
+     gates, to its pending step; never invoke that caller recursively
    - task green in a plan, or a worktree checkpoint → return to the skill
      that sent you; nothing more here
    - completion or integration (the user will read it as done, or it is about
