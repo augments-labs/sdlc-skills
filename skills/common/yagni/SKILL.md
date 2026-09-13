@@ -43,9 +43,11 @@ latest prompt need not repeat those for them to bind.
    policy, or test isolation.
 5. Lasting surface (new dependency, service or process, generalized
    abstraction, public extension point or config knob, verification system),
-   or a strict challenge requested → dispatch `assets/yagni-challenger.md`
-   read-only and wait. `revise` or `decision` → blocked as written.
-   `inconclusive` → not clearance.
+   or a strict challenge requested → fill `assets/yagni-challenger.md` with
+   `assets/challenge-report.md`, dispatch read-only, and wait. Read the report;
+   match Proposal and Challenge inputs to the request. Missing, mismatched,
+   conflicting, or invalid verdict → inconclusive. `revise` or `decision` →
+   blocked as written. `inconclusive` → not clearance.
 
 ## Step 2: Before calling it ready
 

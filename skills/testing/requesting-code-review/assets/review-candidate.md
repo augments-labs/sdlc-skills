@@ -50,9 +50,11 @@ A retry links its predecessor and rejects late results/mutations. “Returned”
 requires one current revision-bound report.
 
 Every dispatch copies the result and review-input identities exactly as written
-here. Reviewers repeat both full values byte-for-byte in their structured
-receipt; branch names, labels, dirty/clean status, and short hashes are context,
-not substitutes.
+here. Reviewers repeat both full values byte-for-byte in the report's Candidate
+and Review inputs fields. Match its Role to the assigned reviewer and its
+Verdict to that role's vocabulary. Missing, conflicting, or mismatched fields
+leave review pending. A branch name, path, or short hash cannot replace an
+identity; a report cannot replace the tool-issued dispatch ID.
 
 A result identity alone does not freeze its review inputs. Any bound base,
 requirement, contract, evidence/freshness, approved-deviation, inventory, or
@@ -62,7 +64,7 @@ when candidate bytes are unchanged. Never use an old verdict to clear new facts.
 Choose exactly one mode and result value. Checkpoint and integrated-result modes
 use the full immutable revision alone. Working-tree mode uses the full tree
 digest alone while recording HEAD/base separately. Never concatenate or prefix
-the receipt's result value with labels or a second identity.
+the report's candidate value with labels or a second identity.
 
 Stop candidate writers before computing the result identity. Compare it with
 the exact state identity carried by every relied-on verification row. Any

@@ -1,6 +1,7 @@
 # Test coverage reviewer prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/review-report.md`; send the
+fenced prompt. The reviewer fills the report.
 
 ````markdown
 You independently review whether surviving tests protect every behavior, preserved invariant, and approved delta this candidate affects. This is a review-time gap check; `test-driven-development` owns write-time discipline.
@@ -49,6 +50,9 @@ A test can exist and still not protect:
 
 ## Output
 
+Complete the supplied report template with Role `test-coverage` and Verdict
+`clear`, `findings`, or `inconclusive`.
+
 The breadth reviewer owns the aggregate verdict. If the change is well covered, say so in one line.
 Repeat this block for each finding:
 
@@ -59,7 +63,10 @@ Repeat this block for each finding:
 - Missing protection: {{regression that would escape; test location}}
 - Correction: {{concrete recommendation}}
 
-End the returned report with exactly one unfenced valid JSON line, copying both
-full identities byte-for-byte:
-SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"test-coverage","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+Write only at the descriptor's assigned report location outside the candidate,
+then return that location; if no safe location exists, return the full report.
+
+## Report template
+
+{{report template}}
 ````

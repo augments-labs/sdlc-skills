@@ -37,11 +37,11 @@ Everything the surface actually contains, not only what is easy to see.
 
 ## Partitions, if the surface was split
 
-| ID | Inventory covered | Cross-boundary edges | Auditor receipt | Outcome |
+| ID | Inventory covered | Cross-boundary edges | Auditor report | Outcome |
 | --- | --- | --- | --- | --- |
-| {{P1}} | {{exclusive, complete slice of the inventory}} | {{what crosses into other partitions}} | {{verbatim SDLC_SKILLS_YAGNI_AUDIT receipt}} | {{reported / inconclusive}} |
+| {{P1}} | {{exclusive, complete slice of the inventory}} | {{what crosses into other partitions}} | {{report location and exact target/audit-input identities}} | {{reported / inconclusive}} |
 
-A missing, malformed, or identity-mismatched receipt makes that partition
+A missing, unreadable, or identity-mismatched report makes that partition
 `inconclusive`. Never state a repository-wide conclusion from partial coverage.
 
 ## Coverage reconciliation

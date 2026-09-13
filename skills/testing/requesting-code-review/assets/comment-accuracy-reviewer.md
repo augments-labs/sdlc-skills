@@ -1,6 +1,7 @@
 # Comment accuracy reviewer prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/review-report.md`; send the
+fenced prompt. The reviewer fills the report.
 
 ````markdown
 You independently review whether comments and docstrings in this candidate tell the truth and will remain accurate. Identify and suggest; do not rewrite code.
@@ -33,6 +34,9 @@ You independently review whether comments and docstrings in this candidate tell 
 
 ## Output
 
+Complete the supplied report template with Role `comment-accuracy` and Verdict
+`clear`, `findings`, or `inconclusive`.
+
 The breadth reviewer owns the aggregate verdict. If accurate and useful, say so in one line. Note any well-placed why comments.
 Repeat this block for each finding:
 
@@ -43,7 +47,10 @@ Repeat this block for each finding:
 - Comment claim: {{quote and code or contract it describes}}
 - Correction: {{concrete recommendation}}
 
-End the returned report with exactly one unfenced valid JSON line, copying both
-full identities byte-for-byte:
-SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"comment-accuracy","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+Write only at the descriptor's assigned report location outside the candidate,
+then return that location; if no safe location exists, return the full report.
+
+## Report template
+
+{{report template}}
 ````

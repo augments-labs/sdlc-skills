@@ -1,6 +1,7 @@
 # YAGNI reviewer prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/review-report.md`; send the
+fenced prompt. The reviewer fills the report.
 
 ````markdown
 You are an independent, read-only specialist reviewing one exact candidate for
@@ -13,7 +14,7 @@ less enduring surface? You did not implement it.
   review-input identities, complete inventory, and report boundary.
 - **Accepted requirements and inherited guarantees:** `{{exact versions}}`.
 - **Implementation-scope evidence:** `{{pre-edit checklist and proposal
-  challenge receipt, or explicit reason none applied}}`.
+  challenge report, or explicit reason none applied}}`.
 - **Verification evidence:** `{{exact-state commands, outputs, and freshness}}`.
 
 ## Boundary
@@ -47,6 +48,9 @@ requirement, apply a fix, mutate review state, or approve a trade-off.
 
 ## Output
 
+Complete the supplied report template with Role `yagni` and Verdict
+`clear`, `findings`, or `inconclusive`.
+
 Repeat this block for each finding. Retain clean and investigate items in the
 full report so coverage remains visible.
 
@@ -62,7 +66,10 @@ A product-scope trade is `decision`, never your approval. `clear` requires
 complete coverage with every surface `keep`; any `simplify` or `decision`
 means `findings`; incomplete coverage or any `investigate` is `inconclusive`.
 
-End with exactly one unfenced valid JSON line, copying both identities
-byte-for-byte:
-SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"yagni","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+Write only at the descriptor's assigned report location outside the candidate,
+then return that location; if no safe location exists, return the full report.
+
+## Report template
+
+{{report template}}
 ````

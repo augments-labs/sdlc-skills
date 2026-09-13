@@ -1,6 +1,7 @@
 # YAGNI challenger prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/challenge-report.md`; send the
+fenced prompt. The challenger fills the report.
 
 A prompt or assigned name is not dispatch. Freeze terminal control, then require
 a nonempty receipt from the callable action and poll that exact attempt. At its
@@ -57,22 +58,14 @@ challenge neither records nor approves it.
 
 ## Output
 
-Repeat for each surface. Any proposal or challenge-input identity change
-invalidates the report.
-
-### {{surface}}
-
-- Owner requirement/guarantee: {{owner}}
-- Evidence inspected: {{paths, commands, and results}}
-- Smaller complete alternative: {{alternative or none}}
-- Lifecycle trade-off: {{comparison}}
-- Disposition: {{keep | simplify | decision | investigate}}
-- Next action: {{shortest next action}}
-
-End with exactly one valid JSON line:
-`SDLC_SKILLS_YAGNI_CHALLENGE={"proposal":"{{exact proposal identity}}","context":"{{exact challenge-input identity}}","verdict":"{{lean | revise | decision | inconclusive}}","report":"{{location or returned directly}}"}`.
+Complete the supplied report template. Any proposal or challenge-input identity
+change invalidates it. Return the full report, or its authorized location.
 
 Incomplete coverage or any `investigate` is `inconclusive`; otherwise any
 `decision` wins, then any `simplify` is `revise`, and complete all-`keep` is
 `lean`. `lean` is not implementation, verification, review, or approval.
+
+## Report template
+
+{{report template}}
 ````

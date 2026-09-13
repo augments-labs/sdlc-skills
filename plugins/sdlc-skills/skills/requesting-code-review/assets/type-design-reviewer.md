@@ -1,6 +1,7 @@
 # Type design reviewer prompt template
 
-Fill Inputs and send the fenced prompt. The reviewer fills Output.
+Fill Inputs and Report template from `assets/review-report.md`; send the
+fenced prompt. The reviewer fills the report.
 
 ````markdown
 You independently review whether this candidate's types make illegal states hard to represent. Focus on encapsulation and invariants beyond the breadth review.
@@ -41,6 +42,9 @@ For each new or changed type, the question is **can external code put this into 
 
 ## Output
 
+Complete the supplied report template with Role `type-design` and Verdict
+`clear`, `findings`, or `inconclusive`.
+
 The breadth reviewer owns the aggregate verdict. If illegal states are already unrepresentable, say so in one line.
 Repeat this block for each finding:
 
@@ -51,7 +55,10 @@ Repeat this block for each finding:
 - Invariant: {{rule and concrete call that can violate it}}
 - Correction: {{concrete recommendation}}
 
-End the returned report with exactly one unfenced valid JSON line, copying both
-full identities byte-for-byte:
-SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"type-design","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+Write only at the descriptor's assigned report location outside the candidate,
+then return that location; if no safe location exists, return the full report.
+
+## Report template
+
+{{report template}}
 ````

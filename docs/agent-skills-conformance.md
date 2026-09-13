@@ -102,7 +102,7 @@ Not machine-checkable. These are the bar a reviewer holds a skill to.
 | Directory | Standard's purpose | Our use |
 | --- | --- | --- |
 | `references/` | documentation read on demand | 21 skills; rubrics, checklists, reviewer briefs, worked examples |
-| `assets/` | static resources, incl. document templates | 27 skills; every fill-in template — see below |
+| `assets/` | static resources, incl. document templates | 28 skills; every fill-in template — see below |
 | `scripts/` | bundled executable code | 5 skills — see below |
 
 **The split.** A file the agent *fills in and emits as an artifact* is a

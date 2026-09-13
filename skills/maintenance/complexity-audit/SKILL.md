@@ -34,18 +34,19 @@ diagnosis, not permission to change code.
 
 ## Step 2: Challenge read-only
 
-1. Read `assets/yagni-auditor.md`. Dispatch it against each exact
-   partition. Record real receipts and terminal outcomes; a name or prompt is
-   not dispatch.
+1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` for each
+   exact partition. Dispatch it; record tool-issued IDs and terminal outcomes.
+   A name or prompt is not dispatch.
 2. No independent action available → write that an inline pass ran. An
    explicitly requested independent audit stays pending.
 3. Fill the reconciliation block before any finding: every partition,
    exclusion, cross-boundary candidate, duplicate, failed attempt,
    inconclusive area.
-4. Copy each auditor's terminal `SDLC_SKILLS_YAGNI_AUDIT` receipt verbatim.
-   Missing, malformed, or bound to another identity → that partition is
-   inconclusive. Never state a repository-wide conclusion from partial
-   coverage.
+4. Read each returned partition report; open its file if only a location was
+   returned. Match Target, Audit inputs, Partition, and Verdict to the frozen
+   request and auditor's allowed verdicts. Missing, unreadable, conflicting,
+   or mismatched fields → that partition is inconclusive. Retain the report
+   unchanged; never infer a repository-wide conclusion from partial coverage.
 
 ## Step 3: Publish decisions
 
