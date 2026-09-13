@@ -32,7 +32,9 @@ Record the smallest realistic counterexample and its evidence strength:
 
 Candidates may enter an audit without live proof. Once you edit behavior, run the
 smallest applicable before/after probe. If the control does not exhibit the
-claimed failure, narrow the claim or stop; do not tune the prompt to force a RED.
+claimed failure, narrow the measured claim or stop that probe; do not tune the
+prompt to force RED. Keep reported failures and contract contradictions visible.
+A passing sample does not disprove them or establish that a skill is unnecessary.
 
 ## Match proof to the failure
 

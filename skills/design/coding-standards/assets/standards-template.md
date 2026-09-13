@@ -123,5 +123,5 @@ checks and rubric pass.
 - **The exemplar drifts.** Suspend adoption when it fails. Propose a successor
   standards version naming the new exemplar, approve it, then rerun adoption;
   never silently re-point an immutable standard.
-- **Failure: the standards file becomes a style guide.** Indentation, brace placement, and import order belong to the formatter and linter — automatable, so automate them. The standards section is only for what a machine can't enforce: vocabulary, layering, pattern choice.
+- **Failure: the standards file becomes a style guide.** Indentation, brace placement, and import order belong to the formatter and linter — automatable, so automate them. Reference the enforcing configuration instead of duplicating its settings. Keep vocabulary, layering, pattern choice, and their human review criteria here.
 - **Failure: nevers with no teeth.** Every "never" must be something a reviewer will actually send back. A never nobody enforces trains readers to ignore the whole list.

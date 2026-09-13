@@ -1,37 +1,55 @@
 # Testing this library
 
-Everything that observes the library *running* lives under `tests/`, split by one
-question: **is the correct answer known before the run?** The two answers are
-held to different standards, so they keep different directories.
+Tests separate known expected outcomes from exploratory measurements. A known
+assertion can score a sampled agent run; it does not make that agent's behavior
+deterministic.
 
-| Where | What red means | Runner |
+| Where | What a result establishes | Runner |
 | --- | --- | --- |
-| `tests/` | something broke; act | `run-behavioral.sh --arm red\|green`, one file per scenario under `tests/behavioral/` |
-| `tests/`, offline | something broke; act | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-serve-preview.sh` — no model, free, prefer these |
-| `tests/optimizing/` | a number, not a regression | `descriptions/test-triggering-on-queries.sh` |
-| `tests/harnesses/` | — | one file per CLI, holding only what differs between them; they decide nothing |
+| `tests/behavioral/` | Observed behavior on a labeled scenario and candidate | `run-behavioral.sh` |
+| `tests/`, offline | The checked packaging or script predicate | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-serve-preview.sh` |
+| `tests/optimizing/` | A measurement used to tune a description | `descriptions/test-triggering-on-queries.sh` |
+| `tests/harnesses/` | Shared runners' CLI bindings | One adapter per supported CLI |
 
-`run-behavioral.sh --arm none` sits with the gates but answers a measurement's
-question: whether a skill is worth its context, not whether anything broke. A
-skill whose assertions pass just as well with no skills loaded earns nothing.
+## Behavioral arms and limits
 
-Nothing under `tests/optimizing/` runs in CI, by design.
+| Arm | Installed configuration | Question |
+| --- | --- | --- |
+| `none` | No skill library | What did this agent do unaided in these conditions? |
+| `red` | Complete library at `--base` | What did the baseline version do? |
+| `green` | Complete library from the working tree | What did the candidate version do? |
 
-## Everything else has an owner
+These compare library configurations, not an isolated skill removed from an
+otherwise identical library. Hold the fixture, evaluator, environment, and
+permissions fixed; use the smallest scenario that exercises the intended change.
+Total run tokens and time include generated work and tool use. Their difference
+is an observed arm-cost difference, not the isolated cost of one skill.
 
-- **Which skills have a behaviour worth proving, and how to prove one** —
-  `skills/common/writing-skills/references/testing.md`. It ships with the skill,
-  so it is available wherever `writing-skills` is installed.
-- **What a query set must contain, what a run costs, and why a trigger rate is
-  not a pass mark** — `tests/optimizing/README.md`.
-- **The mechanical gate** — `scripts/sh/validate-skills.sh`, run before every
-  commit; CI runs it on every push and pull request.
+A passing control means the proposed failure was not observed in that sample.
+It can narrow a behavioral claim or end an unproductive probe; it cannot erase a
+reported failure, resolve contradictory instructions, or prove a skill useless.
+Repeated green samples strengthen only the conclusion their scope supports.
+Keep observed failures, current contract gaps, and unmeasured candidates distinct.
 
-## Proportionality
+Read raw results before classifying a nonzero exit. An assertion failure,
+timeout, provider refusal, process error, and contaminated control are different
+outcomes. Confirm the evaluator inspected the candidate the agent actually
+changed, including any task-owned worktree. Retain every attempt and explain
+inconclusive results; do not silently relabel or omit them.
 
-The doctrine holds the general rule. Two consequences are this repository's own:
+## Choose the relevant check
 
-- Do not emulate whole provider transcripts, sessions, or process trees when a
-  smaller observable answers the question.
-- If an evaluator grows comparable in size to the behaviour under test, simplify
-  the evaluator before adding to it.
+- **Skill behavior and before/after proof:**
+  `skills/common/writing-skills/references/testing.md` owns the method. Body
+  changes use a targeted scenario where applicable; on-demand support files do
+  not automatically require a live rerun.
+- **Description tuning:** `tests/optimizing/README.md` owns query design, fixed
+  selection splits, costs, and interpretation. Optimization is not certification
+  and does not run in CI.
+- **Repository structure:** run `scripts/sh/validate-skills.sh` before committing;
+  CI runs it on pushes and pull requests. It does not prove agent compliance.
+
+Use behavioral tests only for the affected skill or handoff. Do not broaden to
+unrelated skills for coverage, emulate whole provider sessions when a smaller
+observable answers the question, or build an evaluator comparable in size to the
+behavior being evaluated.

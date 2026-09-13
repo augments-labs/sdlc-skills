@@ -24,7 +24,9 @@ Review the design in Inputs. Flag **only** issues that would lead to building th
 ## Inputs
 
 - Design: {{design path and exact version}}
-- Approved requirements and data model: {{paths and exact versions}}
+- Approved requirements: {{paths and exact versions}}
+- Domain input: {{approved model where required, or established concepts and
+  invariants with source evidence; do not require a new artifact for unchanged semantics}}
 - Codebase evidence: {{relevant paths and revisions}}
 - Review boundary: {{reviewer role ID, allowed artifact access, worker/provider/storage/egress authority, and report location}}
 - Terminal control: {{deadline and timeout/cancel owner}}
@@ -39,8 +41,9 @@ Review the design in Inputs. Flag **only** issues that would lead to building th
    unavailable, retry, idempotency, degraded, and recovery behavior.
 4. **Operations** — the risk-selected runtime, deployment, scale/resource,
    observability, rollout, and compatibility views are sufficient.
-5. **Decisions and seams** — hard-to-reverse choices have accepted ADRs; each
-   proposed seam has a stable owner and measured change friction or one real
+5. **Decisions and seams** — choices meeting `architecture-decisions`' full
+   entry conditions have accepted ADRs; other choices remain recorded in the
+   design. Each proposed seam has a stable owner and measured change friction or one real
    volatile/external boundary with measured impedance, failure policy, or
    test-isolation value; implementation count alone proves nothing.
 6. **Cross-section consistency** — flows use real data-model concepts and

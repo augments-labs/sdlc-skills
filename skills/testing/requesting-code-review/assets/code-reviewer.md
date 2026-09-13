@@ -55,6 +55,10 @@ You independently review this candidate on two axes: project standards and the o
   introduced. Traverse relevant callers, consumers, contracts, generated
   sources, history, and tests when needed to prove impact; record why. Do not
   convert that permission into an unrelated repository audit.
+- **On re-review, retain resolved obligations.** Read the prior dispositions
+  and exact delta. Verify fixes and affected paths, including new regressions.
+  Reopen a disposed finding only on new evidence or changed binding; a wording
+  preference or different reviewer is not a new requirement.
 - **Breadth, not rabbit holes.** This is the broad pass. If one axis needs real
   depth—error paths, type invariants, test coverage, comment accuracy, or
   accidental complexity—request its specialist rather than half-running it.

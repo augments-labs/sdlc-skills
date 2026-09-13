@@ -37,6 +37,10 @@ skill that owns eliciting the still-open inputs.
 1. Read the request. Search the codebase and context for what is already
    decided: conventions, similar features, libraries in use, naming.
 2. Never ask what the code already answers.
+3. Entered to resolve a caller's named decision → keep that decision and its
+   pending step. When a direct answer settles it without changing the approved
+   scope, record the answer and return to that step. Do not create another
+   alignment brief or approval round. New material intent → continue below.
 
 ## Step 2: Ask one question at a time
 
@@ -54,8 +58,8 @@ skill that owns eliciting the still-open inputs.
 
 2. Wait for a direct answer before the next question. See *What
    closes a decision*.
-3. Use each answer to prune later questions. Aim for 3–6 total. More → say
-   why first.
+3. Use each answer to prune later questions. Ask only what could change the
+   outcome; a resolved caller decision returns under Step 1.3.
 4. Stop when another question would not change the outcome and every live
    decision in a category named under *When to use* has a direct answer. A
    general "go" answers no unnamed choice.

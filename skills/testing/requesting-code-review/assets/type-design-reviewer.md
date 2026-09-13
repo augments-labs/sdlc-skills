@@ -45,7 +45,7 @@ For each new or changed type, the question is **can external code put this into 
 Complete the supplied report template with Role `type-design` and Verdict
 `clear`, `findings`, or `inconclusive`.
 
-The breadth reviewer owns the aggregate verdict. If illegal states are already unrepresentable, say so in one line.
+Return this axis verdict to the requesting coordinator, who reconciles all roles and owns the aggregate verdict. If illegal states are already unrepresentable, say so in one line.
 Repeat this block for each finding:
 
 ### {{finding title}}

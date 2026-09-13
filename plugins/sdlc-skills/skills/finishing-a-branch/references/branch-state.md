@@ -1,8 +1,10 @@
 # Branch finishing state machine
 
-Use only after the entrypoint has frozen the candidate, environment, ownership,
-base, evidence, and review verdict. This is a procedure to read, not a file to
-copy into the candidate.
+Bind the state, ownership and authority relevant to the selected action.
+Materialization, publication and integration require current verification and
+review; keep-as-is, discard and PR-only close/reopen use their own identity and
+authority gates below. This is a procedure to read, not a file to copy into the
+candidate.
 
 Before asking for a mutating choice, issue an immutable transition descriptor
 with a stable transition ID; exact candidate, base, and current remote/PR state;

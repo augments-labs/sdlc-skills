@@ -8,6 +8,8 @@
 external state, and evaluator artifacts this task may mutate; overlaps require
 an explicit dependency and one transition owner}}
 **Context:** {{key files or entrypoints to read first for this task — plus any spec artifact that defines it (a failing test, a mockup page, a reference implementation to port). Point at the path; do not paraphrase it back into prose. Or "none".}}
+For a UI task, include the approved design path/version and applicable Trace
+obligations. A selected preview alone does not carry its flows, states or conditions.
 **Applicable visual references:** {{for a UI-bearing task: the keyed subset of
 the plan index's Selected visual references, copied field for field below; or
 `not applicable`. This task may not substitute a different direction}}
@@ -23,7 +25,9 @@ the plan index's Selected visual references, copied field for field below; or
 | {{VR-001}} | {{VCONF-001}} | {{executable check or controlled rubric that judges the Distinguishing invariants}} |
 
 Every Applicable visual reference has a gate row, and every gate ID matches the
-plan index's Visual reference coverage. A UI task's required gate set is its task
+plan index's Visual reference coverage. Cover the task's full approved UI
+obligations, including those outside the preview, in its Evaluator and relevant
+visual observations. A UI task's required gate set is its task
 Evaluator, every applicable VCONF row, and, for an integrated UI, the verdict
 returned by `visual-ui-verification`. Every required gate must pass on the same
 accepted state before the task can be `done`; a `mismatch`, failed VCONF, `unavailable` or
@@ -45,6 +49,9 @@ homogeneous item.}}
 
 - **Consumes:** {{names, signatures, data shapes this task takes from earlier tasks — or "nothing"}}
 - **Produces:** {{the exact names and types later tasks will rely on — another task's executor sees only this line to learn them}}
+
+List existing code, approved documents and external fixtures in **Context**.
+**Consumes** records only dependencies on outputs of earlier plan tasks.
 
 {{Don't pre-write the implementation — the executor writes it at run time with full context. Include exact code ONLY where precision is fragile (tricky regex, security check, migration SQL).}}
 
