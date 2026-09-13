@@ -5,13 +5,13 @@
 # deriving it. The trail's approval state lives outside the artifacts by
 # design, so a confident page is easy and a truthful one is work. The checks
 # below are mechanical: exact rollup counts against a planted `[x] done with
-# concerns` trap, a drift flag that only real per-file git times can produce,
+# concerns` trap, identity-bound drift despite equal timestamps,
 # `unknown` where no ledger row exists, encoded hostile content, and a spec
 # body sentence that must NOT appear — the page carries state, not documents.
 #
 # The runner makes ONE baseline commit, which would flatten every git-log
-# timestamp. So setup plants its own dated commits (spec rev 2 newer than the
-# plan = the drift case) and deliberately leaves README.md uncommitted. Not
+# timestamp. Setup binds the plan to spec-v1, then records spec-v2 at the
+# same Git time as the plan, and leaves README.md uncommitted. Not
 # because seeding would die: bh_seed_fixture has no `set -e`, so on an empty
 # stage the runner's baseline commit fails SILENTLY and the run continues —
 # but then no `scenario baseline` commit exists, and the read-only assertion
@@ -96,6 +96,18 @@ Keep signed bearer tokens.
 - **External decision ledger:** .sdlc-skills/decision-ledger.md
 
 Passkeys replace tokens; ADR-014 supersedes ADR-009.
+
+## ADR: ADR-015 recovery mail
+
+- **Normative version:** adr-015-v1
+- **Predecessor:** none
+- **External lifecycle ledger:** .sdlc-skills/decision-ledger.md
+
+## ADR: ADR-016 recovery SMS
+
+- **Normative version:** adr-016-v1
+- **Predecessor:** none
+- **External lifecycle ledger:** .sdlc-skills/decision-ledger.md
 EOF
   git add .sdlc-skills
   GIT_AUTHOR_DATE='2026-08-01T09:00:00Z' GIT_COMMITTER_DATE='2026-08-01T09:00:00Z' \
@@ -108,6 +120,10 @@ EOF
 - **Normative version:** plan-v1
 - **External decision ledger:** .sdlc-skills/decision-ledger.md
 
+## Context
+
+Consumed .sdlc-skills/specs/2026-07-28-auth-overhaul.md at normative identity spec-v1.
+
 ## Tasks
 
 - [ ] `T-001` — scaffold session store   ·   `01-scaffold-store.md`   ·   `todo`
@@ -118,7 +134,8 @@ EOF
   GIT_AUTHOR_DATE='2026-08-04T09:00:00Z' GIT_COMMITTER_DATE='2026-08-04T09:00:00Z' \
     _sdlc_commit 'auth-overhaul: plan' || return 2
 
-  # spec rev 2 — NEWER than the plan: this is the drift the page must flag
+  # The consumed spec-v1 differs from current spec-v2; equal times cannot hide drift.
+  perl -0pi -e 's/Normative version:\*\* spec-v1/Normative version:** spec-v2/; s/Predecessor:\*\* none/Predecessor:** spec-v1/' .sdlc-skills/specs/2026-07-28-auth-overhaul.md
   cat >> .sdlc-skills/specs/2026-07-28-auth-overhaul.md <<'EOF'
 
 ## Addendum (rev 2)
@@ -126,7 +143,7 @@ EOF
 | R2 | recovery codes for locked-out users | prose | — |
 EOF
   git add .sdlc-skills
-  GIT_AUTHOR_DATE='2026-08-09T09:00:00Z' GIT_COMMITTER_DATE='2026-08-09T09:00:00Z' \
+  GIT_AUTHOR_DATE='2026-08-04T09:00:00Z' GIT_COMMITTER_DATE='2026-08-04T09:00:00Z' \
     _sdlc_commit 'auth-overhaul: spec rev 2 (drift)' || return 2
 
   # --- topic 2: billing-retry — executing, vocabulary traps, matrix, visuals
@@ -262,6 +279,11 @@ EOF
 | goals-v1 | `## Goals` | .sdlc-skills/briefs/2026-07-28-auth-overhaul.md | approved | session | 2026-08-01 |
 | plan-v1 | `## Plan` | .sdlc-skills/plans/2026-08-02-billing-retry/00-index.md | approved | session | 2026-08-07 |
 | goals-v1 | `## Goals` | .sdlc-skills/briefs/2026-08-11-rate-limiting.md | approved | session | 2026-08-11 |
+| arch-v1 | `## System architecture` | .sdlc-skills/designs/2026-08-02-billing-retry.md | rejected | session | 2026-08-07 |
+| adr-009-v1 | `## ADR: ADR-009 token sessions` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | superseded | session | 2026-08-04 |
+| adr-014-v1 | `## ADR: ADR-014 passkey sessions` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | accepted | session | 2026-08-04 |
+| adr-015-v1 | `## ADR: ADR-015 recovery mail` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | rejected | session | 2026-08-04 |
+| adr-016-v1 | `## ADR: ADR-016 recovery SMS` | .sdlc-skills/designs/2026-07-28-auth-overhaul.md | cancelled | session | 2026-08-04 |
 EOF
   git add .sdlc-skills
   GIT_AUTHOR_DATE='2026-08-14T09:00:00Z' GIT_COMMITTER_DATE='2026-08-14T09:00:00Z' \
@@ -316,11 +338,21 @@ scenario_assert() {
   assert_contains "$html" '5/9|5 of 9' "billing-retry rollup counts only exact \`[x] done\` (5)"
   assert_not_contains "$html" '6/9|6 of 9' "the \`[x] done with concerns\` trap was not counted as done"
 
-  # drift: only real per-file git times put spec rev 2 after the plan. The
-  # pin is the drift connector's class — contractually omitted when there is
-  # no drift; a bare `drift` match was vacuous (the page's own CSS is full
-  # of the word)
-  assert_contains "$html" 'class="conn"' "drift flagged (spec rev 2 newer than the plan)"
+  # Bound spec-v1 -> spec-v2 is real drift even at equal Git timestamps.
+  # Billing has no consumed spec binding: it must disclose unknown/possible
+  # staleness rather than infer proven drift or freshness from time ordering.
+  local auth_pane billing_pane auth_text billing_text
+  auth_pane="$(printf '%s' "$html" | perl -0777 -ne 'print $1 if /(<section\b[^>]*id="topic-[^"]*auth-overhaul".*?<\/section>)/s' | tr '\n' ' ')"
+  billing_pane="$(printf '%s' "$html" | perl -0777 -ne 'print $1 if /(<section\b[^>]*id="topic-[^"]*billing-retry".*?<\/section>)/s' | tr '\n' ' ')"
+  auth_text="$(printf '%s' "$auth_pane" | perl -pe 's/<[^>]+>/ /g; s/\s+/ /g')"
+  billing_text="$(printf '%s' "$billing_pane" | perl -pe 's/<[^>]+>/ /g; s/\s+/ /g')"
+  assert_contains "$auth_pane" 'class="conn"' "identity-bound drift rendered in auth-overhaul"
+  assert_contains "$auth_pane" 'spec-v1.*spec-v2|spec-v2.*spec-v1' "drift explains the consumed/current identity mismatch"
+  assert_not_contains "$billing_pane" 'class="conn"[^>]*>[^<]*drift' "unbound billing dependency has no proven-drift connector"
+  assert_contains "$billing_text" 'freshness.{0,60}unknown|unknown.{0,60}freshness|possible.staleness' "unbound freshness is explicitly unknown or possible staleness"
+  assert_contains "$billing_pane" 'rejected' "ordinary rejected design decision preserved"
+  assert_contains "$auth_text" 'ADR-015.{0,100}rejected' "ADR rejected state preserved"
+  assert_contains "$auth_text" 'ADR-016.{0,100}cancelled' "ADR cancelled state preserved"
 
   # attention grouping and underivable state honesty
   assert_contains "$html" 'needs attention' "attention grouping present"

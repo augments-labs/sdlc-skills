@@ -37,9 +37,9 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
 Follow the section's ledger pointer and preserve its vocabulary:
 
 - `**External decision ledger:**` — pending, changes requested, approved,
-  cancelled, or superseded.
+  rejected, cancelled, or superseded.
 - `**External lifecycle ledger:**` on an ADR — pending, accepted, in force,
-  retired, or superseded.
+  rejected, cancelled, retired, or superseded.
 - `**External condition and decision ledger:**` on feasibility — go, go-if,
   no-go, or cancel, plus each condition's pending, satisfied, or failed state.
   Render go-if with its unmet conditions; recording the decision does not
