@@ -49,17 +49,17 @@ wait on one, until the dispatch action has returned a non-empty receipt.
      before assigning anyone.
 2. Give every role a stable ID, including each one omitted. An omission
    records evidence, owner, expiry, compensation, and approver.
-3. Add the specialist role whose condition holds; open its brief:
-   - `references/silent-failures-reviewer.md` — catches, retries, fallbacks,
+3. Add each applicable specialist role; open its prompt template:
+   - `assets/silent-failures-reviewer.md` — catches, retries, fallbacks,
      or defaults that could swallow a failure
-   - `references/type-design-reviewer.md` — a new or changed type, interface,
+   - `assets/type-design-reviewer.md` — a new or changed type, interface,
      schema, or shape callers bind to
-   - `references/test-coverage-reviewer.md` — behavior tests should pin, or
+   - `assets/test-coverage-reviewer.md` — behavior tests should pin, or
      behavior moved between covered and uncovered code
-   - `references/comment-accuracy-reviewer.md` — comments, docstrings, or
+   - `assets/comment-accuracy-reviewer.md` — comments, docstrings, or
      prose that claims something about the code
-   - `references/equivalence-reviewer.md` — high-risk equivalence
-   - `references/yagni-reviewer.md` — new or expanded enduring surface, or a
+   - `assets/equivalence-reviewer.md` — high-risk equivalence
+   - `assets/yagni-reviewer.md` — new or expanded enduring surface, or a
      requested simplification review
 4. Trust boundary changed → invoke `security-audits`. Audit of existing code →
    `complexity-audit`. Challenge to the assurance strategy →
@@ -72,8 +72,10 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 1. Shallow, with its written assignment recorded in the descriptor → run the
    self-review below; dispatch nothing. No assignment → Standard.
-2. Otherwise read `references/code-reviewer.md`, attach the raw evidence from
-   Step 1, and send it through the harness's dispatch action.
+2. Otherwise open `assets/code-reviewer.md` and each selected specialist
+   template. Fill Inputs from the descriptor and raw evidence; leave Output
+   fields for the reviewer. Send only each fenced prompt through the harness's
+   dispatch action.
 3. Dispatched = the action returned a non-empty ID. Empty, refused, or
    unavailable → write the review as pending and stop. Do not review it
    yourself. Do not poll an empty target.

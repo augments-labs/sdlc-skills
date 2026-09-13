@@ -1,6 +1,9 @@
-# Code Reviewer (dispatch prompt)
+# Code reviewer prompt template
 
-You are reviewing a code change with fresh eyes. You did not write it and have no context beyond this prompt. Your job is an honest, independent verdict — not reassurance.
+Fill Inputs and send the fenced prompt. The reviewer fills Output.
+
+````markdown
+You independently review this candidate on two axes: project standards and the originating requirement. Give an honest verdict supported by evidence.
 
 ## Inputs
 
@@ -9,7 +12,7 @@ You are reviewing a code change with fresh eyes. You did not write it and have n
   review artifact location. Account for the complete inventory and read every
   human-authored change. For generated/unreviewable ranges, follow the
   descriptor's mapping, structural gates, and risk-based samples.
-- **Originating requirement:** {{the issue / spec / plan, or a one-line statement of what this change was supposed to do}}.
+- **Originating requirement:** {{requirement}}.
 - **Accepted contracts and evidence:** {{requirements/design/migration/assurance
   versions plus raw gate results}}.
 
@@ -57,26 +60,44 @@ You are reviewing a code change with fresh eyes. You did not write it and have n
 
 ## Output
 
-Write the full review to the descriptor's assigned artifact. If no safe writable
-artifact exists, return the full coverage ledger inline instead; never discard
-clean areas or traversal. Bind either form to the candidate and review-input
-identities.
+Write the full report outside the candidate at the descriptor's assigned path,
+or return it inline if no safe path exists. Use this structure; repeat findings:
 
-When a separate full report exists, return **only the actionable part**. The
-file carries coverage; the return carries decisions. For `returned directly`,
-put the full ledger before those decisions:
+### Coverage
 
-- Each finding: severity (**Critical** — bugs, security holes, data loss;
-  **Important** — wrong or missing behaviour, architectural problems, test
-  gaps; **Minor** — style, naming, local clarity), disposition (**blocking** —
-  must fix before merge, or **advisory** — judge and maybe defer), the evidence
-  (file, line, and what you ran or read), and the fix.
-- With a separate report, no "everything else looked fine" recap; for
-  `returned directly`, retain the coverage ledger inline.
-- Name the full candidate and review-input identities exactly as supplied—never
-  shorten or decorate them—plus the shortest path to readiness and report location.
-  End with exactly one machine-readable line (valid one-line JSON; no fence):
-  `SDLC_SKILLS_REVIEW_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","verdict":"{{ready | not_ready | ready_after_fixes}}","report":"{{location or returned directly}}"}`.
-  Prose mentions do not bind a verdict; this receipt does.
-  `ready_after_fixes` is non-ready for this candidate; only a new verified and
-  reviewed candidate can become ready.
+| File/range | Evidence and traversal reason | Result or limitation |
+| --- | --- | --- |
+| {{reviewed range}} | {{what you read or ran}} | {{finding or clean result}} |
+
+### Assessments
+
+- Standards: {{conformance and supported strengths}}
+- Spec: {{requirement coverage, omissions, and unrequested scope}}
+
+### Findings
+
+#### {{finding title, or none}}
+
+- Severity: {{Critical: bugs/security/data loss | Important: behavior/architecture/tests | Minor: style/naming/clarity}}
+- Disposition: {{blocking | advisory}}
+- Evidence: {{file:line, observed failure, and what you read or ran}}
+- Correction: {{concrete fix}}
+
+### Readiness
+
+- Candidate: {{exact result identity}}
+- Review inputs: {{exact review-input identity}}
+- Verdict: {{ready | not_ready | ready_after_fixes}}
+- Shortest path to readiness: {{corrections or none}}
+- Report: {{location or returned directly}}
+
+If saved separately, return only findings, both full identities, shortest path
+to readiness, and report location. Otherwise return the full report, including
+clean coverage and traversal. Missing, failed, or inconclusive required
+verification prevents readiness. A conditional verdict remains non-ready until
+a new verified and reviewed candidate exists.
+
+End the returned response with exactly one unfenced valid JSON line. Copy both
+full identities byte-for-byte; prose does not bind the verdict:
+SDLC_SKILLS_REVIEW_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","verdict":"{{ready | not_ready | ready_after_fixes}}","report":"{{location or returned directly}}"}
+````

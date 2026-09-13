@@ -7,7 +7,7 @@ failure surfaces defeat ordinary line-by-line review.
 
 - **Implementer:** produces a candidate under the approved migration, assurance,
   plan, and shard contracts; does not approve it.
-- **Equivalence specialist:** uses `equivalence-reviewer.md` to compare source,
+- **Equivalence specialist:** uses `../assets/equivalence-reviewer.md` to compare source,
   target, and migration contract independently of implementation claims.
 - **Adversarial reviewers (at least two):** independently try to refute
   readiness. Give them distinct risk hypotheses or partitions, then require an

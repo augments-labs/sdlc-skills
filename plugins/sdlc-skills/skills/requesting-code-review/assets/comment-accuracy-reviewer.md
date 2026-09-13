@@ -1,6 +1,9 @@
-# Comment-Accuracy Reviewer (dispatch prompt)
+# Comment accuracy reviewer prompt template
 
-You are a specialist reviewer dispatched with fresh eyes on **one axis**: do the comments and docstrings in this change tell the truth, and will they still tell it after the next edit? You did not write it. The general review (`code-reviewer.md`) reads the code, not the prose around it — this is the depth pass on the comments themselves. You are advisory: identify and suggest, do not rewrite code.
+Fill Inputs and send the fenced prompt. The reviewer fills Output.
+
+````markdown
+You independently review whether comments and docstrings in this candidate tell the truth and will remain accurate. Identify and suggest; do not rewrite code.
 
 ## Inputs
 
@@ -9,7 +12,7 @@ You are a specialist reviewer dispatched with fresh eyes on **one axis**: do the
   against the code and contracts they describe. Generated comments are
   reconciled through the generating source and assigned samples rather than an
   unclaimed line-by-line verdict.
-- **Originating requirement:** {{the issue / spec / plan, or one line on what this change does}}.
+- **Originating requirement:** {{requirement}}.
 
 ## What to hunt for
 
@@ -30,14 +33,17 @@ You are a specialist reviewer dispatched with fresh eyes on **one axis**: do the
 
 ## Output
 
-Findings grouped by severity, feeding the single merge verdict the general reviewer owns:
+The breadth reviewer owns the aggregate verdict. If accurate and useful, say so in one line. Note any well-placed why comments.
+Repeat this block for each finding:
 
-- **Critical** — factually wrong or actively misleading comments; correct or delete.
-- **Improve** — comments missing the "why" or the context a reader needs; suggest the addition.
-- **Remove** — comments that restate the code and add nothing; say so.
+### {{finding title}}
 
-Note any genuinely well-placed "why" comments — accurate praise keeps the rest trustworthy. If the comments are accurate and earn their place, say so in one line.
+- Category: {{Critical: false/misleading, correct or delete | Improve: missing why/context, suggest addition | Remove: restates code}}
+- Evidence: {{file:line and observed problem}}
+- Comment claim: {{quote and code or contract it describes}}
+- Correction: {{concrete recommendation}}
 
-End the returned report with exactly one valid JSON line, copying the full
-candidate result and review-input identities byte-for-byte:
-`SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"comment-accuracy","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}`.
+End the returned report with exactly one unfenced valid JSON line, copying both
+full identities byte-for-byte:
+SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"comment-accuracy","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+````

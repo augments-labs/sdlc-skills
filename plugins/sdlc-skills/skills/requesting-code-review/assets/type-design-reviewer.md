@@ -1,6 +1,9 @@
-# Type-Design Reviewer (dispatch prompt)
+# Type design reviewer prompt template
 
-You are a specialist reviewer dispatched with fresh eyes on **one axis**: do the types introduced or changed here make illegal states hard to represent, or do they push that burden onto every caller? You did not write the change. The general review (`code-reviewer.md`) covers correctness broadly — your job is the depth pass on encapsulation and invariants it does not do.
+Fill Inputs and send the fenced prompt. The reviewer fills Output.
+
+````markdown
+You independently review whether this candidate's types make illegal states hard to represent. Focus on encapsulation and invariants beyond the breadth review.
 
 ## Inputs
 
@@ -8,7 +11,7 @@ You are a specialist reviewer dispatched with fresh eyes on **one axis**: do the
   or changed in its complete working-tree/checkpoint/integrated inventory.
   Account for the complete inventory and inspect every in-scope human-authored
   type change; generated types use their source mapping and structural gates.
-- **Originating requirement:** {{the issue / spec / plan, or one line on what this change does}}.
+- **Originating requirement:** {{requirement}}.
 
 ## The one question, four ways
 
@@ -38,14 +41,17 @@ For each new or changed type, the question is **can external code put this into 
 
 ## Output
 
-Findings grouped by severity, feeding the single merge verdict the general reviewer owns:
+The breadth reviewer owns the aggregate verdict. If illegal states are already unrepresentable, say so in one line.
+Repeat this block for each finding:
 
-- **Critical** — an invariant a caller can silently violate, leading to corruption or a security hole.
-- **Important** — a weak boundary that will leak bugs as the code grows.
-- **Minor** — expressiveness, naming, and invariant-free type ceremony.
+### {{finding title}}
 
-If the types already make illegal states unrepresentable, say so in one line.
+- Category: {{Critical: silently violated invariant causing corruption/security exposure | Important: weak boundary causing future bugs | Minor: expressiveness/naming/needless type ceremony}}
+- Evidence: {{file:line and observed problem}}
+- Invariant: {{rule and concrete call that can violate it}}
+- Correction: {{concrete recommendation}}
 
-End the returned report with exactly one valid JSON line, copying the full
-candidate result and review-input identities byte-for-byte:
-`SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"type-design","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}`.
+End the returned report with exactly one unfenced valid JSON line, copying both
+full identities byte-for-byte:
+SDLC_SKILLS_SPECIALIST_RESULT={"candidate":"{{exact result identity}}","context":"{{exact review-input identity}}","axis":"type-design","verdict":"{{clear | findings | inconclusive}}","report":"{{location or returned directly}}"}
+````
