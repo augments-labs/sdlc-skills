@@ -323,11 +323,10 @@
             </div>
           </div>
 
-          <!-- DRIFT CONNECTOR — only when an artifact is older than what it
-               was written against. Sits directly AFTER the stale node.
-               Text names the exact staleness: which artifact is newer, by
-               how much, and the re-alignment action. Pattern:
-               ⚠ drift — spec rev 2 (edited 08-09) is 5 days newer than the plan (08-04). Re-align before executing. -->
+          <!-- DRIFT CONNECTOR — only for a proven consumed/current normative
+               identity or content mismatch. Place it AFTER the affected node;
+               name the mismatch and re-alignment action. Time alone permits
+               possible staleness or unknown freshness, never proven drift. -->
           <p class="conn">⚠ drift — {{drift-explanation}}</p>
 
           <!-- NODE · Execute — meta carries the rollup N/M tasks; the bar
