@@ -83,7 +83,7 @@
     "split": "validation",
     "should_trigger": false,
     "expect": "debugging",
-    "query": "Interpret these supplied failure logs and stack traces in chat. Explain what they suggest and what evidence is missing; stop before reproducing, probing, repairing, or assessing completion."
+    "query": "Interpret this supplied log in chat: price_test expected 20, got 19; total.py:2 converts each numeric price with int() before summing. Explain what the log suggests and any missing evidence; stop before reproducing, probing, repairing, or assessing completion."
   },
   {
     "split": "validation",
@@ -107,6 +107,6 @@
     "split": "validation",
     "should_trigger": false,
     "expect": "debugging",
-    "query": "The team already reproduced the red suite and supplied the raw diagnosis records. Summarize the recorded cause and remaining uncertainty in chat; do not run new probes, repair code, or assess completion."
+    "query": "Summarize this supplied diagnosis record in chat: decimal-string input 12.50 raises ValueError at int(price); integer-string input 12 returns 12; the input contract requires decimal prices. Preserve uncertainty beyond those observations; do not run new probes, repair code, or assess completion."
   }
 ]
