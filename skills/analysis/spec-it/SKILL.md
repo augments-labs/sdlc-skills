@@ -39,11 +39,10 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 3. Read `references/reference-forms.md` before choosing the first acceptance
    form. Per requirement, choose the cheapest honest form: executable gate,
    disposable mockup, source-fact contract, rubric, or prose.
-4. Executable gate authorized now → write it in the project's real gate and
-   run it. New behavior → fails. Preserved behavior → green now, falsified
-   later by TDD. Interface or mutation authority open → write the
-   observable, intended gate, owner, handoff. Never invent an interface or
-   edit the project silently.
+4. Executable gate → write it as a proposed file beside the spec, never into
+   the project; `test-driven-development` lands and runs it inside the task
+   workspace. Interface or mutation authority open → write the observable,
+   intended gate, owner, handoff. Never invent an interface.
 5. List the edge cases and scenarios that break a naive build: empty input,
    concurrency, unhappy paths.
 6. Per assumption and dependency: stable ID, evidence or state, validation
@@ -83,8 +82,8 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 
 - A retired requirement ID reused for new work silently repoints every earlier
   citation of it: test names, review comments, out-of-scope links.
-- A preservation criterion starts green, not red; making it fail first breaks
-  working code at spec time.
+- A gate written into the project while specifying lands in whichever checkout
+  is open, before any task workspace exists.
 
 ## Common mistakes
 

@@ -45,8 +45,10 @@ happens to the branch.
 
 ## Step 2: Set up the workspace
 
-**REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. Fill its record from the
-workspace's own commands.
+1. Record the approved plan directory by absolute path; read and mirror the
+   plan only there.
+2. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. Fill its record from
+   the workspace's own commands.
 
 ## Step 3: Check the plan contract
 
@@ -137,7 +139,6 @@ authoritative workspace, in order:
 | "All tasks are done, so the plan is done" | Tasks are done inside the plan. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "The user said not to ask per action, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision and asks its own question. |
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
-| "Verified at the last task, no need to rerun" | Evidence binds to a state. The integrated revision is a new state. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
 | "Task done — I'll check in before the next" | `done` is a ledger entry, not a decision point. Take the next task. |
 
@@ -145,6 +146,8 @@ authoritative workspace, in order:
 
 - A task file edited after approval leaves the index unchanged; only the
   printed version moves.
+- A workspace created from HEAD lacks an uncommitted plan, or holds an older,
+  unapproved committed copy.
 
 ## Failures and the circuit breaker
 

@@ -6,15 +6,17 @@ for what it actually contains today; never point to a future file as if it exist
 
 ## 1. Executable gate
 
-**Use now when** observable inputs/outputs are settled, the project may be
-mutated, and the artifact will run through its real gate.
+**Use when** observable inputs/outputs are settled and the project's own gate
+command can run the artifact once it lands.
 
 - New behavior: the criterion fails because behavior is missing—not from import,
   syntax, runner, `skip`, or `todo`.
 - Preserved behavior: the independent criterion starts green. During TDD it must
   be deliberately diverged, observed red, restored, then kept green.
 - Assert observables, never an implementation not yet designed.
-- Put it where the project's own command runs it and execute that command.
+- Write it as a proposed file beside the spec, never into the project, and name
+  the project path its gate command will run it from. `test-driven-development`
+  lands and runs it inside the task workspace.
 
 If any precondition is absent, name the intended observable, gate owner, and
 handoff in the spec. Do not create a guessed test merely to avoid prose.
@@ -99,5 +101,10 @@ For each requirement, record one of:
 {{open decision or authorization}}
 ```
 
-Before approval, resolve every claimed path and run every present executable
-artifact. A future gate stays visibly future.
+```markdown
+**Proposed gate:** `{{file beside the spec}}` — lands at `{{project path}}`
+through `test-driven-development`; not yet run
+```
+
+Before approval, resolve every claimed path and run every executable artifact
+already in the project. A proposed or future gate stays visibly unrun.
