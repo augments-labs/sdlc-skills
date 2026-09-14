@@ -23,17 +23,23 @@ repository whose branch is being finished.
 Options:
   --base REF     Compare against REF instead of the detected base.
   --limit N      Cap each file/commit list at N entries (default: 50).
-                 Counts are always exact; only the listings are capped.
+                 Counts are exact when known; only the listings are capped.
   --full         No cap on listings. May produce large output.
   --help         Show this message.
 
 Output:
   JSON on stdout, diagnostics on stderr. Every list is accompanied by an
-  exact count, so a truncated listing never understates the real total.
+  exact count, so a truncated listing never understates the real total. A
+  count the script cannot compute is null, never 0.
 
   Key fields:
     base.resolved        false when the base is ambiguous — integration stops
     head.detached        true when there is no branch to push
+    candidate.id         digest over root, branch, HEAD, base, dirty.digest,
+                         published, and the unpushed commit count;
+                         the discard token, and it changes with any of them
+    candidate.commit_count, candidate.unpushed_commit_count, candidate.commits
+                         null when base.resolved is false
     candidate.published  true when commits already exist on a remote ref;
                          rewriting them needs separate direct permission
     dirty.*_count        staged / unstaged / untracked, counted separately
@@ -184,10 +190,16 @@ digest="$( { git rev-parse 'HEAD^{tree}' 2>/dev/null
            } | sha )"
 
 # --- candidate commits --------------------------------------------------------
-commits=""; commits_n=0
-if [ "$base_resolved" = 1 ] && [ -n "$head_sha" ]; then
-  commits="$(git log --format='%h %s' "$base_sha..HEAD" 2>/dev/null)"
-  commits_n="$(printf '%s\n' "$commits" | count_lines)"
+# With no resolved base there is nothing to count against: report null, never
+# 0, so a discard block cannot present "no unique commits" it never computed.
+commits=""; commits_n=null; commits_json=null
+if [ "$base_resolved" = 1 ]; then
+  commits_n=0; commits_json='[]'
+  if [ -n "$head_sha" ]; then
+    commits="$(git log --format='%h %s' "$base_sha..HEAD" 2>/dev/null)"
+    commits_n="$(printf '%s\n' "$commits" | count_lines)"
+    commits_json="$(printf '%s\n' "$commits" | jarray)"
+  fi
 fi
 
 # Published: are the candidate's commits already on a remote-tracking ref?
@@ -199,11 +211,16 @@ if [ -n "$head_sha" ]; then
 fi
 # Commits unique to this candidate and on NO remote ref — the ones a discard
 # would actually destroy.
-unpushed_n=0
-if [ "$commits_n" -gt 0 ]; then
-  unpushed_n="$(git rev-list --no-walk HEAD 2>/dev/null >/dev/null; \
-                git rev-list "$base_sha..HEAD" --not --remotes 2>/dev/null | count_lines)"
+unpushed_n=null
+if [ "$base_resolved" = 1 ]; then
+  unpushed_n=0
+  if [ "$commits_n" -gt 0 ]; then
+    unpushed_n="$(git rev-list "$base_sha..HEAD" --not --remotes 2>/dev/null | count_lines)"
+  fi
 fi
+
+# The discard token: any change to what a discard would destroy changes it.
+cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$published" "$unpushed_n" | sha)"
 
 stashes="$(git stash list 2>/dev/null | count_lines)"
 
@@ -234,9 +251,10 @@ printf '    "unstaged": %s,\n'  "$(printf '%s\n' "$unstaged"  | jarray)"
 printf '    "untracked": %s\n'  "$(printf '%s\n' "$untracked" | jarray)"
 printf '  },\n'
 printf '  "candidate": {\n'
+printf '    "id": %s,\n' "$(jstr "$cand_id")"
 printf '    "commit_count": %s, "published": %s, "unpushed_commit_count": %s,\n' \
   "$commits_n" "$(jbool $published)" "$unpushed_n"
-printf '    "commits": %s\n' "$(printf '%s\n' "$commits" | jarray)"
+printf '    "commits": %s\n' "$commits_json"
 printf '  },\n'
 printf '  "recoverability": {\n'
 printf '    "stash_entries": %s,\n' "${stashes:-0}"
@@ -249,6 +267,7 @@ printf '}\n'
 
 [ "$limit" -gt 0 ] && {
   for pair in "staged:$staged_n" "unstaged:$unstaged_n" "untracked:$untracked_n" "commits:$commits_n"; do
+    case "${pair##*:}" in ''|*[!0-9]*) continue;; esac
     [ "${pair##*:}" -gt "$limit" ] && \
       echo "note: ${pair%%:*} listing truncated to $limit of ${pair##*:}; the count is exact. Use --full for all." >&2
   done
