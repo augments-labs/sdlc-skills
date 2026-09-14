@@ -91,12 +91,10 @@ The conformance record is `docs/agent-skills-conformance.md`.
    in instead of running something —
    `skills/common/writing-skills/references/testing.md` draws that line and owns
    the rest.
-5. **Every body you touch meets the Editing rules.** It has a `## Gotchas`
-   section; it names every support file with a load condition, as in
-   `Read references/{{file}} when {{condition}}`; and it prescribes exactly only
-   fragile operations — git mutations, dispatch, evidence binding, destructive
-   actions. `writing-skills` states the rules; `check-skill.sh --strict` reports
-   the ones a script can see.
+5. **A body you touch meets the current `writing-skills` format in full**,
+   including its Gotchas, load-condition, and fragile-operation rules. Run
+   `check-skill.sh --strict` on each skill you edit: `validate-skills.sh` reports
+   those checks as warnings, so CI does not fail on them.
 
 ## Verify against the gate
 
@@ -167,8 +165,8 @@ the skill actually does. Match the run to what changed:
   probe (three pressure prompts, with and without the section), put the result
   in the PR, and commit nothing. Hard stops and destructive-action guards are
   never cut.
-  Permanent behavioral scenarios exist only for a chain in `docs/chains.toml`
-  that has none.
+  Permanent behavioral scenarios exist only for a chain of skills that has
+  none; `docs/chains.toml` lists those chains once the chain-budget gate adds it.
 - **Description (the trigger):** the evals lab's triggering runner *optimizes* a
   description; it does not certify one, and no edit is held open waiting for it.
   Reach for it when you are tuning that description — the lab's descriptions

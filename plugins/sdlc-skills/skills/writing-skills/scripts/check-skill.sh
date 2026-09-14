@@ -105,6 +105,9 @@ fmval() { # $1 key
   ' | tr '\n' ' ' | sed 's/^[>|][-+]*//; s/^["'\'']//; s/["'\''][[:space:]]*$//; s/[[:space:]]\+/ /g; s/^ //; s/ $//'
 }
 
+# A support-file path as the policy checks read it; [.] keeps it escape-free for awk -v.
+support_path='(references|assets)/[A-Za-z0-9._/-]*[A-Za-z0-9_-][.][A-Za-z0-9]+'
+
 # --- SKILL.md and frontmatter -------------------------------------------------
 if [ ! -f "$skill" ]; then
   finding fail skill-md "no SKILL.md in $dir"
@@ -156,8 +159,8 @@ else
     yaml_bad=""
     case "$draw" in
       ''|'>'*|'|'*) ;;
-      '"'*) printf '%s\n' "$draw" | grep -qE '^"([^"\\]|\\.)*"[[:space:]]*$' || yaml_bad="the double-quoted value does not close at the end of its line";;
-      "'"*) printf '%s\n' "$draw" | grep -qE "^'([^']|'')*'[[:space:]]*\$" || yaml_bad="the single-quoted value does not close at the end of its line";;
+      '"'*) grep -qE '^"([^"\\]|\\.)*"[[:space:]]*$' <<<"$draw" || yaml_bad="the double-quoted value does not close at the end of its line";;
+      "'"*) grep -qE "^'([^']|'')*'[[:space:]]*\$" <<<"$draw" || yaml_bad="the single-quoted value does not close at the end of its line";;
       '*'*|'&'*|'['*|'{'*|'#'*|'!'*|'%'*|'@'*|'`'*) yaml_bad="an unquoted value cannot start with \`${draw:0:1}\`";;
       *': '*|*' #'*|*:) yaml_bad="an unquoted value cannot contain \`: \` or \` #\`";;
     esac
@@ -173,7 +176,7 @@ else
 $(printf '%s\n' "$fm" | awk '/^[A-Za-z_][A-Za-z0-9_-]*:/ {sub(/:.*/,""); print}')
 KEYS
 
-    if printf '%s\n' "$fm" | grep -q '^compatibility:'; then
+    if grep -q '^compatibility:' <<<"$fm"; then
       compat="$(fmval compatibility)"
       [ "${#compat}" -le 500 ] || policy compatibility-length "compatibility is ${#compat} characters; at most 500"
     fi
@@ -224,16 +227,15 @@ KEYS
     [ -n "$hit" ] || continue
     policy reference-load-condition "line ${hit%%:*} names a support file with no load condition after it (when, if, before, after): ${hit#*:}"
   done <<HITS
-$(awk -v e="${fm_end:-0}" '
+$(awk -v e="${fm_end:-0}" -v pat="$support_path" '
   NR<=e { next }
   {
-    rest = $0; named = 0; bad = 0
-    while (match(rest, /(references|assets)\/[A-Za-z0-9._\/-]*[A-Za-z0-9_-]\.[A-Za-z0-9]+/)) {
-      named = 1
-      rest = substr(rest, RSTART + RLENGTH)
-      if (tolower(rest) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) bad = 1
+    # A condition after the last named file also follows every earlier one, so
+    # one split tests the whole line in linear time.
+    n = split($0, parts, pat)
+    if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
+      snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet); print NR ":" snippet
     }
-    if (named && bad) { snippet = substr($0, 1, 100); gsub(/[\t\r]/, " ", snippet); print NR ":" snippet }
   }' "$skill")
 HITS
 
@@ -289,12 +291,12 @@ fi
 # third file is missed. Always a warning: the chain may be deliberate.
 while IFS= read -r sf; do
   [ -n "$sf" ] || continue
-  srel="${sf#"$dir"/}"
+  srel="${sf#"$dir"/}"; srel="${srel//[[:cntrl:]]/ }"
   while IFS= read -r m; do
     [ -n "$m" ] && [ "$m" != "$srel" ] && [ -e "$dir/$m" ] || continue
     finding warn reference-depth "$srel names $m; keep support files one level deep from SKILL.md"
   done <<NAMES
-$(grep -oE '(references|assets)/[A-Za-z0-9._/-]*[A-Za-z0-9_-]\.[A-Za-z0-9]+' "$sf" 2>/dev/null | sort -u)
+$(grep -oE -- "$support_path" "$sf" 2>/dev/null | sort -u)
 NAMES
 done <<SUPPORT
 $(find "$dir/references" "$dir/assets" -type f -name '*.md' 2>/dev/null | sort)

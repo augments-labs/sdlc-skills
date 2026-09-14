@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: "Use when creating or editing a skill in this library — its format, its sibling files, and how to prove it works. Fires on add a skill for X and this skill isn't triggering. Skip using a skill."
+description: "Writes and edits the skills in this library: the SKILL.md format, descriptions, Gotchas, support files, and the proof that a skill changes what an agent does. Use when adding a skill, changing or fixing one, or when a skill is not triggering. Skip using a skill."
 ---
 
 # Writing Skills
@@ -29,7 +29,8 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    every field. The description says what the skill does and when to use it, in
    the user's words, with the keywords an agent matches a task on — 1 to 1,024
    characters, no word cap, no `Fires on` list, no summary of the steps. Quote
-   it.
+   it. A description that still carries a `Fires on` list predates this rule;
+   rewrite it to this shape when you edit that skill.
 2. **House limits: at most 500 body lines and under 5000 estimated tokens.**
    These enforce the concise-body recommendations. Most capability skills land
    near 80–120 lines; a body past ~200 should justify itself. Intent + procedure only; cut
@@ -100,8 +101,8 @@ debugging, and receiving review. For these only:
    Passing samples limit a behavior claim; they do not erase reported failures.
 2. Start from real expertise: extract the procedure from a task done by hand,
    or synthesize it from project artifacts — runbooks, review comments, fixes.
-   Before cutting a heavily used skill, read transcripts of it on real tasks and
-   cut or clarify the steps agents wasted first.
+   Before editing a heavily used skill, run it on three real tasks, read the
+   transcripts, and cut or clarify the steps agents wasted first.
 3. An exact fragile sequence → a tested script, not prose.
 4. Split activities only when each is independently invokable. Otherwise one
    cohesive skill.
@@ -129,7 +130,8 @@ debugging, and receiving review. For these only:
 - **`scripts/check-skill.sh`** — checks a skill directory with the library's
   format and policy profile: required fields, names, sizes, selected paths,
   presentation, bundled script help, and the policy checks (`## Gotchas`, load
-  conditions, description YAML, frontmatter fields) — warnings by default,
+  conditions, description YAML, frontmatter fields, compatibility length) —
+  warnings by default,
   failures with `--strict`. Its field extraction is not a complete
   YAML parser and does not validate all optional metadata. It executes candidate
   scripts with `--help`; inspect untrusted scripts or isolate them first.
@@ -153,9 +155,10 @@ debugging, and receiving review. For these only:
 
 ## Gotchas
 
-- An unquoted `description` containing `: `, or starting with `"`, `'`, `*`,
-  `&`, `[`, `{`, or `#`, is invalid YAML, and a strict parser drops the skill
-  without an error. Quote it; `check-skill.sh` reports `description-yaml`.
+- An unquoted `description` containing `: `, or starting with a YAML indicator
+  such as `*`, `&`, `[`, `{`, or `#`, is invalid YAML, and a strict parser drops
+  the skill without an error. Quote it; `check-skill.sh` reports
+  `description-yaml`.
 - A support file named without a load condition gets loaded on every run or on
   none; `check-skill.sh` reports `reference-load-condition`.
 - A support file that names another support file gets read partially, so the

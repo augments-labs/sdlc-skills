@@ -51,11 +51,15 @@ jobs:
             echo "## Reference validator cross-check"
             echo
             for dir in skills/*/*/; do
-              if out=$(skills-ref validate "$dir" 2>&1); then
+              case "$dir" in *[!a-z0-9/-]*) echo "- skipped: a directory name outside [a-z0-9-]"; continue;; esac
+              if out=$(agentskills validate "$dir" 2>&1); then
                 echo "- valid: \`$dir\`"
               else
                 echo "- differs: \`$dir\`"
-                printf '%s\n' "$out" | sed 's/^/  /'
+                echo
+                echo '````text'
+                printf '%s\n' "$out" | tr -d '`'
+                echo '````'
               fi
             done
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee -a "$GITHUB_STEP_SUMMARY"

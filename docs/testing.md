@@ -81,5 +81,4 @@ The regression net is the lab's behavioral scenarios and description query
 sets, run once before and once after each release. A release is compared with
 the baseline campaign record, `results/{{date}}-baseline-{{version}}/summary.md`;
 a scenario that passed there and fails on the candidate stops the release.
-Permanent scenarios are added only for a chain in `docs/chains.toml` that has
-none.
+Permanent scenarios are added only for a chain of skills that has none.

@@ -36,11 +36,15 @@ under a stricter house rule is not automatically a standard violation.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 169 (34% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~1981 |
+| Body lines | At most 500; longest is 172 (34% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker; largest is ~2018 |
 | Typical body size | Aim near 80–120 lines; longer discipline bodies need relevant behavioral evidence |
 | Presentation | The checker warns on long undifferentiated prose; keep readable sentences |
 | Supporting paths | Resolve inside the installed skill and keep direct references shallow |
+| Gotchas | `gotchas-present` policy check: the body has a `## Gotchas` section |
+| Support-file load conditions | `reference-load-condition` policy check: a named `references/` or `assets/` file carries when, if, before, or after |
+| Support-file depth | `reference-depth` warning: a support file names another support file |
+| Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
 | Fill-in templates | Put them in `assets/`; keep explanatory guidance in `references/` |
 
 `check-skill.sh` estimates tokens as words × 1.3. The CI drift gate,

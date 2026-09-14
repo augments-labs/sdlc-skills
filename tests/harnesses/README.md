@@ -44,5 +44,5 @@ claiming support is in `docs/harness-support.md`.
 
 ## Regression net
 
-Plugin smoke runs whenever an adapter changes. Whether a harness still activates
+Run plugin smoke whenever an adapter changes. Whether a harness still activates
 skills is part of the lab's regression net, run before and after each release.
