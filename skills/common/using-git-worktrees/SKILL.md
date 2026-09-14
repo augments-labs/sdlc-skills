@@ -8,6 +8,8 @@ NEVER START REPO EDITS IN A SHARED CHECKOUT — one where Step 1 reports
 `git-dir` equal to `common-dir` — WHATEVER BRANCH IT IS ON. Create or enter a
 dedicated workspace — a git worktree unless the user or project says otherwise —
 *before* the first edit, unless the user explicitly okayed the current checkout.
+Writing the `.sdlc-skills/` artifact trail (briefs, specs, designs, plans) is
+not a repo edit here; product code, tests, and project gates are.
 </EXTREMELY-IMPORTANT>
 
 # Using Git Worktrees
@@ -122,8 +124,7 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    inspection, pre/post capture, each red cell bound. Red cell you cannot
    attribute, or an effect you did not contain → stop work.
 4. Hand the completed `assets/workspace-record.md`, after the baseline, to
-   whatever invoked this skill: identity, inventory, external gate inputs, baseline evidence and
-   side effects, runtime identities, task-owned resources.
+   whatever invoked this skill.
 
 ## Pressure points
 
@@ -135,7 +136,6 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
 | "I'll make the branch after the first edit" | After the edit, you may already have mixed unrelated state. |
 | "It looks like a plain checkout" | Looking is not detecting. `git-dir` against `common-dir`, plus the superproject check, is the inspection. |
 | "The harness has a worktree tool, but plain git is simpler" | The native tool owns the path, the ignore rule, and cleanup. A hand-made worktree beside it is a second thing to clean up. |
-| "`worktree add` failed in the sandbox, so I'll work in place" | Failing to isolate grants nothing. Report it; the user decides what the current checkout may carry. |
 
 ## Step 5: Checkpoint while you work
 
@@ -170,3 +170,5 @@ authority.
 
 - Being able to run `git commit` is not authority to commit: a commit runs hooks
   and signing and shapes history.
+- A gate written during planning lands on whatever branch the shared checkout
+  is on.
