@@ -19,8 +19,9 @@ diagnosis, not permission to change code.
 
 ## Step 1: Freeze
 
-1. Open `assets/audit-report.md`. Fill *What was frozen* first: identity,
-   goal, path boundary, guarantees in force, admissible evidence.
+1. Open `assets/audit-report.md` before the inventory. Fill *What was
+   frozen* first: identity, goal, path boundary, guarantees in force,
+   admissible evidence.
 2. Predeclare the report path
    `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`, coordinator-owned,
    outside the audited target's identity. Target drifts → stop or restart.
@@ -34,11 +35,11 @@ diagnosis, not permission to change code.
 
 ## Step 2: Challenge read-only
 
-1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` for each
-   exact partition. Dispatch it; record tool-issued IDs and terminal outcomes.
-   A name or prompt is not dispatch.
-2. No independent action available → write that an inline pass ran. An
-   explicitly requested independent audit stays pending.
+1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` before
+   dispatching each exact partition. Dispatch it; record tool-issued IDs and
+   terminal outcomes. A name or prompt is not dispatch.
+2. Empty, refused, or unavailable → follow the no-dispatch rule in
+   `dispatching-parallel-agents` Step 2.
 3. Fill the reconciliation block before any finding: every partition,
    exclusion, cross-boundary candidate, duplicate, failed attempt,
    inconclusive area.
@@ -58,6 +59,14 @@ diagnosis, not permission to change code.
    candidate.
 3. Verify the report's coverage, then stop. Review or branch finishing runs
    only if the user separately asks to ship the report.
+
+## Gotchas
+
+- Code with no static caller can still be reached through reflection,
+  registration, or configuration. A search that finds no caller has not proved
+  a removal safe.
+- A reconciliation that lists no failed or inconclusive area reads as full
+  coverage. Count what was not examined, or a silent gap passes as clean.
 
 ## Common mistakes
 
