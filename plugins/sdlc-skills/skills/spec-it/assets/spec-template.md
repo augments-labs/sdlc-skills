@@ -5,7 +5,8 @@ found", which is a claim.
 ```markdown
 # Spec: {{topic}}
 
-- **Normative version:** {{immutable content identity}}
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this artifact's own text as issued
 - **Predecessor:** {{prior normative identity, or none; a successor carries a
   per-requirement added / changed / removed / preserved delta}}
 - **External decision ledger:** {{ledger path: this spec's path with .ledger.md
@@ -14,6 +15,25 @@ found", which is a claim.
   lifecycle never mutates this spec}}
 - **Decision owner:** {{one accountable owner, OR the required approvers, the
   conflict resolver, and the decision rule}}
+
+## High-risk classification
+
+Classify before implementing, on risk evidence rather than line count. The
+ordinary route is ordinary feature planning and line-by-line review; an
+answer is off it when the ordinary route cannot make those surfaces
+reviewable and recoverable.
+
+- Can independent humans or gates inspect the result (**reviewability**)?
+  {{answer and evidence}}
+- Must behavior, compatibility, data, or operations match (**preservation**)?
+  {{answer and evidence}}
+- How many owners, consumers, platforms, or modes change (**breadth**)?
+  {{answer and evidence}}
+- Can data, security, concurrency, resources, cutover, or recovery fail
+  independently (**failure surfaces**)? {{answer and evidence}}
+- **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
+  the ordinary route, or the user marking the work high-risk, makes it
+  high-risk. Reclassify when inputs change.
 
 ## Problem
 

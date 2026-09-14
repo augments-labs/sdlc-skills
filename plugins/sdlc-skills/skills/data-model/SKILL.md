@@ -35,11 +35,10 @@ Open `assets/data-model-section.md` before the steps below fill it in.
    risk. Omitted lens → a skip record with that row's fields. Never drop one
    as "inapplicable" without it.
 2. Anything persists → note denormalized or cached data with source of truth,
-   update boundary, drift repair. Existing-model change on the ordinary
-   route by `migration-strategy`'s four questions (reviewability,
-   preservation, breadth, failure surfaces) → define migration,
-   mixed-version, rollback. Any answer off the ordinary route → record domain
-   constraints; `migration-strategy` owns the contract.
+   update boundary, drift repair. Existing-model change → fill the classification block.
+   On the ordinary route → define migration, mixed-version, rollback. Any
+   answer off the ordinary route → record domain constraints;
+   `migration-strategy` owns the contract.
 3. Trace representative reads, writes, transitions, concurrent operations,
    deletion, existing-data migration. Record the runnable query and result
    when one exists. Otherwise name the future evaluator and owner; never
@@ -54,7 +53,7 @@ Open `assets/data-model-section.md` before the steps below fill it in.
 2. Present:
 
    ```text
-   {{Section}} {{path}} — version {{identity}}
+   {{Section}} {{path}} — version {{identity (per template)}}
    {{summary lines}}
 
    1. Approve and hand off to planning

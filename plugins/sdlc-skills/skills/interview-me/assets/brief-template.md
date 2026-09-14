@@ -1,7 +1,9 @@
 # Alignment Brief: {{topic}}
 
 - **Status:** {{draft | proposed; lifecycle stays external}}
-- **Normative version:** {{immutable content identity}}
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object --stdin` over this brief, from the top of the file down to its
+  first `##` heading
 - **Predecessor:** {{prior normative identity or none; proposal only links it}}
 - **Decision owner:** {{person or accountable role}}
 - **External decision ledger:** {{ledger path: this brief's path with .ledger.md

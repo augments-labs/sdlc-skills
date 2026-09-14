@@ -7,7 +7,9 @@ mapping gets a stable ID, and a successor never recycles one.
 ## Data model
 
 **Status:** {{draft | proposed; decision state stays external}}
-**Normative version:** {{immutable content identity of this section}}
+**Identity:** recorded in the ledger row, never here: the first 7 characters of
+`git hash-object --stdin` over this section, from its heading to the next `##`
+heading, without trailing blank lines
 **Predecessor:** {{prior normative identity, or none; a proposal only links it}}
 **Approval rule:** {{one accountable decision owner, or the required approvers
 plus the conflict resolver and the rule that decides}}
@@ -98,4 +100,23 @@ Trace real operations rather than asserting the model works.
 | {{representative read, write, transition, concurrent operation, deletion, or existing-data migration}} | {{what was actually run, or "none exists yet"}} | {{raw result}} | {{who owns the future evaluator, where none ran}} |
 
 Never present a named future evaluator as though it had already run.
+
+## High-risk classification
+
+Classify before implementing, on risk evidence rather than line count. The
+ordinary route is ordinary feature planning and line-by-line review; an
+answer is off it when the ordinary route cannot make those surfaces
+reviewable and recoverable.
+
+- Can independent humans or gates inspect the result (**reviewability**)?
+  {{answer and evidence}}
+- Must behavior, compatibility, data, or operations match (**preservation**)?
+  {{answer and evidence}}
+- How many owners, consumers, platforms, or modes change (**breadth**)?
+  {{answer and evidence}}
+- Can data, security, concurrency, resources, cutover, or recovery fail
+  independently (**failure surfaces**)? {{answer and evidence}}
+- **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
+  the ordinary route, or the user marking the work high-risk, makes it
+  high-risk. Reclassify when inputs change.
 ```

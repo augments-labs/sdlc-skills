@@ -75,7 +75,7 @@ skill that owns eliciting the still-open inputs.
 3. Present and end the turn:
 
    ```text
-   Brief {{path}} — version {{identity}}
+   Brief {{path}} — version {{identity (per template)}}
    Goal: {{one line}}  Decisions: {{n}}  Non-goals: {{n}}  Open risks: {{n}}
 
    1. Approve

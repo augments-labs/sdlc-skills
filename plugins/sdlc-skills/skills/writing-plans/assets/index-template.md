@@ -1,9 +1,11 @@
 # Plan: {{topic}}
 
 - **Status:** `draft | proposed` (decision and execution state stay external)
-- **Normative version:** {{immutable identity of this index with every task
-  checkbox marker and status normalized to `[ ]` and `todo`, plus every task
-  contract}}
+- **Normative version:** this plan's identity, computed by the rule on the next
+  line; approval, mode, and evidence bind to it, never to a label
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this index, with every task checkbox and state label
+  normalized to `[ ]` and `todo`, followed by every task file in index order
 - **Predecessor:** {{prior normative identity or none; a proposal only links it}}
 - **Approval rule:** {{one accountable decision owner, or required approvers plus
   conflict resolver and decision rule}}
@@ -68,6 +70,25 @@ only mutable projection.
 **Brief:** {{link to the alignment brief from interview-me, if any}}   ·   **Created:** {{date}}
 **References:** {{paths to artifacts the spec shipped — failing tests, mockup pages, a reference implementation, rubrics — or "none". Tasks point at these; they are never restated in prose.}}
 
+## High-risk classification
+
+Classify before implementing, on risk evidence rather than line count. The
+ordinary route is ordinary feature planning and line-by-line review; an
+answer is off it when the ordinary route cannot make those surfaces
+reviewable and recoverable.
+
+- Can independent humans or gates inspect the result (**reviewability**)?
+  {{answer and evidence}}
+- Must behavior, compatibility, data, or operations match (**preservation**)?
+  {{answer and evidence}}
+- How many owners, consumers, platforms, or modes change (**breadth**)?
+  {{answer and evidence}}
+- Can data, security, concurrency, resources, cutover, or recovery fail
+  independently (**failure surfaces**)? {{answer and evidence}}
+- **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
+  the ordinary route, or the user marking the work high-risk, makes it
+  high-risk. Reclassify when inputs change.
+
 ## Trace
 
 Include every applicable approved UI flow, state, decision, condition and
@@ -98,7 +119,7 @@ Mirror the external ledger as a checkbox plus its exact state label:
   `[ ] cancelled`, and `[ ] superseded` do not count toward completion.
 
 This projection is navigation, not evidence. Normalize it to `[ ] todo` when
-computing the normative version. On mismatch, the external ledger wins.
+computing the identity. On mismatch, the external ledger wins.
 
 The external ledger is the single source of truth for progress. Each row binds
 plan version, task ID, attempt/result identity, evaluator evidence, owner/time,

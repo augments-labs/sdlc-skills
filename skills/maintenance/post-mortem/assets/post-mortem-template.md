@@ -4,9 +4,11 @@ Copy this structure and replace every placeholder. Keep it factual and
 blameless: people and roles may appear as owners or timeline actors, but causes
 describe conditions and controls rather than moral judgment.
 
-Draft the analysis, challenge it, then issue one immutable version. Compute its
-identity over the canonical analysis/action definitions below, excluding its
-own identity slot and every later review/approval/action/effectiveness state.
+Draft the analysis, challenge it, then issue one immutable version. Its
+identity is the first 7 characters of `git hash-object` on this file as issued;
+record it in the ledger row, never in this file. Everything that happens after
+issue — action states, proof and rollout results, effectiveness verdicts — goes
+in ledger rows, never into this file; its cells stay `pending` here.
 Any correction or normative action change creates a successor with predecessor,
 stable-ID delta, affected consumers, and new approval; it never edits the issued
 version. Keep mutable lifecycle evidence in an append-only external ledger.
@@ -19,7 +21,8 @@ tool, data, secret, network, mutation, publication, storage, or cleanup access.
 
 ## Control and evidence handling
 
-- **Analysis identity/predecessor/delta:** `{{digest; predecessor or none; stable changes}}`
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of `git hash-object` over this file as issued
+- **Predecessor/delta:** `{{predecessor identity or none; stable changes}}`
 - **Incident/work-cycle ID:** `{{identity}}`
 - **External lifecycle ledger identity/location:** `{{outside this analysis}}`
 - **Scope and exclusions:** `{{boundary}}`

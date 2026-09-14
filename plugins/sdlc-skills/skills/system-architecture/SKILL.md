@@ -54,14 +54,13 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it. Fill the header: identity,
    predecessor, approval rule, ledger location, stable ID delta.
-2. Answer `migration-strategy`'s four questions (reviewability,
-   preservation, breadth, failure surfaces) and record the answers. Any off
-   the ordinary route, or the user marks the work high-risk → run
-   `assets/design-review.md` before presenting. Blocking.
+2. Fill the classification block. Any answer off the ordinary route, or the
+   user marks the work high-risk → run `assets/design-review.md` before
+   presenting. Blocking.
 3. Present:
 
    ```text
-   {{Section}} {{path}} — version {{identity}}
+   {{Section}} {{path}} — version {{identity (per template)}}
    {{summary lines}}
 
    1. Approve and hand off to planning

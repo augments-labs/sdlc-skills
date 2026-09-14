@@ -43,7 +43,7 @@ Open `assets/scope-section.md` before starting; each step fills its section.
 2. Present:
 
    ```text
-   Scope {{path}} — version {{identity}}
+   Scope {{path}} — version {{identity (per template)}}
    In: {{n}} capabilities  Out: {{n}}  MVP: {{one line}}  Assumptions: {{n}} owned
 
    1. Approve this boundary

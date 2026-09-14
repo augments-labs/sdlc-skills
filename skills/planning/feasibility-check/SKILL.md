@@ -42,7 +42,7 @@ section.
 3. Present:
 
    ```text
-   Feasibility {{path}} — version {{identity}}
+   Feasibility {{path}} — version {{identity (per template)}}
    Recommendation: {{go | no-go | go-if}}
    Top risks: {{list with confidence}}
    Conditions: {{each with owner and evaluator}}
