@@ -5,11 +5,6 @@ the plugin is installed and discovered. `tests/run-plugin-smoke.sh` sources the
 file for the harness it is given; nothing executes these files directly, and
 none of them decides anything — judging an observation belongs to the runner.
 
-The live half of each harness — invoking the CLI, detecting an activation in its
-stream, reading what a run cost, binding a tier to a model — lives with the live
-runners in the evals lab,
-[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
-
 ## The contract
 
 ```text
@@ -38,11 +33,10 @@ into the throwaway home.
 
 ## Adding a harness
 
-Add `{{name}}.sh` implementing the contract above, and its launcher in the lab.
+Add `{{name}}.sh` implementing the contract above.
 Bindings alone do not make a harness supported — what one has to prove before
 claiming support is in `docs/harness-support.md`.
 
 ## Regression net
 
-Run plugin smoke whenever an adapter changes. Whether a harness still activates
-skills is part of the lab's regression net, run before and after each release.
+Run plugin smoke whenever an adapter changes.

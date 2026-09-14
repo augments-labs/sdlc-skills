@@ -38,7 +38,7 @@ Before you open a PR here, you MUST:
 1. **Read the PR template** (`.github/PULL_REQUEST_TEMPLATE.md`) and fill every section with specific, true answers — not placeholders, not a summary of what you *would* do.
 2. **Search PRs and issues — open *and* closed — for the same problem.** If it already exists or was already rejected, stop and tell the human you're working with; don't open a duplicate. If a prior attempt was closed, say what is different here.
 3. **Confirm it belongs in core** — see *What belongs here*.
-4. **Meet every bullet in *Contributing*** — a real problem you actually hit, one change, the gate re-run with what it actually returned, behaviour-shaping changes proved, and the authoring environment disclosed.
+4. **Meet every bullet in *Contributing*** — a real problem you actually hit, one change, the gate re-run with what it actually returned, behaviour-shaping changes explained, and the authoring environment disclosed.
 5. **Show the human the complete diff** for explicit approval before submitting.
 
 If any check fails, do not open the PR. Explain why it would be rejected and what would have to change first.
@@ -53,9 +53,7 @@ portable engineering guidance.
 
 `docs/` is website documentation for the current library contract. Never put
 run transcripts, failure records, pass-rate anecdotes, superseded behavior, or
-investigation notes there. Keep reproducible scenarios and campaign records in
-the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals); keep
-ephemeral results in the review workflow or private notes.
+investigation notes there. Keep ephemeral results in the review workflow or private notes.
 
 **The Agent Skills standard outranks every rule here.** Where this file, or
 anything under `docs/`, conflicts with agentskills.io, the standard wins and the
@@ -70,10 +68,7 @@ The conformance record is `docs/agent-skills-conformance.md`.
    The same rule governs commit messages, PR descriptions, and release notes:
    state the change and its evidence; never attribute it to another repository,
    project, or library it may resemble. (Disclosing the authoring environment,
-   required under *Contributing*, is not attribution and stays.) This project's
-   own evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), is not
-   an external reference: `docs/`, `README.md`, and contributor files link it;
-   shipped skills never name it.
+   required under *Contributing*, is not attribution and stays.)
 2. **Model- and harness-agnostic.** Refer to models by capability tier —
    `small | medium | large` — never vendor names (haiku, sonnet, gpt, gemini, …).
    Don't assume a specific harness's tooling or paths. Each harness binds
@@ -84,13 +79,9 @@ The conformance record is `docs/agent-skills-conformance.md`.
    compressing prose into noun stacks, and why discipline skills run longer are
    all stated there, once. Invoke that skill before authoring or editing one —
    this file does not restate it, so a copy here cannot drift from it.
-4. **Prove behavior-shaping changes.** If you never watched an agent fail without
-   the skill, you do not know it prevents the right failure. Live runs happen in
-   the evals lab; the PR cites the campaign record and the plugin commit it
-   pinned. Where there is no failure to reproduce, say which class the skill is
-   in instead of running something —
-   `skills/common/writing-skills/references/testing.md` draws that line and owns
-   the rest.
+4. **Explain behavior-shaping changes.** A change to what a skill makes an agent
+   do names the failure or contract gap it answers. This repository runs no live
+   agent, so the PR argues from the skill text and the gates.
 5. **A body you touch meets the current `writing-skills` format in full**,
    including its Gotchas, load-condition, and fragile-operation rules. Run
    `check-skill.sh --strict` on each skill you edit: `validate-skills.sh` reports
@@ -114,69 +105,38 @@ It extracts the library's frontmatter subset rather than parsing all YAML, and
 executes bundled scripts with `--help`. See `docs/agent-skills-conformance.md`
 for coverage and effects before checking an unfamiliar skill.
 
-Rule 4 (behavior) has no deterministic gate — that is the honest limit. Live
-runs belong to the evals lab,
-[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), and
-never run here or in CI. Which run answers which question, and how a PR cites its
-campaign record, is `docs/testing.md`. Report the real numbers in the PR,
-failures and inconclusive results included. Which harness produced a run is
-plumbing: leave it out of PR, commit, and release narratives unless it is
-material to the result — a harness-specific failure or adapter bug is exactly
-the case where naming it is the finding.
+Rule 4 (behavior) has no deterministic gate — that is the honest limit. No live
+agent runs in this repository or its CI.
 
 ## Adding a skill
 
 Invoke `writing-skills` and follow its procedure — it owns the template, the
 format, and the checks to run before calling one done. Three things are this
-repository's and are not in there: prove the failure first, pick the phase
+repository's and are not in there: name the failure it answers, pick the phase
 folder from the canonical order in `README.md` (or `common/`), and run
 `scripts/sh/validate-skills.sh`, which adds the house rules on top of the
 standard's.
 
-**Start from failure evidence before authoring.** Record observed sessions,
-current contract gaps, and unmeasured candidates separately. Where a realistic
-scenario can exercise the problem, run it first in the evals lab: `--arm none`
-observes the bare agent, while `--arm red` observes the current library. A
-bare-agent failure does not show that an existing skill fails or that a new
-skill is needed.
-
-A passing sample means the failure was not observed under those conditions. It
-does not erase reported failures, resolve contradictory instructions, or prove
-that a skill is unnecessary. Narrow the measured claim and retain the other
-evidence; do not tune the opening just to obtain RED. Where no behavioral
-failure can be exercised, authoring rule 4 governs the evidence class.
-
-Both library arms install the complete library. Compare the intended change
-under fixed conditions and report all outcomes without attributing the whole
-library's benefit or cost to one skill. `docs/testing.md` owns interpretation.
+**Start from the failure.** Record observed sessions, current contract gaps,
+and unmeasured candidates separately, and name which one the new skill answers.
 
 ## Editing a skill
 
-Changing a skill is changing behaviour, and a skill modification is measured
-before it lands. The measurement that decides is the **behavioural** one — what
-the skill actually does. Match the run to what changed:
+Changing a skill is changing behaviour. This repository runs no live agent, so a
+change is judged on its text and the gates:
 
-- **The always-loaded `SKILL.md` body:** where the change has a failure that can
-  be reproduced, run the smallest existing lab scenario or a temporary
-  before/after probe that exercises it, and report the result. Where it has
-  none, name the class and say so — that is a finding, not a skipped step.
+- **The always-loaded `SKILL.md` body:** name the failure or contract gap the
+  change answers, and run `check-skill.sh --strict` on the skill.
 - **Cutting:** cut by judgement, not word count. Ask of each section:
-  "would the agent get this wrong without this?" When unsure, run a throwaway
-  probe (three pressure prompts, with and without the section), put the result
-  in the PR, and commit nothing. Hard stops and destructive-action guards are
-  never cut.
-  Permanent behavioral scenarios exist only for a chain of skills that has
-  none; `docs/chains.toml` lists those chains.
-- **Description (the trigger):** the evals lab's triggering runner *optimizes* a
-  description; it does not certify one, and no edit is held open waiting for it.
-  Reach for it when you are tuning that description — the lab's descriptions
-  guide owns the loop, what a set must contain, and what a run costs.
+  "would the agent get this wrong without this?" When unsure, keep it and say
+  so in the PR. Hard stops and destructive-action guards are never cut.
+- **Description (the trigger):** follow `writing-skills`' description shape;
+  the collision gate reports a trigger clause another description already carries.
 - **A file under `references/` or `assets/`** (loaded on demand, not under
-  pressure): the always-loaded body is unchanged — no behavioural re-run is
-  owed; say so.
+  pressure): the always-loaded body is unchanged; say so.
 - Never reword carefully-tuned discipline content — rationalization tables,
-  red-flag lists, hard-stops — without re-proving it still holds. An inconclusive
-  result *is* the finding; report it.
+  red-flag lists, hard-stops — without saying in the PR why the new wording holds
+  the same line.
 
 ## What belongs here
 
@@ -192,7 +152,7 @@ For whether a phase's activities are separable or one interleaved pass, see
 
 - **Solve a real problem you actually hit** — not a speculative or theoretical one. "My review agent flagged it" or "this could theoretically break" is not a problem statement.
 - **One change per PR.** Don't bundle unrelated edits or batch-fix the tracker — pick one problem, understand it, submit focused work.
-- **Run the gate, and prove behaviour-shaping changes,** before opening a PR (see *Verify against the gate*).
+- **Run the gates** before opening a PR (see *Verify against the gate*).
 - **Identify yourself.** Disclose in the PR the model, harness, harness version, and any installed plugins that produced the change — or state plainly it was written by hand. Contributions are weighed by how they were made: a behaviour claim reasoned from documentation is held to a different bar than one grounded in a real session. Hiding the authoring environment is grounds for closing the PR.
 - **Target `dev` from a task branch.** `dev` is where reviewed changes collect; `main` holds releases only and receives nothing but release PRs from `dev`. A PR opened against `main` is asked to retarget `dev` before review.
 - **Never bump versions or edit CHANGELOG version headings in a PR.** Releases are versioned once, by the maintainer — see `RELEASING.md`, which also owns what a changelog entry says.
@@ -208,7 +168,7 @@ for one at the right moment (on Claude Code, the `hooks/` SessionStart nudge;
 elsewhere, an equivalent). See `docs/harness-support.md`.
 
 A PR adding a harness MUST add `tests/harnesses/{{name}}.sh` offline bindings
-for `tests/run-plugin-smoke.sh`, pair them with a launcher in the evals lab, and
+for `tests/run-plugin-smoke.sh` and
 show a skill *actually activating* through that harness's CLI on a
 representative opening, not describe how it should work. Files present but
 never invoked are not a working integration.
@@ -222,7 +182,6 @@ never invoked are not a working integration.
 - `scripts/sh/` — portable validators, token budget, adapter checks, and hook scripts; CI runs `validate-skills.sh`, `token-budget.sh`, `validate-trigger-collisions.sh`, and `validate-skill-graph.sh`, which reports skills that hand off to each other unless `docs/allowed-cycles.txt` lists the pair. Everything here is deterministic, free, and safe to run anywhere.
 - `tests/` — offline tests, where the answer is known in advance and no model runs: `run-session-start.sh`, `run-plugin-smoke.sh`, and `run-serve-preview.sh`.
 - `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
-- The evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals) — a separate repository holding every live runner, behavioral scenario, description query set, fixture, and harness launcher, plus dated campaign records pinned to a plugin commit. A PR here cites a record; nothing here runs the lab.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
 - `docs/` — repository-only rationale: philosophy, activation, harness support, skill granularity, testing, and the conformance record, plus `chains.toml`, each chain's skills and body-word budget. Never referenced from a shipped skill; the gate enforces that.
 - `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the four manifest versions agree).
