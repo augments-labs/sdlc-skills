@@ -1,6 +1,6 @@
 ---
 name: data-model
-description: "Use when domain concepts, relationships, state transitions, or invariants need to be introduced, changed, or removed before implementation, including stateless rules and pricing engines. Skip when those semantics remain unchanged or are already settled for this task."
+description: "Defines domain concepts, relationships, state transitions, and invariants before implementation. Use when any of them needs to be introduced, changed, or removed, including stateless rules and pricing engines. Skip when those semantics stay unchanged or are already settled for this task."
 ---
 
 # Data Model

@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Use when a session is ending mid-work or responsibility for continuing the task passes to a fresh session or another agent. Fires on I'm heading out, context is getting full, and someone else is taking over. Skip finished tasks and bounded worker assignments whose coordinator remains responsible."
+description: "Writes a handoff so a fresh session or another agent can continue unfinished work. Use when a session is ending mid-work, the context is getting full, the user is heading out, or someone else is taking over. Skip finished tasks and bounded worker assignments whose coordinator stays responsible."
 ---
 
 # Handoff

@@ -1,6 +1,6 @@
 ---
 name: ui-ux-design
-description: "Use when a new or revised user interface still has open decisions about flow, state, hierarchy, responsive behaviour, accessibility, content, or visual direction, before it is implemented. Fires on design this screen, what should this look like, and how does the user get through this. Skip backend-only work and cosmetic edits whose direction is already decided."
+description: "Designs a user interface's flow, states, hierarchy, responsive behaviour, accessibility, content, and visual direction before it is built. Use when a new or revised interface still has open design decisions, or when the user says design this screen, asks what it should look like, or how the user gets through it. Skip backend-only work and cosmetic edits whose direction is already decided."
 ---
 
 # UI/UX Design

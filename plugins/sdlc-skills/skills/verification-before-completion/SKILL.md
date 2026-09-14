@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: "Use before any claim that work is complete, fixed, passing, done, or satisfactory, before any commit or PR, and when evidence may be stale, partial, or bound to another state. Fires on that should do it, it's working now, and all set, even if no formal claim is made."
+description: "Runs the checks and reads their output before any claim that work is done. Use when work is about to be called complete, fixed, passing, done, or satisfactory, before any commit or PR, when evidence may be stale or partial, or when the user says that should do it, it's working now, or all set, even if no formal claim is made."
 ---
 
 # Verification Before Completion

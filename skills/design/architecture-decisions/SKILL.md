@@ -1,6 +1,6 @@
 ---
 name: architecture-decisions
-description: "Use when a significant, hard-to-reverse technical choice is being weighed or has just been settled — a datastore, sync vs async, a framework, a public contract, an auth or security model. Fires on should we use X or Y, on a choice made in passing during discussion, and on a request to revisit an old one. Skip easily-reversible choices."
+description: "Records a significant, hard-to-reverse technical decision and the options weighed. Use when a choice such as a datastore, sync versus async, a framework, a public contract, or an auth or security model is being weighed or has just been settled, when the user asks whether to use X or Y, when a choice is made in passing during discussion, or when an old decision is revisited. Skip easily reversible choices."
 ---
 
 # Architecture Decisions

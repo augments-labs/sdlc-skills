@@ -1,6 +1,6 @@
 ---
 name: release-readiness
-description: "Use when an integrated candidate is about to be promoted to a release, deployment, or publication — the first release of a project, a version bump, a package publish, a production deploy, or a rollout stage expansion. Fires on ship it, cut a release, publish the package, and is this safe to deploy. Skip internal work with no release surface."
+description: "Decides whether a release, deployment, or publication is safe to go out. Use when the user says ship it, asks to cut a release or publish the package, or asks whether this is safe to deploy, and before a first release, a version bump, a production deploy, or a rollout stage expansion. Skip internal work with no release surface."
 ---
 
 # Release Readiness

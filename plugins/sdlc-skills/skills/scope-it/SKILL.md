@@ -1,6 +1,6 @@
 ---
 name: scope-it
-description: "Use when a project's goals are set and its delivery boundary needs defining or revising: what is in, out, and sufficient for the goal. Includes scope growth during delivery. Skip single-feature requirements, unresolved intent, and implementation-level speculative additions."
+description: "Defines a project's delivery boundary: what is in, what is out, and what is sufficient for the goal. Use when a project's goals are set and its scope needs defining or revising, including scope growth during delivery. Skip single-feature requirements, unresolved intent, and speculative additions at the implementation level."
 ---
 
 # Scope It
