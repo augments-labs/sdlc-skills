@@ -127,5 +127,3 @@ user's main-session model and any model reserved for orchestration untouched.
   “coordinate.”
 - Session-history briefs, or undeclared data and egress — neither is bounded
   context.
-- No combined exact-result check, or accepting late/quarantined output.
-- Treating combined green as permission to ignore scope leaks or mixed commits.
