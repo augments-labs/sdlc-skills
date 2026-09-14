@@ -18,9 +18,9 @@ Design the experience and decide its direction before implementation. In an exis
 
 - **`scripts/start-server.sh` / `scripts/stop-server.sh`** — start and stop
   the governed localhost preview (per-session key, owner watchdog, idle
-  timeout) for a comparison surface. Deliver a surface served: run the
-  preview and present its URL with the delivery, without waiting to be
-  asked. The file path is the fallback when serving fails or is declined.
+  timeout) for a comparison surface. Offer to serve a surface; start the
+  preview only after the user accepts, then present its URL. Always deliver
+  the file path; it is the fallback when serving fails or is declined.
   They wrap `scripts/serve.py`; read
   [visual-decisions.md](references/visual-decisions.md) before starting or
   stopping a preview; it owns the details.
@@ -61,13 +61,14 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    Build it from `assets/comparison-template.html` before authoring any
    variant, then author 2–4 controlled, meaningfully different variants. Give
    every version block and variant a stable ID.
-3. Serve it and present the URL with the delivery:
+3. Deliver the file path and offer to serve the surface. Start the preview
+   only after the user accepts, then present its URL:
 
    ```bash
    bash scripts/start-server.sh --root .sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals
    ```
 
-   Serving fails or is declined → give the file path.
+   Serving fails or is declined → the file path stands.
 4. Skip the surface only with a recorded reason: every open question is
    conceptual; the scale-down clause applies; the uncertainty is feasibility
    → `prototyping`. Prose alone for "what should this look like" is the
@@ -120,6 +121,8 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
   treated as a constraint instead of being flagged as unknown.
 - Run without `--root`, `scripts/start-server.sh` exits 1, and the file-path
   fallback in Step 3.3 hides that no surface was served.
+- A design request is not consent to a background listener: a preview started
+  unasked opens a local port the user never agreed to.
 
 ## Common mistakes
 
