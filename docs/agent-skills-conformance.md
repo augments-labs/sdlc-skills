@@ -97,13 +97,15 @@ current bundled help branches return without starting their operational work.
 ## Evaluation is separate from conformance
 
 The testing layout is repository policy, not part of the standard's required
-skill format. `tests/` holds labeled behavior scenarios and offline adapter
-checks; `tests/optimizing/` holds tuning measurements. Neither a structural pass
-nor a description score certifies model behavior.
+skill format. `tests/` holds offline script and packaging checks; labeled
+behavior scenarios and description tuning measurements live in the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals) (see
+[`testing.md`](testing.md)). Neither a structural pass nor a description score
+certifies model behavior.
 
 ### Description tuning
 
-Query sets live at `tests/optimizing/descriptions/{{phase}}/{{skill}}.json`.
+Query sets live in the lab at `descriptions/{{phase}}/{{skill}}.json`.
 The current corpus contains 34 sets for 36 skills. The always-applicable router
 has no negative class; `containing-an-incident` also has no set. Existing sets
 usually contain 10 positive and 10 near-miss negative queries; `executing-plans`
@@ -124,9 +126,9 @@ times out can still count as a miss. Scores depend on this fixture, library,
 harness, and observation window.
 
 The 0.5 trigger-rate threshold is an optimization rule, not a certification
-barrier. See `tests/optimizing/README.md` for the loop and
+barrier. The lab's descriptions guide owns the loop;
 [description optimization guidance](https://agentskills.io/skill-creation/optimizing-descriptions)
-for the broader method.
+gives the broader method.
 
 ### Behavioral evidence
 

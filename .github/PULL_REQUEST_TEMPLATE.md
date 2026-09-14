@@ -69,11 +69,14 @@ attempt should land where that one did not. -->
 
     bash scripts/sh/validate-skills.sh
 
-For a behaviour-shaping change, also re-run the smallest behavioural
-scenario that exercises it (`tests/run-behavioral.sh`) and paste what it
-returned. Say how many runs, on which arms, and include inconclusive and
-failing results; an inconclusive result is a finding, a fabricated one is
-grounds for closing. `docs/testing.md` says which run answers which question.
+For a behaviour-shaping change, also cite the lab campaign that ran the
+smallest behavioural scenario exercising it: the record's path in
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals)
+(`results/{{date}}-{{label}}/summary.md`)
+and the plugin commit it pinned. Say how many runs, on which arms, and include
+inconclusive and failing results; an inconclusive result is a finding, a
+fabricated one is grounds for closing. `docs/testing.md` says which run answers
+which question.
 
 For a change confined to `references/` or `assets/`, the always-loaded body
 is unchanged; say so instead of running something. -->
@@ -91,7 +94,7 @@ is unchanged; say so instead of running something. -->
 - [ ] For a skill change: I invoked `writing-skills`, and `skills/common/writing-skills/scripts/check-skill.sh` passes on every skill touched.
 - [ ] The change was pressure-tested, not only exercised on the happy path.
 - [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without re-proving it still holds (CLAUDE.md → "Editing a skill").
-- [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model.
+- [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model (`docs/` may link this project's evals lab).
 
 ## New harness support (required only if this PR adds a harness)
 
@@ -99,7 +102,8 @@ is unchanged; say so instead of running something. -->
 one loads the entry skill at session start so that skills fire without the
 user asking. A PR adding a harness must:
 
-- add `tests/harnesses/{{name}}.sh` bindings for the shared runners;
+- add `tests/harnesses/{{name}}.sh` offline bindings, and a launcher in the
+  evals lab;
 - pass `tests/run-session-start.sh` and `tests/run-plugin-smoke.sh --harness {{name}}`;
 - show a skill actually activating through the harness's own CLI on a
   representative opening. Open a clean session, send exactly:
@@ -135,7 +139,7 @@ A PR is closed without review when it:
 - bundles unrelated changes;
 - leaves a required section blank or keeps placeholder text;
 - names another repository, project, author, issue, or vendor model in
-  shipped files;
+  shipped files (`docs/` may link this project's evals lab);
 - submits domain-, tool-, or workflow-specific content as core;
 - changes behaviour-shaping content without evidence.
 -->

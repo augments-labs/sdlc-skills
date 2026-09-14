@@ -20,9 +20,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Structural validation (skills + adapter sync)
         run: bash scripts/sh/validate-skills.sh
-      # Nothing under tests/optimizing/ is checked here, by design. That corpus
-      # exists to tune descriptions, and its state is not a correctness claim
-      # about the library — a red sheet there is a number, not a regression.
+      # Live evidence is not checked here, by design: behavioral scenarios and
+      # description query sets live in the evals lab,
+      # [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals),
+      # cost tokens, and sample a non-deterministic agent, so they never run in CI.
       - name: Session-start router injection
         run: bash tests/run-session-start.sh
       - name: Governed localhost preview (serve.py + wrappers)

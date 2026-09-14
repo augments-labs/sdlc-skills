@@ -84,8 +84,9 @@ for skill in "${skills[@]}"; do
   tokens=$(( words * 13 / 10 ))
   [ "$tokens" -gt 2500 ] && note "warn: ~$tokens tokens (>2500; over the house target)"
 
-  # (Per-skill triggering records retired — activation is proven by the shared
-  # harness-backed runners under tests/, not a static record. See tests/README.md.)
+  # (Per-skill triggering records retired — activation is proven by live runs in
+  # the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals),
+  # not a static record. See docs/testing.md.)
 
   # No external references, vendor model names, or <angle> placeholders — in every
   # .md of the skill, RECURSIVELY (covers references/ and scripts/ subfolders).
@@ -247,23 +248,10 @@ distinct=$(printf '%s' "$versions" | sort -u | grep -c .)
 
 # Internal references: any repo-root docs/ or tests/ markdown path named in a
 # shipped or meta file must exist — a broken link ships straight to users.
-#
-# Trigger-eval query sets are excluded, and must be. A query is written to sound
-# like a real request, which means naming real-looking files — "the spec is at
-# docs/invites.md, follow it". Those paths belong to the *hypothetical* project
-# in the query, not to this repository, so requiring them to resolve here would
-# force every query into vague phrasing and destroy the realism the queries exist
-# to provide. Nothing gates their shape; tests/optimizing/README.md says what a
-# set has to contain, and a reader checks it.
-#
-# The query sets fall out of this scan for free, being .json. fixtures.sh does
-# not, and needs naming: it is the file that BUILDS that hypothetical project, so
-# every path it writes is a path in the fixture tree by definition, not a link
-# into this repository.
 echo "• internal references (docs/ and tests/ paths resolve)"
 while IFS=: read -r src ref; do
   [ -f "$ref" ] || err "$src: internal reference '$ref' does not exist"
-done < <(grep -roE --include='*.md' --include='*.sh' --exclude='fixtures.sh' \
+done < <(grep -roE --include='*.md' --include='*.sh' \
            '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md CLAUDE.md | sort -u)
 
 # Conformance record freshness. docs/agent-skills-conformance.md
