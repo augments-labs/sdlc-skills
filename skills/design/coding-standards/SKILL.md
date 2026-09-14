@@ -14,7 +14,8 @@ Set the conventions once so every contributor — human or agent — writes code
 
 ## Step 1: Fix the vocabulary and the patterns
 
-Open `assets/standards-template.md` now. Each step fills its section.
+Open `assets/standards-template.md` before starting; each step fills its
+section.
 
 1. Approved `data-model` or domain contract exists → take its concepts and
    terms. Decide only representation, casing, abbreviations, drift
@@ -46,7 +47,7 @@ Open `assets/standards-template.md` now. Each step fills its section.
 1. Write the immutable section to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the project's
    standing conventions path, preserving approved sections around it.
-2. Present and end the turn:
+2. Present:
 
    ```text
    Coding standards {{path}} — version {{identity}}
@@ -61,11 +62,18 @@ Open `assets/standards-template.md` now. Each step fills its section.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-3. Only option 1 hands off. Record lifecycle externally. Normative change →
-   a successor with a per-ID `added / changed / removed / preserved` delta.
-   Removal needs owning approval. Never edit an issued identity.
-4. Claim adoption only after enforcement and the exemplar gate run. Record
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+3. On option 1, claim adoption only after enforcement and the exemplar gate run. Record
    `in force / suspended / superseded` externally with fresh evidence.
+
+## Gotchas
+
+- An exception granted with no expiry never comes back for review. The
+  carve-out becomes a second, permanent convention living alongside the
+  one it was supposed to be an exception to.
+- Enforcement usually checks new or changed code, not a one-time sweep of
+  everything already there, so banning a generic label going forward can
+  leave every existing occurrence exactly as inconsistent as before.
 
 ## Common mistakes
 

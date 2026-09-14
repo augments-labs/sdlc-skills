@@ -29,7 +29,8 @@ before any target work starts.
 
 ## Step 1: Establish the ground truth
 
-Open `assets/migration-contract.md` now. Each step fills the section it names.
+Open `assets/migration-contract.md` before the steps below; each fills
+the section it names.
 
 1. Fill `Normative control`: source and target revisions, scope, one
    accountable owner or approval rule. Unsettled target → back to
@@ -90,7 +91,7 @@ Open `assets/migration-contract.md` now. Each step fills the section it names.
 3. Write the contract to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`. Keep
    stable-ID delta, review, and execution state external.
-4. Present the contract and stop:
+4. Present the contract:
 
    ```text
    Migration contract {{path}} — {{strategy}}
@@ -104,9 +105,23 @@ Open `assets/migration-contract.md` now. Each step fills the section it names.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
 5. Only an approved exact version, with predecessor-bound consumers
-   reconciled, proceeds to `writing-plans`. Praise and silence decide nothing.
-   Every normative change is a proposed successor.
+   reconciled, proceeds to `writing-plans`.
+
+## Gotchas
+
+- The trial slice's coverage inventory (Step 2) is only as stable as the
+  source is frozen or intake-controlled (Step 3) — a new consumer,
+  platform, or path that lands mid-migration silently turns an
+  already-dispositioned cell into an unaudited one, so “every excluded cell
+  has a disposition” can be true at the trial and false by cutover without
+  either step's owner noticing.
+- “Live use is provably zero” (Step 3) is usually checked against recent
+  traffic, which a periodic consumer — a monthly batch job, an annual
+  report — can pass while it is simply between runs. Decommissioning on
+  that reading retires a source a consumer from Step 1's inventory is still
+  going to call.
 
 ## Common mistakes
 

@@ -24,10 +24,11 @@ reading the code, a coverage number, or the builder's opinion.
    that already run, existing tests, escaped defects.
 2. Transformation: add its migration facts, invariants, and approved
    deviations.
-3. Instantiate `assets/assurance-matrix.md` now. Fill `Risk inventory` and
-   `Risk-to-gate matrix`. Write no gate code before this exists.
-4. Fill `Catalogue disposition` for every category in
-   `references/battery-catalogue.md`: covered, or an accountable expiring
+3. Instantiate `assets/assurance-matrix.md` before writing any gate. Fill
+   `Risk inventory` and `Risk-to-gate matrix`. Write no gate code before this
+   exists.
+4. Read `references/battery-catalogue.md` before filling `Catalogue
+   disposition` for every category it lists: covered, or an accountable expiring
    approval plus a compensating gate. N/A needs evidence and an owner.
 
 ## Step 2: Make each gate real
@@ -57,14 +58,14 @@ reading the code, a coverage number, or the builder's opinion.
 
 ## Step 4: Challenge, then hand over the decision
 
-1. Fill `assets/assurance-challenger.md` with `assets/assurance-report.md`.
-   **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with this addendum,
-   before approval. Keep the candidate read-only. Read the returned assurance
-   section; missing or mismatched Matrix version, or a verdict other than
-   `clear` → approval blocked.
+1. Fill `assets/assurance-challenger.md` with `assets/assurance-report.md` before the challenge.
+   **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with this
+   addendum, before approval. Keep the candidate read-only. Read the
+   returned assurance section; missing or mismatched Matrix version, or a
+   verdict other than `clear` → approval blocked.
 2. Blocker: correct a successor, reverify, rechallenge until clear or
    concretely blocked.
-3. Present the matrix and stop:
+3. Present the matrix:
 
    ```text
    Assurance matrix {{path}} — {{n}} executable, {{n}} planned, {{n}} absent
@@ -78,10 +79,19 @@ reading the code, a coverage number, or the builder's opinion.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
 4. Approve nothing yourself. Authority to draft gates is not authority to
    accept unseen risks, thresholds, omissions, or exceptions.
-5. Keep the normative file at `proposed`; lifecycle state stays external.
-   Every normative change is an exact-delta successor.
+5. Keep the normative file at `proposed`.
+
+## Gotchas
+
+- Marking a catalogue category `N/A` with no evidence or owner leaves the
+  exact silent gap the matrix exists to surface — it only relabels the gap
+  instead of closing it.
+- A gate that runs correctly and shows green still blocks nothing if it is
+  wired to run only on demand — correctness and sitting on a path no
+  promotion can bypass are two different facts.
 
 ## Hard stops
 

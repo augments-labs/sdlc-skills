@@ -21,9 +21,9 @@ event and decision trail; do not invent a code defect to enter this skill.
 
 ## Step 1: Control the record
 
-1. Open `assets/post-mortem-template.md`. Fill `Control and evidence
-   handling` first: readers, lifetime, redaction, expected reviewers and
-   approver rules.
+1. Open `assets/post-mortem-template.md` when starting the analysis. Fill
+   `Control and evidence handling` first: readers, lifetime, redaction,
+   expected reviewers and approver rules.
 2. Fill `Summary and impact` and `Timeline` from artifacts, not memory. Mark
    every time `observed` or `estimated`.
 
@@ -45,7 +45,7 @@ event and decision trail; do not invent a code defect to enter this skill.
 
 1. Write each corrective action as `proposed`, mapped to a structural cause,
    every action-row field filled.
-2. Present and end the turn:
+2. Present:
 
    ```text
    Post-mortem {{identifier}}
@@ -60,6 +60,7 @@ event and decision trail; do not invent a code defect to enter this skill.
    Recommendation: {{the answer the evidence and ownership support}} — {{one sentence}}.
    ```
 
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
 3. Move an action out of `proposed` only on a complete trusted receipt for
    the exact scope and dates. Record rejection, cancellation, or supersession
    with its residual risk and replacement.
@@ -90,6 +91,16 @@ Record in the external ledger `proposed → {owner-accepted | rejected |
 cancelled | superseded}`, and for accepted:
 `implemented → falsified → deployed/enforced → effectiveness reviewed → effective → closed`.
 Let no prose, merge, or local green skip a state.
+
+## Gotchas
+
+- An escape-path audit taken from today's gate list instead of the frozen
+  inventory pinned to its source digest can end up describing the battery
+  after the fix already landed — which makes every gate look fine and the
+  audit worthless.
+- A `Risk-reduction claim` of "prevent" with no baseline, target, or horizon
+  can never be marked `effective` or `ineffective` at the review date — only
+  `inconclusive`, permanently.
 
 ## Common mistakes
 

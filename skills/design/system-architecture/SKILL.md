@@ -18,7 +18,7 @@ Design the shape of the solution before anyone builds it: what the pieces are, h
 
 ## Step 1: Trace and structure
 
-Open `assets/architecture-section.md` now. Each step fills its section.
+Open `assets/architecture-section.md` before the steps below fill it in.
 
 1. Map every requirement, preserved obligation, and material risk to the
    component, interface, and owning evaluator reference covering it. Define no
@@ -58,7 +58,7 @@ Open `assets/architecture-section.md` now. Each step fills its section.
    preservation, breadth, failure surfaces) and record the answers. Any off
    the ordinary route, or the user marks the work high-risk → run
    `assets/design-review.md` before presenting. Blocking.
-3. Present and end the turn:
+3. Present:
 
    ```text
    {{Section}} {{path}} — version {{identity}}
@@ -72,13 +72,20 @@ Open `assets/architecture-section.md` now. Each step fills its section.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-4. Only option 1 authorizes planning. Praise, silence, prior-version approval
-   → nothing. Record lifecycle externally.
-5. Normative change after issue → a successor with a per-ID `added / changed /
-   removed / preserved` delta. Removal needs owning approval. Never edit an
-   issued identity.
-6. Option 1, and every design section the work needs is approved →
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+4. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+
+## Gotchas
+
+- Step 1's mapping table needs a real owning evaluator for every row, but
+  this skill defines no assurance gates itself. A row with only a
+  placeholder or invented evaluator still reads as mapped on the page until
+  that gate actually exists elsewhere.
+- The Skip condition in *When to use* is checked once, at intake. Nothing
+  here re-checks it as scope grows, so a feature that starts small and
+  later crosses into several components can stay embedded in its task plan
+  instead of getting this skill's own architecture record.
 
 ## Common mistakes
 

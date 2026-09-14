@@ -16,7 +16,7 @@ Model the domain before the code that manipulates it. A domain model is more tha
 
 ## Step 1: Model the domain
 
-Open `assets/data-model-section.md` now. Each step fills its section.
+Open `assets/data-model-section.md` before the steps below fill it in.
 
 1. Name one concept per entity in the domain's language: what it represents,
    the words experts use. This vocabulary is a deliverable consumed downstream
@@ -51,7 +51,7 @@ Open `assets/data-model-section.md` now. Each step fills its section.
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it. Fill the header: identity,
    predecessor, approval rule, ledger location, stable ID delta.
-2. Present and end the turn:
+2. Present:
 
    ```text
    {{Section}} {{path}} — version {{identity}}
@@ -65,13 +65,23 @@ Open `assets/data-model-section.md` now. Each step fills its section.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-3. Only option 1 hands off. Praise, silence, a partial reply → pending.
-   Record lifecycle externally.
-4. Normative change after issue → a successor with a per-ID `added / changed /
-   removed / preserved` delta. Removal needs owning approval. Never edit an
-   issued identity.
-5. Option 1, and every design section the work needs is approved →
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+3. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+
+## Gotchas
+
+- The eight operational lenses in Step 2 are counted, and an omitted one
+  needs its own skip record — but the lenses themselves live in the
+  template, not in this file. Working from memory instead of the
+  template's list is how a lens gets skipped with no skip record, because
+  nothing here tells you which eighth lens you forgot.
+- Cardinality has a steady-state value and a momentary one — during
+  creation, before a required relationship holds, and during deletion,
+  when a cascade fires into one. Step 1's cardinality mapping doesn't
+  separate the two, so documenting only the steady state leaves the code
+  free to do anything at those edges without that being a documented
+  deviation.
 
 ## Common mistakes
 
@@ -84,4 +94,6 @@ Open `assets/data-model-section.md` now. Each step fills its section.
   problem after the model is approved.
 - Modeling the UI's shape instead of the domain's.
 
-For a full domain modeled end to end at this level of rigor — null semantics, momentary vs lifetime cardinality, state transitions, invariants, denormalization — see `references/worked-example.md`.
+See `references/worked-example.md` when a full domain needs modeling end to
+end at this level of rigor: null semantics, momentary vs lifetime cardinality,
+state transitions, invariants, denormalization.
