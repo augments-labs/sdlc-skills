@@ -18,22 +18,25 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 - **Skip** here, and go through `finishing-a-branch` directly, for keep,
   discard, and PR-only close or reopen: those need its identity and authority
   gates, not a readiness review.
-- For a high-risk transformation, read `references/high-risk-review.md` first;
-  it owns the role separation, and one review of an aggregate diff nobody can
-  read does not satisfy it.
+- Read `references/high-risk-review.md` first when the change is a high-risk
+  transformation; it owns the role separation, and one review of an aggregate
+  diff nobody can read does not satisfy it.
 
 ## Step 1: Verify and freeze
 
 1. Stop anything still writing to the candidate.
-2. Read the available verification evidence and raw results. Reuse required
-   rows only when the candidate, bound inputs/environment, gate requirements,
-   and evidence freshness still match.
-3. Missing or stale rows → **REQUIRED SUB-SKILL:** invoke
-   `verification-before-completion` to obtain evidence for this review, then resume here.
-   Keep failures and pending results: they permit review, never readiness.
-4. Open `assets/review-candidate.md`. Fill every field: mode, identities,
-   complete inventory, artifact controls, terminal contract, continuation,
-   review history. Retain that history across successor candidates.
+2. Consume the caller's evidence ledger for the frozen state and its raw
+   results. Reuse each row whose candidate, bound inputs/environment, gate
+   requirements, and evidence freshness still match. Never rerun a matching
+   row.
+3. No ledger, or a missing or stale row → **REQUIRED SUB-SKILL:** invoke
+   `verification-before-completion` to obtain evidence for this review, then
+   resume here. Keep failures and pending results: they permit review, never
+   readiness.
+4. Open `assets/review-candidate.md` after the evidence is bound. Fill every
+   field: mode, identities, complete inventory, artifact controls, terminal
+   contract, continuation, review history. Retain that history across
+   successor candidates.
    Record a caller only when it has a step awaiting this verdict. A skill
    whose work ended at this handoff is not a pending return step.
 5. Compare its result identity with the verification evidence. Different →
@@ -48,22 +51,23 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    - **Standard:** one independent breadth reviewer plus relevant specialists.
    - **Deep:** breadth, specialists, `security-audits`, and an independent
      adversarial pass.
-   - **High-risk transformation:** read `references/high-risk-review.md`
-     before assigning anyone.
+   - **High-risk transformation:** read `references/high-risk-review.md` before
+     assigning anyone.
 2. Give every role a stable ID, including each one omitted. An omission
    records evidence, owner, expiry, compensation, and approver.
 3. Add each applicable specialist role; open its prompt template:
-   - `assets/silent-failures-reviewer.md` — catches, retries, fallbacks,
-     or defaults that could swallow a failure
-   - `assets/type-design-reviewer.md` — a new or changed type, interface,
-     schema, or shape callers bind to
-   - `assets/test-coverage-reviewer.md` — behavior tests should pin, or
-     behavior moved between covered and uncovered code
-   - `assets/comment-accuracy-reviewer.md` — comments, docstrings, or
-     prose that claims something about the code
-   - `assets/equivalence-reviewer.md` — high-risk equivalence
-   - `assets/yagni-reviewer.md` — new or expanded enduring surface, or a
-     requested simplification review
+   - `assets/silent-failures-reviewer.md` when catches, retries, fallbacks,
+     or defaults could swallow a failure
+   - `assets/type-design-reviewer.md` when a type, interface, schema, or
+     shape callers bind to is new or changed
+   - `assets/test-coverage-reviewer.md` when tests should pin the behavior,
+     or behavior moved between covered and uncovered code
+   - `assets/comment-accuracy-reviewer.md` when comments, docstrings, or
+     prose claim something about the code
+   - `assets/equivalence-reviewer.md` when the change claims high-risk
+     equivalence
+   - `assets/yagni-reviewer.md` when enduring surface is new or expanded, or
+     a simplification review is requested
 4. Trust boundary changed → invoke `security-audits`. Audit of existing code →
    `complexity-audit`. Challenge to the assurance strategy →
    `verification-strategy`. When the recorded caller owns that activity,
@@ -77,11 +81,11 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 1. Shallow, with its written assignment recorded in the descriptor → run the
    self-review below; dispatch nothing. No assignment → Standard.
-2. Otherwise open `assets/code-reviewer.md` and each selected specialist
-   template. Fill Inputs from the descriptor and raw evidence; insert
-   `assets/review-report.md` into its Report template slot. Leave the report
-   fields for the reviewer. Send each filled fenced prompt through the
-   harness's dispatch action.
+2. Otherwise open `assets/code-reviewer.md` before dispatch, with each
+   selected specialist template. Fill Inputs from the descriptor and raw
+   evidence. Insert `assets/review-report.md` before sending, in its Report
+   template slot; leave the report fields for the reviewer. Send each filled
+   fenced prompt through the harness's dispatch action.
 3. Dispatched = the action returned a non-empty ID. Empty, refused, or
    unavailable → write the review as pending and stop. Do not review it
    yourself. Do not poll an empty target.
@@ -129,6 +133,15 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 - On `not ready`, do not hand off. Either the assignment did not fit the
   change — report that to the user, raise the depth to Standard, and restart
   at Step 2 — or there is a defect: fix it, then restart at Step 1.
+
+## Gotchas
+
+- Rerunning a caller's matching rows looks like rigor, but it verifies one
+  frozen state twice, and a second run that disagrees gets argued away instead
+  of diagnosed. Reuse the row; review is where it gets challenged.
+- A reviewer sees only what the descriptor inventories. An untracked or
+  generated file left out of the inventory ships unreviewed under a `ready`
+  verdict.
 
 ## Common mistakes
 
