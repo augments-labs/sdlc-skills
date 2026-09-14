@@ -35,15 +35,21 @@ Output:
   Key fields:
     base.resolved        false when the base is ambiguous — integration stops
     head.detached        true when there is no branch to push
-    candidate.id         digest over root, branch, HEAD, base, dirty.digest,
+    candidate.id         digest over root, branch, HEAD, base, base sha, dirty.digest,
                          published, and the unpushed commit count;
                          the discard token, and it changes with any of them
     candidate.commit_count, candidate.unpushed_commit_count, candidate.commits
                          null when base.resolved is false
-    candidate.published  true when commits already exist on a remote ref;
-                         rewriting them needs separate direct permission
+    candidate.published  true when HEAD or any candidate commit is on a remote
+                         ref; null when base.resolved is false, remote refs
+                         exist, and HEAD is on none. true or null: rewriting
+                         needs separate direct permission. Read from local
+                         remote-tracking refs: a stale or single-branch clone
+                         can report false for pushed commits
     dirty.*_count        staged / unstaged / untracked, counted separately
-    recoverability       what a discard would and would not be able to undo
+    recoverability       what a discard would and would not be able to undo;
+                         commits_recoverable_from_remote is true only when
+                         HEAD, and so every candidate commit, is on a remote ref
 
 Not covered: remote/PR state. That needs a forge API, which this script
 deliberately does not reach for. Bind PR state separately.
@@ -91,7 +97,7 @@ jstr() { # escape one string as a JSON scalar
   s="${s//$'\r'/\\r}"; s="${s//$'\n'/\\n}"
   printf '"%s"' "$s"
 }
-jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
+jbool() { case "${1:-}" in 1) printf 'true';; null) printf 'null';; *) printf 'false';; esac; }
 jnull() { [ -n "${1-}" ] && jstr "$1" || printf 'null'; }
 
 # Emit a JSON array from newline-delimited stdin, honouring $limit.
@@ -245,13 +251,6 @@ if [ "$base_resolved" = 1 ]; then
   fi
 fi
 
-# Published: are the candidate's commits already on a remote-tracking ref?
-# This is what makes a rewrite unsafe, and it is not the same question as
-# "does the branch have an upstream".
-published=0
-if [ -n "$head_sha" ]; then
-  if [ -n "$(git --no-optional-locks branch -r --contains HEAD 2>/dev/null | head -1)" ]; then published=1; fi
-fi
 # Commits unique to this candidate and on NO remote ref — the ones a discard
 # would actually destroy.
 unpushed_n=null
@@ -259,6 +258,26 @@ if [ "$base_resolved" = 1 ]; then
   unpushed_n=0
   if [ "$commits_n" -gt 0 ]; then
     unpushed_n="$(git rev-list "$base_sha..HEAD" --not --remotes 2>/dev/null | count_lines)"
+  fi
+fi
+
+# Published: is ANY candidate commit already on a remote-tracking ref? One is
+# enough to make a rewrite unsafe, and it is not the same question as "does the
+# branch have an upstream". The tip alone cannot answer it: after a push and a
+# local commit, the tip is on no remote ref while the commits below it are.
+# With no resolved base the candidate's commits are unknown, so a tip on no
+# remote ref reports null while any remote-tracking ref exists.
+# A tip on a remote ref carries every candidate commit with it; that is the only
+# case in which recovery from the remote is claimed.
+head_on_remote=0; published=0
+if [ -n "$head_sha" ]; then
+  [ -n "$(git --no-optional-locks branch -r --contains HEAD 2>/dev/null | head -1)" ] && head_on_remote=1
+  if [ "$head_on_remote" = 1 ]; then
+    published=1
+  elif [ "$base_resolved" = 1 ]; then
+    [ "$unpushed_n" -lt "$commits_n" ] && published=1
+  elif [ -n "$(git --no-optional-locks for-each-ref --count=1 refs/remotes 2>/dev/null)" ]; then
+    published=null
   fi
 fi
 
@@ -303,7 +322,7 @@ printf '  "recoverability": {\n'
 printf '    "stash_entries": %s,\n' "${stashes:-0}"
 printf '    "untracked_would_be_lost": %s,\n' "$(jbool $untracked_lost)"
 printf '    "uncommitted_would_be_lost": %s,\n' "$(jbool $uncommitted_lost)"
-printf '    "commits_recoverable_from_remote": %s\n' "$(jbool $published)"
+printf '    "commits_recoverable_from_remote": %s\n' "$(jbool $head_on_remote)"
 printf '  },\n'
 printf '  "listing_limit": %s\n' "$limit"
 printf '}\n'

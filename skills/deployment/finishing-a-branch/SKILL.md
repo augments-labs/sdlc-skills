@@ -21,8 +21,8 @@ mutation.
 
 ## Available scripts
 
-- **`scripts/branch-state.sh`** — the local git state as JSON, read-only; run it
-  first (Step 1). `--help` documents its fields and exit codes.
+- **`scripts/branch-state.sh`** — the local git state as JSON, read-only.
+  `--help` documents its fields and exit codes.
 
 ## Step 1: Read the state
 
@@ -53,8 +53,8 @@ mutation.
    project's contribution rules override the detected default. Check remote
    freshness yourself; the script does not fetch. Stale, moved, or ambiguous
    base → no integration.
-8. Read `candidate.published`. Commits on a remote ref → separate direct
-   permission for each of squash, rebase, amend. Never force-push as repair.
+8. Read `candidate.published`. `true` or `null` → separate direct permission
+   for each of squash, rebase, amend. Never force-push as repair.
    After any history change, rerun the script; content moved → back to
    `requesting-code-review`.
 9. For PR creation/update, prepare the description from the contribution rules
@@ -136,9 +136,10 @@ unwanted.
 
 - A local-only repository has no resolvable base: its commit counts are `null`,
   not 0, and a block filled from them hides commits.
+- A tip-only remote check reads pushed history as unpublished once a local
+  commit follows the push.
 
 ## Common mistakes
 
-- Writing branch-state bookkeeping into the candidate being finished.
 - Treating PR creation, ownership-looking paths, praise, or "get rid of it" as
   cleanup, integration, or discard authority.
