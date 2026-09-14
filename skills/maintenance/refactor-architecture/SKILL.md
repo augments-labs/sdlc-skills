@@ -5,7 +5,13 @@ description: "Redesigns the structure of existing code when that structure makes
 
 # Refactor Architecture
 
-Improve the structure of code that already exists. The goal is **deep modules** — a lot of behaviour behind a small interface — and **locality**, so a change lives in one place. This is maintenance; for designing new structure, use `system-architecture`. The vocabulary these steps lean on — module, interface, depth, seam, adapter, leverage, and the deletion test — is defined in `references/vocabulary.md`.
+Improve the structure of code that already exists. The goal is **deep
+modules** — a lot of behaviour behind a small interface — and
+**locality**, so a change lives in one place. This is maintenance; for
+designing new structure, use `system-architecture`. The vocabulary these
+steps lean on — module, interface, depth, seam, adapter, leverage, and the
+deletion test — is defined in `references/vocabulary.md`; open it when a
+term below reads unfamiliar.
 
 ## When to use
 
@@ -37,11 +43,11 @@ Improve the structure of code that already exists. The goal is **deep modules** 
    friction, or one real volatile or external boundary with measured
    impedance, failure policy, or test isolation. Never for count or
    hypothetical variation.
-3. Fill `assets/structural-proposal.md`: distinct structures compared,
-   removals and where their invariants now live, slice table, approver rule.
-   Decision outcome and slice progress stay outside it.
+3. Fill `assets/structural-proposal.md` before presenting it: distinct
+   structures compared, removals and where their invariants now live, slice
+   table, approver rule. Decision outcome and slice progress stay outside it.
 4. Hard-to-reverse choice → invoke `architecture-decisions`.
-5. Present and end the turn. Never self-select a material structure:
+5. Present. Never self-select a material structure:
 
    ```text
    Structural proposal {{identity}}
@@ -56,6 +62,7 @@ Improve the structure of code that already exists. The goal is **deep modules** 
    Recommendation: {{option the friction and recovery evidence support}} — {{one sentence}}.
    ```
 
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
 6. Input or normative drift → an approved successor; affected slices invalid.
 
 ## Step 3: Transform under preservation
@@ -73,6 +80,17 @@ Improve the structure of code that already exists. The goal is **deep modules** 
    completed deprecation and migration.
 5. Map every invariant the surface carried to surviving coverage. Falsify
    that surviving gate. Keep the rollback recoverable until integration.
+
+## Gotchas
+
+- A surface with zero static callers can still be reached through dynamic
+  registration, reflection, or a generated config — a plain call-site search
+  finds none of those and reads as proof the surface is dead when it is only
+  unproven.
+- The deletion test's "removal spreads complexity to callers" branch is only
+  as good as the caller trace behind it: run it against a guessed caller set
+  and a genuinely load-bearing module reads as a thin wrapper worth
+  collapsing.
 
 ## Common mistakes
 

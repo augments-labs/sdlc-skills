@@ -21,12 +21,13 @@ Design the experience and decide its direction before implementation. In an exis
   timeout) for a comparison surface. Deliver a surface served: run the
   preview and present its URL with the delivery, without waiting to be
   asked. The file path is the fallback when serving fails or is declined.
-  They wrap `scripts/serve.py`;
-  [visual-decisions.md](references/visual-decisions.md) owns the details.
+  They wrap `scripts/serve.py`; read
+  [visual-decisions.md](references/visual-decisions.md) before starting or
+  stopping a preview; it owns the details.
 
 ## Step 1: Read the real context
 
-Open `assets/ui-ux-section.md` now. Each step fills its section.
+Open `assets/ui-ux-section.md` before the steps below fill it in.
 
 1. Establish requirements and audience.
 2. Existing project → find its routes, screens, components, tokens, type and
@@ -52,13 +53,14 @@ Open `assets/ui-ux-section.md` now. Each step fills its section.
 
 ## Step 3: Decide the direction by seeing it
 
-1. Open visual direction → read `references/design-quality.md`. Define
-   layout, type, color, spacing, shape, imagery, motion as one
+1. Open visual direction → read `references/design-quality.md` before
+   defining layout, type, color, spacing, shape, imagery, motion as one
    product-specific system. Decorate nothing around an unresolved hierarchy.
 2. Open visual, spatial, or motion decision → read
-   `references/visual-decisions.md`. Build the comparison surface from
-   `assets/comparison-template.html`. Author 2–4 controlled, meaningfully
-   different variants. Give every version block and variant a stable ID.
+   `references/visual-decisions.md` before building the comparison surface.
+   Build it from `assets/comparison-template.html` before authoring any
+   variant, then author 2–4 controlled, meaningfully different variants. Give
+   every version block and variant a stable ID.
 3. Serve it and present the URL with the delivery:
 
    ```bash
@@ -84,7 +86,7 @@ Open `assets/ui-ux-section.md` now. Each step fills its section.
 3. Write the whole section to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`
    or the user-set path, preserving approved sections around it. Selected
    screens, a chosen variant, an agreed flow are inputs, not the section.
-4. Present and end the turn:
+4. Present:
 
    ```text
    {{Section}} {{path}} — version {{identity}}
@@ -98,13 +100,24 @@ Open `assets/ui-ux-section.md` now. Each step fills its section.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-5. Only option 1 authorizes planning. A preference, praise, silence → nothing.
-   Record lifecycle externally.
-6. Normative change after issue → a successor with `added / changed / removed
-   / preserved` IDs, selected visual references included. Removal needs
-   owning approval. Never edit an issued identity.
-7. Option 1, and every design section the work needs is approved →
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+5. A successor's delta includes the selected visual references.
+6. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+
+## Gotchas
+
+- A single open question can mix a conceptual half with a visual one —
+  say, whether an error should block submission, and separately what an
+  alarming-versus-subtle error should look like. The skip-surface test in
+  Step 3 asks whether every open question is conceptual, so settling the
+  conceptual half in prose doesn't clear the visual half's obligation to
+  be rendered and compared.
+- Step 1's sort has two buckets — a deliberate constraint, or an
+  inconsistency this work may correct — with nothing for a pattern that is
+  neither, just an undocumented accident nobody decided. Filing an
+  unrecognized pattern as deliberate by default is how an accident gets
+  treated as a constraint instead of being flagged as unknown.
 
 ## Common mistakes
 

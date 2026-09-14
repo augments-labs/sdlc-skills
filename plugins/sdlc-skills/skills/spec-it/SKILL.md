@@ -23,7 +23,7 @@ Turn an intent into a requirements spec (SRS): gather and analyze what the softw
 
 ## Step 2: Write the requirements
 
-Open `assets/spec-template.md` now. Each step fills its section.
+Open `assets/spec-template.md` before starting; each step fills its section.
 
 1. Write each functional requirement as an observable behavior with a stable
    ID that successors never recycle:
@@ -36,9 +36,9 @@ Open `assets/spec-template.md` now. Each step fills its section.
 2. Carry every applicable guardrail and obligation: trust and data, security,
    accessibility, compatibility, operational and recovery, performance and
    resource, supported platforms and modes. No generic NFR list.
-3. Per requirement, choose the cheapest honest acceptance form from
-   `references/reference-forms.md`: executable gate, disposable mockup,
-   source-fact contract, rubric, or prose.
+3. Read `references/reference-forms.md` before choosing the first acceptance
+   form. Per requirement, choose the cheapest honest form: executable gate,
+   disposable mockup, source-fact contract, rubric, or prose.
 4. Executable gate authorized now → write it in the project's real gate and
    run it. New behavior → fails. Preserved behavior → green now, falsified
    later by TDD. Interface or mutation authority open → write the
@@ -59,9 +59,9 @@ Open `assets/spec-template.md` now. Each step fills its section.
 2. Answer `migration-strategy`'s four questions (reviewability,
    preservation, breadth, failure surfaces) and record the answers. Any off
    the ordinary route, or the user marks the work high-risk → run
-   `assets/spec-review.md` with a reviewer who is not the sole author.
-   Blocking.
-3. Present and end the turn:
+   `assets/spec-review.md` before presenting, with a reviewer who is not
+   the sole author. Blocking.
+3. Present:
 
    ```text
    Spec {{path}} — version {{identity}}
@@ -75,15 +75,18 @@ Open `assets/spec-template.md` now. Each step fills its section.
    Recommendation: {{option the open-question state supports}} — {{one sentence}}.
    ```
 
-4. Only option 1 hands off. Praise, silence, a partial reply → pending. A
-   reply that does not close a pending material decision → `interview-me`.
-   Record lifecycle externally. Normative change → a proposed successor with a
-   per-ID `added / changed / removed / preserved` delta. Never edit an issued
-   identity.
-5. **REQUIRED SUB-SKILL:** on option 1, invoke the next missing precondition:
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+4. **REQUIRED SUB-SKILL:** on option 1, invoke the next missing precondition:
    `ui-ux-design`, `system-architecture`, or `data-model` for unresolved
    non-trivial shape; otherwise `writing-plans`. Never impose a phase already
    complete.
+
+## Gotchas
+
+- A retired requirement ID reused for new work silently repoints every earlier
+  citation of it: test names, review comments, out-of-scope links.
+- A preservation criterion starts green, not red; making it fail first breaks
+  working code at spec time.
 
 ## Common mistakes
 

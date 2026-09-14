@@ -16,7 +16,8 @@ put an evidence-bound recommendation to the accountable owner.
 
 ## Step 1: Assess
 
-Open `assets/feasibility-section.md` now. Each step fills its section.
+Open `assets/feasibility-section.md` before starting; each step fills its
+section.
 
 1. Fill every dimension row with its accountable owner: technical, delivery
    and budget, operations and recovery, security and compliance, data,
@@ -38,7 +39,7 @@ Open `assets/feasibility-section.md` now. Each step fills its section.
 2. Write the immutable `## Feasibility` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it.
-3. Present and end the turn:
+3. Present:
 
    ```text
    Feasibility {{path}} — version {{identity}}
@@ -54,14 +55,22 @@ Open `assets/feasibility-section.md` now. Each step fills its section.
    Recommendation: {{option}} — {{one sentence of evidence}}.
    ```
 
-4. Nothing hands off until one option arrives. The commitment is the user's.
-5. Go-if → only the named evidence and owner move a condition's external
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+4. Go-if → only the named evidence and owner move a condition's external
    state. Expiry, or any change to a bound input, evaluator, evidence, owner,
-   or freshness → condition invalid, decision reopened. Normative change → a
-   proposed successor. Never edit an issued identity.
-6. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
+   or freshness → condition invalid, decision reopened.
+5. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
    `satisfied`, invoke `scope-it` when the boundary is next. Never impose a
    phase already complete.
+
+## Gotchas
+
+- Filling in Option Zero with a bare assertion ("no existing tool fits")
+  instead of the same evidence the other dimensions require still counts
+  as skipped in substance — it only looks done.
+- Assigning a risk a confidence level it hasn't earned, rather than
+  recording "unknown", launders a risk with no real evidence into one
+  that reads as already assessed.
 
 ## Common mistakes
 

@@ -14,7 +14,7 @@ Record the decisions you'd regret not being able to explain in six months. An AD
 
 ## Step 1: Draft the ADR
 
-Open `assets/adr-template.md` now. It owns the fields.
+Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
 
 1. State the question, the artifact or system scope, the forces, and one
    accountable decision owner or the approvers with a conflict rule.
@@ -39,7 +39,7 @@ Open `assets/adr-template.md` now. It owns the fields.
 
 ## Step 3: Present and track
 
-1. Present and end the turn:
+1. Present:
 
    ```text
    ADR {{identity}}: {{question}}
@@ -54,15 +54,24 @@ Open `assets/adr-template.md` now. It owns the fields.
    Recommendation: {{option the recorded trade-offs support}} — {{one sentence}}.
    ```
 
-2. Praise and momentum accept nothing. Record accepted, rejected, or
-   cancelled externally with exact-version evidence.
-3. Normative change → a proposed successor with an exact delta. Accepted
-   successor → inventory and invalidate predecessor-bound consumers until
-   their owners reconcile. Never edit an issued identity.
-4. Track decision and conformance separately. Acceptance puts nothing `in
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+2. Track decision and conformance separately. Acceptance puts nothing `in
    force`; conformance does. Retirement needs owner action and absence of the
    governed surface. Contradiction → reopen every affected owner.
-5. Return the recorded outcome to the skill that invoked this one.
+3. Return the recorded outcome to the skill that invoked this one.
+
+## Gotchas
+
+- An assumption's “way to be proved wrong” (Step 1) can succeed after the
+  ADR is accepted — but the ADR itself is immutable and append-only (Step
+  2), so a disproven assumption is never fixed by editing the original. It
+  needs a new ADR that supersedes the old one, the same way a rejected
+  alternative is preserved rather than removed.
+- Step 2's reviewer-skip condition requires a *current* review of *this
+  exact* ADR identity. A design review that covered an earlier draft —
+  before an option was reweighed or an assumption added — no longer
+  satisfies either word, even though it can feel like “we already
+  reviewed this.”
 
 ## Common mistakes
 
@@ -73,4 +82,5 @@ Open `assets/adr-template.md` now. It owns the fields.
   in-force ADR was never linked as superseded or retired.
 - Treating “the code now does this” as owner approval or conformance proof.
 
-For a copyable ADR template, a filled example, and common failure patterns, see `assets/adr-template.md`.
+See `assets/adr-template.md` when a copyable template, a filled example, or
+common failure patterns are needed.
