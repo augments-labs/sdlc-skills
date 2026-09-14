@@ -50,6 +50,7 @@ jobs:
           # The validator echoes skill content; the runner must not read it as workflow commands.
           token=$(cat /proc/sys/kernel/random/uuid)
           echo "::stop-commands::$token"
+          trap 'echo "::$token::"' EXIT
           {
             echo "## Reference validator cross-check"
             echo
@@ -66,4 +67,3 @@ jobs:
               fi
             done
           } | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "::$token::"

@@ -231,10 +231,14 @@ KEYS
       n = split($0, parts, pat)
       if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
         snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
-        # [[:cntrl:]] misses UTF-8 C1 controls where awk counts bytes, so strip
-        # those bytes there. A character-counting awk rejects the range, even in
-        # a /regex/ it never runs, hence the string.
-        if (length("\302\233") == 2) gsub("\302[\200-\237]", " ", snippet)
+        # Where awk counts bytes, [[:cntrl:]] misses UTF-8 C1 controls and the cut
+        # can split a character, so strip those bytes and a split tail there. A
+        # character-counting awk rejects these ranges, even in a /regex/ it never
+        # runs, hence the strings.
+        if (length("\302\233") == 2) {
+          gsub("\302[\200-\237]", " ", snippet)
+          sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", snippet)
+        }
         print NR ":" snippet
       }
     }
