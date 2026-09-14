@@ -26,7 +26,7 @@ Nobody bumps in a contribution PR. Versioning is decided once per release, by th
 4. Run the gate: `bash scripts/sh/validate-skills.sh`.
 5. Commit the bump on a release branch off `dev` as `chore(release): vX.Y.Z — <one-line theme>`, and merge its PR into `dev`.
 6. Open the `dev` → `main` PR and merge it as a merge commit, so the individual changes stay in history and `main` never carries a commit `dev` lacks.
-7. Tag `vX.Y.Z` on `main` and create the release: title `SDLC skills vX.Y.Z`, notes carrying the narrative — the field report that drove the change, what changed, and the proof records under `tests/`.
+7. Tag `vX.Y.Z` on `main` and create the release: title `SDLC skills vX.Y.Z`, notes carrying the narrative — the field report that drove the change, what changed, and the evidence behind it.
 
 ## Writing the changelog
 

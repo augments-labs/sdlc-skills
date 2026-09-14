@@ -2,6 +2,10 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [9.0.0] — 2026-09-14
+
+Live behavior tests move to the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals); no skill is renamed or removed. `writing-skills` encodes the editing rules that `check-skill.sh --strict` enforces, and CI reports handoff cycles, chain word budgets, shared trigger clauses and missing load conditions without failing on them yet.
+
 ## [8.0.0] — 2026-09-14
 
 Rename `verifying-completion` to `verification-before-completion`; update explicit invocations when upgrading. Clarify skill selection and bounded handoffs, preserve approved UI requirements through finished-interface acceptance, and align templates, artifact state and documentation so work can finish without losing its decisions.
