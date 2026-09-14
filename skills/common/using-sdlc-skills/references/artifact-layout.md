@@ -37,13 +37,40 @@ whole, and the layout inside does not change.
   a correction is a new row that names the row it corrects.
 - **Columns:** `| Date | Location | Section | Identity | State | Decided by | Evidence |`.
   `Location` is the artifact's path from the project root. `Identity` is the
-  exact normative version. `Section` names the section when
+  artifact's identity (see Identity). `Section` names the section when
   one file holds several, such as a brief's goals, scope, and feasibility.
 - **States:** the vocabulary the artifact's pointer field lists, for example
   pending, changes requested, approved, rejected, cancelled, superseded.
 
 A ledger kept anywhere else, or returned instead of written, is recorded in the
 artifact's pointer field.
+
+## Identity
+
+An issued artifact's identity is the first 7 characters of `git hash-object`
+over the exact text the artifact owns:
+
+- **A file of its own:** the whole file.
+- **A section in a shared file:** from its heading down to the next heading at
+  the same or a higher level, without trailing blank lines, so appending the
+  next section does not change it.
+- **A brief's own text:** from the top of the file down to its first `##`
+  heading; the goals, scope, and feasibility sections are other artifacts.
+- **A plan:** its index, with every task checkbox and state label normalized to
+  `[ ]` and `todo`, followed by every task file in index order.
+
+```bash
+git hash-object .sdlc-skills/specs/2026-01-15-login.md | cut -c1-7
+awk -v h='## Architecture' '$0 == h {f = 1; print; next} f && /^##? / {exit} f {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/designs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+awk '/^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/briefs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+```
+
+`e69de29` is the hash of nothing: the heading did not match exactly, so fix it
+before recording. The agent that issues the artifact runs the command at issue;
+whoever later checks an approval or drift recomputes it the same way. Record the
+value in the ledger row and show it in the decision block. Never write it into
+the artifact: that changes the bytes it names. Any later byte change is a new
+identity, and so a successor.
 
 ## Evidence
 

@@ -42,7 +42,7 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
 1. Present:
 
    ```text
-   ADR {{identity}}: {{question}}
+   ADR {{identity (per template)}}: {{question}}
    Proposed: {{choice}} — {{rationale, one line}}
    Rejected: {{alternatives}}  Reversal cost: {{one line}}
 

@@ -6,6 +6,8 @@ proposal.
 ```markdown
 # Structural proposal {{proposal-id}}
 
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this artifact's own text as issued
 - **Input identity:** {{the exact source revision, contracts, and external inputs
   the friction was measured against}}
 - **Predecessor:** {{prior proposal id, or none — drift needs an approved

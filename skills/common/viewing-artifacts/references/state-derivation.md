@@ -21,8 +21,8 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
 - **No artifact** → a pending node naming what produces it; no fabricated
   dates or counts.
 - **Presence** → the artifact exists, even without a `**Status:**` field.
-  Decision state is external; its `**Normative version:**` identity is what
-  approval binds to. A draft or proposed label is never approval.
+  Decision state is external; its identity, per its template's `**Identity:**`
+  line, is what approval binds to. A draft or proposed label is never approval.
 - **Derive state and dependencies per section.** Shared files can hold goals,
   scope, feasibility, or ADRs with separate identities and ledger rows. A
   change in one section does not invalidate an unrelated section's approval.
@@ -48,7 +48,7 @@ ledger beside the artifact: its path with .ledger.md in place of .md, or
   satisfy them. Unknown conditions stay unknown, not ready.
 
 Parse best-effort and only the markdown-table form. The matching row is the one
-whose `Identity` equals the normative version and whose location and section
+whose `Identity` equals the artifact's identity and whose location and section
 identify that content. The same identity on another file or section is a
 different decision. Preserve a missing or ambiguous section match as unknown.
 

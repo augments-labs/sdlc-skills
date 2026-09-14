@@ -41,7 +41,7 @@ Open `assets/goals-section.md` before starting; each step fills its section.
 2. Present:
 
    ```text
-   Goals {{path}} — version {{identity}}
+   Goals {{path}} — version {{identity (per template)}}
    Objective: {{one line}}
    Measure: {{baseline}} → {{target}} by {{horizon}}, source {{source}}
    Guardrails: {{list}}

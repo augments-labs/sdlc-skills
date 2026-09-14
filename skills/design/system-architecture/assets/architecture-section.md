@@ -6,7 +6,9 @@ identity is issued.
 ## Architecture
 
 **Status:** {{draft | proposed; decision and adoption state stay external}}
-**Normative version:** {{immutable content identity of this section}}
+**Identity:** recorded in the ledger row, never here: the first 7 characters of
+`git hash-object --stdin` over this section, from its heading to the next `##`
+heading, without trailing blank lines
 **Predecessor:** {{prior normative identity, or none; a proposal only links it}}
 **Approval rule:** {{one accountable decision owner, or the required approvers
 plus the conflict resolver and the rule that decides}}

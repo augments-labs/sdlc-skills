@@ -50,7 +50,7 @@ term below reads unfamiliar.
 5. Present. Never self-select a material structure:
 
    ```text
-   Structural proposal {{identity}}
+   Structural proposal {{identity (per template)}}
    Friction: {{measured, one line}}  Target: {{one line}}
    Alternatives: {{list}}  Slices: {{n}}  Rollback: {{one line}}
 

@@ -61,7 +61,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 3. Present:
 
    ```text
-   {{Section}} {{path}} — version {{identity}}
+   {{Section}} {{path}} — version {{identity (per template)}}
    {{summary lines}}
 
    1. Approve and hand off to planning

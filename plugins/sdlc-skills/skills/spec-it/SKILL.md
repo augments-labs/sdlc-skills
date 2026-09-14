@@ -64,7 +64,7 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 3. Present:
 
    ```text
-   Spec {{path}} — version {{identity}}
+   Spec {{path}} — version {{identity (per template)}}
    Requirements: {{n}}  Open questions: {{n}}  Out of scope: {{n}}
 
    1. Approve and hand off to design
