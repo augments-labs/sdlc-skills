@@ -16,6 +16,25 @@ found", which is a claim.
 - **Decision owner:** {{one accountable owner, OR the required approvers, the
   conflict resolver, and the decision rule}}
 
+## High-risk classification
+
+Classify before implementing, on risk evidence rather than line count. The
+ordinary route is ordinary feature planning and line-by-line review; an
+answer is off it when the ordinary route cannot make those surfaces
+reviewable and recoverable.
+
+- Can independent humans or gates inspect the result (**reviewability**)?
+  {{answer and evidence}}
+- Must behavior, compatibility, data, or operations match (**preservation**)?
+  {{answer and evidence}}
+- How many owners, consumers, platforms, or modes change (**breadth**)?
+  {{answer and evidence}}
+- Can data, security, concurrency, resources, cutover, or recovery fail
+  independently (**failure surfaces**)? {{answer and evidence}}
+- **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
+  the ordinary route, or the user marking the work high-risk, makes it
+  high-risk. Reclassify when inputs change.
+
 ## Problem
 
 {{one or two lines}} — serves {{the goal or brief this traces to}}

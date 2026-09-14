@@ -20,9 +20,8 @@ term below reads unfamiliar.
 
 ## Step 1: Classify and measure
 
-1. Classify with `migration-strategy`'s four questions (reviewability,
-   preservation, breadth, failure surfaces) and record the answers. All
-   four on the ordinary route → stay here. Any not → wait for an approved,
+1. Fill the classification block. All four answers on the ordinary route →
+   stay here. Any not → wait for an approved,
    current migration and assurance contract and passed entry gates. An
    authorized prerequisite consumes only its exact proposed contract; it
    cannot edit the target, approve the contract, or satisfy entry.

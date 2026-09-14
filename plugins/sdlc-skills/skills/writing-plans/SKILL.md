@@ -16,9 +16,8 @@ not the code.
 - **Skip** for single-step or trivial changes — planning them costs more than doing them.
 - Intent still ambiguous: invoke `interview-me` first. Verifiable behavior
   still missing: invoke `spec-it` first. A precise task needs neither.
-- High-risk means any of `migration-strategy`'s four classification answers
-  (reviewability, preservation, breadth, failure surfaces) is off the
-  ordinary route, or the user marks the work so; record the answers. For a
+- Fill the classification block. High-risk means any answer is off the
+  ordinary route, or the user marks the work so. For a
   high-risk target, read the approved migration and assurance contracts
   before writing a task. If they are missing, plan only the gate that is
   missing, consuming the exact proposed contract, and put no target work in
