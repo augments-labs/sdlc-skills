@@ -154,12 +154,15 @@ time and available harness telemetry, not an isolated per-skill price. See
 
 ```bash
 bash scripts/sh/validate-skills.sh
+bash scripts/sh/validate-skill-graph.sh
 bash skills/common/writing-skills/scripts/check-skill.sh path/to/skill
 ```
 
-The first checks the library and its adapters. The second accepts a skill path,
-including one outside this repository, subject to the parsing and execution
-limits above. Both enforce this checker's profile.
+The first checks the library and its adapters. The second reports pairs of
+skills that hand off to each other: a pair listed in `docs/allowed-cycles.txt`
+prints as allowed, and `--strict` fails on any other. The third accepts a skill
+path, including one outside this repository, subject to the parsing and
+execution limits above. The first and third enforce this checker's profile.
 
 The standard's reference validator is not vendored because this library adds no
 third-party dependencies. A separate, non-blocking CI job installs it and runs it
