@@ -30,3 +30,40 @@ jobs:
         run: bash tests/run-serve-preview.sh
       - name: Token budget (always-loaded surface)
         run: bash scripts/sh/token-budget.sh --max 5000
+
+  reference-validator:
+    # A parser cross-check with the Agent Skills reference validator, never a
+    # gate: a differing verdict is investigated (docs/agent-skills-conformance.md).
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the reference validator
+        run: pip install skills-ref==0.1.1
+      - name: Validate every skill directory
+        run: |
+          # The validator echoes skill content; the runner must not read it as workflow commands.
+          token=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$token"
+          trap 'echo "::$token::"' EXIT
+          {
+            echo "## Reference validator cross-check"
+            echo
+            for dir in skills/*/*/; do
+              case "$dir" in *[!a-z0-9/-]*) echo "- skipped: a directory name outside [a-z0-9-]"; continue;; esac
+              if out=$(agentskills validate "$dir" 2>&1); then
+                echo "- valid: \`$dir\`"
+              else
+                echo "- differs: \`$dir\`"
+                echo
+                echo '````text'
+                printf '%s\n' "$out" | tr -d '`'
+                echo '````'
+              fi
+            done
+          } | tee -a "$GITHUB_STEP_SUMMARY"

@@ -68,3 +68,17 @@ Use behavioral tests only for the affected skill or handoff. Do not broaden to
 unrelated skills for coverage, emulate whole provider sessions when a smaller
 observable answers the question, or build an evaluator comparable in size to the
 behavior being evaluated.
+
+## Cutting and the regression net
+
+Cut guidance by judgement, not word count. Ask of each section:
+"would the agent get this wrong without this?" Cut it when the answer is no.
+When unsure, run a throwaway probe — three pressure prompts, once with the
+section and once without — report the result in the PR, and commit nothing.
+Hard stops and destructive-action guards are never cut.
+
+The regression net is the lab's behavioral scenarios and description query
+sets, run once before and once after each release. A release is compared with
+the baseline campaign record, `results/{{date}}-baseline-{{version}}/summary.md`;
+a scenario that passed there and fails on the candidate stops the release.
+Permanent scenarios are added only for a chain of skills that has none.

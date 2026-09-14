@@ -91,6 +91,10 @@ The conformance record is `docs/agent-skills-conformance.md`.
    in instead of running something —
    `skills/common/writing-skills/references/testing.md` draws that line and owns
    the rest.
+5. **A body you touch meets the current `writing-skills` format in full**,
+   including its Gotchas, load-condition, and fragile-operation rules. Run
+   `check-skill.sh --strict` on each skill you edit: `validate-skills.sh` reports
+   those checks as warnings, so CI does not fail on them.
 
 ## Verify against the gate
 
@@ -156,7 +160,13 @@ the skill actually does. Match the run to what changed:
   be reproduced, run the smallest existing lab scenario or a temporary
   before/after probe that exercises it, and report the result. Where it has
   none, name the class and say so — that is a finding, not a skipped step.
-  Do not add a permanent fixture for coverage.
+- **Cutting:** cut by judgement, not word count. Ask of each section:
+  "would the agent get this wrong without this?" When unsure, run a throwaway
+  probe (three pressure prompts, with and without the section), put the result
+  in the PR, and commit nothing. Hard stops and destructive-action guards are
+  never cut.
+  Permanent behavioral scenarios exist only for a chain of skills that has
+  none; `docs/chains.toml`, when present, lists those chains.
 - **Description (the trigger):** the evals lab's triggering runner *optimizes* a
   description; it does not certify one, and no edit is held open waiting for it.
   Reach for it when you are tuning that description — the lab's descriptions
@@ -186,7 +196,7 @@ For whether a phase's activities are separable or one interleaved pass, see
 - **Identify yourself.** Disclose in the PR the model, harness, harness version, and any installed plugins that produced the change — or state plainly it was written by hand. Contributions are weighed by how they were made: a behaviour claim reasoned from documentation is held to a different bar than one grounded in a real session. Hiding the authoring environment is grounds for closing the PR.
 - **Target `dev` from a task branch.** `dev` is where reviewed changes collect; `main` holds releases only and receives nothing but release PRs from `dev`. A PR opened against `main` is asked to retarget `dev` before review.
 - **Never bump versions or edit CHANGELOG version headings in a PR.** Releases are versioned once, by the maintainer — see `RELEASING.md`, which also owns what a changelog entry says.
-- **No third-party dependencies.** SDLC skills is zero-dependency by design; a change that needs an external tool or service belongs in a separate plugin. Adding a harness is the exception.
+- **No third-party dependencies.** SDLC skills is zero-dependency by design; a change that needs an external tool or service belongs in a separate plugin. Two exceptions: adding a harness, and the non-blocking CI job that cross-checks skills with the Agent Skills reference validator — users install nothing and it never gates.
 - The bar is the gate and the evidence, not volume or confidence. "No skill is needed here" is a valid, useful outcome; an inconclusive result is a valid finding; a fabricated one closes the PR.
 
 ## New harness support

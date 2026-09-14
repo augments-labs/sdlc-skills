@@ -85,3 +85,15 @@ Report commands, base/edited arms, environments, run counts, and every pass,
 failure, timeout, refusal, or inconclusive result. A single green run is weak
 evidence. An unavailable live runner means “shape validated; behavior unproven,”
 never “works.”
+
+## Throwaway probes
+
+When unsure whether a section changes behavior, write three pressure prompts that
+would tempt an agent to break its rule. Run each once with the section and once
+without, report every result in the change's review, and commit nothing.
+
+## Gotchas
+
+- A green on a large tier does not transfer to a small one: a smaller model
+  drops steps a larger one keeps. Prove on the smallest tier the library
+  supports.

@@ -44,3 +44,10 @@ and asserts the auth gate, path confinement, and clean stop. Both run in CI.
 `run-plugin-smoke.sh` needs the harness's CLI installed, so it runs locally: it
 installs this tree the way that harness does, into a throwaway home, and checks
 that every skill is discovered. Its bindings are in `harnesses/README.md`.
+
+## The regression net
+
+These tests guard scripts and packaging on every change. Behavior is guarded by
+the lab's scenarios, run once before and once after each release; a release
+that fails a scenario its baseline passed does not ship. A temporary controlled
+probe that answers one question is reported in its PR and never committed here.

@@ -92,7 +92,14 @@ for skill in "${skills[@]}"; do
   # .md of the skill, RECURSIVELY (covers references/ and scripts/ subfolders).
   while IFS= read -r f; do
     body=$(sed 's/`[^`]*`//g' "$f")   # ignore inline code spans
-    echo "$body" | grep -qiE "$EXT_REFS"        && err "$(basename "$f"): external reference (repo/issue/URL) — state the principle directly"
+    # The Agent Skills specification is the one external host a skill may cite:
+    # strip only its scheme and host so a path is still scanned, and fail closed
+    # when sed cannot run the edit.
+    if ! scanned=$(printf '%s\n' "$body" | sed -E 's@https?://agentskills\.io([/?#[:space:])>])@\1@g; s@https?://agentskills\.io$@@'); then
+      err "$(basename "$f"): external-reference scan could not run"
+    elif grep -qiE "$EXT_REFS" <<<"$scanned"; then
+      err "$(basename "$f"): external reference (repo/issue/URL) — state the principle directly"
+    fi
     echo "$body" | grep -qiE "$VENDORS"         && err "$(basename "$f"): vendor model name — use a capability tier (small|medium|large)"
     echo "$body" | grep -qiE "$SCANNER_TRIGGERS" && err "$(basename "$f"): harness scanner trigger-word — rephrase so a keyword scan can't hijack the session"
     echo "$body" | grep -qE  '<[a-z][a-z0-9 -]*>' && err "$(basename "$f"): bare <angle> placeholder — use {{double-curly}}"
@@ -108,7 +115,7 @@ done
 # Backticked kebab-case tokens that are not skill names go on the allowlist.
 echo "• backticked skill names resolve to skills on disk"
 skill_names="$(find skills -mindepth 3 -maxdepth 3 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
-name_allowlist='common-dir git-dir integrated-regression'
+name_allowlist='common-dir git-dir integrated-regression description-yaml reference-depth reference-load-condition'
 while IFS=: read -r file token; do
   printf '%s\n' "$skill_names" | grep -qx "$token" && continue
   printf '%s\n' $name_allowlist | grep -qx "$token" && continue

@@ -41,3 +41,8 @@ into the throwaway home.
 Add `{{name}}.sh` implementing the contract above, and its launcher in the lab.
 Bindings alone do not make a harness supported — what one has to prove before
 claiming support is in `docs/harness-support.md`.
+
+## Regression net
+
+Run plugin smoke whenever an adapter changes. Whether a harness still activates
+skills is part of the lab's regression net, run before and after each release.
