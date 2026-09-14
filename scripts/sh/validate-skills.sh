@@ -50,12 +50,15 @@ mapfile -t skills < <(find skills -name SKILL.md | sort)
 [ ${#skills[@]} -eq 0 ] && { echo "no skills found under skills/"; exit 2; }
 
 # Shared format and policy checks are delegated to the checker this library
-# ships (see the per-skill loop). Delegation fails open — a moved or renamed
-# script would produce no findings and every skill would pass — so prove it is
-# there and runnable before trusting a silent result.
+# ships (see the per-skill loop). It has to exist and answer --help here. In the
+# loop, a non-zero exit that reports no fail row is itself a FAIL naming the
+# checker, the skill, the exit code, and the first diagnostic, so a checker that
+# crashes fails the gate instead of passing every skill in silence.
 CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh
 [ -f "$CONFORMANCE" ] || { echo "missing $CONFORMANCE — the skill-format checks are delegated to it"; exit 2; }
 bash "$CONFORMANCE" --help >/dev/null 2>&1 || { echo "$CONFORMANCE does not run"; exit 2; }
+conformance_err=$(mktemp) || { echo "could not create a file for $CONFORMANCE diagnostics"; exit 2; }
+trap 'rm -f "$conformance_err"' EXIT
 
 for skill in "${skills[@]}"; do
   dir=$(dirname "$skill")
@@ -64,13 +67,21 @@ for skill in "${skills[@]}"; do
 
   # Delegate the shared format and policy profile: required field extraction,
   # names, sizes, links, presentation, and executable script help. This is not
-  # full YAML/optional-metadata validation. Preserve warnings as well as errors.
+  # full YAML/optional-metadata validation. Preserve warnings as well as errors,
+  # and the checker's exit status: non-zero with no fail row is a crash.
+  conformance_rows=$(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>"$conformance_err")
+  conformance_status=$?
+  conformance_fails=0
   while IFS=$'\t' read -r level check detail; do
     case "$level" in
-      fail) err  "$check: $detail" ;;
+      fail) err  "$check: $detail"; conformance_fails=1 ;;
       warn) note "warn: $check: $detail" ;;
     esac
-  done < <(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>/dev/null)
+  done <<<"$conformance_rows"
+  if [ "$conformance_status" -ne 0 ] && [ "$conformance_fails" = 0 ]; then
+    conformance_diag=$(grep -m1 . "$conformance_err" || printf '%s\n' "$conformance_rows" | grep -m1 .)
+    err "$CONFORMANCE exited $conformance_status on $dir with no fail row: ${conformance_diag:-no output}"
+  fi
 
   fname=$(awk -F': ' '/^name:/{print $2; exit}' "$skill")
 
