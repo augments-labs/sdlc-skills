@@ -28,6 +28,8 @@
 # its own prior values. This script measures full SKILL.md files.
 
 set -uo pipefail
+# CHAINS_TOML is read relative to the caller, before moving to the repo root.
+case "${CHAINS_TOML:-}" in ''|/*) ;; *) CHAINS_TOML="$PWD/$CHAINS_TOML" ;; esac
 cd "$(dirname "$0")/../.." || exit 2
 
 case "${1-}" in
@@ -35,21 +37,69 @@ case "${1-}" in
     cat <<'EOF'
 scripts/sh/token-budget.sh — approximate context cost of the always-loaded surface.
 
-  --max N   flag any SKILL.md body over N approx-tokens (default: report only)
-  --help    this text
+  --max N        flag any SKILL.md body over N approx-tokens (default: report only)
+  --chain NAME   sum the body words of chain NAME's skills from docs/chains.toml
+                 (references excluded) and exit 1 over its budget_words
+  --help         this text
+
+Environment:
+  CHAINS_TOML    the chains file to read instead of docs/chains.toml
 
 Tokens are approximated as characters/4 — a portable proxy for drift and
 comparison, not a billing figure. Discipline skills legitimately run large; see
 writing-skills before tightening one.
 
-Exit codes: 0 report printed, nothing over --max
-            1 at least one body exceeded --max · 2 not run from the repo
+Exit codes: 0 report printed, nothing over --max or the chain's budget
+            1 a body exceeded --max, or the chain exceeded its budget_words
+            2 not run from the repo, or an unknown chain or unreadable chains file
 EOF
     exit 0;;
 esac
 
 max=0
 [ "${1:-}" = "--max" ] && max="${2:-0}"
+
+# --chain NAME: the summed body words of one chain from docs/chains.toml,
+# checked against its budget_words. Word counts, not the chars/4 estimate above.
+if [ "${1:-}" = "--chain" ]; then
+  chain="${2:-}"; toml="${CHAINS_TOML:-docs/chains.toml}"
+  case "$chain" in ''|*[!a-z0-9-]*) echo "--chain takes a chain name of a-z, 0-9 and -" >&2; exit 2 ;; esac
+  [ -r "$toml" ] || { echo "cannot read $toml" >&2; exit 2; }
+  # The chains file is a small TOML subset: [name] tables holding a skills array
+  # (on one line or several) and the integers recorded_words and budget_words.
+  parsed="$(awk -v want="$chain" '
+    function names(s) { while (match(s, /"[^"]*"/)) { print "skill\t" substr(s, RSTART + 1, RLENGTH - 2); s = substr(s, RSTART + RLENGTH) } }
+    /^[[:space:]]*\[/ { t = $0; gsub(/[[:space:]]/, "", t); in_t = (t == "[" want "]"); if (in_t) found = 1; arr = 0; next }
+    !in_t { next }
+    arr { names($0); if ($0 ~ /\]/) arr = 0; next }
+    /^[[:space:]]*skills[[:space:]]*=/ { names($0); if ($0 !~ /\]/) arr = 1; next }
+    /^[[:space:]]*(recorded|budget)_words[[:space:]]*=/ { k = $0; sub(/_words.*/, "", k); gsub(/[[:space:]]/, "", k); v = $0; sub(/^[^=]*=[[:space:]]*/, "", v); sub(/[[:space:]]*$/, "", v); print k "\t" v; next }
+    END { if (!found) print "missing" }
+  ' "$toml")" || { echo "cannot parse $toml" >&2; exit 2; }
+  budget=""; skills=()
+  while IFS=$'\t' read -r kind val; do
+    case "$kind" in
+      missing) echo "no [$chain] table in $toml" >&2; exit 2 ;;
+      skill) skills+=("$val") ;;
+      budget) budget="$val" ;;
+    esac
+  done <<<"$parsed"
+  case "$budget" in ''|*[!0-9]*) echo "[$chain] needs an integer budget_words" >&2; exit 2 ;; esac
+  [ "${#skills[@]}" -gt 0 ] || { echo "[$chain] lists no skills" >&2; exit 2; }
+  echo "token-budget: chain $chain  (body words, references excluded)"
+  total=0
+  for s in "${skills[@]}"; do
+    case "$s" in ''|*[!a-z0-9-]*) echo "[$chain] lists a skill name outside a-z, 0-9 and -" >&2; exit 2 ;; esac
+    f=""; for c in skills/*/"$s"/SKILL.md; do [ -f "$c" ] && f="$c"; done
+    [ -n "$f" ] || { echo "[$chain] lists $s, which has no SKILL.md" >&2; exit 2; }
+    w=$(awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$f" | wc -w | tr -d ' ')
+    printf '  %6d  %s\n' "$w" "$s"
+    total=$((total + w))
+  done
+  printf '  total %d words · budget %d\n' "$total" "$budget"
+  [ "$total" -le "$budget" ] || { echo "✗ chain $chain is over budget by $((total - budget)) words"; exit 1; }
+  exit 0
+fi
 
 approx() { local c; c=$(wc -m <"$1"); echo $(((c + 3) / 4)); }
 
