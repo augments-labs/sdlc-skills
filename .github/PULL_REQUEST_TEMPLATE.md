@@ -94,7 +94,7 @@ is unchanged; say so instead of running something. -->
 - [ ] For a skill change: I invoked `writing-skills`, and `skills/common/writing-skills/scripts/check-skill.sh` passes on every skill touched.
 - [ ] The change was pressure-tested, not only exercised on the happy path.
 - [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without re-proving it still holds (CLAUDE.md → "Editing a skill").
-- [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model.
+- [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model (`docs/` may link this project's evals lab).
 
 ## New harness support (required only if this PR adds a harness)
 
@@ -139,7 +139,7 @@ A PR is closed without review when it:
 - bundles unrelated changes;
 - leaves a required section blank or keeps placeholder text;
 - names another repository, project, author, issue, or vendor model in
-  shipped files;
+  shipped files (this project's evals lab excepted);
 - submits domain-, tool-, or workflow-specific content as core;
 - changes behaviour-shaping content without evidence.
 -->

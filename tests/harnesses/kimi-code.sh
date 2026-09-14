@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Kimi Code CLI adapter. Sourced by tests/run-plugin-smoke.sh — never executed
-# directly. The live half lives with the live runners in the evals lab.
+# directly. The live half lives with the live runners in the evals lab,
+# [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
 
 source_kimi_home="${KIMI_CODE_HOME:-${HOME:-}/.kimi-code}"
 

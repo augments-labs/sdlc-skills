@@ -70,7 +70,10 @@ The conformance record is `docs/agent-skills-conformance.md`.
    The same rule governs commit messages, PR descriptions, and release notes:
    state the change and its evidence; never attribute it to another repository,
    project, or library it may resemble. (Disclosing the authoring environment,
-   required under *Contributing*, is not attribution and stays.)
+   required under *Contributing*, is not attribution and stays.) This project's
+   own evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), is not
+   an external reference: `docs/` and contributor files link it; shipped skills
+   never name it.
 2. **Model- and harness-agnostic.** Refer to models by capability tier —
    `small | medium | large` — never vendor names (haiku, sonnet, gpt, gemini, …).
    Don't assume a specific harness's tooling or paths. Each harness binds

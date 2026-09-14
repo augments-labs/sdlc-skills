@@ -97,10 +97,11 @@ current bundled help branches return without starting their operational work.
 ## Evaluation is separate from conformance
 
 The testing layout is repository policy, not part of the standard's required
-skill format. `tests/` holds offline adapter checks; labeled behavior scenarios
-and description tuning measurements live in the evals lab, a separate repository
-(see [`testing.md`](testing.md)). Neither a structural pass nor a description
-score certifies model behavior.
+skill format. `tests/` holds offline script and packaging checks; labeled
+behavior scenarios and description tuning measurements live in the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals) (see
+[`testing.md`](testing.md)). Neither a structural pass nor a description score
+certifies model behavior.
 
 ### Description tuning
 
