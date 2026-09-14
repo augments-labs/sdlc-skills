@@ -223,20 +223,29 @@ KEYS
 
   # An agent loads a support file only when the body says when to: a bare path
   # is a file it either reads every time or never.
+  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" '
+    NR<=e { next }
+    {
+      # A condition after the last named file also follows every earlier one, so
+      # one split tests the whole line in linear time.
+      n = split($0, parts, pat)
+      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
+        snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
+        # [[:cntrl:]] misses UTF-8 C1 controls where awk counts bytes, so strip
+        # those bytes there. A character-counting awk rejects the range, even in
+        # a /regex/ it never runs, hence the string.
+        if (length("\302\233") == 2) gsub("\302[\200-\237]", " ", snippet)
+        print NR ":" snippet
+      }
+    }
+  ' "$skill")"; then
+    policy reference-load-condition "the load-condition scan could not run"
+  fi
   while IFS= read -r hit; do
     [ -n "$hit" ] || continue
     policy reference-load-condition "line ${hit%%:*} names a support file with no load condition after it (when, if, before, after): ${hit#*:}"
   done <<HITS
-$(awk -v e="${fm_end:-0}" -v pat="$support_path" '
-  NR<=e { next }
-  {
-    # A condition after the last named file also follows every earlier one, so
-    # one split tests the whole line in linear time.
-    n = split($0, parts, pat)
-    if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
-      snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet); print NR ":" snippet
-    }
-  }' "$skill")
+$hits
 HITS
 
   # --- references resolve ------------------------------------------------------
@@ -291,7 +300,8 @@ fi
 # third file is missed. Always a warning: the chain may be deliberate.
 while IFS= read -r sf; do
   [ -n "$sf" ] || continue
-  srel="${sf#"$dir"/}"; srel="${srel//[[:cntrl:]]/ }"
+  # In a single-byte locale [[:cntrl:]] misses UTF-8 C1 controls; strip their bytes too.
+  srel="${sf#"$dir"/}"; srel="${srel//[[:cntrl:]]/ }"; srel="${srel//$'\xc2'[$'\x80'-$'\x9f']/ }"
   while IFS= read -r m; do
     [ -n "$m" ] && [ "$m" != "$srel" ] && [ -e "$dir/$m" ] || continue
     finding warn reference-depth "$srel names $m; keep support files one level deep from SKILL.md"

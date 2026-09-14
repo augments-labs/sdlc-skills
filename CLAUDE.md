@@ -166,7 +166,7 @@ the skill actually does. Match the run to what changed:
   in the PR, and commit nothing. Hard stops and destructive-action guards are
   never cut.
   Permanent behavioral scenarios exist only for a chain of skills that has
-  none; `docs/chains.toml` lists those chains once the chain-budget gate adds it.
+  none; `docs/chains.toml`, when present, lists those chains.
 - **Description (the trigger):** the evals lab's triggering runner *optimizes* a
   description; it does not certify one, and no edit is held open waiting for it.
   Reach for it when you are tuning that description — the lab's descriptions
