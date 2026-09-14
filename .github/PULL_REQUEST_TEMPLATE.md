@@ -139,7 +139,7 @@ A PR is closed without review when it:
 - bundles unrelated changes;
 - leaves a required section blank or keeps placeholder text;
 - names another repository, project, author, issue, or vendor model in
-  shipped files (this project's evals lab excepted);
+  shipped files (`docs/` may link this project's evals lab);
 - submits domain-, tool-, or workflow-specific content as core;
 - changes behaviour-shaping content without evidence.
 -->

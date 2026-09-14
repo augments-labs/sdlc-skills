@@ -72,8 +72,8 @@ The conformance record is `docs/agent-skills-conformance.md`.
    project, or library it may resemble. (Disclosing the authoring environment,
    required under *Contributing*, is not attribution and stays.) This project's
    own evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), is not
-   an external reference: `docs/` and contributor files link it; shipped skills
-   never name it.
+   an external reference: `docs/`, `README.md`, and contributor files link it;
+   shipped skills never name it.
 2. **Model- and harness-agnostic.** Refer to models by capability tier —
    `small | medium | large` — never vendor names (haiku, sonnet, gpt, gemini, …).
    Don't assume a specific harness's tooling or paths. Each harness binds
