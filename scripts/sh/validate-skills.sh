@@ -6,22 +6,29 @@
 set -uo pipefail
 cd "$(dirname "$0")/../.." || exit 2
 
+strict=""
+[ $# -le 1 ] || { echo "at most one argument (see --help)" >&2; exit 2; }
 case "${1-}" in
   -h|--help)
     cat <<'EOF'
 scripts/sh/validate-skills.sh — structural gate for every skill in skills/.
 
-Takes no arguments. Checks frontmatter shape, line and description budgets,
-directory layout, resolvable reference paths, absent external references and
-vendor model names, and that every skill is registered in each plugin manifest.
-CI runs this on every push and PR.
+Checks frontmatter shape, line and description budgets, directory layout,
+resolvable reference paths, absent external references and vendor model names,
+and that every skill is registered in each plugin manifest. CI runs this on
+every push and PR.
 
+  --strict  fail on the policy checks check-skill.sh otherwise reports as
+            warnings, reference-load-condition included
   --help    this text
 
 Exit codes: 0 every skill passed · 1 violations printed above the summary
-            2 not run from the repo
+            2 not run from the repo, or an unknown argument
 EOF
     exit 0;;
+  --strict) strict=--strict ;;
+  "") ;;
+  *) echo "unknown argument: $1 (see --help)" >&2; exit 2 ;;
 esac
 
 fail=0
@@ -63,7 +70,7 @@ for skill in "${skills[@]}"; do
       fail) err  "$check: $detail" ;;
       warn) note "warn: $check: $detail" ;;
     esac
-  done < <(bash "$CONFORMANCE" "$dir" 2>/dev/null)
+  done < <(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>/dev/null)
 
   fname=$(awk -F': ' '/^name:/{print $2; exit}' "$skill")
 

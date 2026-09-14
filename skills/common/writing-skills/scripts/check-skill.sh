@@ -30,8 +30,9 @@ Checks:
 Policy checks (`warn` by default, `fail` with --strict):
   gotchas-present           the body has a `## Gotchas` section
   reference-load-condition  a body line naming references/<file> or
-                            assets/<file> carries `when`, `if`, `before`, or
-                            `after` after that name, on the same line
+                            assets/<file> passes only if `when`, `if`,
+                            `before`, or `after` follows that name on the same
+                            line; nothing else counts
   description-yaml          the raw description loads under a strict YAML
                             parser: quoted, a block scalar, or plain text with
                             no `: `, no ` #`, and no leading * & [ { # ! % @ `

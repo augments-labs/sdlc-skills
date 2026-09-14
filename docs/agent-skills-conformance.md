@@ -160,7 +160,9 @@ bash scripts/sh/validate-trigger-collisions.sh
 bash skills/common/writing-skills/scripts/check-skill.sh path/to/skill
 ```
 
-The first checks the library and its adapters. The second reports pairs of
+The first checks the library and its adapters; with `--strict` it also fails on
+the policy checks it otherwise reports as warnings, `reference-load-condition`
+included. The second reports pairs of
 skills that hand off to each other: a pair listed in `docs/allowed-cycles.txt`
 prints as allowed, and `--strict` fails on any other. The third sums the body
 words of one chain in `docs/chains.toml` and fails over its budget. The fourth
