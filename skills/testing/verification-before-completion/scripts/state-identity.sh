@@ -27,16 +27,19 @@ Options:
 Output:
   JSON on stdout, diagnostics on stderr.
 
-  source.digest covers tracked content, staged and unstaged changes, and
-  untracked file names and contents. It deliberately does NOT change when only
-  the time or the environment changes, so a matching digest means the source
-  really is the same source.
+  source.digest covers the content the working tree presents (tracked and
+  untracked, non-ignored paths, as git would record them) plus any staged copy
+  that matches neither HEAD nor the working tree. HEAD is not part of it:
+  staging or committing exactly the captured content keeps the digest. It does
+  NOT change when only the time or the environment changes. Changes inside a
+  submodule count once its checked-out commit moves.
 
 Exit codes:
   0  state captured, or --compare matched
   1  --compare found drift: the evidence does not describe this state
   2  not a git repository, or bad arguments
   3  a required tool is missing
+  4  git could not record the working tree: no digest, so no evidence binds
 
 Examples:
   before=$(bash scripts/state-identity.sh --quiet)
@@ -77,13 +80,56 @@ jstr() {
 jnull() { [ -n "${1-}" ] && jstr "$1" || printf 'null'; }
 jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
 
+# The content digest: what the working tree presents, as git would record it,
+# plus every staged copy that matches neither HEAD nor the working tree. HEAD is
+# not part of it, so staging or committing exactly this content keeps it.
+#
+# Git itself records the working tree into a throwaway index and object
+# directory under mktemp, reading the repository's objects as alternates, so
+# paths with tabs or newlines, submodules, symlinks, modes, and clean filters
+# are handled as a commit would handle them. The copy keeps the index's mtime,
+# so git still re-reads a racily clean file. Split index and hooks are off, so
+# no hook runs and no repository file is added or changed; git may only refresh
+# the timestamps of objects it already holds. Any git step that fails makes the
+# function fail: it never prints a digest for a partial record.
+content_digest() {
+  local cd_tmp cd_objects cd_index cd_head cd_tw cd_t2 cd_hdr cd_path cd_newmode cd_newsha cd_status
+  cd_tmp="$(mktemp -d 2>/dev/null)" || return 1
+  cd_objects="$(cd "$(git rev-parse --git-path objects 2>/dev/null)" 2>/dev/null && pwd -P)" || { rm -rf "$cd_tmp"; return 1; }
+  cd_index="$(git rev-parse --git-path index 2>/dev/null)"
+  mkdir -p "$cd_tmp/objects"
+  if [ -f "$cd_index" ]; then cp -p "$cd_index" "$cd_tmp/wt.index" || { rm -rf "$cd_tmp"; return 1; }; fi
+  cd_git() { # $1 index file; the rest is a git command
+    local idx="$1"; shift
+    GIT_INDEX_FILE="$idx" GIT_OBJECT_DIRECTORY="$cd_tmp/objects" GIT_ALTERNATE_OBJECT_DIRECTORIES="$cd_objects" \
+      git --no-optional-locks -c core.fsmonitor=false -c core.splitIndex=false -c core.hooksPath=/dev/null "$@"
+  }
+  # What the working tree presents, recorded as git would record it.
+  cd_git "$cd_tmp/wt.index" add -A >/dev/null 2>&1 &&
+    cd_tw="$(cd_git "$cd_tmp/wt.index" write-tree 2>/dev/null)" && [ -n "$cd_tw" ] ||
+    { rm -rf "$cd_tmp"; return 1; }
+  # Overlay every staged copy that differs from HEAD; the result differs from
+  # the working-tree tree only where a staged copy matches neither.
+  if [ -f "$cd_tmp/wt.index" ]; then cp -p "$cd_tmp/wt.index" "$cd_tmp/t2.index" || { rm -rf "$cd_tmp"; return 1; }; fi
+  cd_head="$(git rev-parse --verify -q 'HEAD^{tree}' 2>/dev/null)" || cd_head=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" 2>/dev/null |
+    while IFS= read -r -d '' cd_hdr && IFS= read -r -d '' cd_path; do
+      set -- $cd_hdr
+      cd_newmode="$2"; cd_newsha="$4"; cd_status="$5"
+      case "$cd_status" in M|A|T) ;; *) continue;; esac
+      case "$cd_newsha" in *[!0]*) ;; *) continue;; esac
+      printf '%s %s 0\t%s\0' "$cd_newmode" "$cd_newsha" "$cd_path"
+    done | cd_git "$cd_tmp/t2.index" update-index -z --index-info >/dev/null 2>&1 &&
+    cd_t2="$(cd_git "$cd_tmp/t2.index" write-tree 2>/dev/null)" && [ -n "$cd_t2" ] ||
+    { rm -rf "$cd_tmp"; return 1; }
+  git --no-optional-locks ls-files -u -z >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
+  { printf '%s\n%s\n' "$cd_tw" "$cd_t2"; cat "$cd_tmp/unmerged"; } | sha || { rm -rf "$cd_tmp"; return 1; }
+  rm -rf "$cd_tmp"
+}
+
 # The digest that decides whether evidence still applies.
-digest="$( { git rev-parse 'HEAD^{tree}' 2>/dev/null
-             git diff HEAD --binary 2>/dev/null
-             git status --porcelain -uall 2>/dev/null
-             git ls-files --others --exclude-standard -z 2>/dev/null \
-               | xargs -0 -r git hash-object 2>/dev/null
-           } | sha )"
+digest="$(content_digest)" || {
+  echo "Error: git could not record the working tree (try \`git add -A --dry-run\`); there is no digest to bind evidence to." >&2; exit 4; }
 
 if [ -n "$compare" ]; then
   if [ "$digest" = "$compare" ]; then
@@ -101,9 +147,9 @@ fi
 
 head_sha="$(git rev-parse HEAD 2>/dev/null)" || head_sha=""
 branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" || branch=""
-staged_n="$(git diff --cached --name-only 2>/dev/null | grep -c . || true)"
-unstaged_n="$(git diff --name-only 2>/dev/null | grep -c . || true)"
-untracked_n="$(git ls-files --others --exclude-standard 2>/dev/null | grep -c . || true)"
+staged_n="$(git --no-optional-locks diff --cached --name-only 2>/dev/null | grep -c . || true)"
+unstaged_n="$(git --no-optional-locks diff --name-only 2>/dev/null | grep -c . || true)"
+untracked_n="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null | grep -c . || true)"
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
 
 printf '{\n'
