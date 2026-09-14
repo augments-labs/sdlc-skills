@@ -3,9 +3,10 @@
 - **Status:** `draft | proposed` (decision and execution state stay external)
 - **Normative version:** this plan's identity, computed by the rule on the next
   line; approval, mode, and evidence bind to it, never to a label
-- **Identity:** recorded in the ledger row, never here: the first 7 characters of
-  `git hash-object` over this index, with every task checkbox and state label
-  normalized to `[ ]` and `todo`, followed by every task file in index order
+- **Identity:** recorded in the ledger row, never here: the version
+  `scripts/plan-version.sh` prints, which runs `git hash-object` over this index
+  with every task checkbox and state label normalized to `[ ]` and `todo`,
+  followed by every task file in index order
 - **Predecessor:** {{prior normative identity or none; a proposal only links it}}
 - **Approval rule:** {{one accountable decision owner, or required approvers plus
   conflict resolver and decision rule}}

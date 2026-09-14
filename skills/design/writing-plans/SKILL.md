@@ -25,6 +25,11 @@ not the code.
 - Write separate plans for independent subsystems unless one cutover or
   rollback makes them one initiative.
 
+## Available scripts
+
+- **`scripts/plan-version.sh`** — prints the plan's version; run it before
+  presenting a plan.
+
 ## Step 1: Write the index
 
 1. Open `assets/index-template.md` when starting the index. Fill the header
@@ -89,11 +94,11 @@ not the code.
 
 ## Step 4: Present, then stop
 
-1. Show the complete index and its exact `Normative version` to the
-   `Approval rule` owner:
+1. Run `scripts/plan-version.sh` on the plan directory before presenting.
+   Show the complete index and the printed version to the `Approval rule` owner:
 
    ```text
-   Plan {{path}} — version {{Normative version}}
+   Plan {{path}} — version {{printed version}}
    {{goal, architecture, constraints, acceptance, trace, task list}}
 
    1. Approve, then choose an execution mode
@@ -124,16 +129,15 @@ not the code.
 
    Offer delegated only if the harness has a subagent action.
    Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
-5. Write the approval and the mode into the `External decision ledger`
-   against the exact `Normative version`. Write nothing about approval into
-   the index.
+5. Append one row to the `External decision ledger`: `Identity` = the printed
+   version, `Location` = the index path, `State` = approved, `Bound evidence` =
+   the `Approval rule` owner and their answer, then `mode: inline` or
+   `mode: delegated`. Write nothing about approval into the index.
 6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke `executing-plans`
    against the approved version before any workspace or implementation
    action. This skill writes no code.
 
 ## Gotchas
 
-- A `Consumes` entry must match its `Produces` name exactly: a fresh subagent
-  has no memory of earlier tasks to resolve a paraphrase.
-- A plan file that records its own approval or execution state becomes its own
-  evidence, and a stale copy then reads as a real decision.
+- A row keyed to the index's `Normative version` line survives a task-file
+  edit; key rows to the printed version.
