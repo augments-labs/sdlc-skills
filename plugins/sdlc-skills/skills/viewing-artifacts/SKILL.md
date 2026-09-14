@@ -57,16 +57,16 @@ The page carries state, not documents.
 
 ## Step 3: Deliver
 
-1. Serve it, root `.sdlc-skills/`, entry `views/index.html`:
+1. Deliver the file path and offer to serve the page, root `.sdlc-skills/`,
+   entry `views/index.html`. Start it only after the user accepts:
 
    ```bash
    bash scripts/start-server.sh --root .sdlc-skills --entry views/index.html
    ```
 
-2. Hand over the printed URL and the file path without being asked. Serving
-   fails or declined → file path. `needs python3` → say so, name the
-   platform's install route, deliver the file path. Install a runtime only on
-   explicit request.
+2. Hand over the printed URL. Serving fails or declined → the file path
+   stands. `needs python3` → say so, name the platform's install route,
+   deliver the file path. Install a runtime only on explicit request.
 3. Reply in one short message: path or URL, as-of UTC, every place the page
    says unknown or omitted a block, whether drift came from file mtimes, and
    the cause class of any ledger pointer that could not be honored.
@@ -78,6 +78,8 @@ The page carries state, not documents.
 - Run without `--root`, `scripts/start-server.sh` exits 1 with
   `needs --root DIR`, and the file-path fallback in Step 3.2 hides that no
   preview started.
+- A status request is not consent to a background listener: a preview started
+  unasked opens a local port the user never agreed to.
 
 ## Common mistakes
 
