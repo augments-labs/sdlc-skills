@@ -1,9 +1,11 @@
 # Plan: {{topic}}
 
 - **Status:** `draft | proposed` (decision and execution state stay external)
-- **Normative version:** {{immutable identity of this index with every task
-  checkbox marker and status normalized to `[ ]` and `todo`, plus every task
-  contract}}
+- **Normative version:** this plan's identity, computed by the rule on the next
+  line; approval, mode, and evidence bind to it, never to a label
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this index, with every task checkbox and state label
+  normalized to `[ ]` and `todo`, followed by every task file in index order
 - **Predecessor:** {{prior normative identity or none; a proposal only links it}}
 - **Approval rule:** {{one accountable decision owner, or required approvers plus
   conflict resolver and decision rule}}
@@ -98,7 +100,7 @@ Mirror the external ledger as a checkbox plus its exact state label:
   `[ ] cancelled`, and `[ ] superseded` do not count toward completion.
 
 This projection is navigation, not evidence. Normalize it to `[ ] todo` when
-computing the normative version. On mismatch, the external ledger wins.
+computing the identity. On mismatch, the external ledger wins.
 
 The external ledger is the single source of truth for progress. Each row binds
 plan version, task ID, attempt/result identity, evaluator evidence, owner/time,

@@ -5,7 +5,8 @@ found", which is a claim.
 ```markdown
 # Spec: {{topic}}
 
-- **Normative version:** {{immutable content identity}}
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this artifact's own text as issued
 - **Predecessor:** {{prior normative identity, or none; a successor carries a
   per-requirement added / changed / removed / preserved delta}}
 - **External decision ledger:** {{ledger path: this spec's path with .ledger.md

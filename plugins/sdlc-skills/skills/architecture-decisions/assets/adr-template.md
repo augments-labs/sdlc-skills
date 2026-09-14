@@ -16,7 +16,9 @@ Copyable template behind `../SKILL.md`. Loaded on demand.
 
 **Status:** {{draft | proposed; decision and lifecycle stay external}}
 
-**Normative version:** {{immutable content identity}}
+**Identity:** recorded in the ledger row, never here: the first 7 characters of
+`git hash-object --stdin` over this section, from its heading to the next `##`
+heading, without trailing blank lines
 
 **Predecessor:** {{prior ADR normative identity or none; proposal only links it}}
 
@@ -39,7 +41,7 @@ stay in the External challenge ledger}}
 
 **External challenge ledger:** {{reviewer-owned location; attempt lineage,
 cancellation-requested/quiescent state, quarantined partials, report, findings,
-and dispositions bound to this normative version}}
+and dispositions bound to this identity}}
 
 **Challenge artifact controls:** {{data class, allowed access, worker/provider/
 storage/egress authority, location, retention/expiry, exact cleanup targets,
@@ -81,8 +83,9 @@ force; owner decision and absence gate required for retirement}}
 ## What each field must contain
 
 - **Title** — the decision as a short active statement: "Session state lives in the datastore, not the process." Not "Database discussion."
-- **Normative version** — immutable identity of complete decision content the
-  owner saw; every normative edit is a successor and reopens decision.
+- **Identity** — a rule, not a value: the hash of the decision content the owner
+  saw, recorded in the ledger row; every normative edit is a successor and
+  reopens the decision.
 - **Approval rule** — one accountable owner or the complete required approval
   set and conflict rule. A partial answer cannot accept the ADR.
 - **Successor delta/impact** — stable IDs cannot be recycled. An accepted
@@ -118,7 +121,9 @@ recorded externally. The owner's decision and adoption evidence are still pendin
 
 **Status:** proposed
 
-**Normative version:** `adr-jobs-r2`
+**Identity:** recorded in the ledger row, never here: the first 7 characters of
+`git hash-object --stdin` over this section, from its heading to the next `##`
+heading, without trailing blank lines
 
 **Predecessor:** none
 
@@ -136,15 +141,15 @@ current-load observation `obs-jobs-2026-07-01`, valid for 90 days.
 cancels on deadline and confirms quiescence before reassignment.
 
 **External challenge ledger:** controlled review record `review-024`; actual
-dispatch receipts, terminal outcomes and finding dispositions bind to
-`adr-jobs-r2` there, outside this proposal.
+dispatch receipts, terminal outcomes and finding dispositions bind to this
+ADR's identity there, outside this proposal.
 
 **Challenge artifact controls:** internal data only; approved repository read,
 controlled report store, 90-day retention; review owner may delete that exact
 report after expiry and recovery is not required.
 
 **External lifecycle ledger:** controlled decision record `decision-024` will
-bind the lead's decision and later conformance evidence to `adr-jobs-r2`;
+bind the lead's decision and later conformance evidence to this ADR's identity;
 approval and adoption remain pending until those events occur.
 
 **Context:** The service must send emails and run report generation outside the

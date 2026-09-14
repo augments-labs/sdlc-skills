@@ -89,7 +89,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 4. Present:
 
    ```text
-   {{Section}} {{path}} — version {{identity}}
+   {{Section}} {{path}} — version {{identity (per template)}}
    {{summary lines}}
 
    1. Approve and hand off to planning

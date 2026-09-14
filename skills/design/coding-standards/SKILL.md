@@ -50,7 +50,7 @@ section.
 2. Present:
 
    ```text
-   Coding standards {{path}} — version {{identity}}
+   Coding standards {{path}} — version {{identity (per template)}}
    Vocabulary: {{n}} terms  Patterns: {{n}}  Nevers: {{n}}
    Enforcement: {{n}} automated, {{n}} review  Exemplar gate: {{result}}
 

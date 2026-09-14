@@ -7,7 +7,9 @@ mapping gets a stable ID, and a successor never recycles one.
 ## Data model
 
 **Status:** {{draft | proposed; decision state stays external}}
-**Normative version:** {{immutable content identity of this section}}
+**Identity:** recorded in the ledger row, never here: the first 7 characters of
+`git hash-object --stdin` over this section, from its heading to the next `##`
+heading, without trailing blank lines
 **Predecessor:** {{prior normative identity, or none; a proposal only links it}}
 **Approval rule:** {{one accountable decision owner, or the required approvers
 plus the conflict resolver and the rule that decides}}

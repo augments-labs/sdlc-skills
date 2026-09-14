@@ -7,7 +7,8 @@ placeholder; remove an inapplicable row only with a recorded rationale.
 ## Normative control
 
 - **Status:** `draft | proposed` (review, decision, and execution state stay external)
-- **Normative version:** `{{immutable identity of this complete policy contract}}`
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this artifact's own text as issued
 - **Predecessor:** `{{prior normative identity or none; a proposal only links it}}`
 - **Scope:** `{{included transformation and explicit exclusions}}`
 - **Source revision:** `{{immutable revision or snapshot}}`
@@ -27,7 +28,7 @@ placeholder; remove an inapplicable row only with a recorded rationale.
 - **External challenge ledger:** `{{reviewer-owned location; dispatch IDs,
   predecessor/successor lineage, cancellation-requested/quiescent state,
   quarantined partials, succeeded/failed/timed-out/cancelled outcomes, reports,
-  findings, and dispositions bind this normative version}}`
+  findings, and dispositions bind this identity}}`
 - **Challenge artifact controls:** `{{data class, allowed access, current
   worker/provider/storage/egress authority, location, retention/expiry, exact
   cleanup targets/effects/recoverability, cleanup authority, and disposition}}`
@@ -167,7 +168,7 @@ unresolved, or over-lag state blocks cutover and promotion.
 ## Convergence and failure queue
 
 - **External convergence/failure ledger:** `{{predeclared location; raw counts,
-  failure instances, corrections, and re-audits bind this normative version}}`
+  failure instances, corrections, and re-audits bind this identity}}`
 - **Reconciliation invariant:** `{{total equals every exclusive state across
   shard, source-change, and live-state ledgers exactly once}}`
 
@@ -221,9 +222,9 @@ evidence and recovery artifacts after old runtime or data is removed.
 
 ## Downstream handoffs
 
-- `verification-strategy` consumes this normative version plus external-ledger
+- `verification-strategy` consumes this identity plus external-ledger
   schemas, risks, and terminal states and owns executable gates.
-- `writing-plans` consumes the approved normative version and current external
+- `writing-plans` consumes the approved identity and current external
   ledger identities; it owns tasks, not migration policy or runtime state.
 - Review consumes source, target, and equivalence mappings; release readiness
-  consumes the normative version plus exact current ledger identities.
+  consumes the identity plus exact current ledger identities.

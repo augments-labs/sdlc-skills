@@ -9,8 +9,8 @@ sets another durable location.
 - **Scope:** `project | initiative {{name and exclusions}}`
 - **Status:** `draft | proposed` (approval and lifecycle state live in the external
   decision ledger; do not mutate this file to mirror it)
-- **Normative version:** `{{single-line stable identity of risks, thresholds,
-  gates, dispositions, and promotion rules}}`
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this artifact's own text as issued
 - **Supersedes:** `{{predecessor normative identity, or none; declare this only
   in the replacement and never edit the predecessor}}`
 - **Bound inputs:** `{{exact requirement, risk, migration, platform/mode,
@@ -28,7 +28,7 @@ sets another durable location.
 - **External challenge ledger:** `{{predeclared reviewer-owned location outside
   the matrix candidate; predecessor/successor attempts, cancellation-requested/
   quiescent state, quarantined partials, reports/findings/dispositions, and late-
-  result rejection bind to the normative version}}`
+  result rejection bind to the identity}}`
 - **Challenge artifact controls:** `{{data class, access, worker/provider/
   storage/egress authority, location, retention/expiry, exact cleanup targets/
   effects/recoverability, cleanup authority, and disposition}}`
@@ -43,7 +43,7 @@ sets another durable location.
   stays external; the initiating request does not approve an unseen matrix}}`
 - **External decision ledger:** `{{decision-owned location; pending / changes
   requested / approved / rejected / cancelled / superseded by approved normative identity;
-  current user-role answer/standing default, owner, time, exact normative version}}`
+  current user-role answer/standing default, owner, time, exact identity}}`
 - **Invalidation triggers:** `{{risk, environment, threshold, or contract changes}}`
 
 A proposal names its predecessor but cannot supersede it. Every normative change
@@ -53,7 +53,7 @@ reconcile; only then may they rely on it.
 
 ## Risk inventory
 
-| Risk ID | Failure and consequence | Requirement/invariant | Pre-existing evidence snapshot or gap | Confidence as of normative version |
+| Risk ID | Failure and consequence | Requirement/invariant | Pre-existing evidence snapshot or gap | Confidence as of identity |
 | --- | --- | --- | --- | --- |
 | `{{R-001}}` | `{{what can fail and impact}}` | `{{contract reference}}` | `{{immutable reference or gap captured before gate work}}` | `{{current/stale/unknown at version time}}` |
 

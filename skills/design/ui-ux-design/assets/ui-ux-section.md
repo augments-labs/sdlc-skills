@@ -7,7 +7,9 @@ acceptance check gets a stable ID, and a successor never recycles one.
 ## UI/UX design
 
 **Status:** {{draft | proposed; decision state stays external}}
-**Normative version:** {{immutable content identity of this section}}
+**Identity:** recorded in the ledger row, never here: the first 7 characters of
+`git hash-object --stdin` over this section, from its heading to the next `##`
+heading, without trailing blank lines
 **Predecessor:** {{prior normative identity, or none; a proposal only links it}}
 **Approval rule:** {{one accountable decision owner, or the required approvers
 plus the conflict resolver and the rule that decides}}
@@ -70,7 +72,7 @@ and on what grounds — or, when no comparison ran, the stated reason none was o
 
 | Reference ID | Decision ID | Medium | Approved design artifact version | Artifact locator | Artifact version | Content digest | Selection ID | Rendering-input identity | Freshness evaluator | Normative conditions | Distinguishing invariants |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| {{VR-001}} | {{D-001}} | {{local HTML / project or native preview / screenshot / wireframe}} | {{this design's normative version}} | {{stable path, route, or artifact ID}} | {{immutable version, revision, or capture ID}} | {{digest of selected bytes or artifact}} | {{stable variant, state, frame, or region ID}} | {{immutable chrome, assets, fixture, environment, and capture-set identity}} | {{exact check producing one of `pass`, `mismatch`, `unavailable`, or `error`}} | {{states, viewports, themes, fixtures, or capture set}} | {{observable traits that distinguish this selection from rejected directions}} |
+| {{VR-001}} | {{D-001}} | {{local HTML / project or native preview / screenshot / wireframe}} | {{this design's identity}} | {{stable path, route, or artifact ID}} | {{immutable version, revision, or capture ID}} | {{digest of selected bytes or artifact}} | {{stable variant, state, frame, or region ID}} | {{immutable chrome, assets, fixture, environment, and capture-set identity}} | {{exact check producing one of `pass`, `mismatch`, `unavailable`, or `error`}} | {{states, viewports, themes, fixtures, or capture set}} | {{observable traits that distinguish this selection from rejected directions}} |
 
 Use one keyed row per independently selected decision, or state `not
 applicable` with the recorded reason no comparison was owed.

@@ -5,7 +5,9 @@ do not repeat a header the brief already carries.
 ```markdown
 ## Goals
 
-- **Normative version:** {{immutable content identity for this section}}
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object --stdin` over this section, from its heading to the next `##`
+  heading, without trailing blank lines
 - **Predecessor:** {{prior normative identity, or none}}
 - **External decision ledger:** {{ledger path: the brief's path with .ledger.md
   for .md, rows naming this section, unless the user sets another; holds pending

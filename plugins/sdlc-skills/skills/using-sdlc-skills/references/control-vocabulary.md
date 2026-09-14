@@ -4,24 +4,12 @@ The terms the skills use for evidence, authority, lifecycle, and risk — so the
 same concept is never two words, and one word is never two concepts. Load this
 when a skill uses a term below and the exact sense matters.
 
-## Identity — five different things
+## Identity
 
-`identity` is the most overloaded word in the library. Alone it is almost always
-too vague to act on. Name the sense you mean:
-
-- **Content digest** — a hash over the exact bytes of a file, tree, or artifact.
-  Answers "is this the same content?" Changes whenever any byte changes.
-- **Revision** — a commit or equivalent source-history point. Answers "which
-  state of the repository?" A revision and a working tree with the same content
-  are the same digest but different revisions.
-- **Artifact version** — the issued, immutable version of a normative document
-  (a spec, plan, ADR, contract). Answers "which decision was approved?"
-- **Role ID** — a stable label for a required participant (`reviewer-security`,
-  `approver-data`). Answers "who was supposed to act?" Survives reassignment.
-- **Attempt ID** — the handle a callable action returns for one dispatched unit
-  of work. Answers "which run is this?" A retry gets a new one.
-
-Bare "identity" is correct only when every sense applies at once.
+An issued artifact's identity is defined once, in the `## Identity` section of
+the artifact layout reference. Other identities, such as a revision, a content
+digest, a role ID, or an attempt ID, are named by their sense where used; a role
+ID survives reassignment, and a retry gets a new attempt ID.
 
 ## What is being judged
 
