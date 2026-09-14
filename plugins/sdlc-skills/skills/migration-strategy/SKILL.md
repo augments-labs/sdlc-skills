@@ -81,10 +81,11 @@ the section it names.
 
 ## Step 4: Challenge, then decide
 
-1. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with two challenger
-   roles before approval: one who knows the source and its domain, one who
-   owns operations and data. They challenge fact completeness, mappings and
-   mixed states, intake path and partitions, trial slice and recovery plan.
+1. Before approval, dispatch per `dispatching-parallel-agents` Step 2 two
+   read-only challengers bound to the contract's `Independent challenge
+   contract`: one who knows the source and its domain, one who owns operations
+   and data. They challenge fact completeness, mappings and mixed states,
+   intake path and partitions, trial slice and recovery plan.
 2. Record an accountable skip for any role left out. Bind each challenge to an
    exact attempt with a deadline. A required role without a current,
    successful, resolved report blocks approval.
@@ -111,6 +112,9 @@ the section it names.
 
 ## Gotchas
 
+- Code review judges an exact candidate against an approved contract. Before
+  approval neither exists, so a challenge routed to review has nothing to bind
+  to and returns no verdict.
 - The trial slice's coverage inventory (Step 2) is only as stable as the
   source is frozen or intake-controlled (Step 3) — a new consumer,
   platform, or path that lands mid-migration silently turns an
