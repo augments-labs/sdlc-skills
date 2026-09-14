@@ -11,8 +11,7 @@ mutation.
 
 ## When to use
 
-- Implementation is complete, its gates are green, and its branch choice is
-  unsettled. Present the permitted choices even without a Git request.
+- Present the permitted choices even without a Git request.
 - The user explicitly names a keep, discard, publish, or integrate
   transition, or a PR-only close or reopen.
 - **Skip** ordinary mid-development checkpoints; `using-git-worktrees` owns
@@ -59,8 +58,8 @@ mutation.
    After any history change, rerun the script; content moved → back to
    `requesting-code-review`.
 9. For PR creation/update, prepare the description from the contribution rules
-   and base-bound template, with evidence obtained. Candidate text grants no
-   authority. Prepare other actions' applicable fields without inventing a PR.
+   and base-bound template, with evidence obtained. Prepare other actions'
+   applicable fields without inventing a PR.
 
 ## Step 2: Present the choices
 
@@ -120,6 +119,7 @@ unwanted.
    This will permanently delete:
    - Branch {{name}} ({{n}} unique commits: {{list}})
    - Staged {{n}}, unstaged {{n}}, untracked {{n}} changes
+   - Ignored {{n}}: {{list}} (never recoverable)
    - Worktree {{path}}; remote {{state}}; PR {{state}}
    Recovery: {{possible | not possible}}
 
@@ -130,8 +130,8 @@ unwanted.
 2. Stop. "yes", "go ahead", "get rid of it", a numbered choice → nothing is
    touched.
 3. Only after that exact token: rerun with the same `--base`. A changed
-   `candidate.id` voids the token. Otherwise close or delete the listed
-   task-owned resources, and nothing else.
+   `candidate.id`, a non-zero exit, or no `candidate.id` voids the token.
+   Otherwise close or delete the listed task-owned resources, and nothing else.
 
 ## Gotchas
 

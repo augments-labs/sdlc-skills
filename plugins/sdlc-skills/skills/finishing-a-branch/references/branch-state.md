@@ -183,9 +183,11 @@ branch/HEAD and workspace path so work remains findable.
 
 ## Owned cleanup
 
-Reconfirm integration and resource ownership. Capture paths before changing
-directory; remove an owned worktree from outside it, then use safe branch
-deletion. Do not prune, force-delete, remove remotes, or clean adjacent
+Reconfirm integration and resource ownership. Before removing a worktree, rerun
+`scripts/branch-state.sh` inside it and read `dirty.ignored`: a non-empty list
+goes into the cleanup choice by name; without that choice, preserve the
+worktree and report it. Capture paths before changing directory; remove an
+owned worktree from outside it, then use safe branch deletion. Do not prune, force-delete, remove remotes, or clean adjacent
 workspaces unless each action and target was explicitly authorized.
 
 Detached, host-owned, shared, or ownership-uncertain workspaces are reported to
@@ -194,6 +196,8 @@ their owner and left intact.
 ## Confirmed discard
 
 The confirmation token must exactly match the displayed candidate inventory.
+The inventory includes the ignored listing (`dirty.ignored`), which no recovery
+restores.
 Re-resolve state immediately before deletion; any delta invalidates the token
 and requires a new inventory. Include every open/closed PR, exact head/base,
 remote ref, and whether the requested discard closes it. An unlisted, merged,
