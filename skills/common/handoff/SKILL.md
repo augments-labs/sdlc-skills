@@ -25,7 +25,7 @@ says it may go.
    ```text
    Where should the handoff go?
 
-   1. The durable handoff store — readable by {{who}}
+   1. .sdlc-skills/handoffs/ in this project — readable by anyone who can read this checkout; once committed, by everyone with repository access
    2. A path you name
    3. This reply only — nothing written
 
@@ -38,7 +38,7 @@ says it may go.
    readers, lifetime, exact cleanup target and owner, cleanup pending or not.
    Write nothing into the repository.
 
-## Step 2: Fill `assets/handoff-template.md`
+## Step 2: Fill `assets/handoff-template.md` before writing
 
 1. Fill every section: identity, goal, state identity, decisions and
    authority, evidence, gotchas and permissions, resume first action,
@@ -60,6 +60,11 @@ says it may go.
 8. Before writing, remove every key, token, password, and piece of personal
    data.
 
+## Gotchas
+
+- Session state can hold credentials, customer data, or unreviewed findings. A
+  store the session invents discloses it to readers nobody chose.
+
 ## Common mistakes
 
 - A summary of the conversation instead of the state to resume from.
@@ -68,5 +73,5 @@ says it may go.
 - Treating the handoff as a durable project-lessons store; it transfers
   current state once.
 
-`assets/handoff-template.md` also carries a worked bad-versus-good example and
-what to leave out.
+Read `assets/handoff-template.md` before the first handoff: it also carries a
+worked bad-versus-good example and what to leave out.
