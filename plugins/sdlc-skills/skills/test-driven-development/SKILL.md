@@ -128,8 +128,3 @@ change. Watch it happen; keep the output.
 - Testing internals or mock calls instead of public behavior. Read
   `references/reference.md` and `references/mocking.md` when a test reaches past
   the public interface.
-- Writing all tests first instead of advancing one behavior or preservation
-  slice at a time.
-- Treating coverage, compilation, snapshots of noise, or a target-derived oracle
-  as equivalence proof.
-- Over-building in GREEN instead of letting the current gate bound the change.
