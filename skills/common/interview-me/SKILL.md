@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: "Asks the questions that settle what the user actually wants when a request has several plausible readings. Use when intent is ambiguous and no phase skill's own procedure can settle it, or when a pending decision got praise, constraints, silence, or a partial reply instead of an answer or a cancellation. Skip inputs that another skill's own procedure asks for."
+description: "Asks the questions that settle what the user actually wants when a request has several plausible readings. Use when intent is ambiguous and no phase skill's own procedure can settle it, or when a pending decision got praise, constraints, silence, or a partial reply instead of an answer or a cancellation, even if nobody asks for clarification. Skip inputs that another skill's own procedure asks for."
 ---
 
 # Interview Me
