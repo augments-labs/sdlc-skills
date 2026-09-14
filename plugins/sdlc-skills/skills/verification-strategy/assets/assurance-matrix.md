@@ -32,10 +32,11 @@ sets another durable location.
 - **Challenge artifact controls:** `{{data class, access, worker/provider/
   storage/egress authority, location, retention/expiry, exact cleanup targets/
   effects/recoverability, cleanup authority, and disposition}}`
-- **External gate-state/evidence ledger:** `{{predeclared controlled location
-  outside this normative candidate; gate state, raw run identity, integrity,
-  access, retention/expiry, exact cleanup targets/effects/recoverability,
-  cleanup authority, and disposition}}`
+- **External gate-state/evidence ledger:** `{{gate state, raw run identity,
+  integrity, access, retention/expiry, exact cleanup targets/effects/recoverability,
+  cleanup authority, and disposition; at
+  .sdlc-skills/evidence/YYYY-MM-DD-topic/gate-ledger.md unless the user
+  predeclares another path outside this normative candidate}}`
 - **Approval rule:** `{{one accountable decision owner, or required approvers
   plus conflict resolver and decision rule}}`
 - **Approval gate:** `{{accepted decision shape and owner; actual state/receipt

@@ -34,11 +34,13 @@ conformance evaluator; no row may be inferred from task prose.
   added / changed / removed / preserved; removals need owning approval}}
 - **Downstream impact:** {{predecessor-bound review, task attempts, evidence,
   candidate, release, and external consumers; owner reconciliation state/gate}}
-- **External decision ledger:** {{location; pending / changes requested / approved /
-  rejected / cancelled / superseded by approved normative identity; trusted
+- **External decision ledger:** {{ledger path: 00-index.ledger.md in this plan
+  directory unless the user sets another; pending / changes requested / approved
+  / rejected / cancelled / superseded by approved normative identity; trusted
   evidence and inline/delegated mode bind this exact version}}
-- **External execution ledger:** {{controlled location outside normative identity,
-  or returned directly; append-only task states/evidence bind this version}}
+- **External execution ledger:** {{ledger path: the same 00-index.ledger.md
+  unless the user sets another, or returned directly; outside normative identity;
+  append-only task states/evidence bind this version}}
 - **Invalidation triggers:** {{any bound-input drift or normative scope/interface/
   evaluator/phase/ownership/cutover/rollback/decommission change}}
 - **Required executor:** `executing-plans` after this exact version has direct

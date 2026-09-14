@@ -4,9 +4,10 @@
 - **Normative version:** {{immutable content identity}}
 - **Predecessor:** {{prior normative identity or none; proposal only links it}}
 - **Decision owner:** {{person or accountable role}}
-- **External decision ledger:** {{controlled location or returned record;
-  pending / changes requested / approved / rejected / cancelled / superseded by
-  approved normative identity, with trusted evidence bound to this version}}
+- **External decision ledger:** {{ledger path: this brief's path with .ledger.md
+  for .md unless the user sets another, or a returned record; pending / changes
+  requested / approved / rejected / cancelled / superseded by approved normative
+  identity, with trusted evidence bound to this version}}
 
 **Goal:** {{1–2 sentences — what we're building and why}}
 
