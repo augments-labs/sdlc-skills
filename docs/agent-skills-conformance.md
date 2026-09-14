@@ -112,12 +112,8 @@ certifies model behavior.
 
 ### Description tuning
 
-Query sets live in the lab at `descriptions/{{phase}}/{{skill}}.json`.
-The current corpus contains 34 sets for 36 skills. The always-applicable router
-has no negative class; `containing-an-incident` also has no set. Existing sets
-usually contain 10 positive and 10 near-miss negative queries; `executing-plans`
-currently has 13 positives and 13 negatives. These are tuning inputs, not a
-mandatory coverage matrix.
+Query sets live in the lab at `descriptions/{{phase}}/{{skill}}.json`, which
+records how many exist. They are tuning inputs, not a mandatory coverage matrix.
 
 The runner repeats queries through a fixture and the installed library. It
 observes whether the subject loads anywhere in the chain during the observation
