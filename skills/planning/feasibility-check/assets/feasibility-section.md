@@ -7,10 +7,11 @@ Drop a dimension row only by writing why it does not apply, never by silence.
 
 - **Normative version:** {{immutable content identity for this section}}
 - **Predecessor:** {{prior normative identity, or none}}
-- **External condition and decision ledger:** {{controlled location holding each
-  condition's pending / satisfied / failed state and the go / go-if / no-go /
-  cancel outcome, bound to the version above — lifecycle never mutates this
-  section}}
+- **External condition and decision ledger:** {{ledger path: the brief's path
+  with .ledger.md for .md, rows naming this section, unless the user sets
+  another; holds each condition's pending / satisfied / failed state and the go /
+  go-if / no-go / cancel outcome, bound to the version above — lifecycle never
+  mutates this section}}
 - **Accountable decision owner:** {{who commits the project}}
 
 ### Dimensions assessed

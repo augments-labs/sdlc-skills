@@ -34,7 +34,9 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
 
 ## Approval comes only from the decision ledger
 
-Follow the section's ledger pointer and preserve its vocabulary:
+Follow the section's ledger pointer. A pointer that names no path means the
+ledger beside the artifact: its path with .ledger.md in place of .md, or
+00-index.ledger.md in a plan directory. Preserve the pointer's vocabulary:
 
 - `**External decision ledger:**` — pending, changes requested, approved,
   rejected, cancelled, or superseded.
@@ -51,8 +53,8 @@ identify that content. The same identity on another file or section is a
 different decision. Preserve a missing or ambiguous section match as unknown.
 
 Any of these renders approval `external/unknown` (pill `pending`, content
-`… unknown`): a missing pointer, a missing ledger file, non-table content, an
-ambiguous parse, or no matching row. When the pointer exists but could not be
+`… unknown`): no ledger file where the pointer, or the artifact's own path,
+puts it; non-table content; an ambiguous parse; or no matching row. When the pointer exists but could not be
 honored — present but unparsable, or ambiguous — the report names that cause
 class rather than a bare `unknown`.
 

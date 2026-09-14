@@ -8,9 +8,10 @@ found", which is a claim.
 - **Normative version:** {{immutable content identity}}
 - **Predecessor:** {{prior normative identity, or none; a successor carries a
   per-requirement added / changed / removed / preserved delta}}
-- **External decision ledger:** {{controlled location holding pending / changes
-  requested / approved / rejected / cancelled / superseded, bound to the version
-  above — lifecycle never mutates this spec}}
+- **External decision ledger:** {{ledger path: this spec's path with .ledger.md
+  for .md unless the user sets another; holds pending / changes requested /
+  approved / rejected / cancelled / superseded, bound to the version above —
+  lifecycle never mutates this spec}}
 - **Decision owner:** {{one accountable owner, OR the required approvers, the
   conflict resolver, and the decision rule}}
 

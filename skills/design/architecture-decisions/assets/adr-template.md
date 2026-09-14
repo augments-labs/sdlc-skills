@@ -45,9 +45,10 @@ and dispositions bound to this normative version}}
 storage/egress authority, location, retention/expiry, exact cleanup targets,
 effects, recoverability, cleanup authority, and disposition}}
 
-**External lifecycle ledger:** {{controlled location or returned record; pending /
-accepted / rejected / cancelled / in force / superseded by accepted normative
-identity / retired, with trusted evidence, time, and exact version}}
+**External lifecycle ledger:** {{ledger path: this ADR's path with .ledger.md for
+.md unless the user sets another, or a returned record; pending / accepted /
+rejected / cancelled / in force / superseded by accepted normative identity /
+retired, with trusted evidence, time, and exact version}}
 
 **Context:** {{the forces bearing on the decision — the requirement or constraint
 that makes a choice necessary, and the facts (scale, team, existing code, hard
