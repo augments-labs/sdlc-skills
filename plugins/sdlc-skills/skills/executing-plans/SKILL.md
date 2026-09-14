@@ -16,14 +16,21 @@ happens to the branch.
 - **Skip** a single task with no plan directory: use `test-driven-development`
   and `yagni` directly.
 
+## Available scripts
+
+- **`scripts/plan-version.sh`** — prints the plan's version; run it before
+  trusting a ledger row.
+
 ## Step 1: Verify approval and mode
 
-1. Open the plan index. Note its `Normative version`.
-2. Read the `External decision ledger` entry for that version.
-3. Confirm it records approval by the `Approval rule` owner and a mode:
-   `inline` or `delegated`. The index cannot approve itself.
-4. No approval: stop and say which version needs it.
-5. No mode: ask one question and stop.
+1. Run `scripts/plan-version.sh` on the plan directory before reading the
+   `External decision ledger`. Find the row for this index whose `Identity` is
+   the printed version and whose `Bound evidence` names the `Approval rule`
+   owner's approval. The index cannot approve itself.
+2. No such row, or the script fails → stop and name the missing version or the
+   script's error; never substitute a version read from the index.
+3. No mode in that row (`mode: inline` or `mode: delegated`): ask one question
+   and stop.
 
    ```text
    Plan {{version}} is approved. How should I run it?
@@ -39,8 +46,7 @@ happens to the branch.
 ## Step 2: Set up the workspace
 
 **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. Fill its record from the
-workspace's own commands: owner, HEAD, base, clean tree, baseline output,
-runtime identities.
+workspace's own commands.
 
 ## Step 3: Check the plan contract
 
@@ -60,7 +66,8 @@ Record the checked input/output mappings and evaluator ownership in the existing
 execution ledger before the first edit. Any failure: report the field and task;
 do not start it under an invalid contract.
 
-- Phases or shards in the index: read `references/phase-queues.md` and follow it.
+- Phases or shards in the index: read `references/phase-queues.md` before the first
+  task and follow it.
 - High-risk task: blocked until its migration and assurance contracts are
   approved and their entry gates passed. Report it; do not start it.
 - Read `Integration cadence`: `plan end` (default) or `per task`. It decides
@@ -78,8 +85,8 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - Delegated mode: build the packet from `references/subagent-dispatch.md`
-     and send it.
+   - Delegated mode: read `references/subagent-dispatch.md` before
+     building the packet, then send it.
    - Approved parallel work: invoke `dispatching-parallel-agents`.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
@@ -130,11 +137,14 @@ authoritative workspace, in order:
 | "All tasks are done, so the plan is done" | Tasks are done inside the plan. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "The user said not to ask per action, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision and asks its own question. |
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
-| "I'll name the review skill in the PR description" | Naming a skill is not invoking it. Its loading action has to be in the session. |
 | "Verified at the last task, no need to rerun" | Evidence binds to a state. The integrated revision is a new state. |
-| "Finishing is one command; a skill for it is ceremony" | The command is cheap. The decision it executes — whose branch, which base, reviewed or not — is what the skill gates. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
 | "Task done — I'll check in before the next" | `done` is a ledger entry, not a decision point. Take the next task. |
+
+## Gotchas
+
+- A task file edited after approval leaves the index unchanged; only the
+  printed version moves.
 
 ## Failures and the circuit breaker
 
@@ -153,9 +163,10 @@ authoritative workspace, in order:
 
 - Remaining work will not fit this session: finish the current ledger row,
   then invoke `handoff`.
-- On resume, re-read before trusting: the decision ledger, the workspace's
-  base, HEAD, and dirty state through `using-git-worktrees`, the execution
-  ledger, and whether each `done` row still matches the current revision.
+- On resume, rerun `scripts/plan-version.sh`, then re-read before trusting: the
+  decision ledger row for the printed version, the workspace's base, HEAD, and
+  dirty state through `using-git-worktrees`, the execution ledger, and whether
+  each `done` row still matches the current revision.
 - All tasks already `done` on resume: go to Step 5. A done ledger is no
   evidence that its three steps ran.
 - Reality contradicts the plan: normative change → proposed successor and

@@ -35,12 +35,21 @@ whole, and the layout inside does not change.
   `.sdlc-skills/plans/{{plan}}/00-index.ledger.md`, execution states included.
 - **Append-only:** one table row per state change. Never edit or delete a row;
   a correction is a new row that names the row it corrects.
-- **Columns:** `| Date | Location | Section | Identity | State | Decided by | Evidence |`.
-  `Location` is the artifact's path from the project root. `Identity` is the
-  artifact's identity (see Identity). `Section` names the section when
-  one file holds several, such as a brief's goals, scope, and feasibility.
-- **States:** the vocabulary the artifact's pointer field lists, for example
+
+Every ledger is one markdown table with this header:
+
+| Identity | Section | Location | State | Bound evidence | Updated |
+| --- | --- | --- | --- | --- | --- |
+
+- `Identity` is the artifact's identity (see Identity). `Section` names the
+  section when one file holds several, such as a brief's goals, scope, and
+  feasibility. `Location` is the artifact's path from the project root.
+- `State` uses the vocabulary the artifact's pointer field lists, for example
   pending, changes requested, approved, rejected, cancelled, superseded.
+- `Bound evidence` names who decided and holds the receipt or evidence the
+  state rests on. A plan's approval row also records its execution mode there:
+  `mode: inline` or `mode: delegated`.
+- `Updated` is the date the row was appended.
 
 A ledger kept anywhere else, or returned instead of written, is recorded in the
 artifact's pointer field.

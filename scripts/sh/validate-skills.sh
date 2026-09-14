@@ -145,6 +145,10 @@ while IFS= read -r ref; do
     err "$ref: not referenced directly from $skill_file"
 done < <(find skills \( -path '*/references/*.md' -o -path '*/assets/*.md' \) -type f | sort)
 
+echo "• plan-version.sh copies are byte-identical"
+cmp -s skills/design/writing-plans/scripts/plan-version.sh skills/implementation/executing-plans/scripts/plan-version.sh ||
+  err "plan-version.sh: the writing-plans and executing-plans copies differ"
+
 # The checker enforces executable permission and successful `--help` as house
 # policy. These additional house checks require direct disclosure in SKILL.md
 # so the agent can find the script, and documented exit codes so it can act on
