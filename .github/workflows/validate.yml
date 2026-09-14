@@ -41,6 +41,13 @@ jobs:
             bash scripts/sh/token-budget.sh --chain "$chain" || fail=1
           done
           exit "$fail"
+      # Descriptions are PR content; the runner must not read shared clauses as workflow commands.
+      - name: Trigger collisions (report-only)
+        run: |
+          token=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$token"
+          trap 'echo "::$token::"' EXIT
+          bash scripts/sh/validate-trigger-collisions.sh
 
   reference-validator:
     # A parser cross-check with the Agent Skills reference validator, never a
