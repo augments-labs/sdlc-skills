@@ -1,6 +1,6 @@
 ---
 name: spec-it
-description: "Writes a specification: detailed requirements and acceptance criteria for settled intent, or a revision to an existing spec. Use when the user asks for a spec, requirements, or acceptance criteria before building. Skip when current requirements already cover the work, when choosing implementation details, or while a decision about what the user wants is still open."
+description: "Writes a specification: detailed requirements and acceptance criteria for settled intent, or a revision to an existing spec. Use when settled intent needs detailed requirements and acceptance criteria before building, including a revision to an existing spec, or when the user asks for a spec, requirements, or acceptance criteria. Skip when current requirements already cover the work, when choosing implementation details, or while a material decision about what the user wants is still pending."
 ---
 
 # Spec It

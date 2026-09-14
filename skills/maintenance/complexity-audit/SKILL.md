@@ -1,6 +1,6 @@
 ---
 name: complexity-audit
-description: "Audits existing code for accidental complexity: abstraction nothing needs, ownership it should not hold, flexibility nobody uses, or custom machinery a library already provides. Use when the user asks whether this is over-engineered, why it is so complicated, or whether all of it is still needed. Skip implementation choices, review of a frozen change, and structural work already approved."
+description: "Audits existing code for accidental complexity: abstraction nothing needs, ownership it should not hold, flexibility nobody uses, or custom machinery a library already provides. Use when existing code should be examined for accidental complexity, or when the user asks whether this is over-engineered, why it is so complicated, or whether all of it is still needed. Skip implementation choices, review of a frozen change, and structural work already approved."
 ---
 
 # Complexity Audit

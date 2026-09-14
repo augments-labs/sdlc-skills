@@ -1,6 +1,6 @@
 ---
 name: post-mortem
-description: "Explains why safeguards missed a production escape, incident, loss, or failed work cycle, and what prevents it happening again. Use when a production escape, incident, material loss, or failed work cycle has been contained, or when the user asks how this reached production or what prevents another failed handoff. Establish any technical cause and immediate containment first; a process-only failure needs its event evidence. Skip ordinary bugs and ongoing uncontained impact."
+description: "Explains why safeguards missed a production escape, incident, loss, or failed work cycle, or why its impact grew, and what prevents it happening again. Use when a production escape, incident, material loss, or failed work cycle has been contained, or when the user asks how this reached production or what prevents another failed handoff. Establish any technical cause and immediate containment first; a process-only failure needs its event evidence. Skip ordinary bugs and ongoing uncontained impact."
 ---
 
 # Post-Mortem

@@ -1,6 +1,6 @@
 ---
 name: using-sdlc-skills
-description: "Routes each task to the SDLC skills it needs before any work begins. Use when a task opens, resumes, or is handed off, and again whenever the state changes — a phase ends, a decision returns, feedback arrives — even if nobody mentions skills or process, as with build X, fix this, is it done, or plan this."
+description: "Routes each task to the SDLC skills it needs before any work begins. Use when a task opens, resumes, or is handed off, and again at every material change of state — a phase ends, a decision returns, feedback arrives — before any answer, question, exploration, or tool call that begins the work, even if nobody mentions skills or process, as with build X, fix this, is it done, or plan this."
 ---
 
 <EXTREMELY-IMPORTANT>

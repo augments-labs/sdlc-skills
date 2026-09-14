@@ -1,6 +1,6 @@
 ---
 name: feasibility-check
-description: "Checks whether an initiative can be delivered before committing to it: technical, delivery, budget, operational, security, data, and dependency risk. Use when an initiative's feasibility is uncertain, including proven technology under uncertain delivery constraints. Skip when its feasibility risks are settled and low."
+description: "Checks whether an initiative can be delivered before committing to it: technical, delivery, budget, operational, security, data, and dependency risk. Use when an initiative's feasibility is uncertain, including proven technology under uncertain delivery constraints. Skip when its material feasibility risks are settled and low."
 ---
 
 # Feasibility Check

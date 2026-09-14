@@ -18,7 +18,7 @@ adds packaging and house-policy checks.
 | `name`: 1–64 lowercase letters, digits, or hyphens | Length and character checks |
 | No leading/trailing hyphen or consecutive hyphens | Pattern check |
 | `name` matches its directory | Per-directory comparison |
-| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 533 |
+| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 596 |
 | Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` | `frontmatter-fields` policy check |
 | `compatibility`, when present, at most 500 characters | `compatibility-length` policy check |
 
@@ -125,7 +125,7 @@ included. The second reports pairs of
 skills that hand off to each other: a pair listed in `docs/allowed-cycles.txt`
 prints as allowed, and `--strict` fails on any other. The third sums the body
 words of one chain in `docs/chains.toml` and fails over its budget. The fourth
-reports each description clause of three or more words that more than one skill
+reports each description clause of two or more words that more than one skill
 shares, and `--strict` fails on any. The fifth accepts a skill path, including
 one outside this repository, subject to the parsing and execution limits above.
 The first and fifth enforce this checker's profile.
