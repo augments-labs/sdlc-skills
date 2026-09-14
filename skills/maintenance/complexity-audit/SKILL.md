@@ -36,8 +36,7 @@ diagnosis, not permission to change code.
 ## Step 2: Challenge read-only
 
 1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` before
-   dispatching each exact partition. Dispatch it; record tool-issued IDs and
-   terminal outcomes. A name or prompt is not dispatch.
+   dispatching each exact partition, then dispatch per `dispatching-parallel-agents` Step 2.
 2. Empty, refused, or unavailable → follow the no-dispatch rule in
    `dispatching-parallel-agents` Step 2.
 3. Fill the reconciliation block before any finding: every partition,
