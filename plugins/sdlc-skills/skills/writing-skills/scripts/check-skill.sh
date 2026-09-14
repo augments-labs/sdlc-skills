@@ -39,6 +39,9 @@ Policy checks (`warn` by default, `fail` with --strict):
   frontmatter-fields        frontmatter keys are only name, description,
                             license, compatibility, metadata, allowed-tools
   compatibility-length      compatibility, when present, is at most 500 chars
+  description-rules         the description carries no `Fires on` list and none of
+                            exact candidate, material intent, owning phase
+                            skill, normative
   reference-depth           a file under references/ or assets/ names another
                             support file (always `warn`: keep them one level deep)
 
@@ -147,6 +150,12 @@ else
     fi
 
     desc="$(fmval description)"
+    # A description is plain when-to-use text: no trigger list, none of the terms
+    # that name the library's internal machinery.
+    case "$desc" in *"Fires on"*) policy description-rules "the description carries a \`Fires on\` list; write plain when-to-use text" ;; esac
+    for term in "exact candidate" "material intent" "owning phase skill" "normative"; do
+      grep -qiF -- "$term" <<<"$desc" && policy description-rules "the description uses \`$term\`"
+    done
     if [ -z "$desc" ]; then
       finding fail description "frontmatter has no non-empty \`description\`"
     else

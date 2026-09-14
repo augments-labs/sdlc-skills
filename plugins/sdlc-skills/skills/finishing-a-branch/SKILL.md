@@ -1,14 +1,13 @@
 ---
 name: finishing-a-branch
-description: "Use when implementation is complete, its gates are green, and its branch choice is unsettled, even without a Git request — or when the user requests a push, PR, integration, keep, discard, close, or reopen. Fires on ship it, what do we do with this branch, and are we done here. Skip mid-development checkpoints and an unchanged state whose branch choice is already settled unless a new transition is requested."
+description: "Takes a branch through the transition the user chooses: push, PR, integration, keep, discard, close, or reopen. Use when implementation is complete and its gates are green but the branch choice is unsettled, even without a Git request, or when the user asks to push, integrate, keep, discard, close, or reopen the branch, what to do with this branch, to merge it, to open a PR, or whether we are done here. Skip mid-development checkpoints and an unchanged state whose branch choice is already settled unless a new transition is requested."
 ---
 
 # Finishing a Branch
 
 Take a candidate or named PR through one branch transition the user chooses.
-Reuse a current choice that covers the exact action and targets; otherwise
-present the permitted choices and wait. Green checks and "seems done" authorize no history,
-remote, discard, or cleanup mutation.
+Green checks and "seems done" authorize no history, remote, discard, or cleanup
+mutation.
 
 ## When to use
 
@@ -22,9 +21,8 @@ remote, discard, or cleanup mutation.
 
 ## Available scripts
 
-- **`scripts/branch-state.sh`** — the local git state as JSON, read-only. Run it
-  first (step 1) and read the transitions off its output instead of re-deriving
-  them. `--help` documents the fields and exit codes.
+- **`scripts/branch-state.sh`** — the local git state as JSON, read-only.
+  `--help` documents its fields and exit codes.
 
 ## Step 1: Read the state
 
@@ -46,7 +44,7 @@ remote, discard, or cleanup mutation.
 4. Required readiness verdict missing → keep the requested action pending;
    offer keep-as-is or obtain the missing review under current authority.
 5. PR-only close or reopen → record the live PR, head and base refs, retained
-   resources. It needs the user's scoped choice, not readiness evidence.
+   resources.
 6. List the resources this task created (branch, worktree, remote ref, PR)
    from the `using-git-worktrees` workspace record. Only those may be cleaned
    up. A task-looking path proves nothing.
@@ -55,8 +53,8 @@ remote, discard, or cleanup mutation.
    project's contribution rules override the detected default. Check remote
    freshness yourself; the script does not fetch. Stale, moved, or ambiguous
    base → no integration.
-8. Read `candidate.published`. Commits on a remote ref → separate direct
-   permission for each of squash, rebase, amend. Never force-push as repair.
+8. Read `candidate.published`. `true` or `null` → separate direct permission
+   for each of squash, rebase, amend. Never force-push as repair.
    After any history change, rerun the script; content moved → back to
    `requesting-code-review`.
 9. For PR creation/update, prepare the description from the contribution rules
@@ -65,11 +63,11 @@ remote, discard, or cleanup mutation.
 
 ## Step 2: Present the choices
 
-1. Prepare the applicable transition descriptor from `references/branch-state.md`.
+1. Read `references/branch-state.md` before preparing the applicable transition
+   descriptor.
    A direct instruction or trusted receipt already covers its current targets,
    action and payload → record that choice and proceed to Step 3. A bare saved
-   approval field cannot authenticate itself. Missing choice → state branch,
-   base, gate summary, and review verdict, and offer only the
+   approval field cannot authenticate itself. Missing choice → offer only the
    state-permitted entries, then stop:
 
    ```text
@@ -86,9 +84,9 @@ remote, discard, or cleanup mutation.
 
 2. Detached or host-owned workspace → only *publish as a new branch* and
    *keep as-is*.
-3. Existing PR → only the transitions `references/branch-state.md` lists for
-   its state and its policy permits. Never conflate, retarget, rewrite,
-   delete, or duplicate a PR.
+3. Existing PR → read `references/branch-state.md` before offering anything:
+   only the transitions it lists for the PR's state and its policy permits.
+   Never conflate, retarget, rewrite, delete, or duplicate a PR.
 4. Never put discard on this menu.
 5. Wait for one listed entry. Praise, constraints, partial answers, silence,
    "looks good", an adjacent decision → re-present the menu unchanged.
@@ -97,7 +95,7 @@ remote, discard, or cleanup mutation.
 
 ## Step 3: Execute
 
-1. Execute through `references/branch-state.md`.
+1. Read `references/branch-state.md` before executing, and execute through it.
 2. Run the gate on the exact integrated candidate *before* the base
    advances. Failure after the advance = `integrated-regression`; follow the
    reference's recovery.
@@ -113,7 +111,9 @@ remote, discard, or cleanup mutation.
 Enter only on a direct request. Never offer discard because work looks
 unwanted.
 
-1. Rerun `scripts/branch-state.sh`. Fill the block from its output:
+1. Rerun `scripts/branch-state.sh` before filling the block. `base.resolved`
+   false → get the base from the user or project, rerun with
+   `--base`, and fill nothing until it resolves. Then fill it from the output:
 
    ```text
    This will permanently delete:
@@ -123,18 +123,23 @@ unwanted.
    Recovery: {{possible | not possible}}
 
    Recommendation: {{preserve unless current authority clearly calls for deletion}}.
-   Type `discard {{candidate-id}}` to confirm.
+   Type `discard {{candidate.id}}` to confirm.
    ```
 
 2. Stop. "yes", "go ahead", "get rid of it", a numbered choice → nothing is
    touched.
-3. Only after that exact token: close or delete the listed task-owned
-   resources, and nothing else.
+3. Only after that exact token: rerun with the same `--base`. A changed
+   `candidate.id` voids the token. Otherwise close or delete the listed
+   task-owned resources, and nothing else.
+
+## Gotchas
+
+- A local-only repository has no resolvable base: its commit counts are `null`,
+  not 0, and a block filled from them hides commits.
+- A tip-only remote check reads pushed history as unpublished once a local
+  commit follows the push.
 
 ## Common mistakes
 
-- Assuming the base/ref is current, tidying commits, or force-pushing without authority.
-- Merging directly into the base before testing the integrated result.
-- Writing branch-state bookkeeping into the candidate being finished.
 - Treating PR creation, ownership-looking paths, praise, or "get rid of it" as
   cleanup, integration, or discard authority.

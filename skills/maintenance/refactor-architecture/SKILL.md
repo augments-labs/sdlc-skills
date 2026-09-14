@@ -1,11 +1,17 @@
 ---
 name: refactor-architecture
-description: "Use when the structure of existing code is what makes change expensive and that structure itself needs redesigning — tangled boundaries, logic in the wrong layer, one small change touching many files. Fires on this codebase is a mess, everything imports everything, and every feature makes the next one slower. Skip designing a new system, quick local cleanups, and read-only audits."
+description: "Redesigns the structure of existing code when that structure makes change expensive: tangled boundaries, logic in the wrong layer, one small change touching many files. Use when the structure of existing code is what makes change expensive and needs redesigning, or when the user says this codebase is a mess, everything imports everything, or every feature makes the next one slower. Skip designing a new system, quick local cleanups, and read-only audits."
 ---
 
 # Refactor Architecture
 
-Improve the structure of code that already exists. The goal is **deep modules** — a lot of behaviour behind a small interface — and **locality**, so a change lives in one place. This is maintenance; for designing new structure, use `system-architecture`. The vocabulary these steps lean on — module, interface, depth, seam, adapter, leverage, and the deletion test — is defined in `references/vocabulary.md`.
+Improve the structure of code that already exists. The goal is **deep
+modules** — a lot of behaviour behind a small interface — and
+**locality**, so a change lives in one place. This is maintenance; for
+designing new structure, use `system-architecture`. The vocabulary these
+steps lean on — module, interface, depth, seam, adapter, leverage, and the
+deletion test — is defined in `references/vocabulary.md`; open it when a
+term below reads unfamiliar.
 
 ## When to use
 
@@ -14,9 +20,8 @@ Improve the structure of code that already exists. The goal is **deep modules** 
 
 ## Step 1: Classify and measure
 
-1. Classify with `migration-strategy`'s four questions (reviewability,
-   preservation, breadth, failure surfaces) and record the answers. All
-   four on the ordinary route → stay here. Any not → wait for an approved,
+1. Fill the classification block. All four answers on the ordinary route →
+   stay here. Any not → wait for an approved,
    current migration and assurance contract and passed entry gates. An
    authorized prerequisite consumes only its exact proposed contract; it
    cannot edit the target, approve the contract, or satisfy entry.
@@ -37,14 +42,14 @@ Improve the structure of code that already exists. The goal is **deep modules** 
    friction, or one real volatile or external boundary with measured
    impedance, failure policy, or test isolation. Never for count or
    hypothetical variation.
-3. Fill `assets/structural-proposal.md`: distinct structures compared,
-   removals and where their invariants now live, slice table, approver rule.
-   Decision outcome and slice progress stay outside it.
+3. Fill `assets/structural-proposal.md` before presenting it: distinct
+   structures compared, removals and where their invariants now live, slice
+   table, approver rule. Decision outcome and slice progress stay outside it.
 4. Hard-to-reverse choice → invoke `architecture-decisions`.
-5. Present and end the turn. Never self-select a material structure:
+5. Present. Never self-select a material structure:
 
    ```text
-   Structural proposal {{identity}}
+   Structural proposal {{identity (per template)}}
    Friction: {{measured, one line}}  Target: {{one line}}
    Alternatives: {{list}}  Slices: {{n}}  Rollback: {{one line}}
 
@@ -56,6 +61,7 @@ Improve the structure of code that already exists. The goal is **deep modules** 
    Recommendation: {{option the friction and recovery evidence support}} — {{one sentence}}.
    ```
 
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
 6. Input or normative drift → an approved successor; affected slices invalid.
 
 ## Step 3: Transform under preservation
@@ -73,6 +79,17 @@ Improve the structure of code that already exists. The goal is **deep modules** 
    completed deprecation and migration.
 5. Map every invariant the surface carried to surviving coverage. Falsify
    that surviving gate. Keep the rollback recoverable until integration.
+
+## Gotchas
+
+- A surface with zero static callers can still be reached through dynamic
+  registration, reflection, or a generated config — a plain call-site search
+  finds none of those and reads as proof the surface is dead when it is only
+  unproven.
+- The deletion test's "removal spreads complexity to callers" branch is only
+  as good as the caller trace behind it: run it against a guessed caller set
+  and a genuinely load-bearing module reads as a thin wrapper worth
+  collapsing.
 
 ## Common mistakes
 

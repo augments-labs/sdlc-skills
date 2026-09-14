@@ -1,6 +1,6 @@
 ---
 name: security-audits
-description: "Use when a change touches a trust boundary, attacker-controlled input, authentication or authorization, secrets, sensitive data, isolation, a dependency, build or deploy exposure, availability, sessions, or cryptography. Fires on anything touching login, tokens, permissions, uploads, or user input reaching a query or a shell. Skip only when no security surface changed."
+description: "Audits what an attacker can make a change do, from attacker-controlled input to its effect. Use when a change touches a trust boundary, attacker-controlled input, authentication or authorization, secrets, sensitive data, isolation, a dependency, build or deploy exposure, availability, sessions, or cryptography, including anything touching login, tokens, permissions, uploads, or user input reaching a query or a shell. Skip only when no security surface changed."
 ---
 
 # Security Audits
@@ -37,7 +37,8 @@ or comment as a verdict.
    stores, dependencies, build and CI, configuration, deployment. Record why
    each expansion is relevant.
 2. Note pre-existing unrelated issues separately. Keep them out of this verdict.
-3. Work every category checklist in `references/audit-checklists.md`.
+3. Read `references/audit-checklists.md` before tracing, and work every
+   category checklist in it.
 4. Mark each category covered, or obtain an omission through Step 4.
 5. Write each finding in three parts: attacker-controlled source, propagation,
    the sink or effect it actually reaches.
@@ -46,19 +47,17 @@ or comment as a verdict.
    Never exploit shared or production state without exact, direct authority.
 7. Missing or stale gate: record a blocker and go to Step 4. Do not work
    around it.
-8. Fill `assets/security-report.md` with revision-bound findings. Fix = the
-   smallest change that closes the path. Sensitive evidence = redacted location
-   or digest, never the value.
+8. Fill `assets/security-report.md` after tracing, with revision-bound
+   findings. Fix = the smallest change that closes the path. Sensitive
+   evidence = redacted location or digest, never the value.
 
 ## Step 3: Verdict
 
-1. Include `assets/security-report.md` with the independent auditor's
-   instructions and dispatch through a real callable action.
-   Dispatched = a nonempty tool-issued ID. Empty, refused, or unavailable:
-   issue `inconclusive` with the gate pending. Never self-certify.
-2. Poll the exact receipt to its deadline. Failure or passed deadline: write
-   `cancellation requested`, wait for quiet, quarantine partial output; a
-   retry links its predecessor and rejects its late results.
+1. Include `assets/security-report.md` when you send the independent
+   auditor's instructions: dispatch per `dispatching-parallel-agents` Step 2.
+   Never self-certify: a labelled self-audit never issues `security clear`.
+2. Only the auditor's terminal result counts; a running, failed, or cancelled
+   audit leaves the verdict pending.
 3. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` for every finding
    that comes back.
 4. After a fix: new candidate, rerun the affected gates, independent focused
@@ -87,3 +86,10 @@ touch. Do not approve the omission yourself.
 5. An accepted omission binds to this exact candidate and dies with the
    verdict on any security-relevant edit.
 6. Missing auditor independence is not on this menu; Step 3 settles it.
+
+## Gotchas
+
+- An audit of the changed lines misses old code the change newly exposes.
+  Reachability from the change sets the scope, not the diff.
+- A scanner summary is not a traced path. A finding stands only with its
+  source, propagation, and sink written out, and a summary names none of them.

@@ -1,6 +1,6 @@
 ---
 name: define-goals
-description: "Use at the start of a new project or initiative, before scoping or building, to pin down what it is for: the objective, the stakeholders, how success is measured, and the guardrails. Fires on we want to build X with no stated objective, and on a vague or missing objective. Skip a single feature, and skip while a decision or approval reply is pending."
+description: "Pins down what a new project or initiative is for: the objective, the stakeholders, how success is measured, and the guardrails. Use when a new project or initiative starts before scoping or building, or when the user wants to build X with no stated objective, or when the objective is vague or missing. Skip a single feature, and skip while a decision or approval reply is pending."
 ---
 
 # Define Goals
@@ -19,7 +19,7 @@ A project without a clear goal ships features no one needed. Before scope or des
 
 ## Step 1: Find the objective
 
-Open `assets/goals-section.md` now. Each step fills its section.
+Open `assets/goals-section.md` before starting; each step fills its section.
 
 1. Ask "why this, why now?" until the answer is what the world does
    differently afterward, not code that exists.
@@ -38,10 +38,10 @@ Open `assets/goals-section.md` now. Each step fills its section.
 1. Write the immutable `## Goals` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it.
-2. Present and end the turn:
+2. Present:
 
    ```text
-   Goals {{path}} — version {{identity}}
+   Goals {{path}} — version {{identity (per template)}}
    Objective: {{one line}}
    Measure: {{baseline}} → {{target}} by {{horizon}}, source {{source}}
    Guardrails: {{list}}
@@ -54,13 +54,21 @@ Open `assets/goals-section.md` now. Each step fills its section.
    Recommendation: {{option the open assumptions support}} — {{one sentence}}.
    ```
 
-3. Only option 1 hands off. Praise, constraints, silence, a partial reply →
-   pending. An informative non-answer → `interview-me`. Record lifecycle
-   externally. Normative change → a replacement that reopens the owners.
-   Never edit an issued identity.
-4. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` when
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` when
    viability is unresolved; otherwise `scope-it` when the boundary is next.
    Never impose a phase already complete.
+
+## Gotchas
+
+- A guardrail can look complete just by being written down while staying
+  unfalsifiable. `scope-it` treats every goal guardrail as a non-negotiable
+  constraint on each cut, so one with no observable threshold lets a cut
+  violate it with nothing positioned to catch that.
+- Naming several approvers for the objective without also naming a conflict
+  resolver and a decision rule leaves no way to settle it when they disagree
+  about what the goal actually is — the brief then stalls on a tie nobody is
+  positioned to break.
 
 ## Common mistakes
 

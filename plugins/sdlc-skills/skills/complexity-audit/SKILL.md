@@ -1,6 +1,6 @@
 ---
 name: complexity-audit
-description: "Use when existing code should be examined for accidental complexity — abstraction nothing needs, ownership it should not hold, flexibility nobody uses, or custom machinery a library already provides. Fires on is this over-engineered, why is this so complicated, and do we still need all of this. Skip implementation choices, review of an exact candidate, and structural work already approved."
+description: "Audits existing code for accidental complexity: abstraction nothing needs, ownership it should not hold, flexibility nobody uses, or custom machinery a library already provides. Use when existing code should be examined for accidental complexity, or when the user asks whether this is over-engineered, why it is so complicated, or whether all of it is still needed. Skip implementation choices, review of a frozen change, and structural work already approved."
 ---
 
 # Complexity Audit
@@ -19,11 +19,17 @@ diagnosis, not permission to change code.
 
 ## Step 1: Freeze
 
-1. Open `assets/audit-report.md`. Fill *What was frozen* first: identity,
-   goal, path boundary, guarantees in force, admissible evidence.
+1. Open `assets/audit-report.md` before the inventory. Fill *What was
+   frozen* first: identity, goal, path boundary, guarantees in force,
+   admissible evidence.
 2. Predeclare the report path
    `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`, coordinator-owned,
-   outside the audited target's identity. Target drifts → stop or restart.
+   outside the audited target's identity. Identify the target by revision.
+   Use a working-tree digest only when the report path is outside the
+   repository or `git check-ignore -q` passes for it: an in-tree, unignored
+   report changes the digest the audit froze. Uncommitted target with an
+   in-tree, unignored report path → stop; ask for a checkpoint or an ignored or
+   out-of-repository report path. Target drifts → stop or restart.
 3. Fill the inventory table: code, dependencies, configuration, build and
    test machinery, generated sources, dynamic, reflection, and registration
    paths, external consumers, operational ownership.
@@ -34,11 +40,10 @@ diagnosis, not permission to change code.
 
 ## Step 2: Challenge read-only
 
-1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` for each
-   exact partition. Dispatch it; record tool-issued IDs and terminal outcomes.
-   A name or prompt is not dispatch.
-2. No independent action available → write that an inline pass ran. An
-   explicitly requested independent audit stays pending.
+1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` before
+   dispatching each exact partition, then dispatch per `dispatching-parallel-agents` Step 2.
+2. Empty, refused, or unavailable → follow the no-dispatch rule in
+   `dispatching-parallel-agents` Step 2.
 3. Fill the reconciliation block before any finding: every partition,
    exclusion, cross-boundary candidate, duplicate, failed attempt,
    inconclusive area.
@@ -58,6 +63,17 @@ diagnosis, not permission to change code.
    candidate.
 3. Verify the report's coverage, then stop. Review or branch finishing runs
    only if the user separately asks to ship the report.
+
+## Gotchas
+
+- Code with no static caller can still be reached through reflection,
+  registration, or configuration. A search that finds no caller has not proved
+  a removal safe.
+- A reconciliation that lists no failed or inconclusive area reads as full
+  coverage. Count what was not examined, or a silent gap passes as clean.
+- A working-tree digest captured before the audit reports DRIFT once the
+  report lands at an unignored path under the audited tree, though no audited
+  code changed.
 
 ## Common mistakes
 

@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: "Use when material intent has several plausible readings that no owning phase skill can settle, or when a pending material decision got neither an explicit answer nor an explicit cancellation — praise, constraints, silence, or a partial reply instead. Fires on a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Skip inputs an owning skill's own procedure elicits."
+description: "Asks the questions that settle what the user actually wants when a request has several plausible readings. Use when what the user wants has several plausible readings that would change the work and no phase skill's own procedure can settle it, or when a pending material decision got praise, constraints, silence, or a partial reply instead of an explicit answer or an explicit cancellation, including a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Skip inputs that another skill's own procedure asks for."
 ---
 
 # Interview Me
@@ -66,15 +66,16 @@ skill that owns eliciting the still-open inputs.
 
 ## Step 3: Write the brief and present it
 
-1. Fill `assets/brief-template.md`: goal, decisions with rationale,
-   non-goals, open risks, identity and ledger fields. A brief, not a spec.
+1. Fill `assets/brief-template.md` after Step 2.4's stop condition holds:
+   goal, decisions with rationale, non-goals, open risks, identity and ledger
+   fields. A brief, not a spec.
 2. Write it to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the
    user-set path, preserving approved sections around it. Tiny brief → inline
    beside its decision record.
 3. Present and end the turn:
 
    ```text
-   Brief {{path}} — version {{identity}}
+   Brief {{path}} — version {{identity (per template)}}
    Goal: {{one line}}  Decisions: {{n}}  Non-goals: {{n}}  Open risks: {{n}}
 
    1. Approve
@@ -107,15 +108,27 @@ Supersession requires an approved replacement.
 ## When an artifact carries the pending decision
 
 Write supplied facts or constraints into it only when current mutation authority
-covers it. Before identity is issued, update the draft; once issued, never mutate
-it — every normative change creates a new proposed successor naming its
-predecessor. Without mutation authority, present the proposed update and keep the
-artifact and decision pending.
+covers it. Before identity is issued, update the draft.
+Never edit an issued identity, whether its decision is pending or closed:
+every normative change creates a new proposed successor naming its
+predecessor, with a per-ID `added / changed / removed / preserved` delta, and
+removing an ID needs its owner's approval. When a successor is approved,
+inventory everything bound to its predecessor and mark each binding invalid
+until its owner revalidates. Record lifecycle externally (approved or
+accepted, rejected, cancelled, superseded) with evidence of the exact version
+each state applies to. Without mutation authority, present the proposed update
+and keep the artifact and decision pending.
 
 The current user-role answer supplies authority for the current transition. A
 persisted `Approval:` field is only a process record: in a fresh context it
 cannot authenticate itself. Require the live answer or a project/harness receipt
 that binds user origin to the exact version; otherwise refresh the decision.
+
+## Gotchas
+
+- A persisted `Approval:` line carried forward into a successor draft looks like
+  a receipt, but it binds the predecessor's version; in a fresh context it
+  approves nothing about the successor.
 
 ## Common mistakes
 

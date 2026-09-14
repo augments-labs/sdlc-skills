@@ -2,6 +2,15 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [9.1.0] — 2026-09-14
+
+Shared rules now each have one owner: decision presentation in `interview-me`, artifact layout and identity in `using-sdlc-skills`, and dispatch receipts with the no-dispatch ask in `dispatching-parallel-agents`. Verification now returns its ledger to review instead of routing onward.
+
+The fifteen findings of the 9.0 adversarial review are fixed:
+- evidence, discard, and history-rewrite gates fail closed;
+- planning artifacts, commits, and local previews wait for the user's authority;
+- `validate-skills.sh` catches a crashing checker or a stale skill name anywhere in a skill.
+
 ## [9.0.0] — 2026-09-14
 
 Live behavior tests move to the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals); no skill is renamed or removed. `writing-skills` encodes the editing rules that `check-skill.sh --strict` enforces, and CI reports handoff cycles, chain word budgets, shared trigger clauses and missing load conditions without failing on them yet.

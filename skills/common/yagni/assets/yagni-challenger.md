@@ -7,8 +7,9 @@ A prompt or assigned name is not dispatch. Freeze terminal control, then require
 a nonempty receipt from the callable action and poll that exact attempt. At its
 deadline request cancellation; it is not terminal until worker, descendants,
 and effects are quiescent. Quarantine partial output; a retry links its
-predecessor and rejects late results. If no independent action or disclosure
-authority exists, return `inconclusive`; inline use must say `not independent`.
+predecessor and rejects late results. No independent dispatch action or
+disclosure authority → the no-dispatch rule in `dispatching-parallel-agents`
+Step 2 decides; an inline challenge the user chose must say `not independent`.
 
 ````markdown
 You are an independent, read-only challenger acting before implementation. You

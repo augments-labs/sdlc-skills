@@ -42,8 +42,9 @@ descriptor and new invocation. This template is never copied into that workspace
   authority, and disposition}}`
 - **Dispatch authority:** `{{current authority for the selected worker/provider,
   storage, and egress; direct scoped decision if this is a new boundary}}`
-- **External review ledger:** `{{predeclared controlled location outside the
-  descriptor/candidate; attempts, receipts, reports, findings, and outcomes}}`
+- **External review ledger:** `{{attempts, receipts, reports, findings, and
+  outcomes; at .sdlc-skills/evidence/YYYY-MM-DD-topic/review-ledger.md unless the
+  user predeclares another path outside the descriptor and candidate}}`
 - **Terminal contract:** `{{deadline, poll action, timeout/cancel action/owner,
   worker/descendant/effect boundary, retry and late-result rules}}`
 

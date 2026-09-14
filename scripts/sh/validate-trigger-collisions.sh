@@ -10,13 +10,14 @@ usage() {
 scripts/sh/validate-trigger-collisions.sh — trigger phrases shared between skill descriptions.
 
 Splits every description into clauses at commas, semicolons, and periods,
-case-folds them, and reports each clause of three or more words that more than
+case-folds them, and reports each clause of two or more words that more than
 one description contains, one per line; nothing prints when there is none:
 
   phrase: skill-a, skill-b
 
 It matches whole clauses only: the same trigger worded differently, or inside a
-longer clause, is not caught.
+longer clause, is not caught. The floor is two words because descriptions are
+plain sentences with no trigger list, so a shared trigger is a short clause.
 
   --strict    exit 1 when any clause is shared (default: report only)
   --help      this text
@@ -39,7 +40,7 @@ export LC_ALL=C
 mapfile -t files < <(find skills -name SKILL.md 2>/dev/null | sort)
 [ "${#files[@]}" -gt 0 ] || { echo "no SKILL.md under skills/" >&2; exit 2; }
 
-# One "clause<TAB>skill" row per clause of three or more words.
+# One "clause<TAB>skill" row per clause of two or more words.
 rows=""
 for f in "${files[@]}"; do
   name="$(basename "$(dirname "$f")")"
@@ -56,7 +57,7 @@ for f in "${files[@]}"; do
         { n = split(tolower($0), c, /[,;.]/)
           for (i = 1; i <= n; i++) {
             gsub(/[[:space:]]+/, " ", c[i]); sub(/^ /, "", c[i]); sub(/ $/, "", c[i])
-            if (split(c[i], w, " ") >= 3) print c[i] "\t" skill
+            if (split(c[i], w, " ") >= 2) print c[i] "\t" skill
           } }')
 "
 done

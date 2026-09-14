@@ -1,6 +1,6 @@
 ---
 name: viewing-artifacts
-description: "Use when the state of the artifact trail — briefs, specs, designs, plans, execution — needs to be seen at a glance instead of read file by file. Fires on show me the state of my specs and plans, where does my project stand, what needs attention, is my plan still in sync with the spec, and visualize the trail. Skip when one artifact must be read, written, or edited."
+description: "Shows the state of the artifact trail — briefs, specs, designs, plans, execution — at a glance instead of file by file. Use when the user asks where the project stands, what needs attention, whether the plan is still in sync with the spec, to see the state of specs and plans, or to visualize the trail. Skip when one artifact must be read, written, or edited."
 ---
 
 # Viewing Artifacts
@@ -31,9 +31,9 @@ The page carries state, not documents.
 2. No `.sdlc-skills/`, or artifact paths overridden → render the template's
    empty state naming what produces artifacts. Never search the filesystem
    for look-alikes.
-3. Read `references/state-derivation.md`. Derive every value by its rules:
-   slug allowlist, phase artifacts, approval sources, drift, attention
-   grouping.
+3. Read `references/state-derivation.md` before deriving a value. Derive
+   every value by its rules: slug allowlist, phase artifacts, approval
+   sources, drift, attention grouping.
 4. Match each section's normative version and location to its decision ledger;
    preserve its own decision vocabulary. Only the exact `[x] done` marker
    counts complete. Compare consumed identities for drift; timestamps alone
@@ -41,8 +41,9 @@ The page carries state, not documents.
 
 ## Step 2: Render
 
-1. Open `assets/page-template.html`. Follow its top-of-file and region
-   comments: region order, repeats, omissions, allowed values.
+1. Open `assets/page-template.html` before filling anything. Follow its
+   top-of-file and region comments: region order, repeats, omissions,
+   allowed values.
 2. Fill: current UTC as-of, tiles, sidebar groups in attention order, and per
    topic the spine nodes, drift connector, ADR chain, embedded visuals, every
    task row, the assurance matrix from `verification/`.
@@ -56,20 +57,29 @@ The page carries state, not documents.
 
 ## Step 3: Deliver
 
-1. Serve it, root `.sdlc-skills/`, entry `views/index.html`:
+1. Deliver the file path and offer to serve the page, root `.sdlc-skills/`,
+   entry `views/index.html`. Start it only after the user accepts:
 
    ```bash
-   bash scripts/start-server.sh
+   bash scripts/start-server.sh --root .sdlc-skills --entry views/index.html
    ```
 
-2. Hand over the printed URL and the file path without being asked. Serving
-   fails or declined → file path. `needs python3` → say so, name the
-   platform's install route, deliver the file path. Install a runtime only on
-   explicit request.
+2. Hand over the printed URL. Serving fails or declined → the file path
+   stands. `needs python3` → say so, name the platform's install route,
+   deliver the file path. Install a runtime only on explicit request.
 3. Reply in one short message: path or URL, as-of UTC, every place the page
    says unknown or omitted a block, whether drift came from file mtimes, and
    the cause class of any ledger pointer that could not be honored.
-4. No longer needed → `bash scripts/stop-server.sh`.
+4. No longer needed → `bash scripts/stop-server.sh {{pid}}`, with the `pid`
+   from the startup record.
+
+## Gotchas
+
+- Run without `--root`, `scripts/start-server.sh` exits 1 with
+  `needs --root DIR`, and the file-path fallback in Step 3.2 hides that no
+  preview started.
+- A status request is not consent to a background listener: a preview started
+  unasked opens a local port the user never agreed to.
 
 ## Common mistakes
 

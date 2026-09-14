@@ -1,6 +1,6 @@
 ---
 name: system-architecture
-description: "Use when approved requirements need a target system design before planning or implementation: components, boundaries, data flow, failure and recovery, and which seams are worth their cost. Fires on how should we structure this and what are the moving pieces. Skip the transition from an existing system, and skip a small feature whose structure fits inside its own task or plan."
+description: "Designs the target system for approved requirements: components, boundaries, data flow, failure and recovery, and which seams are worth their cost. Use when approved requirements need a system design before planning or implementation, or when the user asks how to structure this or what the moving pieces are. Skip the transition from an existing system and a small feature whose structure fits inside its own task or plan."
 ---
 
 # System Architecture
@@ -18,7 +18,7 @@ Design the shape of the solution before anyone builds it: what the pieces are, h
 
 ## Step 1: Trace and structure
 
-Open `assets/architecture-section.md` now. Each step fills its section.
+Open `assets/architecture-section.md` before the steps below fill it in.
 
 1. Map every requirement, preserved obligation, and material risk to the
    component, interface, and owning evaluator reference covering it. Define no
@@ -54,14 +54,13 @@ Open `assets/architecture-section.md` now. Each step fills its section.
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it. Fill the header: identity,
    predecessor, approval rule, ledger location, stable ID delta.
-2. Answer `migration-strategy`'s four questions (reviewability,
-   preservation, breadth, failure surfaces) and record the answers. Any off
-   the ordinary route, or the user marks the work high-risk → run
-   `assets/design-review.md` before presenting. Blocking.
-3. Present and end the turn:
+2. Fill the classification block. Any answer off the ordinary route, or the
+   user marks the work high-risk → run `assets/design-review.md` before
+   presenting. Blocking.
+3. Present:
 
    ```text
-   {{Section}} {{path}} — version {{identity}}
+   {{Section}} {{path}} — version {{identity (per template)}}
    {{summary lines}}
 
    1. Approve and hand off to planning
@@ -72,13 +71,20 @@ Open `assets/architecture-section.md` now. Each step fills its section.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-4. Only option 1 authorizes planning. Praise, silence, prior-version approval
-   → nothing. Record lifecycle externally.
-5. Normative change after issue → a successor with a per-ID `added / changed /
-   removed / preserved` delta. Removal needs owning approval. Never edit an
-   issued identity.
-6. Option 1, and every design section the work needs is approved →
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+4. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+
+## Gotchas
+
+- Step 1's mapping table needs a real owning evaluator for every row, but
+  this skill defines no assurance gates itself. A row with only a
+  placeholder or invented evaluator still reads as mapped on the page until
+  that gate actually exists elsewhere.
+- The Skip condition in *When to use* is checked once, at intake. Nothing
+  here re-checks it as scope grows, so a feature that starts small and
+  later crosses into several components can stay embedded in its task plan
+  instead of getting this skill's own architecture record.
 
 ## Common mistakes
 

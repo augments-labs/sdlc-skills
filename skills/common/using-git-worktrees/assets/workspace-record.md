@@ -16,6 +16,7 @@ to, and what the suite looked like before you touched anything.
 | Isolation kind | worktree / harness-native workspace / user-okayed current checkout |
 | Ignore rule | `.gitignore` / `info/exclude` / outside the repository / native tool owns it |
 | Owner of the checkout | this task / user / host |
+| Local commit authority | user answer (quoted) / project policy (path) / none — ask once |
 
 ## Inventory
 

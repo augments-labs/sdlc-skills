@@ -1,0 +1,106 @@
+# Artifact layout
+
+Where the skills write. Only the user sets another path; record it in the
+artifact's ledger pointer so the next reader finds it.
+
+## Directories
+
+Every path sits under `.sdlc-skills/` at the project root. Run
+`scripts/artifact-layout.sh` from the root to create them; a second run changes
+nothing.
+
+| Directory | Holds | Committed |
+| --- | --- | --- |
+| `briefs/` | goals, scope, feasibility, and interview briefs | yes |
+| `specs/` | specifications | yes |
+| `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts | yes |
+| `plans/` | plan directories: an index and its task files | yes |
+| `audits/` | complexity and security audit reports | yes; a security report with open findings once disclosing it is safe |
+| `post-mortems/` | post-mortems | yes |
+| `verification/` | assurance matrices | yes |
+| `evidence/` | run records bound to one state | only its `.gitignore` |
+| `handoffs/` | handoff notes | only when safe to share |
+| `views/` | the generated project view | the project's choice |
+
+Name an artifact `{{YYYY-MM-DD}}-{{topic}}.md`; a plan is a directory with that
+name. "Committed" describes a project that keeps its delivery trail in the
+repository. A project that keeps planning local ignores `.sdlc-skills/` as a
+whole, and the layout inside does not change.
+
+## Decision ledger
+
+- **Path:** beside the artifact, with .ledger.md in place of .md.
+  `.sdlc-skills/specs/2026-01-15-login.md` records its decisions in
+  `.sdlc-skills/specs/2026-01-15-login.ledger.md`. A plan records them in
+  `.sdlc-skills/plans/{{plan}}/00-index.ledger.md`, execution states included.
+- **Append-only:** one table row per state change. Never edit or delete a row;
+  a correction is a new row that names the row it corrects.
+
+Every ledger is one markdown table with this header:
+
+| Identity | Section | Location | State | Bound evidence | Updated |
+| --- | --- | --- | --- | --- | --- |
+
+- `Identity` is the artifact's identity (see Identity). `Section` names the
+  section when one file holds several, such as a brief's goals, scope, and
+  feasibility. `Location` is the artifact's path from the project root.
+- `State` uses the vocabulary the artifact's pointer field lists, for example
+  pending, changes requested, approved, rejected, cancelled, superseded.
+- `Bound evidence` names who decided and holds the receipt or evidence the
+  state rests on. A plan's approval row also records its execution mode there:
+  `mode: inline` or `mode: delegated`.
+- `Updated` is the date the row was appended.
+
+A ledger kept anywhere else, or returned instead of written, is recorded in the
+artifact's pointer field.
+
+## Identity
+
+An issued artifact's identity is the first 7 characters of `git hash-object`
+over the exact text the artifact owns:
+
+- **A file of its own:** the whole file.
+- **A section in a shared file:** from its heading down to the next heading at
+  the same or a higher level, without trailing blank lines, so appending the
+  next section does not change it.
+- **A brief's own text:** from the top of the file down to its first `##`
+  heading; the goals, scope, and feasibility sections are other artifacts.
+- **A plan:** its index, with every task checkbox and state label normalized to
+  `[ ]` and `todo`, followed by every task file in index order.
+
+```bash
+git hash-object .sdlc-skills/specs/2026-01-15-login.md | cut -c1-7
+awk -v h='## Architecture' '$0 == h {f = 1; print; next} f && /^##? / {exit} f {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/designs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+awk '/^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/briefs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+```
+
+`e69de29` is the hash of nothing: the heading did not match exactly, so fix it
+before recording. The agent that issues the artifact runs the command at issue;
+whoever later checks an approval or drift recomputes it the same way. Record the
+value in the ledger row and show it in the decision block. Never write it into
+the artifact: that changes the bytes it names. Any later byte change is a new
+identity, and so a successor.
+
+## Evidence
+
+`evidence/` holds records that bind to one state and go stale with it:
+verification ledgers, TDD RED records, debugging hypothesis and attempt
+ledgers, review descriptors, dispatch receipts and reports, and gate-state
+records. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
+
+The directory holds a `.gitignore` containing `*` and `!.gitignore`. Commit
+that file with the trail, so every clone and worktree ignores the rest. A
+result worth keeping is summarized into the artifact's ledger with the
+identity it ran on.
+
+## Handoffs
+
+`handoffs/` is the durable handoff store:
+`.sdlc-skills/handoffs/{{YYYY-MM-DD}}-{{topic}}.md`. A handoff can carry session
+detail that nobody chose to publish, so commit one only when its reader works
+from another checkout and the content is safe to share.
+
+## Views
+
+`views/` holds generated output, such as the project view at
+`.sdlc-skills/views/index.html`. Regenerate it instead of editing it.

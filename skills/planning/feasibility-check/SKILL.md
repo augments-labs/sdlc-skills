@@ -1,6 +1,6 @@
 ---
 name: feasibility-check
-description: "Use before committing to an initiative whose technical, delivery, budget, operational, security, data, or dependency feasibility remains uncertain, including proven technology under uncertain delivery constraints. Skip when the initiative's material feasibility risks are settled and low."
+description: "Checks whether an initiative can be delivered before committing to it: technical, delivery, budget, operational, security, data, and dependency risk. Use when an initiative's feasibility is uncertain, including proven technology under uncertain delivery constraints. Skip when its material feasibility risks are settled and low."
 ---
 
 # Feasibility Check
@@ -16,7 +16,8 @@ put an evidence-bound recommendation to the accountable owner.
 
 ## Step 1: Assess
 
-Open `assets/feasibility-section.md` now. Each step fills its section.
+Open `assets/feasibility-section.md` before starting; each step fills its
+section.
 
 1. Fill every dimension row with its accountable owner: technical, delivery
    and budget, operations and recovery, security and compliance, data,
@@ -38,10 +39,10 @@ Open `assets/feasibility-section.md` now. Each step fills its section.
 2. Write the immutable `## Feasibility` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it.
-3. Present and end the turn:
+3. Present:
 
    ```text
-   Feasibility {{path}} — version {{identity}}
+   Feasibility {{path}} — version {{identity (per template)}}
    Recommendation: {{go | no-go | go-if}}
    Top risks: {{list with confidence}}
    Conditions: {{each with owner and evaluator}}
@@ -54,14 +55,22 @@ Open `assets/feasibility-section.md` now. Each step fills its section.
    Recommendation: {{option}} — {{one sentence of evidence}}.
    ```
 
-4. Nothing hands off until one option arrives. The commitment is the user's.
-5. Go-if → only the named evidence and owner move a condition's external
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+4. Go-if → only the named evidence and owner move a condition's external
    state. Expiry, or any change to a bound input, evaluator, evidence, owner,
-   or freshness → condition invalid, decision reopened. Normative change → a
-   proposed successor. Never edit an issued identity.
-6. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
+   or freshness → condition invalid, decision reopened.
+5. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
    `satisfied`, invoke `scope-it` when the boundary is next. Never impose a
    phase already complete.
+
+## Gotchas
+
+- Filling in Option Zero with a bare assertion ("no existing tool fits")
+  instead of the same evidence the other dimensions require still counts
+  as skipped in substance — it only looks done.
+- Assigning a risk a confidence level it hasn't earned, rather than
+  recording "unknown", launders a risk with no real evidence into one
+  that reads as already assessed.
 
 ## Common mistakes
 

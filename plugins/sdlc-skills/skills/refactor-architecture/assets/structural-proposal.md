@@ -6,6 +6,8 @@ proposal.
 ```markdown
 # Structural proposal {{proposal-id}}
 
+- **Identity:** recorded in the ledger row, never here: the first 7 characters of
+  `git hash-object` over this artifact's own text as issued
 - **Input identity:** {{the exact source revision, contracts, and external inputs
   the friction was measured against}}
 - **Predecessor:** {{prior proposal id, or none — drift needs an approved
@@ -14,6 +16,25 @@ proposal.
   how a disagreement resolves}}
 - **External decision ledger:** {{where the approve / request changes / reject /
   cancel outcome is recorded}}
+
+## High-risk classification
+
+Classify before implementing, on risk evidence rather than line count. The
+ordinary route is ordinary feature planning and line-by-line review; an
+answer is off it when the ordinary route cannot make those surfaces
+reviewable and recoverable.
+
+- Can independent humans or gates inspect the result (**reviewability**)?
+  {{answer and evidence}}
+- Must behavior, compatibility, data, or operations match (**preservation**)?
+  {{answer and evidence}}
+- How many owners, consumers, platforms, or modes change (**breadth**)?
+  {{answer and evidence}}
+- Can data, security, concurrency, resources, cutover, or recovery fail
+  independently (**failure surfaces**)? {{answer and evidence}}
+- **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
+  the ordinary route, or the user marking the work high-risk, makes it
+  high-risk. Reclassify when inputs change.
 
 ## Now
 

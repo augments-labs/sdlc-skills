@@ -4,13 +4,8 @@ Offline tests for this library's deterministic script and packaging logic. Each
 knows its correct answer before it runs, needs no model, and costs nothing, so a
 red result means something is broken.
 
-Live evidence — whether a description fires, whether a skill changes what an
-agent builds — is sampled from a real agent, costs tokens, and is not
-deterministic. It lives in the evals lab,
-[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), with the
-scenarios, query sets, fixtures, and harness launchers it needs, and
-never runs here or in CI. A PR that makes a behavior claim cites a lab campaign
-record; `docs/testing.md` says how.
+Nothing here samples a live agent: no scenario, query set, or model run belongs
+in this repository.
 
 ## Layout
 
@@ -40,14 +35,13 @@ session start: valid JSON in each harness's envelope, the canonical router body
 present *verbatim* with its frontmatter stripped, escaping that survives the
 quotes and tables inside it, and the event name echoed back.
 `run-serve-preview.sh` starts each skill's bundled preview server on loopback
-and asserts the auth gate, path confinement, and clean stop. Both run in CI.
+and asserts the auth gate, path confinement, and clean stop. It then runs the
+start and stop commands each skill body documents, as written, against a
+fixture project. Both run in CI.
 `run-plugin-smoke.sh` needs the harness's CLI installed, so it runs locally: it
 installs this tree the way that harness does, into a throwaway home, and checks
 that every skill is discovered. Its bindings are in `harnesses/README.md`.
 
 ## The regression net
 
-These tests guard scripts and packaging on every change. Behavior is guarded by
-the lab's scenarios, run once before and once after each release; a release
-that fails a scenario its baseline passed does not ship. A temporary controlled
-probe that answers one question is reported in its PR and never committed here.
+These tests guard scripts and packaging on every change.

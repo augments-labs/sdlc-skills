@@ -65,38 +65,24 @@ attempt should land where that one did not. -->
 
 ## Proof
 
-<!-- Paste what the gate actually returned; it must be green:
+<!-- Paste what the gates actually returned; they must be green:
 
     bash scripts/sh/validate-skills.sh
+    bash skills/common/writing-skills/scripts/check-skill.sh --strict path/to/each/skill/touched
 
-Then name the evidence class and give what it returned:
-
-- Behavioral scenario: the lab campaign record's path in
-  [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals)
-  (`results/{{date}}-{{label}}/summary.md`), the plugin commit it pinned, how
-  many runs on which arms, and every inconclusive or failing result.
-- Throwaway probe result: the three pressure prompts, what each run did with
-  and without the section, and the conclusion; the probe is not committed.
-- reference-only, no re-run owed: the change is confined to `references/` or
-  `assets/`, so the always-loaded body is unchanged.
-
-An inconclusive result is a finding; a fabricated one is grounds for closing.
-`docs/testing.md` says which run answers which question. -->
+For a skill change, name the failure or contract gap it answers. This
+repository runs no live agent, so behaviour is argued from the text, not
+measured here. -->
 
 ## Evaluation
 
-<!-- "It works" is not evaluation. -->
-
 - What opening prompt started the session that led to this change?
-- How many sessions did you run **after** the change?
-- What changed in the outcome compared with before?
 
 ## Rigor
 
 - [ ] For a skill change: I invoked `writing-skills`, and `skills/common/writing-skills/scripts/check-skill.sh` passes on every skill touched.
-- [ ] The change was pressure-tested, not only exercised on the happy path.
-- [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without re-proving it still holds (CLAUDE.md → "Editing a skill").
-- [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model (`docs/` may link this project's evals lab).
+- [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without explaining why the new wording holds the same line (CLAUDE.md → "Editing a skill").
+- [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model.
 
 ## New harness support (required only if this PR adds a harness)
 
@@ -104,8 +90,7 @@ An inconclusive result is a finding; a fabricated one is grounds for closing.
 one loads the entry skill at session start so that skills fire without the
 user asking. A PR adding a harness must:
 
-- add `tests/harnesses/{{name}}.sh` offline bindings, and a launcher in the
-  evals lab;
+- add `tests/harnesses/{{name}}.sh` offline bindings;
 - pass `tests/run-session-start.sh` and `tests/run-plugin-smoke.sh --harness {{name}}`;
 - show a skill actually activating through the harness's own CLI on a
   representative opening. Open a clean session, send exactly:
@@ -141,7 +126,7 @@ A PR is closed without review when it:
 - bundles unrelated changes;
 - leaves a required section blank or keeps placeholder text;
 - names another repository, project, author, issue, or vendor model in
-  shipped files (`docs/` may link this project's evals lab);
+  shipped files;
 - submits domain-, tool-, or workflow-specific content as core;
-- changes behaviour-shaping content without evidence.
+- changes behaviour-shaping content without naming the failure it answers.
 -->

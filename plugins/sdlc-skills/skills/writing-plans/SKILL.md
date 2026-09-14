@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: "Use when approved requirements or a clearly multi-step task need an executable, per-task plan before implementation — ordered tasks, their dependencies, and how each one is known to be done. Fires on break this down, lay out the steps first, and this is too big to do in one go. Skip single-step or trivial work."
+description: "Writes an executable plan: ordered tasks, their dependencies, and how each one is known to be done. Use when approved requirements or a clearly multi-step task need a per-task plan before implementation, or when the user says break this down, lay out the steps first, or this is too big to do in one go. Skip single-step or trivial work."
 ---
 
 # Writing Plans
@@ -16,9 +16,8 @@ not the code.
 - **Skip** for single-step or trivial changes — planning them costs more than doing them.
 - Intent still ambiguous: invoke `interview-me` first. Verifiable behavior
   still missing: invoke `spec-it` first. A precise task needs neither.
-- High-risk means any of `migration-strategy`'s four classification answers
-  (reviewability, preservation, breadth, failure surfaces) is off the
-  ordinary route, or the user marks the work so; record the answers. For a
+- Fill the classification block. High-risk means any answer is off the
+  ordinary route, or the user marks the work so. For a
   high-risk target, read the approved migration and assurance contracts
   before writing a task. If they are missing, plan only the gate that is
   missing, consuming the exact proposed contract, and put no target work in
@@ -26,11 +25,16 @@ not the code.
 - Write separate plans for independent subsystems unless one cutover or
   rollback makes them one initiative.
 
+## Available scripts
+
+- **`scripts/plan-version.sh`** — prints the plan's version; run it before
+  presenting a plan.
+
 ## Step 1: Write the index
 
-1. Open `assets/index-template.md`. Fill the header first: exact identity of
-   every approved input, the rule that makes each stale, the `Approval rule`,
-   the `Integration cadence`.
+1. Open `assets/index-template.md` when starting the index. Fill the header
+   first: exact identity of every approved input, the rule that makes each
+   stale, the `Approval rule`, the `Integration cadence`.
 2. Leave `Integration cadence` at `plan end`. Write `per task` only when the
    user directly asked for per-task integration, and quote the instruction.
 3. Approved UI design with **Selected visual references** → copy the complete
@@ -46,11 +50,11 @@ not the code.
 
 1. Slice vertically: one evaluable capability per task. Split only at a real
    gate boundary. High-risk target work → read
-   `references/scalable-transformation.md` first; copy transition policy from
-   the migration contract.
-2. Open `assets/task-template.md` for each task. Fill `Task ID` (stable,
-   non-positional), `Depends on`, `Files`, `Exclusive ownership/effects`,
-   `Context` as paths.
+   `references/scalable-transformation.md` before slicing; copy transition
+   policy from the migration contract.
+2. Open `assets/task-template.md` before writing each task. Fill `Task ID`
+   (stable, non-positional), `Depends on`, `Files`, `Exclusive
+   ownership/effects`, `Context` as paths.
 3. Fill **Consumes** from earlier tasks' exact **Produces** names and types.
    Put existing code and external input artifacts in **Context**; do not invent
    producer tasks for inputs that already exist.
@@ -85,16 +89,16 @@ not the code.
    conformance evaluator.
 6. Confirm independent tasks have disjoint files, data, effects, evaluators,
    and external state; every overlap has a dependency and one owner.
-7. High-risk by the recorded answers → run `assets/plan-review.md`;
+7. Run `assets/plan-review.md` when the recorded answers are high-risk;
    resolve every blocker.
 
 ## Step 4: Present, then stop
 
-1. Show the complete index and its exact `Normative version` to the
-   `Approval rule` owner, then end the turn:
+1. Run `scripts/plan-version.sh` on the plan directory before presenting.
+   Show the complete index and the printed version to the `Approval rule` owner:
 
    ```text
-   Plan {{path}} — version {{Normative version}}
+   Plan {{path}} — version {{printed version}}
    {{goal, architecture, constraints, acceptance, trace, task list}}
 
    1. Approve, then choose an execution mode
@@ -105,14 +109,13 @@ not the code.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
 2. Do not invoke `executing-plans`, create a workspace, or write code in this
    turn.
-3. Not a go → revise and re-ask: approval of another version, praise,
-   comments, constraints, partial answers, silence, a non-interactive session.
-4. Standing order → proceed unpaused only when its scope, owner, constraints,
+3. Standing order → proceed unpaused only when its scope, owner, constraints,
    and mode explicitly cover unseen plan versions. Bind the exact version to
    that receipt first.
-5. On approval, in a separate turn, ask the mode question and end the turn:
+4. On approval, in a separate turn, ask the mode question:
 
    ```text
    How should the plan run?
@@ -125,9 +128,16 @@ not the code.
    ```
 
    Offer delegated only if the harness has a subagent action.
-6. Write the approval and the mode into the `External decision ledger`
-   against the exact `Normative version`. Write nothing about approval into
-   the index.
-7. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke `executing-plans`
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+5. Append one row to the `External decision ledger`: `Identity` = the printed
+   version, `Location` = the index path, `State` = approved, `Bound evidence` =
+   the `Approval rule` owner and their answer, then `mode: inline` or
+   `mode: delegated`. Write nothing about approval into the index.
+6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke `executing-plans`
    against the approved version before any workspace or implementation
    action. This skill writes no code.
+
+## Gotchas
+
+- A row keyed to the index's `Normative version` line survives a task-file
+  edit; key rows to the printed version.

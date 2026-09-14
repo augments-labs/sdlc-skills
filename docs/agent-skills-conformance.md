@@ -18,7 +18,7 @@ adds packaging and house-policy checks.
 | `name`: 1–64 lowercase letters, digits, or hyphens | Length and character checks |
 | No leading/trailing hyphen or consecutive hyphens | Pattern check |
 | `name` matches its directory | Per-directory comparison |
-| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 452 |
+| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 596 |
 | Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` | `frontmatter-fields` policy check |
 | `compatibility`, when present, at most 500 characters | `compatibility-length` policy check |
 
@@ -43,6 +43,7 @@ under a stricter house rule is not automatically a standard violation.
 | Supporting paths | Resolve inside the installed skill and keep direct references shallow |
 | Gotchas | `gotchas-present` policy check: the body has a `## Gotchas` section |
 | Support-file load conditions | `reference-load-condition` policy check: a named `references/` or `assets/` file carries when, if, before, or after |
+| Description wording | `description-rules` policy check: no `Fires on` list and none of four internal terms |
 | Support-file depth | `reference-depth` warning: a support file names another support file |
 | Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
 | Fill-in templates | Put them in `assets/`; keep explanatory guidance in `references/` |
@@ -77,7 +78,7 @@ Apply those principles through the library's authoring skill:
 | --- | --- |
 | `references/` | 21 skills; rubrics, checklists, worked examples, and lookup guidance |
 | `assets/` | 28 skills; every fill-in template and other static resources |
-| `scripts/` | 5 skills — see below |
+| `scripts/` | 8 skills — see below |
 
 The repository classifies a document by its use: a file filled and emitted is a
 template even if its filename says otherwise. The gate rejects such templates
@@ -89,6 +90,8 @@ are not a universal prohibition on other valid organizations.
 | `finishing-a-branch` | `branch-state.sh` | Inspects commits, dirty state, ownership, and recoverability |
 | `verification-before-completion` | `state-identity.sh` | Captures source identity and environment for evidence binding |
 | `writing-skills` | `check-skill.sh` | Inspects skill files and executes bundled scripts with `--help` |
+| `writing-plans`, `executing-plans` | `plan-version.sh`, one byte-identical copy each | Prints a plan's version from its normalized index and task files; read-only; the gate fails when the copies differ |
+| `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`; never overwrites a file |
 | `viewing-artifacts` | `serve.py`, `start-server.sh`, `stop-server.sh` | Starts and stops an owned local preview, writes a log, and may open a browser |
 | `ui-ux-design` | The same preview scripts | Provides the governed comparison preview; the gate checks byte equality with the viewer copies |
 
@@ -104,47 +107,9 @@ current bundled help branches return without starting their operational work.
 ## Evaluation is separate from conformance
 
 The testing layout is repository policy, not part of the standard's required
-skill format. `tests/` holds offline script and packaging checks; labeled
-behavior scenarios and description tuning measurements live in the evals lab,
-[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals) (see
-[`testing.md`](testing.md)). Neither a structural pass nor a description score
-certifies model behavior.
-
-### Description tuning
-
-Query sets live in the lab at `descriptions/{{phase}}/{{skill}}.json`, which
-records how many exist. They are tuning inputs, not a mandatory coverage matrix.
-
-The runner repeats queries through a fixture and the installed library. It
-observes whether the subject loads anywhere in the chain during the observation
-window, not just which description matched first. Adapter detection also does
-not by itself prove that the full body was read and obeyed. A required downstream
-handoff must not be mislabeled as an incorrect initial selection.
-
-Train and validation splits are fixed. Revise against train cases and use
-validation to select an iteration; validation is then selection evidence, not an
-untouched final test. Report valid/attempted counts and excluded or inconclusive
-runs. Refusals and malformed records are excluded; a responding run that later
-times out can still count as a miss. Scores depend on this fixture, library,
-harness, and observation window.
-
-The 0.5 trigger-rate threshold is an optimization rule, not a certification
-barrier. The lab's descriptions guide owns the loop;
-[description optimization guidance](https://agentskills.io/skill-creation/optimizing-descriptions)
-gives the broader method.
-
-### Behavioral evidence
-
-The `none` arm installs no library; `red` installs the complete baseline library;
-`green` installs the complete candidate library. A controlled before/after pair
-can measure the intended edit when other inputs stay fixed. It does not isolate
-one skill's value or overhead from the rest of the library and generated work.
-
-Keep every observed failure, pass, timeout, refusal, and inconclusive result. A
-pass says the failure was not observed in that sample; it cannot erase reported
-failures or settle a current contract contradiction. Cost lines report total run
-time and available harness telemetry, not an isolated per-skill price. See
-[`testing.md`](testing.md) for interpretation and proportionality.
+skill format. `tests/` holds offline script and packaging checks, and no live
+agent runs in this repository. A structural pass does not certify model
+behavior.
 
 ## Running the repository checks
 
@@ -162,7 +127,7 @@ included. The second reports pairs of
 skills that hand off to each other: a pair listed in `docs/allowed-cycles.txt`
 prints as allowed, and `--strict` fails on any other. The third sums the body
 words of one chain in `docs/chains.toml` and fails over its budget. The fourth
-reports each description clause of three or more words that more than one skill
+reports each description clause of two or more words that more than one skill
 shares, and `--strict` fails on any. The fifth accepts a skill path, including
 one outside this repository, subject to the parsing and execution limits above.
 The first and fifth enforce this checker's profile.

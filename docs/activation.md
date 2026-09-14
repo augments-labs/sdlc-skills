@@ -28,6 +28,8 @@ step to load that body. They register no tool, prompt, or turn-end enforcement
 hooks. Packaging and lifecycle details belong in
 [`harness-support.md`](harness-support.md).
 
+The router body stays within 700 words, because every session loads all of it.
+
 Resident instructions can influence a non-deterministic agent; they do not prove
 that another skill loaded or that its procedure was followed. A live activation
 observation describes one run in its harness and conditions. Reading a body,

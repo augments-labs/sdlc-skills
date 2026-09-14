@@ -1,6 +1,6 @@
 ---
 name: scope-it
-description: "Use when a project's goals are set and its delivery boundary needs defining or revising: what is in, out, and sufficient for the goal. Includes scope growth during delivery. Skip single-feature requirements, unresolved intent, and implementation-level speculative additions."
+description: "Defines a project's delivery boundary: what is in, what is out, and what is sufficient for the goal. Use when a project's goals are set and its scope needs defining or revising, including scope growth during delivery. Skip single-feature requirements, unresolved intent, and speculative additions at the implementation level."
 ---
 
 # Scope It
@@ -17,7 +17,7 @@ Scope is decided by what you say no to. An unbounded project never ships — nam
 
 ## Step 1: Cut the scope
 
-Open `assets/scope-section.md` now. Each step fills its section.
+Open `assets/scope-section.md` before starting; each step fills its section.
 
 1. Carry the non-negotiables first: goal guardrails, existing contracts,
    preserved behavior and data, security, accessibility, compatibility,
@@ -40,10 +40,10 @@ Open `assets/scope-section.md` now. Each step fills its section.
 1. Write the immutable `## Scope` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it.
-2. Present and end the turn:
+2. Present:
 
    ```text
-   Scope {{path}} — version {{identity}}
+   Scope {{path}} — version {{identity (per template)}}
    In: {{n}} capabilities  Out: {{n}}  MVP: {{one line}}  Assumptions: {{n}} owned
 
    1. Approve this boundary
@@ -54,13 +54,20 @@ Open `assets/scope-section.md` now. Each step fills its section.
    Recommendation: {{thinnest answer that reaches the goal}} — {{one sentence}}.
    ```
 
-3. Only option 1 hands off. Praise, constraints, silence, a partial reply →
-   pending. Record lifecycle externally. Normative change → a replacement;
-   an approved successor invalidates stale downstream bindings until owners
-   revalidate. Never edit an issued identity.
-4. **REQUIRED SUB-SKILL:** on option 1, invoke `spec-it` when detailed
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+3. **REQUIRED SUB-SKILL:** on option 1, invoke `spec-it` when detailed
    requirements are the next missing input. Never impose a phase already
    complete.
+
+## Gotchas
+
+- A deferred capability's stable ID reused for a different item in a later
+  rescoping pass makes an old reference to that ID — a linked task, a
+  review note — silently point at the wrong decision. IDs retire; they
+  don't get reissued.
+- An assumption recorded with a validation action but no expiry or decision
+  point reads as settled forever. Nothing then re-checks it once whatever
+  it depended on changes underneath it.
 
 ## Common mistakes
 

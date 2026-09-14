@@ -50,12 +50,15 @@ mapfile -t skills < <(find skills -name SKILL.md | sort)
 [ ${#skills[@]} -eq 0 ] && { echo "no skills found under skills/"; exit 2; }
 
 # Shared format and policy checks are delegated to the checker this library
-# ships (see the per-skill loop). Delegation fails open — a moved or renamed
-# script would produce no findings and every skill would pass — so prove it is
-# there and runnable before trusting a silent result.
+# ships (see the per-skill loop). It has to exist and answer --help here. In the
+# loop, a non-zero exit that reports no fail row is itself a FAIL naming the
+# checker, the skill, the exit code, and the first diagnostic, so a checker that
+# crashes fails the gate instead of passing every skill in silence.
 CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh
 [ -f "$CONFORMANCE" ] || { echo "missing $CONFORMANCE — the skill-format checks are delegated to it"; exit 2; }
 bash "$CONFORMANCE" --help >/dev/null 2>&1 || { echo "$CONFORMANCE does not run"; exit 2; }
+conformance_err=$(mktemp) || { echo "could not create a file for $CONFORMANCE diagnostics"; exit 2; }
+trap 'rm -f "$conformance_err"' EXIT
 
 for skill in "${skills[@]}"; do
   dir=$(dirname "$skill")
@@ -64,13 +67,21 @@ for skill in "${skills[@]}"; do
 
   # Delegate the shared format and policy profile: required field extraction,
   # names, sizes, links, presentation, and executable script help. This is not
-  # full YAML/optional-metadata validation. Preserve warnings as well as errors.
+  # full YAML/optional-metadata validation. Preserve warnings as well as errors,
+  # and the checker's exit status: non-zero with no fail row is a crash.
+  conformance_rows=$(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>"$conformance_err")
+  conformance_status=$?
+  conformance_fails=0
   while IFS=$'\t' read -r level check detail; do
     case "$level" in
-      fail) err  "$check: $detail" ;;
+      fail) err  "$check: $detail"; conformance_fails=1 ;;
       warn) note "warn: $check: $detail" ;;
     esac
-  done < <(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>/dev/null)
+  done <<<"$conformance_rows"
+  if [ "$conformance_status" -ne 0 ] && [ "$conformance_fails" = 0 ]; then
+    conformance_diag=$(grep -m1 . "$conformance_err" || printf '%s\n' "$conformance_rows" | grep -m1 .)
+    err "$CONFORMANCE exited $conformance_status on $dir with no fail row: ${conformance_diag:-no output}"
+  fi
 
   fname=$(awk -F': ' '/^name:/{print $2; exit}' "$skill")
 
@@ -90,10 +101,6 @@ for skill in "${skills[@]}"; do
   words=$(wc -w < "$skill")
   tokens=$(( words * 13 / 10 ))
   [ "$tokens" -gt 2500 ] && note "warn: ~$tokens tokens (>2500; over the house target)"
-
-  # (Per-skill triggering records retired — activation is proven by live runs in
-  # the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals),
-  # not a static record. See docs/testing.md.)
 
   # No external references, vendor model names, or <angle> placeholders — in every
   # .md of the skill, RECURSIVELY (covers references/ and scripts/ subfolders).
@@ -116,18 +123,36 @@ for skill in "${skills[@]}"; do
   done < <(find "$dir" -name '*.md')
 done
 
-# Cross-skill routing lives in the bodies: a precondition, boundary, or handoff
-# names its peer in backticks. A rename or removal must not leave stale names
-# behind — a handoff to a skill that no longer exists routes nowhere, silently.
-# Backticked kebab-case tokens that are not skill names go on the allowlist.
-echo "• backticked skill names resolve to skills on disk"
+# Cross-skill routing lives in skill text: a precondition, boundary, or handoff
+# names its peer in backticks, in SKILL.md and in the references/ and assets/
+# files it loads. A rename or removal must not leave stale names behind — a
+# handoff to a skill that no longer exists routes nowhere, silently. Two rules
+# cover every .md of every skill:
+# - a backticked kebab-case token is a skill name or on name_allowlist;
+# - a single-word handoff target is a skill name or on handoff_allowlist.
+#   Handoffs are read with the graph gate's own grammar
+#   (validate-skill-graph.sh --targets), so the two gates agree on what one is.
+echo "• backticked skill names and handoff targets resolve to skills on disk"
 skill_names="$(find skills -mindepth 3 -maxdepth 3 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
-name_allowlist='common-dir git-dir integrated-regression description-yaml reference-depth reference-load-condition'
+name_allowlist='common-dir git-dir integrated-regression description-yaml reference-depth reference-load-condition
+  blocked-preserved cancellation-requested closed-preserved discard-pending materialized-kept outcome-unknown
+  comment-accuracy silent-failures test-coverage type-design'
+handoff_allowlist='inconclusive satisfied'
 while IFS=: read -r file token; do
   printf '%s\n' "$skill_names" | grep -qx "$token" && continue
   printf '%s\n' $name_allowlist | grep -qx "$token" && continue
-  err "$file: backticked \`$token\` matches no skill on disk (stale cross-reference, or add it to the allowlist)"
-done < <(find skills -name 'SKILL.md' -exec grep -oH '`[a-z][a-z]*\(-[a-z][a-z]*\)\{1,\}`' {} + | tr -d '\`' | sort -u)
+  err "$file: backticked \`$token\` matches no skill on disk (stale cross-reference, or add it to name_allowlist)"
+done < <(find skills -name '*.md' -exec grep -oH '`[a-z][a-z]*\(-[a-z][a-z]*\)\{1,\}`' {} + | tr -d '\`' | sort -u)
+if handoff_targets="$(bash scripts/sh/validate-skill-graph.sh --targets)"; then
+  while IFS=$'\t' read -r file token; do
+    case "$token" in ''|*[!a-z]*) continue ;; esac
+    printf '%s\n' "$skill_names" | grep -qx "$token" && continue
+    printf '%s\n' $handoff_allowlist | grep -qx "$token" && continue
+    err "$file: handoff target \`$token\` matches no skill on disk (stale handoff, or add it to handoff_allowlist)"
+  done <<<"$handoff_targets"
+else
+  err "validate-skill-graph.sh --targets could not run, so handoff targets were not checked"
+fi
 
 # Progressive-disclosure links are executable navigation for an agent. Resolve
 # them in the canonical install tree; adapter-specific layouts run the same
@@ -148,6 +173,10 @@ while IFS= read -r ref; do
   grep -Fq "$ref_dir/$ref_name" "$skill_file" ||
     err "$ref: not referenced directly from $skill_file"
 done < <(find skills \( -path '*/references/*.md' -o -path '*/assets/*.md' \) -type f | sort)
+
+echo "• plan-version.sh copies are byte-identical"
+cmp -s skills/design/writing-plans/scripts/plan-version.sh skills/implementation/executing-plans/scripts/plan-version.sh ||
+  err "plan-version.sh: the writing-plans and executing-plans copies differ"
 
 # The checker enforces executable permission and successful `--help` as house
 # policy. These additional house checks require direct disclosure in SKILL.md

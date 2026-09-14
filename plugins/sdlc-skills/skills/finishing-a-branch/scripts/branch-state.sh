@@ -23,21 +23,33 @@ repository whose branch is being finished.
 Options:
   --base REF     Compare against REF instead of the detected base.
   --limit N      Cap each file/commit list at N entries (default: 50).
-                 Counts are always exact; only the listings are capped.
+                 Counts are exact when known; only the listings are capped.
   --full         No cap on listings. May produce large output.
   --help         Show this message.
 
 Output:
   JSON on stdout, diagnostics on stderr. Every list is accompanied by an
-  exact count, so a truncated listing never understates the real total.
+  exact count, so a truncated listing never understates the real total. A
+  count the script cannot compute is null, never 0.
 
   Key fields:
     base.resolved        false when the base is ambiguous — integration stops
     head.detached        true when there is no branch to push
-    candidate.published  true when commits already exist on a remote ref;
-                         rewriting them needs separate direct permission
+    candidate.id         digest over root, branch, HEAD, base, base sha, dirty.digest,
+                         published, and the unpushed commit count;
+                         the discard token, and it changes with any of them
+    candidate.commit_count, candidate.unpushed_commit_count, candidate.commits
+                         null when base.resolved is false
+    candidate.published  true when HEAD or any candidate commit is on a remote
+                         ref; null when base.resolved is false, remote refs
+                         exist, and HEAD is on none. true or null: rewriting
+                         needs separate direct permission. Read from local
+                         remote-tracking refs: a stale or single-branch clone
+                         can report false for pushed commits
     dirty.*_count        staged / unstaged / untracked, counted separately
-    recoverability       what a discard would and would not be able to undo
+    recoverability       what a discard would and would not be able to undo;
+                         commits_recoverable_from_remote is true only when
+                         HEAD, and so every candidate commit, is on a remote ref
 
 Not covered: remote/PR state. That needs a forge API, which this script
 deliberately does not reach for. Bind PR state separately.
@@ -46,6 +58,7 @@ Exit codes:
   0  state reported
   2  not a git repository, or bad arguments
   3  a required tool is missing
+  4  git could not record the working tree, so candidate.id cannot be computed
 
 Examples:
   bash scripts/branch-state.sh
@@ -84,7 +97,7 @@ jstr() { # escape one string as a JSON scalar
   s="${s//$'\r'/\\r}"; s="${s//$'\n'/\\n}"
   printf '"%s"' "$s"
 }
-jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
+jbool() { case "${1:-}" in 1) printf 'true';; null) printf 'null';; *) printf 'false';; esac; }
 jnull() { [ -n "${1-}" ] && jstr "$1" || printf 'null'; }
 
 # Emit a JSON array from newline-delimited stdin, honouring $limit.
@@ -107,7 +120,7 @@ count_lines() { grep -c . 2>/dev/null || true; }
 # --- repository and worktree --------------------------------------------------
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 # Every listing below must cover the WHOLE candidate and print repo-relative
-# paths. `git ls-files --others` is scoped to the current directory, so running
+# paths. `git --no-optional-locks ls-files --others` is scoped to the current directory, so running
 # from a subdirectory silently reports a subset — which would understate what a
 # discard destroys. Move to the root before inspecting anything.
 [ -n "$root" ] && cd "$root" || { echo "Error: could not resolve the repository root." >&2; exit 2; }
@@ -117,7 +130,7 @@ common_dir="$(cd "$(git rev-parse --git-common-dir 2>/dev/null)" 2>/dev/null && 
 # is a different, and differently owned, operation from deleting a branch.
 linked=0; [ -n "$common_dir" ] && [ "$git_dir" != "$common_dir" ] && linked=1
 bare=0; [ "$(git rev-parse --is-bare-repository 2>/dev/null)" = true ] && bare=1
-worktrees="$(git worktree list --porcelain 2>/dev/null | grep -c '^worktree ' || true)"
+worktrees="$(git --no-optional-locks worktree list --porcelain 2>/dev/null | grep -c '^worktree ' || true)"
 
 # --- HEAD ---------------------------------------------------------------------
 detached=0
@@ -165,47 +178,113 @@ if [ -n "$upstream" ]; then
 fi
 
 # --- working tree -------------------------------------------------------------
-staged="$(git diff --cached --name-only 2>/dev/null)"
-unstaged="$(git diff --name-only 2>/dev/null)"
-untracked="$(git ls-files --others --exclude-standard 2>/dev/null)"
+staged="$(git --no-optional-locks diff --cached --name-only 2>/dev/null)"
+unstaged="$(git --no-optional-locks diff --name-only 2>/dev/null)"
+untracked="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null)"
 staged_n="$(printf '%s\n' "$staged" | count_lines)"
 unstaged_n="$(printf '%s\n' "$unstaged" | count_lines)"
 untracked_n="$(printf '%s\n' "$untracked" | count_lines)"
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
 
-# Working-tree digest: HEAD tree + full diff against HEAD + untracked content
-# and names. Two runs agree only if the source actually matches, which is what
-# binds evidence to a candidate.
-digest="$( { git rev-parse 'HEAD^{tree}' 2>/dev/null
-             git diff HEAD --binary 2>/dev/null
-             git status --porcelain -uall 2>/dev/null
-             git ls-files --others --exclude-standard -z 2>/dev/null \
-               | xargs -0 -r git hash-object 2>/dev/null
-           } | sha )"
+# The content digest: what the working tree presents, as git would record it,
+# plus every staged copy that matches neither HEAD nor the working tree. HEAD is
+# not part of it, so staging or committing exactly this content keeps it.
+#
+# Git itself records the working tree into a throwaway index and object
+# directory under mktemp, reading the repository's objects as alternates, so
+# paths with tabs or newlines, submodules, symlinks, modes, and clean filters
+# are handled as a commit would handle them. The copy keeps the index's mtime,
+# so git still re-reads a racily clean file. Split index and hooks are off, so
+# no hook runs and no repository file is added or changed; git may only refresh
+# the timestamps of objects it already holds. Any git step that fails makes the
+# function fail: it never prints a digest for a partial record.
+content_digest() {
+  local cd_tmp cd_objects cd_index cd_head cd_tw cd_t2 cd_hdr cd_path cd_newmode cd_newsha cd_status
+  cd_tmp="$(mktemp -d 2>/dev/null)" || return 1
+  cd_objects="$(cd "$(git rev-parse --git-path objects 2>/dev/null)" 2>/dev/null && pwd -P)" || { rm -rf "$cd_tmp"; return 1; }
+  cd_index="$(git rev-parse --git-path index 2>/dev/null)"
+  mkdir -p "$cd_tmp/objects"
+  if [ -f "$cd_index" ]; then cp -p "$cd_index" "$cd_tmp/wt.index" || { rm -rf "$cd_tmp"; return 1; }; fi
+  cd_git() { # $1 index file; the rest is a git command
+    local idx="$1"; shift
+    GIT_INDEX_FILE="$idx" GIT_OBJECT_DIRECTORY="$cd_tmp/objects" GIT_ALTERNATE_OBJECT_DIRECTORIES="$cd_objects" \
+      git --no-optional-locks -c core.fsmonitor=false -c core.splitIndex=false -c core.hooksPath=/dev/null "$@"
+  }
+  # What the working tree presents, recorded as git would record it.
+  cd_git "$cd_tmp/wt.index" add -A >/dev/null 2>&1 &&
+    cd_tw="$(cd_git "$cd_tmp/wt.index" write-tree 2>/dev/null)" && [ -n "$cd_tw" ] ||
+    { rm -rf "$cd_tmp"; return 1; }
+  # Overlay every staged copy that differs from HEAD; the result differs from
+  # the working-tree tree only where a staged copy matches neither.
+  if [ -f "$cd_tmp/wt.index" ]; then cp -p "$cd_tmp/wt.index" "$cd_tmp/t2.index" || { rm -rf "$cd_tmp"; return 1; }; fi
+  cd_head="$(git rev-parse --verify -q 'HEAD^{tree}' 2>/dev/null)" || cd_head=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" 2>/dev/null |
+    while IFS= read -r -d '' cd_hdr && IFS= read -r -d '' cd_path; do
+      set -- $cd_hdr
+      cd_newmode="$2"; cd_newsha="$4"; cd_status="$5"
+      case "$cd_status" in M|A|T) ;; *) continue;; esac
+      case "$cd_newsha" in *[!0]*) ;; *) continue;; esac
+      printf '%s %s 0\t%s\0' "$cd_newmode" "$cd_newsha" "$cd_path"
+    done | cd_git "$cd_tmp/t2.index" update-index -z --index-info >/dev/null 2>&1 &&
+    cd_t2="$(cd_git "$cd_tmp/t2.index" write-tree 2>/dev/null)" && [ -n "$cd_t2" ] ||
+    { rm -rf "$cd_tmp"; return 1; }
+  git --no-optional-locks ls-files -u -z >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
+  { printf '%s\n%s\n' "$cd_tw" "$cd_t2"; cat "$cd_tmp/unmerged"; } | sha || { rm -rf "$cd_tmp"; return 1; }
+  rm -rf "$cd_tmp"
+}
+
+# The same digest state-identity.sh prints as source.digest: two runs agree only
+# if the content matches, which is what binds evidence to a candidate.
+digest="$(content_digest)" || {
+  echo "Error: git could not record the working tree (try \`git add -A --dry-run\`); candidate.id cannot be computed." >&2; exit 4; }
 
 # --- candidate commits --------------------------------------------------------
-commits=""; commits_n=0
-if [ "$base_resolved" = 1 ] && [ -n "$head_sha" ]; then
-  commits="$(git log --format='%h %s' "$base_sha..HEAD" 2>/dev/null)"
-  commits_n="$(printf '%s\n' "$commits" | count_lines)"
+# With no resolved base there is nothing to count against: report null, never
+# 0, so a discard block cannot present "no unique commits" it never computed.
+commits=""; commits_n=null; commits_json=null
+if [ "$base_resolved" = 1 ]; then
+  commits_n=0; commits_json='[]'
+  if [ -n "$head_sha" ]; then
+    commits="$(git log --format='%h %s' "$base_sha..HEAD" 2>/dev/null)"
+    commits_n="$(printf '%s\n' "$commits" | count_lines)"
+    commits_json="$(printf '%s\n' "$commits" | jarray)"
+  fi
 fi
 
-# Published: are the candidate's commits already on a remote-tracking ref?
-# This is what makes a rewrite unsafe, and it is not the same question as
-# "does the branch have an upstream".
-published=0
-if [ -n "$head_sha" ]; then
-  if [ -n "$(git branch -r --contains HEAD 2>/dev/null | head -1)" ]; then published=1; fi
-fi
 # Commits unique to this candidate and on NO remote ref — the ones a discard
 # would actually destroy.
-unpushed_n=0
-if [ "$commits_n" -gt 0 ]; then
-  unpushed_n="$(git rev-list --no-walk HEAD 2>/dev/null >/dev/null; \
-                git rev-list "$base_sha..HEAD" --not --remotes 2>/dev/null | count_lines)"
+unpushed_n=null
+if [ "$base_resolved" = 1 ]; then
+  unpushed_n=0
+  if [ "$commits_n" -gt 0 ]; then
+    unpushed_n="$(git rev-list "$base_sha..HEAD" --not --remotes 2>/dev/null | count_lines)"
+  fi
 fi
 
-stashes="$(git stash list 2>/dev/null | count_lines)"
+# Published: is ANY candidate commit already on a remote-tracking ref? One is
+# enough to make a rewrite unsafe, and it is not the same question as "does the
+# branch have an upstream". The tip alone cannot answer it: after a push and a
+# local commit, the tip is on no remote ref while the commits below it are.
+# With no resolved base the candidate's commits are unknown, so a tip on no
+# remote ref reports null while any remote-tracking ref exists.
+# A tip on a remote ref carries every candidate commit with it; that is the only
+# case in which recovery from the remote is claimed.
+head_on_remote=0; published=0
+if [ -n "$head_sha" ]; then
+  [ -n "$(git --no-optional-locks branch -r --contains HEAD 2>/dev/null | head -1)" ] && head_on_remote=1
+  if [ "$head_on_remote" = 1 ]; then
+    published=1
+  elif [ "$base_resolved" = 1 ]; then
+    [ "$unpushed_n" -lt "$commits_n" ] && published=1
+  elif [ -n "$(git --no-optional-locks for-each-ref --count=1 refs/remotes 2>/dev/null)" ]; then
+    published=null
+  fi
+fi
+
+# The discard token: any change to what a discard would destroy changes it.
+cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$published" "$unpushed_n" | sha)"
+
+stashes="$(git --no-optional-locks stash list 2>/dev/null | count_lines)"
 
 # --- recoverability -----------------------------------------------------------
 # Untracked content is never recoverable by git; committed-and-pushed work
@@ -234,21 +313,23 @@ printf '    "unstaged": %s,\n'  "$(printf '%s\n' "$unstaged"  | jarray)"
 printf '    "untracked": %s\n'  "$(printf '%s\n' "$untracked" | jarray)"
 printf '  },\n'
 printf '  "candidate": {\n'
+printf '    "id": %s,\n' "$(jstr "$cand_id")"
 printf '    "commit_count": %s, "published": %s, "unpushed_commit_count": %s,\n' \
   "$commits_n" "$(jbool $published)" "$unpushed_n"
-printf '    "commits": %s\n' "$(printf '%s\n' "$commits" | jarray)"
+printf '    "commits": %s\n' "$commits_json"
 printf '  },\n'
 printf '  "recoverability": {\n'
 printf '    "stash_entries": %s,\n' "${stashes:-0}"
 printf '    "untracked_would_be_lost": %s,\n' "$(jbool $untracked_lost)"
 printf '    "uncommitted_would_be_lost": %s,\n' "$(jbool $uncommitted_lost)"
-printf '    "commits_recoverable_from_remote": %s\n' "$(jbool $published)"
+printf '    "commits_recoverable_from_remote": %s\n' "$(jbool $head_on_remote)"
 printf '  },\n'
 printf '  "listing_limit": %s\n' "$limit"
 printf '}\n'
 
 [ "$limit" -gt 0 ] && {
   for pair in "staged:$staged_n" "unstaged:$unstaged_n" "untracked:$untracked_n" "commits:$commits_n"; do
+    case "${pair##*:}" in ''|*[!0-9]*) continue;; esac
     [ "${pair##*:}" -gt "$limit" ] && \
       echo "note: ${pair%%:*} listing truncated to $limit of ${pair##*:}; the count is exact. Use --full for all." >&2
   done

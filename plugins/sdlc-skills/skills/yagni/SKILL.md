@@ -1,6 +1,6 @@
 ---
 name: yagni
-description: "Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when behavior-affecting implementation or configuration is being written or proposed; when scope drifts toward speculative or incomplete delivery; or when a proposal needs a strict pre-edit challenge. Fires on we might need this later and let's make it configurable. Skip throwaway spikes and nonbehavioral content or configuration."
+description: "Challenges scope so only what the task needs gets built, and built completely. Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when behavior-affecting implementation or configuration is written or proposed; when scope drifts toward speculative or incomplete delivery; when a proposal needs a strict pre-edit challenge; or when anyone says we might need this later or let's make it configurable. Skip throwaway spikes and content or configuration with no behavior."
 ---
 
 # YAGNI — build only what's needed, and make it work
@@ -37,17 +37,20 @@ latest prompt need not repeat those for them to bind.
    6. One line → one line.
    7. Only then, the minimum code that fully works.
 
-   Arguable rung → read `references/yagni-in-depth.md`.
+   Arguable rung → read `references/yagni-in-depth.md` before choosing.
 4. Add no abstraction for hypothetical variation. One real volatile or
    external boundary earns a seam only for measured impedance, a failure
    policy, or test isolation.
 5. Lasting surface (new dependency, service or process, generalized
-   abstraction, public extension point or config knob, verification system),
-   or a strict challenge requested → fill `assets/yagni-challenger.md` with
-   `assets/challenge-report.md`, dispatch read-only, and wait. Read the report;
-   match Proposal and Challenge inputs to the request. Missing, mismatched,
-   conflicting, or invalid verdict → inconclusive. `revise` or `decision` →
-   blocked as written. `inconclusive` → not clearance.
+   abstraction, public extension point or config knob, verification system)
+   the user explicitly asked for → the request is its owner; dispatch nothing.
+   Any other, or a strict challenge requested → fill
+   `assets/yagni-challenger.md` with `assets/challenge-report.md` before
+   dispatching it read-only per `dispatching-parallel-agents` Step 2; wait. Read the
+   report; match Proposal and Challenge inputs to the request. Missing,
+   mismatched, conflicting, or invalid verdict → inconclusive. `revise` →
+   blocked as written. `decision` → its accountable owner decides (the user,
+   unless a plan names another); wait. `inconclusive` → not clearance.
 
 ## Step 2: Before calling it ready
 
@@ -97,4 +100,9 @@ latest prompt need not repeat those for them to bind.
 - Never delete by confidence. Prove static/runtime/reflection/config/generated/
   external consumer absence or completed deprecation; unknowns stay or route to
   migration/refactor ownership.
+
+## Gotchas
+
+- Without a dispatch action, `inconclusive` blocks even a surface the user
+  explicitly asked for.
 

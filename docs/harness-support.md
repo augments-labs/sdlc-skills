@@ -67,9 +67,11 @@ Availability is a property of the installed build and its configuration, not of
 this library, and it changes between versions — some builds gate multi-agent
 tools behind a config entry that is off by default. So the skill does not
 hardcode a remedy. It requires the agent to treat an uncallable action as **not
-dispatched**, and to name both the action it attempted and what this environment
-would need to make it callable, rather than stopping mysteriously, narrating a
-fan-out it holds no receipts for, or silently collapsing it to sequential work.
+dispatched**, to name both the action it attempted and what this environment
+would need to make it callable, and to ask the user once: a labelled
+self-review, a named reviewer or agent, or keeping the work pending. The answer becomes
+the written assignment. The agent never stops mysteriously, narrates a fan-out
+it holds no receipts for, or silently does the work itself.
 
 Check the harness's own configuration reference for the current form, and verify
 by asking the installed CLI what tools it exposes rather than trusting a
@@ -107,34 +109,20 @@ Different claims need different evidence:
 - **Deterministic adapter scripts:** focused offline tests for meaningful parsing
   or hook branches. Keep the script small enough that its test does not become a
   second implementation.
-- **Discovery and activation:** a thin live smoke through the real harness, run
-  from the evals lab. Run the relevant opening when a trigger or adapter changes
-  and before a release; report authentication, provider, or network failures as
-  inconclusive rather than routing failures.
-- **Skill behavior:** retain a behavioral regression in the lab only for a
-  failure actually observed and a verdict that can be checked mechanically. Run
-  it manually and report repeated results honestly.
+- **Discovery and activation:** a new harness shows a skill activating through
+  its own CLI once, when it is added (see `CLAUDE.md`, *New harness support*).
 
-A full skill-by-harness behavioral matrix is neither deterministic nor a useful
-default. It consumes provider time, produces noisy results, and shifts maintenance
-toward the evaluator instead of the skills.
-
-Each harness is bound in two places. The offline contract — how the plugin
-installs and what the CLI resolves — is documented in
+Each harness is bound in one place: the offline contract — how the plugin
+installs and what the CLI resolves — documented in
 [`tests/harnesses/README.md`](../tests/harnesses/README.md) and exercised by
-`tests/run-plugin-smoke.sh` (see [`tests/README.md`](../tests/README.md)). The
-live launcher — invocation, activation detection, run cost — and the runners
-that consume it live in the evals lab,
-[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), whose
-campaign records a PR here cites (see [`testing.md`](testing.md)).
+`tests/run-plugin-smoke.sh` (see [`tests/README.md`](../tests/README.md)).
 
 ## Adding an adapter
 
 1. Point the manifest at the canonical skills; do not fork their content.
 2. Extend structural validation so missing, extra, or divergent skills fail.
 3. Add offline install bindings under `tests/harnesses/` for
-   `tests/run-plugin-smoke.sh`, and a launcher in the evals lab for the smallest
-   activation smoke that drives the real CLI.
+   `tests/run-plugin-smoke.sh`.
 4. Add an offline test only for deterministic adapter logic introduced by the
    integration.
 5. Document the adapter's current lifecycle and support boundaries. Keep run

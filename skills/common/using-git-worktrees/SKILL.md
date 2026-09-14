@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: "Use before the first repository edit or when work needs an isolated checkout and owned resources. Also applies to local task checkpoints. Reuse a linked worktree only when this task or the harness owns it; skip workspace creation there, not checkpoint discipline. Skip read-only work."
+description: "Creates an isolated git worktree for a task and checkpoints work there. Use when a repository is about to be edited for the first time in a task, when work needs an isolated checkout and its own resources, or at a local task checkpoint. Reuse a linked worktree only when this task or the harness owns it; there, skip creating a workspace but keep checkpoint discipline. Skip read-only work."
 ---
 
 <EXTREMELY-IMPORTANT>
@@ -8,6 +8,8 @@ NEVER START REPO EDITS IN A SHARED CHECKOUT — one where Step 1 reports
 `git-dir` equal to `common-dir` — WHATEVER BRANCH IT IS ON. Create or enter a
 dedicated workspace — a git worktree unless the user or project says otherwise —
 *before* the first edit, unless the user explicitly okayed the current checkout.
+Writing the `.sdlc-skills/` artifact trail (briefs, specs, designs, plans) is
+not a repo edit here; product code, tests, and project gates are.
 </EXTREMELY-IMPORTANT>
 
 # Using Git Worktrees
@@ -25,7 +27,7 @@ down what you found there before you change anything.
 
 ## Step 1: Detect what you are in
 
-Open `assets/workspace-record.md` now. Fill each section as its step runs.
+Open `assets/workspace-record.md` before the first command. Fill each section as its step runs.
 
 1. Run this. Do not judge the checkout from the prompt or the path name:
 
@@ -118,12 +120,11 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
 
 1. Claim distinct runtime identities (ports, databases, fixtures).
 2. Run project setup inside the worktree by the project's own instructions.
-3. Run the real baseline under `references/baseline-contract.md`: pre-run
+3. Run the real baseline under `references/baseline-contract.md` after setup: pre-run
    inspection, pre/post capture, each red cell bound. Red cell you cannot
    attribute, or an effect you did not contain → stop work.
-4. Hand the completed `assets/workspace-record.md` to whatever invoked this
-   skill: identity, inventory, external gate inputs, baseline evidence and
-   side effects, runtime identities, task-owned resources.
+4. Hand the completed `assets/workspace-record.md`, after the baseline, to
+   whatever invoked this skill.
 
 ## Pressure points
 
@@ -135,22 +136,22 @@ Open `assets/workspace-record.md` now. Fill each section as its step runs.
 | "I'll make the branch after the first edit" | After the edit, you may already have mixed unrelated state. |
 | "It looks like a plain checkout" | Looking is not detecting. `git-dir` against `common-dir`, plus the superproject check, is the inspection. |
 | "The harness has a worktree tool, but plain git is simpler" | The native tool owns the path, the ignore rule, and cleanup. A hand-made worktree beside it is a second thing to clean up. |
-| "`.worktrees` is surely ignored" | Surely is not `git check-ignore`. An unignored worktree appears in every status, grep, and commit from then on. |
-| "I'll add `.worktrees/` to `.gitignore` and commit it here" | That is an edit on the shared branch. Exclude it locally, then commit the ignore rule on the task branch. |
-| "`worktree add` failed in the sandbox, so I'll work in place" | Failing to isolate grants nothing. Report it; the user decides what the current checkout may carry. |
 
 ## Step 5: Checkpoint while you work
 
 <EXTREMELY-IMPORTANT>
 COMMIT LOCALLY AS YOU GO — after each independently testable piece, not once at
-the end. The authority is already granted; do not ask again for each checkpoint.
-A checkpoint never grants push, publication, or integration authority.
+the end — when the user or project policy authorizes local commits. None
+recorded → ask once for this task and record the answer; after a yes, never ask
+per checkpoint. A checkpoint never grants push, publication, or integration
+authority.
 </EXTREMELY-IMPORTANT>
 
 1. After each coherent piece a reviewer could accept or reject separately:
    **REQUIRED SUB-SKILL:** invoke `verification-before-completion`, run its smallest
-   real gate, commit locally. Do not wait for the final candidate. Do not ask
-   per checkpoint. Withhold only when direct user or project policy withholds.
+   real gate, and commit locally under the recorded authority. Do not wait for
+   the final candidate. None recorded → keep it uncommitted until the answer
+   arrives.
 2. Candidate ready for integration → **REQUIRED SUB-SKILL:** invoke
    `finishing-a-branch` with the recorded workspace, base, and ownership. Run
    no push, publish, integrate, discard, delete, history rewrite, or cleanup
@@ -160,7 +161,14 @@ A checkpoint never grants push, publication, or integration authority.
 | --- | --- |
 | "I'll commit once it all works" | One terminal commit cannot be reviewed or reverted in pieces, and every good intermediate state is gone. |
 | "Nothing is finished, so there is nothing to commit" | The unit is an independently testable change, not a finished feature. If a gate can accept it, it can be a checkpoint. |
-| "I should ask before each commit" | The authority is already granted. Asking again per checkpoint spends the user's turn re-deciding what they decided. |
+| "I should ask before each commit" | Ask once per task when no policy covers local commits; the recorded answer covers every later checkpoint. Asking again re-decides what the user decided. |
 | "The gate is slow — I'll run it once at the end" | Then a red gate at the end leaves every change a suspect. The smallest gate per checkpoint is what keeps that cheap. |
 | "It passes locally, so committing can wait" | An uncommitted passing state is one crash, wrong checkout, or overwrite away from not existing. |
 | "A mid-task commit looks unfinished" | It claims nothing. Nothing reads a checkpoint as done until `finishing-a-branch` runs. |
+
+## Gotchas
+
+- Being able to run `git commit` is not authority to commit: a commit runs hooks
+  and signing and shapes history.
+- A gate written during planning lands on whatever branch the shared checkout
+  is on.

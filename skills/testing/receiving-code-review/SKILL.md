@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: "Use when identifiable human or automated review findings arrive, including stale, ambiguous, or conflicting feedback, before responding or editing. Skip a claimed review with no report and raw build/test failures that need technical diagnosis."
+description: "Verifies review feedback on its merits before responding to it or editing anything. Use when identifiable human or automated review findings arrive, including stale, ambiguous, or conflicting feedback. Skip a claimed review with no report and raw build or test failures that need technical diagnosis."
 ---
 
 # Receiving Code Review
@@ -68,8 +68,9 @@ looks obvious — verify before agreeing, editing, replying, or resolving.
    A supposedly fixed causal finding returns, or three rounds make no progress
    → stop repeating that repair. Diagnose the failed approach under existing
    authority; continue only with a supported changed intervention within the
-   remaining budget. No supported path or exhausted budget → return the
-   unresolved findings and concrete blocker. Never call the candidate ready.
+   remaining budget. No supported path or exhausted budget → the loop ends in
+   the terminal state `unconverged`: return the unresolved findings and the
+   concrete blocker. Never call the candidate ready.
 2. Group accepted findings sharing one root cause or interface into one fix
    set. Bound files, affected gates, rollback, required re-review.
 3. Every expected reviewer attempt terminal and inventoried → proceed.
@@ -98,6 +99,14 @@ looks obvious — verify before agreeing, editing, replying, or resolving.
    Stale, ambiguous, inconclusive, or pending-decision → leave open.
 3. Fully resolved → return the verdict to the skill that requested review.
    Push, merge, or close nothing here. `finishing-a-branch` owns the branch.
+
+## Gotchas
+
+- A round count that restarts with each new candidate, reviewer, or skill call
+  never reaches its bound. The count belongs to the delivery task, so a fresh
+  identity continues it.
+- A stalled repair reported only as `not ready` invites the caller to run the
+  same round again. Name `unconverged` and the blocker so the owner decides.
 
 ## Red flags
 

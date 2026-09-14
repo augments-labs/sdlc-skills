@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: "Use before behavior-affecting implementation — features, fixes, refactors, migrations, generators, or configuration, including behavior meant to be preserved. Fires on any request to add, change, or fix behavior, even if the user names only the feature or the bug and never mentions tests or TDD. Skip throwaway spikes and nonbehavioral content or configuration."
+description: "Makes a test fail for the right reason before the code exists, then makes it pass. Use when any behavior is being added, changed, or fixed — features, fixes, refactors, migrations, generators, or configuration, including behavior that must be preserved — even if the user names only the feature or the bug and never mentions tests or TDD. Skip throwaway spikes and nonbehavioral content or configuration."
 ---
 
 # Test-Driven Development
@@ -47,7 +47,9 @@ change. Watch it happen; keep the output.
    Not RED:             1 skipped, 0 failed
    ```
 
-   Wrong reason or unexplained → invoke `debugging` before any product code.
+   Wrong reason or unexplained → invoke `debugging` before any product code,
+   passing back the attempt count `debugging` handed it, when this cycle
+   came from `debugging`.
 4. Keep the output.
 5. Record the test's identity, the evaluator's identity, and the expected
    observable as of this RED. Any of the three changes later → the cycle is
@@ -69,8 +71,8 @@ change. Watch it happen; keep the output.
    Watch it go red the way you intended. Keep the output.
 4. Restore the exact state. Watch it go green again.
 5. Transform one slice, keeping that gate green. Read
-   `references/preservation-cycle.md` for the oracle, the generator and
-   config case, and the evidence to keep.
+   `references/preservation-cycle.md` when you pick the oracle, meet the
+   generator or config case, or decide the evidence to keep.
 
 ## Step 4: Close the cycle
 
@@ -85,6 +87,11 @@ change. Watch it happen; keep the output.
    not the ledger.
 4. Return to whatever invoked this skill: a plan task, a worktree checkpoint,
    or a fix under `debugging`. Run no commit, push, or PR here.
+
+## Gotchas
+
+- A `debugging` detour does not reset its attempt count. Handing the count back
+  on every wrong-reason RED is what lets the breaker trip at all.
 
 ## Hard stops
 
@@ -118,10 +125,6 @@ change. Watch it happen; keep the output.
 
 ## Common mistakes
 
-- Testing internals or mock calls instead of public behavior — see
-  `references/reference.md` and `references/mocking.md`.
-- Writing all tests first instead of advancing one behavior or preservation
-  slice at a time.
-- Treating coverage, compilation, snapshots of noise, or a target-derived oracle
-  as equivalence proof.
-- Over-building in GREEN instead of letting the current gate bound the change.
+- Testing internals or mock calls instead of public behavior. Read
+  `references/reference.md` and `references/mocking.md` when a test reaches past
+  the public interface.
