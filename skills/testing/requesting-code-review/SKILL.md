@@ -49,8 +49,9 @@ wait on one, until the dispatch action has returned a non-empty receipt.
      plan's task row assigns it in writing. Never chosen here: the size of
      the diff grants nothing.
    - **Standard:** one independent breadth reviewer plus relevant specialists.
-   - **Deep:** breadth, specialists, `security-audits`, and an independent
-     adversarial pass.
+   - **Deep:** breadth, specialists, a security role filled from
+     `security-audits`' report template and checklists before Step 3.2, and an
+     independent adversarial pass.
    - **High-risk transformation:** read `references/high-risk-review.md` before
      assigning anyone.
 2. Give every role a stable ID, including each one omitted. An omission
@@ -68,11 +69,20 @@ wait on one, until the dispatch action has returned a non-empty receipt.
      equivalence
    - `assets/yagni-reviewer.md` when enduring surface is new or expanded, or
      a simplification review is requested
-4. Trust boundary changed → invoke `security-audits`. Audit of existing code →
-   `complexity-audit`. Challenge to the assurance strategy →
-   `verification-strategy`. When the recorded caller owns that activity,
-   use its supplied brief and keep its return step; never invoke it
-   recursively. A generic review never substitutes.
+4. Report what another skill owns as a finding with a suggested owner; the
+   caller routes it, and review ends at its report:
+   - a trust boundary changed → suggested owner `security-audits`. It blocks
+     readiness at every depth until `security clear` on this candidate is
+     recorded, unless the Deep security role returned it.
+   - existing code needs an audit for accidental complexity → suggested owner
+     `complexity-audit`
+   - the assurance strategy is hollow or needs challenging → suggested owner
+     `verification-strategy`
+   Record each such finding in the external review ledger; with no recorded
+   caller, return it with the verdict and name its suggested owner as the next
+   skill. When the recorded caller owns that activity, add any brief it
+   supplied to the Step 3.2 dispatch and return the result to its pending step.
+   A generic review never substitutes for the owner's verdict.
 5. Pick each reviewer's tier with the **Model selection** section of
    `dispatching-parallel-agents`. Depth sets coverage and independence, not
    the largest tier for every role.
@@ -130,6 +140,8 @@ wait on one, until the dispatch action has returned a non-empty receipt.
   only what was requested.
 - Account for untracked and generated files, and every affected caller.
 - Run a real structural gate against that exact candidate.
+- A trust-boundary finding without `security clear` on this digest →
+  `self-reviewed: not ready`.
 - On `not ready`, do not hand off. Either the assignment did not fit the
   change — report that to the user, raise the depth to Standard, and restart
   at Step 2 — or there is a defect: fix it, then restart at Step 1.
@@ -142,6 +154,8 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 - A reviewer sees only what the descriptor inventories. An untracked or
   generated file left out of the inventory ships unreviewed under a `ready`
   verdict.
+- A trust-boundary finding without `security clear` is not advisory. Filing it
+  as advice to reach `ready` ships a boundary nobody audited.
 
 ## Common mistakes
 
