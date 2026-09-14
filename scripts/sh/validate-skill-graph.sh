@@ -18,20 +18,25 @@ none:
   allowed: a↔b    listed there
 
   --strict    exit 1 when a cycle is not allowed (default: report only)
+  --targets   print every handoff target instead, as file<TAB>target, read with
+              the same grammar from every .md of every skill (SKILL.md,
+              references/, assets/), whether or not it names a skill
   --help      this text
 
 Environment:
   SKILLS_ROOT   the tree to read instead of skills/
 
-Exit codes: 0 no disallowed cycle, or report only · 1 a disallowed cycle under --strict
+Exit codes: 0 no disallowed cycle, report only, or --targets printed
+            1 a disallowed cycle under --strict
             2 bad arguments, or a tree or allow-list that cannot be read
 USAGE
 }
 
-strict=0
+strict=0; targets=0
 for arg in "$@"; do
   case "$arg" in
     --strict) strict=1 ;;
+    --targets) targets=1 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "unknown argument: $arg (see --help)" >&2; exit 2 ;;
   esac
@@ -57,10 +62,18 @@ for f in "${files[@]}"; do
   case "$n" in ''|*[!a-z0-9-]*) ;; *) names="$names $n" ;; esac
 done
 
-# One edge per handoff, "from<TAB>to". A block is a paragraph or list item with
-# its wrapped lines joined, so a name on the next line still counts.
-if ! edges="$(awk -v names="$names" '
-  function edge(to) { if ((from in skill) && (to in skill) && to != from) print from "\t" to }
+# The cycle report reads SKILL.md only; --targets reads every .md of each skill.
+scan=("${files[@]}")
+[ "$targets" = 1 ] && mapfile -t scan < <(find "$root" -name '*.md' 2>/dev/null | sort)
+
+# One line per handoff: "from<TAB>to" between two skills, or under --targets
+# "file<TAB>target" for any target. A block is a paragraph or list item with its
+# wrapped lines joined, so a name on the next line still counts.
+if ! edges="$(awk -v names="$names" -v targets="$targets" '
+  function edge(to) {
+    if (targets) { print file "\t" to; return }
+    if ((from in skill) && (to in skill) && to != from) print from "\t" to
+  }
   function flush(   b, s, i, t, rest, n, parts, k) {
     b = block; block = ""
     if (b == "") return
@@ -80,7 +93,7 @@ if ! edges="$(awk -v names="$names" '
     }
   }
   BEGIN { n = split(names, a, " "); for (i = 1; i <= n; i++) skill[a[i]] = 1 }
-  FNR == 1 { flush(); n = split(FILENAME, p, "/"); from = p[n - 1]; fence = 0; fm = ($0 ~ /^---[[:space:]]*$/); if (fm) next }
+  FNR == 1 { flush(); file = FILENAME; n = split(FILENAME, p, "/"); from = p[n - 1]; fence = 0; fm = ($0 ~ /^---[[:space:]]*$/); if (fm) next }
   fm { if ($0 ~ /^---[[:space:]]*$/) fm = 0; next }
   /^[[:space:]]*```/ { flush(); fence = !fence; next }
   fence { next }
@@ -88,8 +101,13 @@ if ! edges="$(awk -v names="$names" '
   /^[[:space:]]*([0-9]+[.]|[-*])[[:space:]]/ { flush() }
   { block = (block == "" ? $0 : block " " $0) }
   END { flush() }
-' "${files[@]}")"; then
+' "${scan[@]}")"; then
   echo "the handoff scan could not run" >&2; exit 2
+fi
+
+if [ "$targets" = 1 ]; then
+  [ -z "$edges" ] || printf '%s\n' "$edges" | sort -u
+  exit 0
 fi
 
 if ! report="$(printf '%s\n' "$edges" | sort -u | awk -F'\t' -v allowfile="$allow" '
