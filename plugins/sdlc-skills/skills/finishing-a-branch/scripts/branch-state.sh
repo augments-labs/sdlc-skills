@@ -34,7 +34,8 @@ Output:
   count the script cannot compute is null, never 0.
 
   Key fields:
-    base.resolved        false when the base is ambiguous — integration stops
+    base.resolved        false when the base is ambiguous, or would be the branch's
+                         own upstream (feature → origin/feature) — integration stops
     head.detached        true when there is no branch to push
     candidate.id         digest over root, branch, HEAD, base, base sha, dirty.digest,
                          the ignored listing, published, and the unpushed commit
@@ -164,7 +165,15 @@ else
   if [ -n "$remote_head" ]; then
     base="$remote_head"; base_source="origin/HEAD"
   elif [ -n "$upstream" ]; then
-    base="$upstream"; base_source="upstream tracking ref"
+    # A branch's own upstream (feature → origin/feature) holds its own pushed
+    # commits, not its base: counting base..HEAD against it reads pushed history
+    # as unpublished. Only an upstream naming another branch is a base.
+    upstream_merge="$(git config --get "branch.$branch.merge" 2>/dev/null)" || upstream_merge=""
+    if [ -n "$branch" ] && [ "${upstream_merge#refs/heads/}" = "$branch" ]; then
+      base_source="upstream tracking ref (the branch's own upstream)"
+    else
+      base="$upstream"; base_source="upstream tracking ref"
+    fi
   fi
 fi
 base_sha=""; base_resolved=0

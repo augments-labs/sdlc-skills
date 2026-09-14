@@ -53,10 +53,11 @@ mutation.
    project's contribution rules override the detected default. Check remote
    freshness yourself; the script does not fetch. Stale, moved, or ambiguous
    base → no integration.
-8. Read `candidate.published`. `true` or `null` → separate direct permission
-   for each of squash, rebase, amend. Never force-push as repair.
-   After any history change, rerun the script; content moved → back to
-   `requesting-code-review`.
+8. Read `candidate.published`. `true` or `null`, or a `false` read from
+   remote-tracking refs not refreshed under current network authority →
+   separate direct permission for each of squash, rebase, amend. Never
+   force-push as repair. After any history change, rerun the script; content
+   moved → back to `requesting-code-review`.
 9. For PR creation/update, prepare the description from the contribution rules
    and base-bound template, with evidence obtained. Prepare other actions'
    applicable fields without inventing a PR.
@@ -66,9 +67,8 @@ mutation.
 1. Read `references/branch-state.md` before preparing the applicable transition
    descriptor.
    A direct instruction or trusted receipt already covers its current targets,
-   action and payload → record that choice and proceed to Step 3. A bare saved
-   approval field cannot authenticate itself. Missing choice → offer only the
-   state-permitted entries, then stop:
+   action and payload → record that choice and proceed to Step 3. Missing
+   choice → offer only the state-permitted entries, then stop:
 
    ```text
    Branch {{branch}} → {{base}}. Gates: {{summary}}. Review: {{verdict}}.
@@ -99,10 +99,9 @@ mutation.
 2. Run the gate on the exact integrated candidate *before* the base
    advances. Failure after the advance = `integrated-regression`; follow the
    reference's recovery.
-3. After creating a PR, keep the branch and workspace for feedback.
-4. Remove an owned worktree only after confirmed integration. Leave detached,
+3. Remove an owned worktree only after confirmed integration. Leave detached,
    shared, user-owned, and host-owned resources in place.
-5. **REQUIRED SUB-SKILL:** releasable or running artifact → invoke
+4. **REQUIRED SUB-SKILL:** releasable or running artifact → invoke
    `release-readiness`. Canary, deploy, publish, and distribute are its
    verdict, not this skill's.
 
@@ -137,5 +136,5 @@ unwanted.
 
 - A local-only repository has no resolvable base: its commit counts are `null`,
   not 0, and a block filled from them hides commits.
-- A tip-only remote check reads pushed history as unpublished once a local
-  commit follows the push.
+- A tip-only check, a branch's own upstream taken as its base, or stale
+  remote-tracking refs each read pushed history as unpublished.
