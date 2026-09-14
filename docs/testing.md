@@ -82,3 +82,9 @@ sets, run once before and once after each release. A release is compared with
 the baseline campaign record, `results/{{date}}-baseline-{{version}}/summary.md`;
 a scenario that passed there and fails on the candidate stops the release.
 Permanent scenarios are added only for a chain of skills that has none.
+
+A chain is the ordered set of skills the router loads for one kind of task.
+`docs/chains.toml` lists each chain's skills with its recorded body word count
+and its budget. `bash scripts/sh/token-budget.sh --chain NAME` sums those
+bodies, references excluded, and fails when the chain exceeds its budget; CI
+runs it for every chain.

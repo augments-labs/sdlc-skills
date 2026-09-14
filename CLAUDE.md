@@ -166,7 +166,7 @@ the skill actually does. Match the run to what changed:
   in the PR, and commit nothing. Hard stops and destructive-action guards are
   never cut.
   Permanent behavioral scenarios exist only for a chain of skills that has
-  none; `docs/chains.toml`, when present, lists those chains.
+  none; `docs/chains.toml` lists those chains.
 - **Description (the trigger):** the evals lab's triggering runner *optimizes* a
   description; it does not certify one, and no edit is held open waiting for it.
   Reach for it when you are tuning that description — the lab's descriptions
@@ -224,6 +224,6 @@ never invoked are not a working integration.
 - `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
 - The evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals) — a separate repository holding every live runner, behavioral scenario, description query set, fixture, and harness launcher, plus dated campaign records pinned to a plugin commit. A PR here cites a record; nothing here runs the lab.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
-- `docs/` — repository-only rationale: philosophy, activation, harness support, skill granularity, testing, and the conformance record. Never referenced from a shipped skill; the gate enforces that.
+- `docs/` — repository-only rationale: philosophy, activation, harness support, skill granularity, testing, and the conformance record, plus `chains.toml`, each chain's skills and body-word budget. Never referenced from a shipped skill; the gate enforces that.
 - `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the four manifest versions agree).
 - `.claude/` — local config and notes; gitignored, never shipped.

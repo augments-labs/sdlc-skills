@@ -1,0 +1,28 @@
+# The ordered skills the router loads for each chain: bodies only, references
+# excluded. `token-budget.sh --chain NAME` sums their words and fails over
+# budget_words. A rename or merge edits this file in the same change.
+
+[bug-fix]
+skills = ["using-sdlc-skills", "using-git-worktrees", "zoom-out", "debugging", "test-driven-development", "yagni", "verification-before-completion"]
+recorded_words = 6710
+budget_words = 6710
+
+[new-feature]
+skills = ["using-sdlc-skills", "interview-me", "spec-it", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
+recorded_words = 11314
+budget_words = 11314
+
+[plan-execution]
+skills = ["using-sdlc-skills", "executing-plans", "using-git-worktrees", "dispatching-parallel-agents", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
+recorded_words = 9653
+budget_words = 9653
+
+[incident]
+skills = ["using-sdlc-skills", "containing-an-incident", "debugging", "verification-before-completion", "post-mortem"]
+recorded_words = 4798
+budget_words = 4798
+
+[release]
+skills = ["using-sdlc-skills", "verification-before-completion", "requesting-code-review", "release-readiness", "finishing-a-branch"]
+recorded_words = 5043
+budget_words = 5043
