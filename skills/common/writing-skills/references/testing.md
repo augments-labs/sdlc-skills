@@ -45,8 +45,8 @@ A passing sample does not disprove them or establish that a skill is unnecessary
 | Discipline collapses under pressure | No-guidance control and edited-skill run on the same pressured task |
 | Stateful boundary is crossed | Forbidden mutation stays absent and the pending state remains visible |
 
-Use the repository's existing proof seam first. Extend a runner only after the
-smallest controlled probe cannot observe the behavior. A transcript may explain
+Use the library's evals lab first. Extend a runner only after the smallest
+controlled probe cannot observe the behavior. A transcript may explain
 a failure, but it cannot replace an artifact, side-effect, or structured-event
 assertion when one exists.
 
@@ -85,3 +85,15 @@ Report commands, base/edited arms, environments, run counts, and every pass,
 failure, timeout, refusal, or inconclusive result. A single green run is weak
 evidence. An unavailable live runner means “shape validated; behavior unproven,”
 never “works.”
+
+## Throwaway probes
+
+When unsure whether a section changes behavior, write three pressure prompts that
+would tempt an agent to break its rule. Run each once with the section and once
+without, report every result in the change's review, and commit nothing.
+
+## Gotchas
+
+- A green on a large tier does not transfer to a small one: a smaller model
+  drops steps a larger one keeps. Prove on the smallest tier the library
+  supports.

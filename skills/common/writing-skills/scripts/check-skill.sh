@@ -14,6 +14,7 @@ Check a skill directory with the library's format and policy profile.
 
 Options:
   --format FORMAT   Output format: tsv, json (default: tsv)
+  --strict          Report the policy checks below as `fail` instead of `warn`
   --quiet           Print nothing; report the verdict through the exit code
   --help            Show this message
 
@@ -25,6 +26,21 @@ Checks:
   body         at most 500 lines and under 5000 tokens (recommended ceiling)
   references   every relative link from SKILL.md resolves inside the skill
   scripts      executes bundled scripts with --help; warns if not executable
+
+Policy checks (`warn` by default, `fail` with --strict):
+  gotchas-present           the body has a `## Gotchas` section
+  reference-load-condition  a body line naming references/<file> or
+                            assets/<file> passes only if `when`, `if`,
+                            `before`, or `after` follows that name on the same
+                            line; nothing else counts
+  description-yaml          the raw description loads under a strict YAML
+                            parser: quoted, a block scalar, or plain text with
+                            no `: `, no ` #`, and no leading * & [ { # ! % @ `
+  frontmatter-fields        frontmatter keys are only name, description,
+                            license, compatibility, metadata, allowed-tools
+  compatibility-length      compatibility, when present, is at most 500 chars
+  reference-depth           a file under references/ or assets/ names another
+                            support file (always `warn`: keep them one level deep)
 
 Output (tsv):
   One row per finding: LEVEL <tab> CHECK <tab> DETAIL
@@ -40,17 +56,18 @@ Exit codes:
 
 Examples:
   bash scripts/check-skill.sh ../../planning/scope-it
-  bash scripts/check-skill.sh --format json ~/my-skills/pdf-tools
+  bash scripts/check-skill.sh --strict --format json ~/my-skills/pdf-tools
 EOF
 }
 
-format=tsv; quiet=0; dir=""
+format=tsv; quiet=0; strict=0; dir=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --format) format="${2:-}"
               case "$format" in tsv|json) ;; *)
                 echo "Error: --format must be one of: tsv, json. Received: \"${2:-}\"" >&2; exit 2;; esac
               shift 2;;
+    --strict) strict=1; shift;;
     --quiet)  quiet=1; shift;;
     --help|-h) usage; exit 0;;
     -*) echo "Error: unknown option \"$1\". Run with --help for usage." >&2; exit 2;;
@@ -74,6 +91,23 @@ finding() { # $1 level  $2 check  $3 detail
   rows="$rows$1	$2	$3
 "
 }
+# Policy checks report until the library turns them into gates; --strict is how
+# a caller asks for that gate today.
+policy() { # $1 check  $2 detail
+  if [ "$strict" = 1 ]; then finding fail "$1" "$2"; else finding warn "$1" "$2"; fi
+}
+# A frontmatter value that may be quoted, folded, or a block scalar: everything
+# up to the next top-level key, with quotes and block indicators stripped.
+fmval() { # $1 key
+  printf '%s\n' "$fm" | awk -v k="$1" '
+    index($0, k ":") == 1 {found=1; sub(/^[^:]*:[[:space:]]*/,""); print; next}
+    found && /^[A-Za-z_][A-Za-z0-9_-]*:/ {exit}
+    found {sub(/^[[:space:]]+/," "); print}
+  ' | tr '\n' ' ' | sed 's/^[>|][-+]*//; s/^["'\'']//; s/["'\''][[:space:]]*$//; s/[[:space:]]\+/ /g; s/^ //; s/ $//'
+}
+
+# A support-file path as the policy checks read it; [.] keeps it escape-free for awk -v.
+support_path='(references|assets)/[A-Za-z0-9._/-]*[A-Za-z0-9_-][.][A-Za-z0-9]+'
 
 # --- SKILL.md and frontmatter -------------------------------------------------
 if [ ! -f "$skill" ]; then
@@ -112,18 +146,40 @@ else
         finding fail name "must match the directory name: frontmatter \"$name\" vs directory \"$name_expected\""
     fi
 
-    # description — may be quoted, folded, or block scalar; take everything up to
-    # the next top-level key.
-    desc="$(printf '%s\n' "$fm" | awk '
-      /^description:/ {found=1; sub(/^description:[[:space:]]*/,""); print; next}
-      found && /^[A-Za-z_][A-Za-z0-9_-]*:/ {exit}
-      found {sub(/^[[:space:]]+/," "); print}
-    ' | tr '\n' ' ' | sed 's/^[>|][-+]*//; s/^["'\'']//; s/["'\''][[:space:]]*$//; s/[[:space:]]\+/ /g; s/^ //; s/ $//')"
+    desc="$(fmval description)"
     if [ -z "$desc" ]; then
       finding fail description "frontmatter has no non-empty \`description\`"
     else
       dlen=${#desc}
       [ "$dlen" -le 1024 ] || finding fail description "must be at most 1024 characters (is $dlen)"
+    fi
+
+    # A strict YAML parser rejects these shapes and the harness then drops the
+    # skill without an error, so the raw value is checked before any stripping.
+    draw="$(printf '%s\n' "$fm" | awk '/^description:/ {sub(/^description:[[:space:]]*/,""); print; exit}')"
+    yaml_bad=""
+    case "$draw" in
+      ''|'>'*|'|'*) ;;
+      '"'*) grep -qE '^"([^"\\]|\\.)*"[[:space:]]*$' <<<"$draw" || yaml_bad="the double-quoted value does not close at the end of its line";;
+      "'"*) grep -qE "^'([^']|'')*'[[:space:]]*\$" <<<"$draw" || yaml_bad="the single-quoted value does not close at the end of its line";;
+      '*'*|'&'*|'['*|'{'*|'#'*|'!'*|'%'*|'@'*|'`'*) yaml_bad="an unquoted value cannot start with \`${draw:0:1}\`";;
+      *': '*|*' #'*|*:) yaml_bad="an unquoted value cannot contain \`: \` or \` #\`";;
+    esac
+    [ -z "$yaml_bad" ] || policy description-yaml "$yaml_bad; quote the description"
+
+    while IFS= read -r key; do
+      [ -n "$key" ] || continue
+      case "$key" in
+        name|description|license|compatibility|metadata|allowed-tools) ;;
+        *) policy frontmatter-fields "unknown frontmatter field \`$key\`; allowed: name, description, license, compatibility, metadata, allowed-tools";;
+      esac
+    done <<KEYS
+$(printf '%s\n' "$fm" | awk '/^[A-Za-z_][A-Za-z0-9_-]*:/ {sub(/:.*/,""); print}')
+KEYS
+
+    if grep -q '^compatibility:' <<<"$fm"; then
+      compat="$(fmval compatibility)"
+      [ "${#compat}" -le 500 ] || policy compatibility-length "compatibility is ${#compat} characters; at most 500"
     fi
   fi
 
@@ -157,6 +213,45 @@ else
   wall_len="${wall%%	*}"; wall_at="${wall##*	}"
   [ "${wall_len:-0}" -le 12 ] || \
     finding warn presentation "$wall_len unbroken lines starting at line $wall_at; break it into paragraphs, a list, or subsections"
+
+  # --- gotchas and load conditions ------------------------------------------------
+  awk -v e="${fm_end:-0}" '
+    NR<=e { next }
+    /^[[:space:]]*```/ { fence = !fence; next }
+    !fence && /^## Gotchas[[:space:]]*$/ { found=1 }
+    END { exit !found }
+  ' "$skill" || policy gotchas-present "the body has no \`## Gotchas\` section"
+
+  # An agent loads a support file only when the body says when to: a bare path
+  # is a file it either reads every time or never.
+  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" '
+    NR<=e { next }
+    {
+      # A condition after the last named file also follows every earlier one, so
+      # one split tests the whole line in linear time.
+      n = split($0, parts, pat)
+      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
+        snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
+        # Where awk counts bytes, [[:cntrl:]] misses UTF-8 C1 controls and the cut
+        # can split a character, so strip those bytes and a split tail there. A
+        # character-counting awk rejects these ranges, even in a /regex/ it never
+        # runs, hence the strings.
+        if (length("\302\233") == 2) {
+          gsub("\302[\200-\237]", " ", snippet)
+          sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", snippet)
+        }
+        print NR ":" snippet
+      }
+    }
+  ' "$skill")"; then
+    policy reference-load-condition "the load-condition scan could not run"
+  fi
+  while IFS= read -r hit; do
+    [ -n "$hit" ] || continue
+    policy reference-load-condition "line ${hit%%:*} names a support file with no load condition after it (when, if, before, after): ${hit#*:}"
+  done <<HITS
+$hits
+HITS
 
   # --- references resolve ------------------------------------------------------
   # Every relative link target must exist, and must sit inside the skill.
@@ -204,6 +299,23 @@ $(find "$dir/scripts" -maxdepth 1 -type f 2>/dev/null | sort)
 EOF
   [ "$found_any" = 1 ] || finding warn scripts "scripts/ exists but contains no files"
 fi
+
+# --- support-file depth ---------------------------------------------------------
+# A chain SKILL.md -> support file -> support file gets read partially, so the
+# third file is missed. Always a warning: the chain may be deliberate.
+while IFS= read -r sf; do
+  [ -n "$sf" ] || continue
+  # In a single-byte locale [[:cntrl:]] misses UTF-8 C1 controls; strip their bytes too.
+  srel="${sf#"$dir"/}"; srel="${srel//[[:cntrl:]]/ }"; srel="${srel//$'\xc2'[$'\x80'-$'\x9f']/ }"
+  while IFS= read -r m; do
+    [ -n "$m" ] && [ "$m" != "$srel" ] && [ -e "$dir/$m" ] || continue
+    finding warn reference-depth "$srel names $m; keep support files one level deep from SKILL.md"
+  done <<NAMES
+$(grep -oE -- "$support_path" "$sf" 2>/dev/null | sort -u)
+NAMES
+done <<SUPPORT
+$(find "$dir/references" "$dir/assets" -type f -name '*.md' 2>/dev/null | sort)
+SUPPORT
 
 # --- report -------------------------------------------------------------------
 if [ "$quiet" = 0 ]; then

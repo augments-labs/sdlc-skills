@@ -1,69 +1,53 @@
 # tests/
 
-Everything that observes the library actually running. Inside it, one question
-splits the work: **is the correct answer known before the run?**
+Offline tests for this library's deterministic script and packaging logic. Each
+knows its correct answer before it runs, needs no model, and costs nothing, so a
+red result means something is broken.
 
-The runners at this level check labeled expectations. Offline predicates are
-deterministic; live agent behavior is sampled. Investigate a failing assertion,
-and distinguish it from a timeout, unavailable provider, or invalid observation.
-`optimizing/` holds exploratory measurements used to tune descriptions.
+Live evidence — whether a description fires, whether a skill changes what an
+agent builds — is sampled from a real agent, costs tokens, and is not
+deterministic. It lives in the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), with the
+scenarios, query sets, fixtures, and harness launchers it needs, and
+never runs here or in CI. A PR that makes a behavior claim cites a lab campaign
+record; `docs/testing.md` says how.
 
 ## Layout
 
-```
+```text
 tests/
-  run-behavioral.sh       does the skill still change what gets BUILT? (live)
-  run-session-start.sh    the injected router, per envelope      (offline)
-  run-plugin-smoke.sh     install / marketplace mechanics        (offline)
+  run-session-start.sh    the injected router, per envelope       (offline)
+  run-plugin-smoke.sh     install / marketplace mechanics         (offline)
   run-serve-preview.sh    the localhost preview's safety contract (offline)
-  assert.sh               assertion helpers every scenario uses
-  fixtures.sh             the disposable project a live run is pointed at
-  behavioral/             the scenarios, and how to write one
-  harnesses/              ONLY what differs per CLI: install, invoke, detect, cost
-  optimizing/             MEASUREMENTS: a red sheet is not a regression
+  harnesses/              ONLY what differs per CLI: how it installs and discovers skills
 ```
 
 Every runner answers `--help` with its own flags, defaults, and exit codes; this
 file covers only what the flags cannot say.
 
 ```bash
-tests/run-session-start.sh                    # offline
-tests/run-plugin-smoke.sh --harness codex     # offline
-tests/run-serve-preview.sh                    # offline
-tests/run-behavioral.sh   --harness kimi-code --scenario spec-it --arm green
+tests/run-session-start.sh
+tests/run-plugin-smoke.sh --harness codex
+tests/run-serve-preview.sh
 ```
 
-## Prefer the offline tests
+## What they catch
 
-`run-session-start.sh`, `run-plugin-smoke.sh`, and `run-serve-preview.sh` need
-no model. They are free, deterministic, and they catch real defects — a hook
-that stopped firing, a manifest drift, skills landing where the harness never
-looks, a preview server that answers without its session key.
-`run-session-start.sh` gates what every adapter injects at session start: valid
-JSON in each harness's envelope, the canonical router body present *verbatim*
-with its frontmatter stripped, escaping that survives the quotes and tables
-inside it, and the event name echoed back. `run-serve-preview.sh` starts each
-skill's bundled preview server on loopback and asserts the auth gate, path
-confinement, and clean stop. Both run in CI. The live runners never do.
+They catch real defects — a hook that stopped firing, a manifest drift, skills
+landing where the harness never looks, a preview server that answers without
+its session key. `run-session-start.sh` gates what every adapter injects at
+session start: valid JSON in each harness's envelope, the canonical router body
+present *verbatim* with its frontmatter stripped, escaping that survives the
+quotes and tables inside it, and the event name echoed back.
+`run-serve-preview.sh` starts each skill's bundled preview server on loopback
+and asserts the auth gate, path confinement, and clean stop. Both run in CI.
+`run-plugin-smoke.sh` needs the harness's CLI installed, so it runs locally: it
+installs this tree the way that harness does, into a throwaway home, and checks
+that every skill is discovered. Its bindings are in `harnesses/README.md`.
 
-## The live runners, and what each one is for
+## The regression net
 
-`run-behavioral.sh` runs a real agent and inspects the artifact it produced.
-RED/GREEN compares library versions; `--arm none` observes the bare agent. A
-passing sample cannot establish absence of a problem or redundancy of a skill.
-The arms and scenario format are in `behavioral/README.md`; `docs/testing.md`
-owns their interpretation and cost limits.
-
-`optimizing/descriptions/test-triggering-on-queries.sh` asks the separate
-question of whether a *description* fires, and has its own price tag —
-`optimizing/README.md`.
-
-Both bind to `harnesses/<name>.sh`, which holds only what differs per CLI. Adding
-a harness also requires its install/routing adapter and validation; see
-`harnesses/README.md` and `docs/harness-support.md`.
-
-## Honest limits
-
-The live runners cost tokens and are **not deterministic**. So they are manual
-tools, never CI, and no result is committed as a record — re-run for current
-truth and report the numbers you actually got, failures included.
+These tests guard scripts and packaging on every change. Behavior is guarded by
+the lab's scenarios, run once before and once after each release; a release
+that fails a scenario its baseline passed does not ship. A temporary controlled
+probe that answers one question is reported in its PR and never committed here.

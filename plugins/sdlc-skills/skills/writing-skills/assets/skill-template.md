@@ -1,6 +1,6 @@
 ---
 name: {{skill-name-kebab}}
-description: Use when {{plain trigger conditions}}. {{Optional near-miss exclusion, only when a real one exists.}}
+description: "{{What the skill does}}. Use when {{situations in the user's words, with the keywords a task would contain}}. {{Optional near-miss exclusion, only when a real one exists.}}"
 ---
 
 # {{Skill Title}}
@@ -16,7 +16,8 @@ description: Use when {{plain trigger conditions}}. {{Optional near-miss exclusi
 
 1. {{one-line act}}
 2. {{condition}} → {{act}}
-3. {{When a handoff is needed: REQUIRED SUB-SKILL, its entry condition, input,
+3. Read `references/{{file}}.md` when {{condition}}.
+4. {{When a handoff is needed: REQUIRED SUB-SKILL, its entry condition, input,
    return value, and the caller step that resumes. Omit otherwise.}}
 
 ## Step 2: {{name the act}}
@@ -34,6 +35,17 @@ description: Use when {{plain trigger conditions}}. {{Optional near-miss exclusi
 
    Recommendation: {{option}} — {{one sentence}}.
    ```
+
+## Step 3: {{check the result}}
+
+1. {{do the work}}.
+2. Run {{the check}} and read what it reports.
+3. It fails → fix the cause, then run it again. Repeat until it passes.
+
+## Gotchas
+
+- {{a fact the agent gets wrong when untold}} — prevents {{the failure}};
+  reproduced by {{the probe or scenario}}.
 
 ## Common mistakes
 

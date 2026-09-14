@@ -6,22 +6,29 @@
 set -uo pipefail
 cd "$(dirname "$0")/../.." || exit 2
 
+strict=""
+[ $# -le 1 ] || { echo "at most one argument (see --help)" >&2; exit 2; }
 case "${1-}" in
   -h|--help)
     cat <<'EOF'
 scripts/sh/validate-skills.sh — structural gate for every skill in skills/.
 
-Takes no arguments. Checks frontmatter shape, line and description budgets,
-directory layout, resolvable reference paths, absent external references and
-vendor model names, and that every skill is registered in each plugin manifest.
-CI runs this on every push and PR.
+Checks frontmatter shape, line and description budgets, directory layout,
+resolvable reference paths, absent external references and vendor model names,
+and that every skill is registered in each plugin manifest. CI runs this on
+every push and PR.
 
+  --strict  fail on the policy checks check-skill.sh otherwise reports as
+            warnings, reference-load-condition included
   --help    this text
 
 Exit codes: 0 every skill passed · 1 violations printed above the summary
-            2 not run from the repo
+            2 not run from the repo, or an unknown argument
 EOF
     exit 0;;
+  --strict) strict=--strict ;;
+  "") ;;
+  *) echo "unknown argument: $1 (see --help)" >&2; exit 2 ;;
 esac
 
 fail=0
@@ -63,7 +70,7 @@ for skill in "${skills[@]}"; do
       fail) err  "$check: $detail" ;;
       warn) note "warn: $check: $detail" ;;
     esac
-  done < <(bash "$CONFORMANCE" "$dir" 2>/dev/null)
+  done < <(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>/dev/null)
 
   fname=$(awk -F': ' '/^name:/{print $2; exit}' "$skill")
 
@@ -84,14 +91,22 @@ for skill in "${skills[@]}"; do
   tokens=$(( words * 13 / 10 ))
   [ "$tokens" -gt 2500 ] && note "warn: ~$tokens tokens (>2500; over the house target)"
 
-  # (Per-skill triggering records retired — activation is proven by the shared
-  # harness-backed runners under tests/, not a static record. See tests/README.md.)
+  # (Per-skill triggering records retired — activation is proven by live runs in
+  # the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals),
+  # not a static record. See docs/testing.md.)
 
   # No external references, vendor model names, or <angle> placeholders — in every
   # .md of the skill, RECURSIVELY (covers references/ and scripts/ subfolders).
   while IFS= read -r f; do
     body=$(sed 's/`[^`]*`//g' "$f")   # ignore inline code spans
-    echo "$body" | grep -qiE "$EXT_REFS"        && err "$(basename "$f"): external reference (repo/issue/URL) — state the principle directly"
+    # The Agent Skills specification is the one external host a skill may cite:
+    # strip only its scheme and host so a path is still scanned, and fail closed
+    # when sed cannot run the edit.
+    if ! scanned=$(printf '%s\n' "$body" | sed -E 's@https?://agentskills\.io([/?#[:space:])>])@\1@g; s@https?://agentskills\.io$@@'); then
+      err "$(basename "$f"): external-reference scan could not run"
+    elif grep -qiE "$EXT_REFS" <<<"$scanned"; then
+      err "$(basename "$f"): external reference (repo/issue/URL) — state the principle directly"
+    fi
     echo "$body" | grep -qiE "$VENDORS"         && err "$(basename "$f"): vendor model name — use a capability tier (small|medium|large)"
     echo "$body" | grep -qiE "$SCANNER_TRIGGERS" && err "$(basename "$f"): harness scanner trigger-word — rephrase so a keyword scan can't hijack the session"
     echo "$body" | grep -qE  '<[a-z][a-z0-9 -]*>' && err "$(basename "$f"): bare <angle> placeholder — use {{double-curly}}"
@@ -107,7 +122,7 @@ done
 # Backticked kebab-case tokens that are not skill names go on the allowlist.
 echo "• backticked skill names resolve to skills on disk"
 skill_names="$(find skills -mindepth 3 -maxdepth 3 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
-name_allowlist='common-dir git-dir integrated-regression'
+name_allowlist='common-dir git-dir integrated-regression description-yaml reference-depth reference-load-condition'
 while IFS=: read -r file token; do
   printf '%s\n' "$skill_names" | grep -qx "$token" && continue
   printf '%s\n' $name_allowlist | grep -qx "$token" && continue
@@ -247,23 +262,10 @@ distinct=$(printf '%s' "$versions" | sort -u | grep -c .)
 
 # Internal references: any repo-root docs/ or tests/ markdown path named in a
 # shipped or meta file must exist — a broken link ships straight to users.
-#
-# Trigger-eval query sets are excluded, and must be. A query is written to sound
-# like a real request, which means naming real-looking files — "the spec is at
-# docs/invites.md, follow it". Those paths belong to the *hypothetical* project
-# in the query, not to this repository, so requiring them to resolve here would
-# force every query into vague phrasing and destroy the realism the queries exist
-# to provide. Nothing gates their shape; tests/optimizing/README.md says what a
-# set has to contain, and a reader checks it.
-#
-# The query sets fall out of this scan for free, being .json. fixtures.sh does
-# not, and needs naming: it is the file that BUILDS that hypothetical project, so
-# every path it writes is a path in the fixture tree by definition, not a link
-# into this repository.
 echo "• internal references (docs/ and tests/ paths resolve)"
 while IFS=: read -r src ref; do
   [ -f "$ref" ] || err "$src: internal reference '$ref' does not exist"
-done < <(grep -roE --include='*.md' --include='*.sh' --exclude='fixtures.sh' \
+done < <(grep -roE --include='*.md' --include='*.sh' \
            '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md CLAUDE.md | sort -u)
 
 # Conformance record freshness. docs/agent-skills-conformance.md

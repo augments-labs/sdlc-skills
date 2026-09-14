@@ -20,12 +20,77 @@ jobs:
       - uses: actions/checkout@v4
       - name: Structural validation (skills + adapter sync)
         run: bash scripts/sh/validate-skills.sh
-      # Nothing under tests/optimizing/ is checked here, by design. That corpus
-      # exists to tune descriptions, and its state is not a correctness claim
-      # about the library — a red sheet there is a number, not a regression.
+      # Live evidence is not checked here, by design: behavioral scenarios and
+      # description query sets live in the evals lab,
+      # [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals),
+      # cost tokens, and sample a non-deterministic agent, so they never run in CI.
       - name: Session-start router injection
         run: bash tests/run-session-start.sh
       - name: Governed localhost preview (serve.py + wrappers)
         run: bash tests/run-serve-preview.sh
       - name: Token budget (always-loaded surface)
         run: bash scripts/sh/token-budget.sh --max 5000
+      - name: Handoff cycles (report-only)
+        run: bash scripts/sh/validate-skill-graph.sh
+      - name: Chain budgets (docs/chains.toml)
+        run: |
+          chains=$(sed -n 's/^\[\([a-z0-9-]*\)\]$/\1/p' docs/chains.toml)
+          [ -n "$chains" ] || { echo "no chains in docs/chains.toml"; exit 1; }
+          fail=0
+          for chain in $chains; do
+            bash scripts/sh/token-budget.sh --chain "$chain" || fail=1
+          done
+          exit "$fail"
+      # Descriptions are PR content; the runner must not read shared clauses as workflow commands.
+      - name: Trigger collisions (report-only)
+        run: |
+          token=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$token"
+          trap 'echo "::$token::"' EXIT
+          bash scripts/sh/validate-trigger-collisions.sh
+      # Report-only until 9.2; the details quote skill bodies, so workflow commands stop first.
+      - name: Reference load conditions (report-only)
+        run: |
+          token=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$token"
+          trap 'echo "::$token::"' EXIT
+          for dir in skills/*/*/; do
+            bash skills/common/writing-skills/scripts/check-skill.sh "$dir" | awk -F'\t' -v d="$dir" '$2 == "reference-load-condition" {print d ": " $3}' || true
+          done
+
+  reference-validator:
+    # A parser cross-check with the Agent Skills reference validator, never a
+    # gate: a differing verdict is investigated (docs/agent-skills-conformance.md).
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the reference validator
+        run: pip install skills-ref==0.1.1
+      - name: Validate every skill directory
+        run: |
+          # The validator echoes skill content; the runner must not read it as workflow commands.
+          token=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$token"
+          trap 'echo "::$token::"' EXIT
+          {
+            echo "## Reference validator cross-check"
+            echo
+            for dir in skills/*/*/; do
+              case "$dir" in *[!a-z0-9/-]*) echo "- skipped: a directory name outside [a-z0-9-]"; continue;; esac
+              if out=$(agentskills validate "$dir" 2>&1); then
+                echo "- valid: \`$dir\`"
+              else
+                echo "- differs: \`$dir\`"
+                echo
+                echo '````text'
+                printf '%s\n' "$out" | tr -d '`'
+                echo '````'
+              fi
+            done
+          } | tee -a "$GITHUB_STEP_SUMMARY"
