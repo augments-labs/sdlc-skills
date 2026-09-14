@@ -1,3 +1,4 @@
 requesting-code-review↔receiving-code-review
 debugging↔test-driven-development
 debugging↔containing-an-incident
+debugging↔yagni
