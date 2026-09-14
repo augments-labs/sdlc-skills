@@ -67,9 +67,11 @@ Availability is a property of the installed build and its configuration, not of
 this library, and it changes between versions — some builds gate multi-agent
 tools behind a config entry that is off by default. So the skill does not
 hardcode a remedy. It requires the agent to treat an uncallable action as **not
-dispatched**, and to name both the action it attempted and what this environment
-would need to make it callable, rather than stopping mysteriously, narrating a
-fan-out it holds no receipts for, or silently collapsing it to sequential work.
+dispatched**, to name both the action it attempted and what this environment
+would need to make it callable, and to ask the user once: a labelled
+self-review, a named reviewer or agent, or keeping the work pending. The answer becomes
+the written assignment. The agent never stops mysteriously, narrates a fan-out
+it holds no receipts for, or silently does the work itself.
 
 Check the harness's own configuration reference for the current form, and verify
 by asking the installed CLI what tools it exposes rather than trusting a

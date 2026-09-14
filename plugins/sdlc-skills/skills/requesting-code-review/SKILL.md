@@ -72,7 +72,7 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 4. Report what another skill owns as a finding with a suggested owner; the
    caller routes it, and review ends at its report:
    - a trust boundary changed → suggested owner `security-audits`. It blocks
-     readiness at every depth until `security clear` on this candidate is
+     readiness at every depth until an independent `security clear` on this candidate is
      recorded, unless the Deep security role returned it.
    - existing code needs an audit for accidental complexity → suggested owner
      `complexity-audit`
@@ -97,8 +97,9 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    template slot; leave the report fields for the reviewer. Send each filled
    fenced prompt through the harness's dispatch action.
 3. Dispatched = the action returned a non-empty ID. Empty, refused, or
-   unavailable → write the review as pending and stop. Do not review it
-   yourself. Do not poll an empty target.
+   unavailable → follow the no-dispatch rule in `dispatching-parallel-agents`
+   Step 2. The answer assigns self-review → quote it as the Shallow assignment
+   in a successor descriptor and return to Step 3.1. Do not poll an empty target.
 4. Poll the exact IDs to the descriptor's deadline. Success = exactly one
    current report.
 5. Read each returned report, opening its file if only a location was returned.
@@ -140,11 +141,12 @@ wait on one, until the dispatch action has returned a non-empty receipt.
   only what was requested.
 - Account for untracked and generated files, and every affected caller.
 - Run a real structural gate against that exact candidate.
-- A trust-boundary finding without `security clear` on this digest →
+- A trust-boundary finding without an independent `security clear` on this digest →
   `self-reviewed: not ready`.
 - On `not ready`, do not hand off. Either the assignment did not fit the
-  change — report that to the user, raise the depth to Standard, and restart
-  at Step 2 — or there is a defect: fix it, then restart at Step 1.
+  change — report that to the user, void a no-dispatch answer that assigned
+  it, raise the depth to Standard, and restart at Step 2 — or there is a
+  defect: fix it, then restart at Step 1.
 
 ## Gotchas
 

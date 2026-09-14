@@ -33,9 +33,9 @@ yourself before anything integrates.
 2. Pick each agent's tier from the table below. Write it in the packet's
    `TIER` field. Lowest tier sufficient for the remaining decisions and the
    cost of an error. Supply missing context before moving up a tier.
-3. Fill one `assets/dispatch-packet.md` per agent, every field. Read
-   `references/brief-examples.md` while writing the first one. Never paste
-   session history.
+3. Fill one `assets/dispatch-packet.md` per agent, every field, before its
+   dispatch. Read `references/brief-examples.md` before writing the first one.
+   Never paste session history.
    - `START FROM` → what defines the task: the contract, the exact spec, the
      failing assertion.
    - `READ` → a path to what informs it: a diff, a log, a large fixture.
@@ -68,10 +68,28 @@ user's main-session model and any model reserved for orchestration untouched.
 
 1. Dispatch through the real callable action. Record each returned non-empty
    agent or job ID in `DISPATCH RECEIPT`.
-2. Action unavailable, refused, or empty → write `not dispatched`, keep the
-   packet pending, stop. Name the action tried and what would make it
-   callable. Never describe a fan-out without receipts. Never quietly do the
-   work sequentially instead.
+2. Action unavailable, refused, or empty → write `not dispatched`, and name
+   the action tried and what would make it callable. Never describe a fan-out
+   without receipts, and never quietly do the work yourself instead.
+   Ask the user once per work item; the answer covers only that work:
+
+   ```text
+   {{work}} needs an independent agent, and {{action}} is not callable here.
+
+   1. I do it myself, labelled as a self-review, not an independent one
+   2. Name the reviewer or agent who will do it
+   3. Keep it pending
+
+   Recommendation: {{option}} — {{one sentence}}.
+   ```
+
+   Independence required (`security clear`, or an audit the user asked to be
+   independent) → omit option 1 and say why.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Record the answer as the written assignment and continue under it. A named
+   reviewer's report counts only when it arrives from outside this session,
+   bound to the exact identities; the recorded answer replaces the receipt. No
+   answer keeps the work pending.
 3. Failure or deadline → write `cancellation requested`. Wait until the
    worker, its descendants, and its effects are quiescent. Quarantine partial
    output. Only then write failed, timed out, or cancelled.
@@ -93,6 +111,14 @@ user's main-session model and any model reserved for orchestration untouched.
    result.
 4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for that combined
    state before anything downstream treats it as done.
+
+## Gotchas
+
+- Doing the work yourself when dispatch fails reads as a fallback, but the
+  result then claims an independence it never had. Only the user's recorded
+  answer makes a self-review legitimate, and it stays labelled as one.
+- A `small` worker handed a decision the packet left open guesses instead of
+  escalating. Settle the decision in the packet, or move the tier up.
 
 ## Common mistakes
 
