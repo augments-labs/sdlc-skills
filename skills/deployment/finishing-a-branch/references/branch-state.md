@@ -76,10 +76,11 @@ bind/reverify/re-review it, and obtain a new choice before any further history,
 remote, PR, or integration mutation. Rejection never permits bypass.
 
 Create only the commit set included in the direct transition choice—never amend,
-squash, rebase, or mix cleanup implicitly. Prove each created commit tree and
-the complete commit set materialize the reviewed digest with no omitted or
-unrelated content. If that equivalence cannot be shown, preserve the working
-tree and stop.
+squash, rebase, or mix cleanup implicitly. The created commit set holds the
+reviewed state only when a rerun of `scripts/branch-state.sh` reports
+`dirty.clean: true` and either `dirty.digest` equals the reviewed digest or
+`head.sha` equals the reviewed revision. Otherwise preserve the working tree
+and stop.
 
 ## Integrate locally
 
@@ -100,10 +101,9 @@ tree and stop.
 
 ## Commit exact candidate and keep
 
-Materialize the reviewed working tree through the procedure above. Verify the
-full created commit set and HEAD tree reproduce the reviewed digest and that no
-unrelated or missing path entered it. Do not push, open a PR, advance a base, or
-clean anything. Report the exact branch, commits, and workspace as
+Materialize the reviewed working tree through the procedure above, including
+its `dirty.clean: true` check, and confirm no unrelated or missing path entered
+the commit set. Do not push, open a PR, advance a base, or clean anything. Report the exact branch, commits, and workspace as
 `materialized-kept`. A later transition refreshes candidate/base/remote state
 and requires its own direct choice; the commit choice grants nothing else.
 
