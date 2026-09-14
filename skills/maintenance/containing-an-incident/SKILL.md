@@ -36,12 +36,16 @@ a minute you chose to spend.
    - blocking the triggering input, tenant, or job
    - rolling back to the last known-good release — wide, needs approval
 2. Read the runbook, deploy log, and config for them. Reading is not pulling.
-3. Lever not yours to pull (deploy, rollback, production data, customer-facing
-   block) → escalate now with the Step 1 lines. That is the containment step.
+3. A lever is yours only when the user, the incident owner, or a runbook the
+   project designates gives you scoped authority for that lever on that target;
+   holding credentials or access grants nothing. Any lever that is not yours →
+   escalate now with the Step 1 lines; that is the containment step. This
+   includes every deploy, rollback, production-data change, and customer-facing
+   block such as a tenant block, whatever access you hold.
 4. Pull the narrowest lever that works. Cannot state its effect in one
    sentence → do not pull it.
 5. No safe authorized lever remains, or a lever risks evidence or other users
-   → read `references/hard-containments.md` now. Record the exhausted options,
+   → read `references/hard-containments.md` before anything else. Record the exhausted options,
    residual impact, and escalation; do not keep selecting the same lever.
 
 ## Step 3: Prove it stopped
@@ -72,6 +76,11 @@ a minute you chose to spend.
 4. Hard-containment fallback → pass residual impact, attempted levers, and
    incident/escalation owner to `debugging`. New or worsened impact or a newly
    available lever reopens containment; unchanged residual impact does not.
+
+## Gotchas
+
+- Access that can pull a lever is not authority to pull it: an unauthorized
+  rollback or tenant block becomes a second incident.
 
 ## When you are tempted to skip it
 
