@@ -96,12 +96,11 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    evidence. Insert `assets/review-report.md` before sending, in its Report
    template slot; leave the report fields for the reviewer. Send each filled
    fenced prompt through the harness's dispatch action.
-3. Dispatched = the action returned a non-empty ID. Empty, refused, or
-   unavailable → follow the no-dispatch rule in `dispatching-parallel-agents`
-   Step 2. The answer assigns self-review → quote it as the Shallow assignment
-   in a successor descriptor and return to Step 3.1. Do not poll an empty target.
-4. Poll the exact IDs to the descriptor's deadline. Success = exactly one
-   current report.
+3. Then dispatch per `dispatching-parallel-agents` Step 2, using the
+   descriptor's deadline as the frozen deadline. The answer assigns
+   self-review → quote it as the Shallow assignment in a successor
+   descriptor and return to Step 3.1.
+4. Success = exactly one current report for each role.
 5. Read each returned report, opening its file if only a location was returned.
    Match Candidate, Review inputs, Role, and the role's allowed Verdict to the
    frozen request. Missing, unreadable, conflicting, or mismatched fields →

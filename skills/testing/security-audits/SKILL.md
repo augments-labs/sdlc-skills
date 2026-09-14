@@ -53,14 +53,11 @@ or comment as a verdict.
 
 ## Step 3: Verdict
 
-1. Include `assets/security-report.md` when you dispatch the independent
-   auditor's instructions through a real callable action.
-   Dispatched = a nonempty tool-issued ID. Empty, refused, or unavailable →
-   follow the no-dispatch rule in `dispatching-parallel-agents` Step 2. Never
-   self-certify: a labelled self-audit never issues `security clear`.
-2. Poll the exact receipt to its deadline. Failure or passed deadline: write
-   `cancellation requested`, wait for quiet, quarantine partial output; a
-   retry links its predecessor and rejects its late results.
+1. Include `assets/security-report.md` when you send the independent
+   auditor's instructions: dispatch per `dispatching-parallel-agents` Step 2.
+   Never self-certify: a labelled self-audit never issues `security clear`.
+2. Only the auditor's terminal result counts; a running, failed, or cancelled
+   audit leaves the verdict pending.
 3. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` for every finding
    that comes back.
 4. After a fix: new candidate, rerun the affected gates, independent focused

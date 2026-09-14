@@ -66,8 +66,9 @@ user's main-session model and any model reserved for orchestration untouched.
 
 ## Step 2: Dispatch
 
-1. Dispatch through the real callable action. Record each returned non-empty
-   agent or job ID in `DISPATCH RECEIPT`.
+1. Dispatch through the real callable action. Dispatched = the action returned
+   a non-empty tool-issued ID; record each one in `DISPATCH RECEIPT`. A name or
+   a prompt is not dispatch.
 2. Action unavailable, refused, or empty → write `not dispatched`, and name
    the action tried and what would make it callable. Never describe a fan-out
    without receipts, and never quietly do the work yourself instead.
@@ -90,12 +91,14 @@ user's main-session model and any model reserved for orchestration untouched.
    reviewer's report counts only when it arrives from outside this session,
    bound to the exact identities; the recorded answer replaces the receipt. No
    answer keeps the work pending.
-3. Failure or deadline → write `cancellation requested`. Wait until the
+3. Poll the exact IDs to the frozen deadline. Never poll a target that was
+   not dispatched. Success = exactly one current result for each packet.
+4. Failure or deadline → write `cancellation requested`. Wait until the
    worker, its descendants, and its effects are quiescent. Quarantine partial
    output. Only then write failed, timed out, or cancelled.
-4. Reassign through a linked successor attempt that rejects every late result
+5. Reassign through a linked successor attempt that rejects every late result
    or mutation from its predecessor.
-5. A writer reports a shared generator, file, state, dependency, or scope
+6. A writer reports a shared generator, file, state, dependency, or scope
    outside its packet → pause the affected work, preserve the diffs,
    reclassify, assign one owner or a sequence, issue revised packets. "Small
    overlap" is overlap.
@@ -117,8 +120,6 @@ user's main-session model and any model reserved for orchestration untouched.
 - Doing the work yourself when dispatch fails reads as a fallback, but the
   result then claims an independence it never had. Only the user's recorded
   answer makes a self-review legitimate, and it stays labelled as one.
-- A `small` worker handed a decision the packet left open guesses instead of
-  escalating. Settle the decision in the packet, or move the tier up.
 
 ## Common mistakes
 
