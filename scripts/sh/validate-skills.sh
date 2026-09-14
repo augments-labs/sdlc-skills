@@ -91,10 +91,6 @@ for skill in "${skills[@]}"; do
   tokens=$(( words * 13 / 10 ))
   [ "$tokens" -gt 2500 ] && note "warn: ~$tokens tokens (>2500; over the house target)"
 
-  # (Per-skill triggering records retired — activation is proven by live runs in
-  # the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals),
-  # not a static record. See docs/testing.md.)
-
   # No external references, vendor model names, or <angle> placeholders — in every
   # .md of the skill, RECURSIVELY (covers references/ and scripts/ subfolders).
   while IFS= read -r f; do

@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # Claude Code adapter. Sourced by tests/run-plugin-smoke.sh — never executed
-# directly. The live half (invocation, activation detection, run cost) lives
-# with the live runners in the evals lab,
-# [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
+# directly.
 #
 # This file holds only what is true of the `claude` CLI's install: how skills
 # are loaded and what the harness reports it resolved.
