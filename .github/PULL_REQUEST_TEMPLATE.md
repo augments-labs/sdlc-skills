@@ -69,17 +69,19 @@ attempt should land where that one did not. -->
 
     bash scripts/sh/validate-skills.sh
 
-For a behaviour-shaping change, also cite the lab campaign that ran the
-smallest behavioural scenario exercising it: the record's path in
-[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals)
-(`results/{{date}}-{{label}}/summary.md`)
-and the plugin commit it pinned. Say how many runs, on which arms, and include
-inconclusive and failing results; an inconclusive result is a finding, a
-fabricated one is grounds for closing. `docs/testing.md` says which run answers
-which question.
+Then name the evidence class and give what it returned:
 
-For a change confined to `references/` or `assets/`, the always-loaded body
-is unchanged; say so instead of running something. -->
+- Behavioral scenario: the lab campaign record's path in
+  [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals)
+  (`results/{{date}}-{{label}}/summary.md`), the plugin commit it pinned, how
+  many runs on which arms, and every inconclusive or failing result.
+- Throwaway probe result: the three pressure prompts, what each run did with
+  and without the section, and the conclusion; the probe is not committed.
+- reference-only, no re-run owed: the change is confined to `references/` or
+  `assets/`, so the always-loaded body is unchanged.
+
+An inconclusive result is a finding; a fabricated one is grounds for closing.
+`docs/testing.md` says which run answers which question. -->
 
 ## Evaluation
 

@@ -19,10 +19,13 @@ adds packaging and house-policy checks.
 | No leading/trailing hyphen or consecutive hyphens | Pattern check |
 | `name` matches its directory | Per-directory comparison |
 | Nonempty `description`, at most 1024 characters | Extracted field length; longest is 452 |
+| Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` | `frontmatter-fields` policy check |
+| `compatibility`, when present, at most 500 characters | `compatibility-length` policy check |
 
 The checker does not validate every optional metadata field or every YAML form.
-A green result establishes its implemented checks, not full validation of any
-arbitrary standard skill. Inspect unfamiliar metadata against the specification.
+Policy checks report as warnings; `--strict` makes them failures. A green result
+establishes its implemented checks, not full validation of any arbitrary
+standard skill. Inspect unfamiliar metadata against the specification.
 
 ## Recommendations and enforced house policy
 
@@ -33,8 +36,8 @@ under a stricter house rule is not automatically a standard violation.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 162 (32% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~1708 |
+| Body lines | At most 500; longest is 169 (34% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker; largest is ~1981 |
 | Typical body size | Aim near 80–120 lines; longer discipline bodies need relevant behavioral evidence |
 | Presentation | The checker warns on long undifferentiated prose; keep readable sentences |
 | Supporting paths | Resolve inside the installed skill and keep direct references shallow |
@@ -155,6 +158,9 @@ including one outside this repository, subject to the parsing and execution
 limits above. Both enforce this checker's profile.
 
 The standard's reference validator is not vendored because this library adds no
-third-party dependencies. If its verdict differs, identify the rule and parser
-behavior involved. Correct a mistaken standard claim; retain an intentional,
-accurately labeled house restriction.
+third-party dependencies. A separate, non-blocking CI job installs it and runs it
+over every skill directory as a parser cross-check; its output is a job summary,
+never a gate. When its verdict differs from `check-skill.sh`, investigate rather
+than defer to either tool: identify the rule and parser behavior involved,
+correct a mistaken standard claim, and retain an intentional, accurately labeled
+house restriction.

@@ -64,4 +64,7 @@ Match instruction density to how constrained the task is:
 ## Naming
 
 - Directory name == frontmatter `name`, kebab-case.
+- Gerund or verb-first, naming the activity: `writing-plans`, `debugging`.
+- No vague words such as helper, utils, or tools, and no pronoun or particle
+  suffix such as `-it`, `-me`, or `-out`.
 - The invoked name is `sdlc-skills:<name>` regardless of which phase folder holds it — the folder is organization for humans, not part of the address.

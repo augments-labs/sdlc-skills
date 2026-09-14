@@ -65,3 +65,7 @@ fail the relevant claim.
 Keep guidance that changes actions, preserves required information, or resolves
 a demonstrated ambiguity. Remove repetitions and speculative procedure. Concision
 means fewer unnecessary instructions, not fewer words at the cost of meaning.
+
+A constraint earns its context only where the agent would otherwise violate it.
+Ask of every line "would the agent get this wrong without this?" A line the agent
+already follows unprompted costs attention on every load and prevents nothing.
