@@ -124,7 +124,8 @@ installs and what the CLI resolves — is documented in
 [`tests/harnesses/README.md`](../tests/harnesses/README.md) and exercised by
 `tests/run-plugin-smoke.sh` (see [`tests/README.md`](../tests/README.md)). The
 live launcher — invocation, activation detection, run cost — and the runners
-that consume it live in the evals lab, `augments-labs/sdlc-skills-evals`, whose
+that consume it live in the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), whose
 campaign records a PR here cites (see [`testing.md`](testing.md)).
 
 ## Adding an adapter

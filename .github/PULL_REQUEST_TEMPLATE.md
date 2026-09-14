@@ -71,7 +71,8 @@ attempt should land where that one did not. -->
 
 For a behaviour-shaping change, also cite the lab campaign that ran the
 smallest behavioural scenario exercising it: the record's path in
-`augments-labs/sdlc-skills-evals` (`results/{{date}}-{{label}}/summary.md`)
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals)
+(`results/{{date}}-{{label}}/summary.md`)
 and the plugin commit it pinned. Say how many runs, on which arms, and include
 inconclusive and failing results; an inconclusive result is a finding, a
 fabricated one is grounds for closing. `docs/testing.md` says which run answers

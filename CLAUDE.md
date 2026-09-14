@@ -54,8 +54,8 @@ portable engineering guidance.
 `docs/` is website documentation for the current library contract. Never put
 run transcripts, failure records, pass-rate anecdotes, superseded behavior, or
 investigation notes there. Keep reproducible scenarios and campaign records in
-the evals lab, `augments-labs/sdlc-skills-evals`; keep ephemeral results in the
-review workflow or private notes.
+the evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals); keep
+ephemeral results in the review workflow or private notes.
 
 **The Agent Skills standard outranks every rule here.** Where this file, or
 anything under `docs/`, conflicts with agentskills.io, the standard wins and the
@@ -108,8 +108,9 @@ executes bundled scripts with `--help`. See `docs/agent-skills-conformance.md`
 for coverage and effects before checking an unfamiliar skill.
 
 Rule 4 (behavior) has no deterministic gate — that is the honest limit. Live
-runs belong to the evals lab, `augments-labs/sdlc-skills-evals`, and never run
-here or in CI. Which run answers which question, and how a PR cites its
+runs belong to the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), and
+never run here or in CI. Which run answers which question, and how a PR cites its
 campaign record, is `docs/testing.md`. Report the real numbers in the PR,
 failures and inconclusive results included. Which harness produced a run is
 plumbing: leave it out of PR, commit, and release narratives unless it is
@@ -208,7 +209,7 @@ never invoked are not a working integration.
 - `scripts/sh/` — portable validators, token budget, adapter checks, and hook scripts; CI runs `validate-skills.sh` and `token-budget.sh`. Everything here is deterministic, free, and safe to run anywhere.
 - `tests/` — offline tests, where the answer is known in advance and no model runs: `run-session-start.sh`, `run-plugin-smoke.sh`, and `run-serve-preview.sh`.
 - `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
-- The evals lab, `augments-labs/sdlc-skills-evals` — a separate repository holding every live runner, behavioral scenario, description query set, fixture, and harness launcher, plus dated campaign records pinned to a plugin commit. A PR here cites a record; nothing here runs the lab.
+- The evals lab, [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals) — a separate repository holding every live runner, behavioral scenario, description query set, fixture, and harness launcher, plus dated campaign records pinned to a plugin commit. A PR here cites a record; nothing here runs the lab.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
 - `docs/` — repository-only rationale: philosophy, activation, harness support, skill granularity, testing, and the conformance record. Never referenced from a shipped skill; the gate enforces that.
 - `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the four manifest versions agree).

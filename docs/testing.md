@@ -6,7 +6,8 @@ deterministic.
 
 Two repositories hold them. This one keeps the deterministic gates: structural
 validation and offline script tests, which answer before a merge. The evals lab,
-`augments-labs/sdlc-skills-evals`, keeps everything that needs a live agent —
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), keeps
+everything that needs a live agent —
 behavioral scenarios, description query sets, their runners, fixtures, and
 harness launchers — and the dated campaign records their runs produce. Nothing
 in this repository runs the lab.

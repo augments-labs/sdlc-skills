@@ -7,7 +7,8 @@ none of them decides anything — judging an observation belongs to the runner.
 
 The live half of each harness — invoking the CLI, detecting an activation in its
 stream, reading what a run cost, binding a tier to a model — lives with the live
-runners in the evals lab, `augments-labs/sdlc-skills-evals`.
+runners in the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
 
 ## The contract
 

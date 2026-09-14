@@ -6,8 +6,9 @@ red result means something is broken.
 
 Live evidence — whether a description fires, whether a skill changes what an
 agent builds — is sampled from a real agent, costs tokens, and is not
-deterministic. It lives in the evals lab, `augments-labs/sdlc-skills-evals`,
-with the scenarios, query sets, fixtures, and harness launchers it needs, and
+deterministic. It lives in the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals), with the
+scenarios, query sets, fixtures, and harness launchers it needs, and
 never runs here or in CI. A PR that makes a behavior claim cites a lab campaign
 record; `docs/testing.md` says how.
 

@@ -132,7 +132,8 @@ step that keeps the Codex mirror current are documented once in
 Read [`CLAUDE.md`](CLAUDE.md) before changing the library. It defines the PR
 requirements, authoring policy, and structural gate. For skill changes, use
 `writing-skills` and run only the behavioral scenarios relevant to the change —
-they live in the evals lab, `augments-labs/sdlc-skills-evals`.
+they live in the evals lab,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
 Report passes, failures, and inconclusive runs: a passing sample cannot erase a
 reported failure or prove that a skill is unnecessary. See
 [`docs/testing.md`](docs/testing.md) for what each test can establish.
