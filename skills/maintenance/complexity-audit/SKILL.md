@@ -24,7 +24,12 @@ diagnosis, not permission to change code.
    admissible evidence.
 2. Predeclare the report path
    `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`, coordinator-owned,
-   outside the audited target's identity. Target drifts → stop or restart.
+   outside the audited target's identity. Identify the target by revision.
+   Use a working-tree digest only when the report path is outside the
+   repository or `git check-ignore -q` passes for it: an in-tree, unignored
+   report changes the digest the audit froze. Uncommitted target with an
+   in-tree, unignored report path → stop; ask for a checkpoint or an ignored or
+   out-of-repository report path. Target drifts → stop or restart.
 3. Fill the inventory table: code, dependencies, configuration, build and
    test machinery, generated sources, dynamic, reflection, and registration
    paths, external consumers, operational ownership.
@@ -66,6 +71,9 @@ diagnosis, not permission to change code.
   a removal safe.
 - A reconciliation that lists no failed or inconclusive area reads as full
   coverage. Count what was not examined, or a silent gap passes as clean.
+- A working-tree digest captured before the audit reports DRIFT once the
+  report lands at an unignored path under the audited tree, though no audited
+  code changed.
 
 ## Common mistakes
 
