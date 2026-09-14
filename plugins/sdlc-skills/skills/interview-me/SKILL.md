@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: "Use when material intent has several plausible readings that no owning phase skill can settle, or when a pending material decision got neither an explicit answer nor an explicit cancellation — praise, constraints, silence, or a partial reply instead. Fires on a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Skip inputs an owning skill's own procedure elicits."
+description: "Asks the questions that settle what the user actually wants when a request has several plausible readings. Use when what the user wants has several plausible readings that would change the work and no phase skill's own procedure can settle it, or when a pending material decision got praise, constraints, silence, or a partial reply instead of an explicit answer or an explicit cancellation, including a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Skip inputs that another skill's own procedure asks for."
 ---
 
 # Interview Me

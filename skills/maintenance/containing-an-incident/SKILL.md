@@ -1,6 +1,6 @@
 ---
 name: containing-an-incident
-description: "Use the moment a failure is reaching real users — an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data corrupted or exposed, a customer-visible regression. Fires on it's down, customers are getting errors, something broke in production, and this started after the deploy. Skip a failing test, a bug caught in review, or a defect nobody has hit, and skip once impact has stopped."
+description: "Contains a failure that is reaching real users before diagnosing it. Use when there is an outage, a broken signup or checkout, a bad deploy, a spiking error rate, data corrupted or exposed, or a customer-visible regression, or when the user says it's down, customers are getting errors, something broke in production, or this started after the deploy. Skip a failing test, a bug caught in review, or a defect nobody has hit, and skip once impact has stopped."
 ---
 
 # Containing an Incident

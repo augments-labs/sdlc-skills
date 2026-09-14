@@ -1,6 +1,6 @@
 ---
 name: viewing-artifacts
-description: "Use when the state of the artifact trail — briefs, specs, designs, plans, execution — needs to be seen at a glance instead of read file by file. Fires on show me the state of my specs and plans, where does my project stand, what needs attention, is my plan still in sync with the spec, and visualize the trail. Skip when one artifact must be read, written, or edited."
+description: "Shows the state of the artifact trail — briefs, specs, designs, plans, execution — at a glance instead of file by file. Use when the user asks where the project stands, what needs attention, whether the plan is still in sync with the spec, to see the state of specs and plans, or to visualize the trail. Skip when one artifact must be read, written, or edited."
 ---
 
 # Viewing Artifacts

@@ -1,6 +1,6 @@
 ---
 name: executing-plans
-description: "Use to execute, continue, or resume work governed by an approved plan directory, including one remaining task and a direct execution-mode reply such as inline or delegated. Skip a standalone task with no plan directory."
+description: "Runs an approved plan task by task through each task's evaluator. Use when the user asks to execute, continue, or resume work governed by an approved plan directory, including one remaining task or a reply choosing inline or delegated mode. Skip a standalone task with no plan directory."
 ---
 
 # Executing Plans

@@ -1,6 +1,6 @@
 ---
 name: finishing-a-branch
-description: "Use when implementation is complete, its gates are green, and its branch choice is unsettled, even without a Git request — or when the user requests a push, PR, integration, keep, discard, close, or reopen. Fires on what do we do with this branch, merge it, open a PR, and are we done here. Skip mid-development checkpoints and an unchanged state whose branch choice is already settled unless a new transition is requested."
+description: "Takes a branch through the transition the user chooses: push, PR, integration, keep, discard, close, or reopen. Use when implementation is complete and its gates are green but the branch choice is unsettled, even without a Git request, or when the user asks to push, integrate, keep, discard, close, or reopen the branch, what to do with this branch, to merge it, to open a PR, or whether we are done here. Skip mid-development checkpoints and an unchanged state whose branch choice is already settled unless a new transition is requested."
 ---
 
 # Finishing a Branch

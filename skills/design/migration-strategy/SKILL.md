@@ -1,6 +1,6 @@
 ---
 name: migration-strategy
-description: "Use before planning or implementing a rewrite, migration, or broad preservation-sensitive transformation whose behavior, cutover, or recovery cannot be established by ordinary review and gates. Skip bounded changes whose diff, behavior, and recovery remain directly reviewable."
+description: "Plans how a rewrite or migration preserves behavior through cutover and recovery. Use when a rewrite, migration, or broad preservation-sensitive transformation is about to be planned or implemented and its behavior, cutover, or recovery cannot be established by ordinary review and gates. Skip bounded changes whose diff, behavior, and recovery remain directly reviewable."
 ---
 
 # Migration Strategy

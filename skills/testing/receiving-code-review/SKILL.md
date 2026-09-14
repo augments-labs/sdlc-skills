@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: "Use when identifiable human or automated review findings arrive, including stale, ambiguous, or conflicting feedback, before responding or editing. Skip a claimed review with no report and raw build/test failures that need technical diagnosis."
+description: "Verifies review feedback on its merits before responding to it or editing anything. Use when identifiable human or automated review findings arrive, including stale, ambiguous, or conflicting feedback. Skip a claimed review with no report and raw build or test failures that need technical diagnosis."
 ---
 
 # Receiving Code Review

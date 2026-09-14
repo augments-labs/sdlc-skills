@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: "Use when approved requirements or a clearly multi-step task need an executable, per-task plan before implementation — ordered tasks, their dependencies, and how each one is known to be done. Fires on break this down, lay out the steps first, and this is too big to do in one go. Skip single-step or trivial work."
+description: "Writes an executable plan: ordered tasks, their dependencies, and how each one is known to be done. Use when approved requirements or a clearly multi-step task need a per-task plan before implementation, or when the user says break this down, lay out the steps first, or this is too big to do in one go. Skip single-step or trivial work."
 ---
 
 # Writing Plans

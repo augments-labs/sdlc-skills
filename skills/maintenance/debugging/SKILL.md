@@ -1,6 +1,6 @@
 ---
 name: debugging
-description: "Use before proposing or applying a fix to any bug, test failure, flaky or intermittent result, or unexpected behavior whose technical cause is unknown. Fires on it's broken, this doesn't work, and why is it doing that. Skip a one-line error whose cause and complete effect are directly visible, and skip explaining how a known, contained production failure escaped its safeguards."
+description: "Finds the cause of a bug before any fix is proposed or applied. Use when a bug, test failure, flaky or intermittent result, or unexpected behavior has an unknown technical cause, or when the user says it's broken, this doesn't work, or why is it doing that. Skip a one-line error whose cause and complete effect are directly visible, and skip explaining how a known, contained production failure escaped its safeguards."
 ---
 
 # Debugging

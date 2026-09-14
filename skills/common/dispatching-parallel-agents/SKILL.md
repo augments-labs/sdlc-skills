@@ -1,6 +1,6 @@
 ---
 name: dispatching-parallel-agents
-description: "Use when independent work can run concurrently with exclusive writes, separate mutable resources, and no dependence on another worker's output. Shared reads of frozen inputs are allowed. Skip coupled writes, runtime state, dependent outputs, or work quicker to do inline."
+description: "Splits independent work across parallel agents, each with its own exclusive writes and resources. Use when tasks can run concurrently with no dependence on another worker's output, such as separate files, services, or investigations; shared reads of frozen inputs are fine. Skip coupled writes, shared runtime state, dependent outputs, or work quicker to do inline."
 ---
 
 # Dispatching Parallel Agents

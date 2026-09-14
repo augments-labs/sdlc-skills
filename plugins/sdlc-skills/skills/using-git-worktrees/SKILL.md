@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: "Use before the first repository edit or when work needs an isolated checkout and owned resources. Also applies to local task checkpoints. Reuse a linked worktree only when this task or the harness owns it; skip workspace creation there, not checkpoint discipline. Skip read-only work."
+description: "Creates an isolated git worktree for a task and checkpoints work there. Use when a repository is about to be edited for the first time in a task, when work needs an isolated checkout and its own resources, or at a local task checkpoint. Reuse a linked worktree only when this task or the harness owns it; there, skip creating a workspace but keep checkpoint discipline. Skip read-only work."
 ---
 
 <EXTREMELY-IMPORTANT>

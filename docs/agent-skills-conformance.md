@@ -18,7 +18,7 @@ adds packaging and house-policy checks.
 | `name`: 1–64 lowercase letters, digits, or hyphens | Length and character checks |
 | No leading/trailing hyphen or consecutive hyphens | Pattern check |
 | `name` matches its directory | Per-directory comparison |
-| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 452 |
+| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 596 |
 | Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` | `frontmatter-fields` policy check |
 | `compatibility`, when present, at most 500 characters | `compatibility-length` policy check |
 
@@ -43,6 +43,7 @@ under a stricter house rule is not automatically a standard violation.
 | Supporting paths | Resolve inside the installed skill and keep direct references shallow |
 | Gotchas | `gotchas-present` policy check: the body has a `## Gotchas` section |
 | Support-file load conditions | `reference-load-condition` policy check: a named `references/` or `assets/` file carries when, if, before, or after |
+| Description wording | `description-rules` policy check: no `Fires on` list and none of four internal terms |
 | Support-file depth | `reference-depth` warning: a support file names another support file |
 | Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
 | Fill-in templates | Put them in `assets/`; keep explanatory guidance in `references/` |
@@ -124,7 +125,7 @@ included. The second reports pairs of
 skills that hand off to each other: a pair listed in `docs/allowed-cycles.txt`
 prints as allowed, and `--strict` fails on any other. The third sums the body
 words of one chain in `docs/chains.toml` and fails over its budget. The fourth
-reports each description clause of three or more words that more than one skill
+reports each description clause of two or more words that more than one skill
 shares, and `--strict` fails on any. The fifth accepts a skill path, including
 one outside this repository, subject to the parsing and execution limits above.
 The first and fifth enforce this checker's profile.
