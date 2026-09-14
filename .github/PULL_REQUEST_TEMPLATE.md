@@ -76,11 +76,7 @@ measured here. -->
 
 ## Evaluation
 
-<!-- "It works" is not evaluation. -->
-
 - What opening prompt started the session that led to this change?
-- How many sessions did you run **after** the change?
-- What changed in the outcome compared with before?
 
 ## Rigor
 
