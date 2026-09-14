@@ -31,9 +31,9 @@ The page carries state, not documents.
 2. No `.sdlc-skills/`, or artifact paths overridden → render the template's
    empty state naming what produces artifacts. Never search the filesystem
    for look-alikes.
-3. Read `references/state-derivation.md`. Derive every value by its rules:
-   slug allowlist, phase artifacts, approval sources, drift, attention
-   grouping.
+3. Read `references/state-derivation.md` before deriving a value. Derive
+   every value by its rules: slug allowlist, phase artifacts, approval
+   sources, drift, attention grouping.
 4. Match each section's normative version and location to its decision ledger;
    preserve its own decision vocabulary. Only the exact `[x] done` marker
    counts complete. Compare consumed identities for drift; timestamps alone
@@ -41,8 +41,9 @@ The page carries state, not documents.
 
 ## Step 2: Render
 
-1. Open `assets/page-template.html`. Follow its top-of-file and region
-   comments: region order, repeats, omissions, allowed values.
+1. Open `assets/page-template.html` before filling anything. Follow its
+   top-of-file and region comments: region order, repeats, omissions,
+   allowed values.
 2. Fill: current UTC as-of, tiles, sidebar groups in attention order, and per
    topic the spine nodes, drift connector, ADR chain, embedded visuals, every
    task row, the assurance matrix from `verification/`.
@@ -59,7 +60,7 @@ The page carries state, not documents.
 1. Serve it, root `.sdlc-skills/`, entry `views/index.html`:
 
    ```bash
-   bash scripts/start-server.sh
+   bash scripts/start-server.sh --root .sdlc-skills --entry views/index.html
    ```
 
 2. Hand over the printed URL and the file path without being asked. Serving
@@ -69,7 +70,14 @@ The page carries state, not documents.
 3. Reply in one short message: path or URL, as-of UTC, every place the page
    says unknown or omitted a block, whether drift came from file mtimes, and
    the cause class of any ledger pointer that could not be honored.
-4. No longer needed → `bash scripts/stop-server.sh`.
+4. No longer needed → `bash scripts/stop-server.sh {{pid}}`, with the `pid`
+   from the startup record.
+
+## Gotchas
+
+- Run without `--root`, `scripts/start-server.sh` exits 1 with
+  `needs --root DIR`, and the file-path fallback in Step 3.2 hides that no
+  preview started.
 
 ## Common mistakes
 

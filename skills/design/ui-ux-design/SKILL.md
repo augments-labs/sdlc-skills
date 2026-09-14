@@ -64,7 +64,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 3. Serve it and present the URL with the delivery:
 
    ```bash
-   bash scripts/start-server.sh
+   bash scripts/start-server.sh --root .sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals
    ```
 
    Serving fails or is declined → give the file path.
@@ -118,6 +118,8 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
   neither, just an undocumented accident nobody decided. Filing an
   unrecognized pattern as deliberate by default is how an accident gets
   treated as a constraint instead of being flagged as unknown.
+- Run without `--root`, `scripts/start-server.sh` exits 1, and the file-path
+  fallback in Step 3.3 hides that no surface was served.
 
 ## Common mistakes
 

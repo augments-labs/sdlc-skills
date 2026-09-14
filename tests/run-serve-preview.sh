@@ -19,7 +19,8 @@ case "${1-}" in
 tests/run-serve-preview.sh — offline unit check for the serve.py preview.
 
 Starts each skill's scripts/serve.py against a fixture root on 127.0.0.1 and
-asserts the auth gate, path confinement, response headers, and clean stop.
+asserts the auth gate, path confinement, response headers, and clean stop, then
+runs the start and stop commands each skill body documents, as written.
 
   --help    this text
 
@@ -132,6 +133,62 @@ check "stop-server refuses a PID that is not the preview" "$?" "1"
 bash "$S/stop-server.sh" "$pid" >/dev/null 2>&1
 check "stop-server stops the preview" "$?" "0"
 kill -0 "$pid" 2>/dev/null && bad "preview process is gone after stop" || ok "preview process is gone after stop"
+
+echo "--- documented commands"
+# Each body's preview commands, run as its text writes them: the script path
+# resolves against the skill directory, the arguments against the project root.
+# A command missing an argument the wrapper requires fails here, in CI, instead
+# of in front of a user, where the file-path fallback would hide it.
+repo_root="$PWD"
+project="$fixture/project"
+mkdir -p "$project/.sdlc-skills/views" "$project/.sdlc-skills/designs/2026-01-01-fixture/visuals"
+echo '<h1>trail view</h1>' > "$project/.sdlc-skills/views/index.html"
+echo '<h1>visual decision</h1>' > "$project/.sdlc-skills/designs/2026-01-01-fixture/visuals/index.html"
+
+fill() { # $1 documented command, $2 pid; fills the placeholders bodies use
+  printf '%s' "$1" | sed -e 's/{{YYYY-MM-DD}}/2026-01-01/g' -e 's/{{topic}}/fixture/g' -e "s/{{pid}}/$2/g"
+}
+stop_preview() { # $1 pid: SIGTERM, then wait until it has exited
+  kill "$1" 2>/dev/null
+  for _ in $(seq 1 50); do kill -0 "$1" 2>/dev/null || return 0; sleep 0.1; done
+}
+run_as_written() { # $1 skill directory, $2 filled command
+  local words
+  read -r -a words <<<"$2"
+  [ "${words[0]-}" = bash ] && [ -n "${words[1]-}" ] || { echo "not a bash command: $2" >&2; return 2; }
+  (cd "$project" && bash "$repo_root/$1/${words[1]}" "${words[@]:2}")
+}
+check_documented() { # $1 body, $2 marker of the page it should serve, $3 file documenting the stop
+  local body="$1" marker="$2" stop_doc="${3:-$1}" dir start stop line url pid code
+  dir="$(dirname "$body")"
+  start="$(grep -hoE 'bash scripts/start-server\.sh[^`]*' "$body" | head -1 | sed 's/[[:space:]]*$//')"
+  if [ -z "$start" ]; then bad "$body documents a start command"; return; fi
+  start="$(fill "$start" "")"
+  case "$start" in *'{{'*) bad "$body: start command keeps a placeholder this test cannot fill: $start"; return;; esac
+  line="$(run_as_written "$dir" "$start" 2>/dev/null)"
+  if ! printf '%s' "$line" | jq -e '.url and .pid' >/dev/null 2>&1; then
+    bad "$body: documented start prints a startup record (got: $line)"; return
+  fi
+  ok "$body: documented start prints a startup record"
+  url="$(printf '%s' "$line" | jq -r .url)"; pid="$(printf '%s' "$line" | jq -r .pid)"
+  code="$(curl -s -o "$fixture/documented.body" -w '%{http_code}' "$url")"
+  check "$body: the printed URL serves with its key" "$code" "200"
+  grep -qF "$marker" "$fixture/documented.body" && ok "$body: the URL shows the documented entry" || bad "$body: the URL shows the documented entry"
+  stop="$(grep -hoE 'bash scripts/stop-server\.sh[^`]*' "$stop_doc" | head -1 | sed 's/[[:space:]]*$//')"
+  # A reference that states the stop in prose commits to exactly this command.
+  if [ -z "$stop" ] && grep -q 'Stop the preview with `scripts/stop-server\.sh` and the `pid`' "$stop_doc"; then
+    stop='bash scripts/stop-server.sh {{pid}}'
+  fi
+  if [ -z "$stop" ]; then
+    bad "$stop_doc documents a stop command with the PID"; stop_preview "$pid"; return
+  fi
+  run_as_written "$dir" "$(fill "$stop" "$pid")" >/dev/null 2>&1
+  check "$body: documented stop exits 0" "$?" "0"
+  if kill -0 "$pid" 2>/dev/null; then bad "$body: preview is gone after the documented stop"; stop_preview "$pid"
+  else ok "$body: preview is gone after the documented stop"; fi
+}
+check_documented skills/common/viewing-artifacts/SKILL.md '<h1>trail view</h1>'
+check_documented skills/design/ui-ux-design/SKILL.md '<h1>visual decision</h1>' skills/design/ui-ux-design/references/visual-decisions.md
 
 echo
 if [ "$fails" -eq 0 ]; then echo "✓ serve preview passes"; else echo "✗ serve preview violations found"; fi
