@@ -56,11 +56,9 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 
 1. Write the immutable spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md`
    or the user-set path.
-2. Answer `migration-strategy`'s four questions (reviewability,
-   preservation, breadth, failure surfaces) and record the answers. Any off
-   the ordinary route, or the user marks the work high-risk → run
-   `assets/spec-review.md` before presenting, with a reviewer who is not
-   the sole author. Blocking.
+2. Fill the classification block. Any answer off the ordinary route, or the
+   user marks the work high-risk → run `assets/spec-review.md` before
+   presenting, with a reviewer who is not the sole author. Blocking.
 3. Present:
 
    ```text
