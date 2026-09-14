@@ -4,12 +4,26 @@ Tests separate known expected outcomes from exploratory measurements. A known
 assertion can score a sampled agent run; it does not make that agent's behavior
 deterministic.
 
+Two repositories hold them. This one keeps the deterministic gates: structural
+validation and offline script tests, which answer before a merge. The evals lab,
+`augments-labs/sdlc-skills-evals`, keeps everything that needs a live agent —
+behavioral scenarios, description query sets, their runners, fixtures, and
+harness launchers — and the dated campaign records their runs produce. Nothing
+in this repository runs the lab.
+
 | Where | What a result establishes | Runner |
 | --- | --- | --- |
-| `tests/behavioral/` | Observed behavior on a labeled scenario and candidate | `run-behavioral.sh` |
 | `tests/`, offline | The checked packaging or script predicate | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-serve-preview.sh` |
-| `tests/optimizing/` | A measurement used to tune a description | `descriptions/test-triggering-on-queries.sh` |
-| `tests/harnesses/` | Shared runners' CLI bindings | One adapter per supported CLI |
+| `tests/harnesses/` | Per-CLI install bindings the smoke test drives | One adapter per supported CLI |
+| Lab `behavior/` | Observed behavior on a labeled scenario and candidate | The lab's behavior runner |
+| Lab `descriptions/` | A measurement used to tune a description | The lab's triggering runner |
+
+## Citing live evidence
+
+A behavior claim in a PR here cites a lab campaign record rather than a local
+command: the record's path, `results/{{date}}-{{label}}/summary.md`, and the
+plugin commit the campaign pinned. The record measures that commit, not a later
+one.
 
 ## Behavioral arms and limits
 
@@ -43,7 +57,7 @@ inconclusive results; do not silently relabel or omit them.
   `skills/common/writing-skills/references/testing.md` owns the method. Body
   changes use a targeted scenario where applicable; on-demand support files do
   not automatically require a live rerun.
-- **Description tuning:** `tests/optimizing/README.md` owns query design, fixed
+- **Description tuning:** the lab's descriptions guide owns query design, fixed
   selection splits, costs, and interpretation. Optimization is not certification
   and does not run in CI.
 - **Repository structure:** run `scripts/sh/validate-skills.sh` before committing;

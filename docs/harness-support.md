@@ -107,29 +107,33 @@ Different claims need different evidence:
 - **Deterministic adapter scripts:** focused offline tests for meaningful parsing
   or hook branches. Keep the script small enough that its test does not become a
   second implementation.
-- **Discovery and activation:** a thin live smoke through the real harness.
-  Run the relevant opening when a trigger or adapter changes and before a
-  release; report authentication, provider, or network failures as inconclusive
-  rather than routing failures.
-- **Skill behavior:** retain a behavioral regression only for a failure actually
-  observed and a verdict that can be checked mechanically. Run it manually and
-  report repeated results honestly.
+- **Discovery and activation:** a thin live smoke through the real harness, run
+  from the evals lab. Run the relevant opening when a trigger or adapter changes
+  and before a release; report authentication, provider, or network failures as
+  inconclusive rather than routing failures.
+- **Skill behavior:** retain a behavioral regression in the lab only for a
+  failure actually observed and a verdict that can be checked mechanically. Run
+  it manually and report repeated results honestly.
 
 A full skill-by-harness behavioral matrix is neither deterministic nor a useful
 default. It consumes provider time, produces noisy results, and shifts maintenance
 toward the evaluator instead of the skills.
 
-The adapter contract is documented in
-[`tests/harnesses/README.md`](../tests/harnesses/README.md). What consumes it
-splits by whether the correct answer is known in advance: gates in
-[`tests/README.md`](../tests/README.md), measurements in
-[`tests/optimizing/README.md`](../tests/optimizing/README.md).
+Each harness is bound in two places. The offline contract — how the plugin
+installs and what the CLI resolves — is documented in
+[`tests/harnesses/README.md`](../tests/harnesses/README.md) and exercised by
+`tests/run-plugin-smoke.sh` (see [`tests/README.md`](../tests/README.md)). The
+live launcher — invocation, activation detection, run cost — and the runners
+that consume it live in the evals lab, `augments-labs/sdlc-skills-evals`, whose
+campaign records a PR here cites (see [`testing.md`](testing.md)).
 
 ## Adding an adapter
 
 1. Point the manifest at the canonical skills; do not fork their content.
 2. Extend structural validation so missing, extra, or divergent skills fail.
-3. Add the smallest install/activation smoke that drives the real CLI.
+3. Add offline install bindings under `tests/harnesses/` for
+   `tests/run-plugin-smoke.sh`, and a launcher in the evals lab for the smallest
+   activation smoke that drives the real CLI.
 4. Add an offline test only for deterministic adapter logic introduced by the
    integration.
 5. Document the adapter's current lifecycle and support boundaries. Keep run

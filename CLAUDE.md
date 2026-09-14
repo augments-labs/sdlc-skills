@@ -53,8 +53,9 @@ portable engineering guidance.
 
 `docs/` is website documentation for the current library contract. Never put
 run transcripts, failure records, pass-rate anecdotes, superseded behavior, or
-investigation notes there. Keep reproducible scenarios under `tests/`; keep
-ephemeral results in the review workflow or private notes.
+investigation notes there. Keep reproducible scenarios and campaign records in
+the evals lab, `augments-labs/sdlc-skills-evals`; keep ephemeral results in the
+review workflow or private notes.
 
 **The Agent Skills standard outranks every rule here.** Where this file, or
 anything under `docs/`, conflicts with agentskills.io, the standard wins and the
@@ -81,10 +82,12 @@ The conformance record is `docs/agent-skills-conformance.md`.
    all stated there, once. Invoke that skill before authoring or editing one —
    this file does not restate it, so a copy here cannot drift from it.
 4. **Prove behavior-shaping changes.** If you never watched an agent fail without
-   the skill, you do not know it prevents the right failure. Where there is no
-   failure to reproduce, say which class the skill is in instead of running
-   something — `skills/common/writing-skills/references/testing.md` draws that
-   line and owns the rest.
+   the skill, you do not know it prevents the right failure. Live runs happen in
+   the evals lab; the PR cites the campaign record and the plugin commit it
+   pinned. Where there is no failure to reproduce, say which class the skill is
+   in instead of running something —
+   `skills/common/writing-skills/references/testing.md` draws that line and owns
+   the rest.
 
 ## Verify against the gate
 
@@ -104,13 +107,14 @@ It extracts the library's frontmatter subset rather than parsing all YAML, and
 executes bundled scripts with `--help`. See `docs/agent-skills-conformance.md`
 for coverage and effects before checking an unfamiliar skill.
 
-Rule 4 (behavior) has no deterministic gate — that is the honest limit. Which
-live run answers which question, and what a red result means on each side of
-`tests/`, is `docs/testing.md`. Report the real numbers in the PR, failures and
-inconclusive results included. Which harness produced a run is plumbing: leave
-it out of PR, commit, and release narratives unless it is material to the
-result — a harness-specific failure or adapter bug is exactly the case where
-naming it is the finding.
+Rule 4 (behavior) has no deterministic gate — that is the honest limit. Live
+runs belong to the evals lab, `augments-labs/sdlc-skills-evals`, and never run
+here or in CI. Which run answers which question, and how a PR cites its
+campaign record, is `docs/testing.md`. Report the real numbers in the PR,
+failures and inconclusive results included. Which harness produced a run is
+plumbing: leave it out of PR, commit, and release narratives unless it is
+material to the result — a harness-specific failure or adapter bug is exactly
+the case where naming it is the finding.
 
 ## Adding a skill
 
@@ -123,9 +127,10 @@ standard's.
 
 **Start from failure evidence before authoring.** Record observed sessions,
 current contract gaps, and unmeasured candidates separately. Where a realistic
-scenario can exercise the problem, run it first: `--arm none` observes the bare
-agent, while `--arm red` observes the current library. A bare-agent failure does
-not show that an existing skill fails or that a new skill is needed.
+scenario can exercise the problem, run it first in the evals lab: `--arm none`
+observes the bare agent, while `--arm red` observes the current library. A
+bare-agent failure does not show that an existing skill fails or that a new
+skill is needed.
 
 A passing sample means the failure was not observed under those conditions. It
 does not erase reported failures, resolve contradictory instructions, or prove
@@ -144,15 +149,14 @@ before it lands. The measurement that decides is the **behavioural** one — wha
 the skill actually does. Match the run to what changed:
 
 - **The always-loaded `SKILL.md` body:** where the change has a failure that can
-  be reproduced, run the smallest existing scenario or a temporary before/after
-  probe that exercises it, and report the result. Where it has none, name the
-  class and say so — that is a finding, not a skipped step. Do not add a
-  permanent fixture for coverage.
-- **Description (the trigger):**
-  `tests/optimizing/descriptions/test-triggering-on-queries.sh` *optimizes* a
+  be reproduced, run the smallest existing lab scenario or a temporary
+  before/after probe that exercises it, and report the result. Where it has
+  none, name the class and say so — that is a finding, not a skipped step.
+  Do not add a permanent fixture for coverage.
+- **Description (the trigger):** the evals lab's triggering runner *optimizes* a
   description; it does not certify one, and no edit is held open waiting for it.
-  Reach for it when you are tuning that description — `tests/optimizing/README.md`
-  owns the loop, what a set must contain, and what a run costs.
+  Reach for it when you are tuning that description — the lab's descriptions
+  guide owns the loop, what a set must contain, and what a run costs.
 - **A file under `references/` or `assets/`** (loaded on demand, not under
   pressure): the always-loaded body is unchanged — no behavioural re-run is
   owed; say so.
@@ -189,10 +193,11 @@ skills are inert unless the harness both discovers them and is nudged to reach
 for one at the right moment (on Claude Code, the `hooks/` SessionStart nudge;
 elsewhere, an equivalent). See `docs/harness-support.md`.
 
-A PR adding a harness MUST add `tests/harnesses/{{name}}.sh` bindings for the
-shared runners and show a skill *actually activating* through that harness's
-CLI on a representative opening, not describe how it should work. Files present
-but never invoked are not a working integration.
+A PR adding a harness MUST add `tests/harnesses/{{name}}.sh` offline bindings
+for `tests/run-plugin-smoke.sh`, pair them with a launcher in the evals lab, and
+show a skill *actually activating* through that harness's CLI on a
+representative opening, not describe how it should work. Files present but
+never invoked are not a working integration.
 
 ## Layout
 
@@ -201,9 +206,9 @@ but never invoked are not a working integration.
 - `AGENTS.md`, `GEMINI.md` — symlinks to this file, so a harness that reads its own instructions file gets the same guidance from one source.
 - `.github/` — CI (`workflows/validate.yml`, `workflows/release-readiness.yml`) and the PR template (`PULL_REQUEST_TEMPLATE.md`).
 - `scripts/sh/` — portable validators, token budget, adapter checks, and hook scripts; CI runs `validate-skills.sh` and `token-budget.sh`. Everything here is deterministic, free, and safe to run anywhere.
-- `tests/` — everything that observes the library running, split by what a red result means. The **gates** live here directly, where the answer is known in advance: `run-behavioral.sh` with `behavioral/{{name}}.sh`, plus the offline `run-session-start.sh`, `run-plugin-smoke.sh`, and `run-serve-preview.sh`. `fixtures.sh` is the disposable project a live run is pointed at.
-- `tests/optimizing/` — **measurements**, where it is not: `descriptions/test-triggering-on-queries.sh` scoring descriptions against `descriptions/{{phase}}/{{skill}}.json`. A red sheet here is not a regression, and no part of it runs in CI.
-- `tests/harnesses/{{name}}.sh` — one file per CLI, holding only what differs between them: install, invoke, detect, cost. They decide nothing; every runner binds to them.
+- `tests/` — offline tests, where the answer is known in advance and no model runs: `run-session-start.sh`, `run-plugin-smoke.sh`, and `run-serve-preview.sh`.
+- `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
+- The evals lab, `augments-labs/sdlc-skills-evals` — a separate repository holding every live runner, behavioral scenario, description query set, fixture, and harness launcher, plus dated campaign records pinned to a plugin commit. A PR here cites a record; nothing here runs the lab.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
 - `docs/` — repository-only rationale: philosophy, activation, harness support, skill granularity, testing, and the conformance record. Never referenced from a shipped skill; the gate enforces that.
 - `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the four manifest versions agree).
