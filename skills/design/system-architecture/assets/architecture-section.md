@@ -92,7 +92,7 @@ Implementation count alone neither requires nor forbids a seam.
 | --- | --- | --- | --- |
 | {{R-001}} | {{the risk}} | {{data, security, concurrency, resources, cutover, recovery}} | {{the evidence or decision that closes it}} |
 
-## High-risk classification
+### High-risk classification
 
 Classify before implementing, on risk evidence rather than line count. The
 ordinary route is ordinary feature planning and line-by-line review; an
