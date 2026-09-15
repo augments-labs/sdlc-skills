@@ -153,7 +153,7 @@ hidden_paths() {
   hp_git() { git --no-optional-locks -c core.quotePath=true -c core.fsmonitor=false "$@"; }
   hp_index="$(hp_git ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
     hp_others="$(hp_git ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
-    hp_types="$(hp_git diff --name-only --diff-filter=AT -- . "$evidence_out" 2>/dev/null)" ||
+    hp_types="$(hp_git diff --ignore-submodules=dirty --name-only --diff-filter=AT -- . "$evidence_out" 2>/dev/null)" ||
     return 1
   hp_sparse="$(git config --bool core.sparseCheckout 2>/dev/null)"
   printf '%s\n' "$hp_index" | LC_ALL=C grep -E '^([a-z]|S) ' | while IFS= read -r hp_line; do
