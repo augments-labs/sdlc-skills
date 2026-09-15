@@ -254,9 +254,10 @@ fi
 # --- working tree -------------------------------------------------------------
 # A listing git cannot produce stops the script: an empty one would read as clean.
 # Evidence records leave the three listings, but a discard destroys the ones git
-# does not ignore, so they join the ignored listing below.
-staged="$(git --no-optional-locks diff --cached --name-only -- . "$evidence_out" 2>/dev/null)" &&
-  unstaged="$(git --no-optional-locks diff --name-only -- . "$evidence_out" 2>/dev/null)" &&
+# does not ignore, so they join the ignored listing below. --ignore-submodules=untracked
+# is git's default, stated so that no ignore setting hides a submodule change.
+staged="$(git --no-optional-locks diff --cached --ignore-submodules=untracked --name-only -- . "$evidence_out" 2>/dev/null)" &&
+  unstaged="$(git --no-optional-locks diff --ignore-submodules=untracked --name-only -- . "$evidence_out" 2>/dev/null)" &&
   untracked="$(git --no-optional-locks ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
   evidence="$( { git --no-optional-locks diff --cached --name-only -- .sdlc-skills/evidence &&
     git --no-optional-locks ls-files --others --modified --exclude-standard -- .sdlc-skills/evidence; } 2>/dev/null | LC_ALL=C sort -u)" || {
