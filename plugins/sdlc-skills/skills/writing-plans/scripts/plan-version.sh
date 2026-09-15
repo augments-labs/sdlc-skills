@@ -21,7 +21,8 @@ order. Read-only; writes nothing.
 Exit codes:
   0  version printed
   2  usage error, the index or a listed task file is missing, or a task row
-     does not parse: text after its state label, or an unlisted state
+     does not parse: indented, missing its backticked file, text after its
+     state label, or an unlisted state
   3  git is not on PATH
 USAGE
 }
@@ -40,14 +41,15 @@ index="$dir/00-index.md"
 # The task file is the backticked .md token just before the state label.
 states='todo|in progress|done|done with concerns|blocked|needs context|cancelled|superseded'
 task_files=$(sed -nE 's/^- \[[ xX]\] .*`([^`]+\.md)`[^`]*`('"$states"')`[[:space:]]*$/\1/p' "$index")
-# Every checkbox row that names a backticked .md file is a task row. One that
-# fails to parse would otherwise drop its task out of the version silently.
-candidates=$(grep -E '^- \[[ xX]\] .*`[^`]+\.md`' "$index")
+# A checkbox line, at any indentation, is a task row when it ends in a state
+# label or opens with a backticked ID followed by another backticked token. One
+# that fails to parse would otherwise drop its task out of the version silently.
+candidates=$(grep -E '\[[ xX]\]([[:space:]]+`[^`]+`.*`[^`]+`|.*`('"$states"')`[[:space:]]*$)' "$index")
 rows=$(printf '%s\n' "$candidates" | grep -c .)
 parsed=$(printf '%s\n' "$task_files" | grep -c .)
 if [ "$parsed" -eq 0 ] || [ "$parsed" -ne "$rows" ]; then
   echo "Error: $index has a task row that does not read - [ ] \`ID\` — title · \`file.md\` · \`state\`, with nothing after the state:" >&2
-  printf '%s\n' "$candidates" | grep -vE '`[^`]+\.md`[^`]*`('"$states"')`[[:space:]]*$' | sed 's/^/  /' >&2
+  printf '%s\n' "$candidates" | grep -vE '^- \[[ xX]\] .*`[^`]+\.md`[^`]*`('"$states"')`[[:space:]]*$' | sed 's/^/  /' >&2
   exit 2
 fi
 while IFS= read -r f; do
