@@ -26,9 +26,10 @@ Build it from `dispatching-parallel-agents`' dispatch packet — scope, explicit
 - **Authority boundary** — the worker may change only its owned task state. It
   reports raw diff, authorized checkpoint commits (or none), result revision,
   and evaluator output; subdispatch is prohibited unless the packet explicitly
-  suballocates scope, capacity, data/egress, and reconciliation. The coordinator
-  alone accepts the result and appends the external execution ledger/queue;
-  neither party mutates the normative plan.
+  suballocates scope, capacity, data/egress, and reconciliation. It verifies and
+  returns its report; review and branch finishing stay with the coordinator. The
+  coordinator alone accepts the result and appends the external execution
+  ledger/queue; neither party mutates the normative plan.
 - **Attempt lifecycle** — bind attempt ID, terminal deadline, timeout/cancel
   owner/action, process/effect boundary, and report location. Failure/deadline
   enters cancellation-requested until worker, descendants, and effects are
