@@ -122,12 +122,13 @@ mode; switching needs the user's direct answer.
 
 ## Step 5: Finish the plan
 
-The last `done` closes the loop, not the plan. It opens no PR. In the
-authoritative workspace, in order:
+The last `done` closes the loop, not the plan. In the task workspace recorded
+in Step 2, in order:
 
 1. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`: the index's
-   `Acceptance` check plus every task evaluator, on the exact integrated
-   revision. Task ledgers are not evidence for this state.
+   `Acceptance` check plus every task evaluator, on the HEAD that combines every
+   task (`per task`: the base after the last integration). Task ledgers are not
+   evidence for this state.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision.
    Reading the diff yourself is not this step.
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
@@ -170,7 +171,6 @@ authoritative workspace, in order:
   decision ledger row for the printed version, the workspace's base, HEAD, and
   dirty state through `using-git-worktrees`, the execution ledger, and whether
   each `done` row still matches the current revision.
-- All tasks already `done` on resume: go to Step 5. A done ledger is no
-  evidence that its three steps ran.
+- All tasks already `done` on resume: go to Step 5.
 - Reality contradicts the plan: normative change → proposed successor and
   direct reapproval; runtime facts → execution ledger only.

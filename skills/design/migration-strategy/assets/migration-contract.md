@@ -22,9 +22,10 @@ placeholder; remove an inapplicable row only with a recorded rationale.
 - **Independent challenge coverage:** `{{source/domain and operations/data roles;
   each omitted role has skip ID, rationale/evidence, owner, expiry/revisit,
   compensating challenge, and approval}}`
-- **Independent challenge contract:** `{{role IDs, terminal deadlines,
-  timeout/cancel owners/actions, required reports and verdicts; actual attempt
-  receipts belong in the External challenge ledger}}`
+- **Independent challenge contract:** `{{role IDs, terminal deadlines, and
+  timeout/cancel owners/actions; each report uses the shipped migration
+  challenger prompt and its clear, revise, or inconclusive verdict; actual
+  attempt receipts belong in the External challenge ledger}}`
 - **External challenge ledger:** `{{reviewer-owned location; dispatch IDs,
   predecessor/successor lineage, cancellation-requested/quiescent state,
   quarantined partials, succeeded/failed/timed-out/cancelled outcomes, reports,

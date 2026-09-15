@@ -2,8 +2,9 @@
 
 Create a mutable pre-identity draft, then issue this immutable descriptor before
 dispatch and freeze the candidate while reviewers work. Store it and reports
-outside the candidate workspace. Any later field change creates a successor
-descriptor and new invocation. This template is never copied into that workspace.
+under `.sdlc-skills/evidence/`, which the content digest leaves out, or
+outside the workspace. Any later field change creates a successor descriptor
+and new invocation. Never copy this template anywhere else in the workspace.
 
 ## Identity
 
@@ -18,8 +19,10 @@ descriptor and new invocation. This template is never copied into that workspace
 - **Intended base:** `{{immutable revision and freshness}}`
 - **Result identity:** `{{full HEAD/checkpoint/integrated revision, or full
   working-tree digest; never a shortened display prefix}}`
-- **Verification state identity:** `{{exact value from completion evidence;
-  must equal Result identity byte-for-byte}}`
+- **Verification state identity:** `{{the value the verification ledger
+  recorded: in checkpoint-range and integrated-result modes, the full revision
+  captured with state-identity.sh --quiet --committed; in working-tree mode,
+  the digest from --quiet; either way equal to Result identity byte-for-byte}}`
 - **Review-input identity:** `{{immutable identity over result/base, requirement
   and contract versions, complete inventory, evidence set/freshness, deviations,
   and every bound external state supplied to reviewers}}`
@@ -31,12 +34,13 @@ descriptor and new invocation. This template is never copied into that workspace
   and the state it covers. A terminal handoff has no pending caller step.}}`
 - **Review history:** `{{delivery task, agreed scope and acceptance, prior rounds
   and candidate identities, stable causal finding IDs, dispositions/evidence,
-  and remaining finite repair budget. Preserve across successor descriptors;
-  changing the candidate or reviewer does not start a new delivery task.}}`
+  and the repair budget and rounds used against it. Preserve across successor
+  descriptors; changing the candidate or reviewer does not start a new delivery
+  task.}}`
 - **Design/migration/assurance contracts:** `{{exact versions or N/A reasons}}`
 - **Raw verification evidence:** `{{commands, outputs, state, timestamps}}`
-- **Review artifacts:** `{{reviewer-owned paths outside the candidate workspace,
-  or "returned directly"}}`
+- **Review artifacts:** `{{reviewer-owned paths under .sdlc-skills/evidence/ or
+  outside the candidate workspace, or "returned directly"}}`
 - **Artifact controls:** `{{data class, access/storage/egress authority,
   retention/expiry, exact cleanup targets/effects/recoverability, cleanup
   authority, and disposition}}`
@@ -75,7 +79,8 @@ use the full immutable revision alone. Working-tree mode uses the full tree
 digest alone while recording HEAD/base separately. Never concatenate or prefix
 the report's candidate value with labels or a second identity.
 
-Stop candidate writers before computing the result identity. Compare it with
+Stop the writers this task started before computing the result identity;
+another owner's writer keeps review pending. Compare it with
 the exact state identity carried by every relied-on verification row. Any
 mismatch or later mutation invalidates the evidence and returns the frozen state
 to `verification-before-completion`; never attach evidence from one identity to another.

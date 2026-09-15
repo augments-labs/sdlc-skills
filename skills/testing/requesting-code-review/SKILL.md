@@ -24,7 +24,8 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 ## Step 1: Verify and freeze
 
-1. Stop anything still writing to the candidate.
+1. Stop writers this task started; report any other writer to its owner and
+   keep review pending until it stops.
 2. Consume the caller's evidence ledger for the frozen state and its raw
    results. Reuse each row whose candidate, bound inputs/environment, gate
    requirements, and evidence freshness still match. Never rerun a matching
@@ -166,6 +167,3 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 - Asking a reviewer to mutate the frozen candidate; destructive challenge runs
   only in a reviewer-owned copy or against retained evidence.
 - Filling incompatible high-risk roles without a direct recorded exception.
-- Applying fixes while review continues, so nobody reviewed one stable candidate.
-- Writing receipts into the frozen candidate creates a new candidate and voids
-  the verdict.

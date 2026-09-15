@@ -101,7 +101,7 @@ Trace real operations rather than asserting the model works.
 
 Never present a named future evaluator as though it had already run.
 
-## High-risk classification
+### High-risk classification
 
 Classify before implementing, on risk evidence rather than line count. The
 ordinary route is ordinary feature planning and line-by-line review; an

@@ -19,7 +19,8 @@ or comment as a verdict.
 
 ## Step 1: Freeze and model
 
-1. Stop anything still writing to the candidate.
+1. Stop writers this task started; report any other writer to its owner and
+   keep review pending until it stops.
 2. Reuse a current `requesting-code-review` descriptor, or invoke that skill
    and fill its review-candidate descriptor.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the exact-state
@@ -47,14 +48,17 @@ or comment as a verdict.
    Never exploit shared or production state without exact, direct authority.
 7. Missing or stale gate: record a blocker and go to Step 4. Do not work
    around it.
-8. Fill `assets/security-report.md` after tracing, with revision-bound
-   findings. Fix = the smallest change that closes the path. Sensitive
-   evidence = redacted location or digest, never the value.
+8. Write each traced finding (source, propagation, sink) to a working note at
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/security-notes.md`, never
+   into the report template. Fix = the smallest change that closes the path.
+   Sensitive evidence = a redacted location or digest, never the value.
 
 ## Step 3: Verdict
 
-1. Include `assets/security-report.md` when you send the independent
-   auditor's instructions: dispatch per `dispatching-parallel-agents` Step 2.
+1. Send the blank `assets/security-report.md` when you dispatch the
+   independent auditor's instructions per `dispatching-parallel-agents` Step 2
+   — never your working note or a filled copy. Only the auditor fills the
+   report, `Verdict` included.
    Never self-certify: a labelled self-audit never issues `security clear`.
 2. Only the auditor's terminal result counts; a running, failed, or cancelled
    audit leaves the verdict pending.

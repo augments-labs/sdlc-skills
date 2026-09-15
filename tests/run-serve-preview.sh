@@ -84,6 +84,10 @@ test_copy() { # $1 = path to the serve.py copy under test
   check "no key is refused" "$code" "403"
   code="$(curl -s -o /dev/null -w '%{http_code}' "$base?key=deadbeef")"
   check "wrong key is refused" "$code" "403"
+  headers="$(curl -s -D - -o /dev/null "$base" | tr -d '\r')"
+  case "$headers" in *[Ss]et-[Cc]ookie:*) bad "a refusal with no key sets no cookie" ;; *) ok "a refusal with no key sets no cookie" ;; esac
+  headers="$(curl -s -D - -o /dev/null "$base?key=deadbeef" | tr -d '\r')"
+  case "$headers" in *[Ss]et-[Cc]ookie:*) bad "a refusal with a wrong key sets no cookie" ;; *) ok "a refusal with a wrong key sets no cookie" ;; esac
 
   headers="$(curl -s -D - -o "$fixture/body" "$url")"
   check "full key URL serves the page" "$(cat "$fixture/body")" "<h1>preview</h1>"

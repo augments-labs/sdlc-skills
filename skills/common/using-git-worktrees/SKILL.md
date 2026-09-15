@@ -8,8 +8,8 @@ NEVER START REPO EDITS IN A SHARED CHECKOUT — one where Step 1 reports
 `git-dir` equal to `common-dir` — WHATEVER BRANCH IT IS ON. Create or enter a
 dedicated workspace — a git worktree unless the user or project says otherwise —
 *before* the first edit, unless the user explicitly okayed the current checkout.
-Writing the `.sdlc-skills/` artifact trail (briefs, specs, designs, plans) is
-not a repo edit here; product code, tests, and project gates are.
+Writing anything under `.sdlc-skills/` is not a repo edit here; product code,
+tests, and project gates are.
 </EXTREMELY-IMPORTANT>
 
 # Using Git Worktrees
@@ -19,8 +19,6 @@ down what you found there before you change anything.
 
 ## When to use
 
-- You are about to edit files, implement a feature/fix/refactor, execute a plan, or dispatch agents.
-- Runtime or review isolation matters: parallel agents, risky changes, separate ports, databases, fixtures, or long-running app state.
 - **Skip creation** when the user explicitly says to stay, or Step 1 confirms
   a linked worktree owned by this task or the harness. Reuse its current workspace
   and baseline record; retain Step 5 checkpoints and handoff. Skip read-only work.
@@ -29,7 +27,7 @@ down what you found there before you change anything.
 
 Open `assets/workspace-record.md` before the first command. Fill each section as its step runs.
 
-1. Run this. Do not judge the checkout from the prompt or the path name:
+1. Run this:
 
    ```bash
    git rev-parse --show-toplevel
@@ -50,12 +48,13 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    task, or pre-existing/user-owned/shared/host-owned. Unknown → second
    column. It blocks cleanup. Never stash dirty state you do
    not own.
-5. Planning happened in another workspace → rerun 1 before the first product
-   edit. Plan approval says nothing about code isolation.
+5. Planned in another workspace → rerun 1 before the first product edit.
 
 ## Step 2: Prove the base
 
-1. Take the base from direct user or project guidance. Record revision and
+1. Take the base from direct user or project guidance. None → the current
+   branch this task started from, at its recorded revision. Detached HEAD or
+   conflicting guidance → ask for the base and stop. Record revision and
    remote freshness:
 
    ```bash
@@ -85,19 +84,23 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    guidance → harness-native worktree command or session flag (use the name
    above, confirm HEAD is the proven base, skip to Step 4) → a worktree you
    create below.
-3. Choose the directory and prove it is ignored. User-given path wins.
+3. Inside a submodule → stop here. Create an owned branch in the submodule and
+   write an explicit plan for the parent gitlink; never run Steps 3.3–3.5 from
+   the superproject's paths. Otherwise choose the directory and prove it is
+   ignored. User-given path wins.
 
    ```bash
+   [ -z "$(git rev-parse --show-superproject-working-tree)" ] || echo "SUBMODULE: stop; follow the submodule rule"
    root="$(cd "$common_dir/.." && pwd -P)" && cd "$root"   # main checkout root, even from inside a linked worktree
    dir=".worktrees"
    [ -d "$root/worktrees" ] && [ ! -d "$root/.worktrees" ] && dir="worktrees"
-   git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null || echo "NOT IGNORED"
-   git check-ignore -q "$dir" || echo "$dir itself is not ignored"
+   git check-ignore -q "$dir/" || echo "$dir/ is not ignored"
    ```
 
-4. Either line printed → do not edit `.gitignore` in the shared checkout.
-   Exclude locally, then make adding `{{dir}}/` to `.gitignore` the first
-   commit on the task branch:
+4. That line printed → do not edit `.gitignore` in the shared checkout;
+   exclude locally below. Local commit authority recorded (Step 5) → also make
+   adding `{{dir}}/` to `.gitignore` the first commit on the task branch. None
+   recorded → the local exclude alone.
 
    ```bash
    printf '%s/\n' "$dir" >> "$(git rev-parse --git-common-dir)/info/exclude"
@@ -113,8 +116,7 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
 
 6. `worktree add` or `cd` fails on a permission or sandbox boundary → try a
    path the boundary allows and ask the user to confirm it. None works →
-   report and stop. Never edit the shared checkout instead. Submodule → an
-   owned branch and an explicit plan for the parent gitlink.
+   report and stop. Never edit the shared checkout instead.
 
 ## Step 4: Baseline it
 

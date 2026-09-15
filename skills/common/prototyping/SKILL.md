@@ -39,9 +39,12 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 
 ## Step 3: Retain the result, dispose of the code
 
-1. Store the question, evidence, limitations and decision consequences durably.
-   A settled load-bearing choice with no pending caller → **REQUIRED SUB-SKILL:**
-   invoke `architecture-decisions` and apply its entry conditions.
+1. Store the question, evidence, limitations and decision consequences. With a
+   pending caller → return them for its artifact's ledger. With none → write
+   them to `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/prototype.md` unless
+   the user names another path. A settled load-bearing choice with no pending
+   caller → **REQUIRED SUB-SKILL:** invoke `architecture-decisions` and apply
+   its entry conditions.
 2. Return observations to the caller's pending decision. A UI experiment informs
    `ui-ux-design`; it does not select the product direction or authorize its
    implementation. Before scratch cleanup, retain any frame or artifact the
@@ -54,6 +57,13 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
    Otherwise preserve and report cleanup pending.
 4. Never delete pre-existing, shared, user-owned, or ownership-uncertain
    state.
+
+## Gotchas
+
+- A prototype's answer kept only in the conversation dies with the session, and
+  the settled question gets argued again.
+- A probe that wrote outside its registered scratch targets leaves those writes
+  behind when cleanup removes only the registered ones.
 
 ## Common mistakes
 

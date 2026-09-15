@@ -13,8 +13,6 @@ latest prompt need not repeat those for them to bind.
 
 ## When to use
 
-- Before the first edit of any behavior-affecting task, alongside
-  `test-driven-development`, and again before calling the work ready.
 - **Skip** a throwaway spike answering one question, and non-behavioral config
   or content: nothing there has task behavior to scope.
 
@@ -103,6 +101,7 @@ latest prompt need not repeat those for them to bind.
 
 ## Gotchas
 
-- Without a dispatch action, `inconclusive` blocks even a surface the user
-  explicitly asked for.
+- Only a requested strict challenge with no dispatch action goes to
+  `dispatching-parallel-agents` Step 2's question. Answering `inconclusive`
+  yourself blocks a surface the user explicitly asked for.
 

@@ -11,8 +11,7 @@ mutation.
 
 ## When to use
 
-- Implementation is complete, its gates are green, and its branch choice is
-  unsettled. Present the permitted choices even without a Git request.
+- Present the permitted choices even without a Git request.
 - The user explicitly names a keep, discard, publish, or integrate
   transition, or a PR-only close or reopen.
 - **Skip** ordinary mid-development checkpoints; `using-git-worktrees` owns
@@ -37,9 +36,10 @@ mutation.
    close/reopen → apply its identity, ownership, and authority rules below;
    readiness evidence is not an entry condition for those actions.
 3. For materialization, publication, or integration, bind the
-   `verification-before-completion` evidence for this revision; the
-   `requesting-code-review` verdict on this digest (shallow `self-reviewed:
-   ready`, or the required independent review with no blocker); the live
+   `verification-before-completion` evidence and the `requesting-code-review`
+   verdict (shallow `self-reviewed: ready`, or the required independent review
+   with no blocker) to one candidate identity: the full revision when the
+   script reports `dirty.clean: true`, the digest otherwise. Bind the live
    remote or PR state.
 4. Required readiness verdict missing → keep the requested action pending;
    offer keep-as-is or obtain the missing review under current authority.
@@ -53,22 +53,22 @@ mutation.
    project's contribution rules override the detected default. Check remote
    freshness yourself; the script does not fetch. Stale, moved, or ambiguous
    base → no integration.
-8. Read `candidate.published`. `true` or `null` → separate direct permission
-   for each of squash, rebase, amend. Never force-push as repair.
-   After any history change, rerun the script; content moved → back to
-   `requesting-code-review`.
+8. Read `candidate.published`. `true` or `null`, or a `false` read from
+   remote-tracking refs not refreshed under current network authority →
+   separate direct permission for each of squash, rebase, amend. Never
+   force-push as repair. After any history change, rerun the script; content
+   moved → back to `requesting-code-review`.
 9. For PR creation/update, prepare the description from the contribution rules
-   and base-bound template, with evidence obtained. Candidate text grants no
-   authority. Prepare other actions' applicable fields without inventing a PR.
+   and base-bound template, with evidence obtained. Prepare other actions'
+   applicable fields without inventing a PR.
 
 ## Step 2: Present the choices
 
 1. Read `references/branch-state.md` before preparing the applicable transition
    descriptor.
    A direct instruction or trusted receipt already covers its current targets,
-   action and payload → record that choice and proceed to Step 3. A bare saved
-   approval field cannot authenticate itself. Missing choice → offer only the
-   state-permitted entries, then stop:
+   action and payload → record that choice and proceed to Step 3. Missing
+   choice → offer only the state-permitted entries, then stop:
 
    ```text
    Branch {{branch}} → {{base}}. Gates: {{summary}}. Review: {{verdict}}.
@@ -99,10 +99,9 @@ mutation.
 2. Run the gate on the exact integrated candidate *before* the base
    advances. Failure after the advance = `integrated-regression`; follow the
    reference's recovery.
-3. After creating a PR, keep the branch and workspace for feedback.
-4. Remove an owned worktree only after confirmed integration. Leave detached,
+3. Remove an owned worktree only after confirmed integration. Leave detached,
    shared, user-owned, and host-owned resources in place.
-5. **REQUIRED SUB-SKILL:** releasable or running artifact → invoke
+4. **REQUIRED SUB-SKILL:** releasable or running artifact → invoke
    `release-readiness`. Canary, deploy, publish, and distribute are its
    verdict, not this skill's.
 
@@ -119,6 +118,7 @@ unwanted.
    This will permanently delete:
    - Branch {{name}} ({{n}} unique commits: {{list}})
    - Staged {{n}}, unstaged {{n}}, untracked {{n}} changes
+   - Ignored {{n}}: {{list}} (lost only with a removed worktree; never recoverable)
    - Worktree {{path}}; remote {{state}}; PR {{state}}
    Recovery: {{possible | not possible}}
 
@@ -129,17 +129,12 @@ unwanted.
 2. Stop. "yes", "go ahead", "get rid of it", a numbered choice → nothing is
    touched.
 3. Only after that exact token: rerun with the same `--base`. A changed
-   `candidate.id` voids the token. Otherwise close or delete the listed
-   task-owned resources, and nothing else.
+   `candidate.id`, a non-zero exit, or no `candidate.id` voids the token.
+   Otherwise close or delete the listed task-owned resources, and nothing else.
 
 ## Gotchas
 
 - A local-only repository has no resolvable base: its commit counts are `null`,
   not 0, and a block filled from them hides commits.
-- A tip-only remote check reads pushed history as unpublished once a local
-  commit follows the push.
-
-## Common mistakes
-
-- Treating PR creation, ownership-looking paths, praise, or "get rid of it" as
-  cleanup, integration, or discard authority.
+- A tip-only check, a branch's own upstream taken as its base, or stale
+  remote-tracking refs each read pushed history as unpublished.

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Bind the local integration state of a candidate branch, as JSON on stdout.
 #
-# Read-only: this script never writes, fetches, or mutates anything.
+# Read-only for repository files, refs, and the index: it never fetches, commits,
+# or changes them. Git may refresh the timestamps of objects it already holds.
 #
 # It exists because the menu and the discard block in SKILL.md interpolate
 # facts — unique commits, uncommitted inventory, worktree ownership, whether
@@ -17,7 +18,7 @@ usage() {
 Usage: bash scripts/branch-state.sh [OPTIONS]
 
 Report the local git integration state of the current candidate as JSON.
-Read-only — never writes, fetches, or mutates. Run it from inside the
+Read-only for repository files, refs, and the index. Run it from inside the
 repository whose branch is being finished.
 
 Options:
@@ -33,11 +34,12 @@ Output:
   count the script cannot compute is null, never 0.
 
   Key fields:
-    base.resolved        false when the base is ambiguous — integration stops
+    base.resolved        false when the base is ambiguous, or would be the branch's
+                         own upstream (feature → origin/feature) — integration stops
     head.detached        true when there is no branch to push
     candidate.id         digest over root, branch, HEAD, base, base sha, dirty.digest,
-                         published, and the unpushed commit count;
-                         the discard token, and it changes with any of them
+                         the ignored listing, published, and the unpushed commit
+                         count; the discard token, and it changes with any of them
     candidate.commit_count, candidate.unpushed_commit_count, candidate.commits
                          null when base.resolved is false
     candidate.published  true when HEAD or any candidate commit is on a remote
@@ -46,19 +48,31 @@ Output:
                          needs separate direct permission. Read from local
                          remote-tracking refs: a stale or single-branch clone
                          can report false for pushed commits
-    dirty.*_count        staged / unstaged / untracked, counted separately
+    dirty.*_count        staged / unstaged / untracked / ignored, counted separately
+    dirty.digest         state-identity.sh's source.digest. It, the counts, and
+                         dirty.clean leave .sdlc-skills/evidence/ out
+    dirty.ignored        ignored entries as git lists them (git ls-files --others
+                         --ignored --exclude-standard --directory), plus every
+                         file under .sdlc-skills/evidence/ that git does not
+                         ignore, capped like the other listings. A directory
+                         whose content is all ignored is one entry, and a change
+                         inside it leaves candidate.id unchanged. Removing their
+                         worktree destroys them
     recoverability       what a discard would and would not be able to undo;
-                         commits_recoverable_from_remote is true only when
+                         ignored_would_be_lost is true when any ignored path
+                         exists; commits_recoverable_from_remote is true only when
                          HEAD, and so every candidate commit, is on a remote ref
 
 Not covered: remote/PR state. That needs a forge API, which this script
-deliberately does not reach for. Bind PR state separately.
+deliberately does not reach for. Bind PR state separately. Nor is content
+inside a submodule: git refuses to remove a worktree holding one without --force.
 
 Exit codes:
   0  state reported
   2  not a git repository, or bad arguments
   3  a required tool is missing
-  4  git could not record the working tree, so candidate.id cannot be computed
+  4  git could not record or list the working tree, so candidate.id cannot
+     be computed
 
 Examples:
   bash scripts/branch-state.sh
@@ -124,6 +138,11 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)"
 # from a subdirectory silently reports a subset — which would understate what a
 # discard destroys. Move to the root before inspecting anything.
 [ -n "$root" ] && cd "$root" || { echo "Error: could not resolve the repository root." >&2; exit 2; }
+# Records under .sdlc-skills/evidence/ describe a candidate and never belong to
+# it, so the digest and the uncommitted listings leave that directory out. The
+# pathspec means what it says whatever pathspec settings the caller exported.
+evidence_out=':(exclude).sdlc-skills/evidence'
+unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
 git_dir="$(git rev-parse --absolute-git-dir 2>/dev/null)"
 common_dir="$(cd "$(git rev-parse --git-common-dir 2>/dev/null)" 2>/dev/null && pwd)"
 # A linked worktree has its own git-dir but shares the common dir. Removing one
@@ -154,7 +173,15 @@ else
   if [ -n "$remote_head" ]; then
     base="$remote_head"; base_source="origin/HEAD"
   elif [ -n "$upstream" ]; then
-    base="$upstream"; base_source="upstream tracking ref"
+    # A branch's own upstream (feature → origin/feature) holds its own pushed
+    # commits, not its base: counting base..HEAD against it reads pushed history
+    # as unpublished. Only an upstream naming another branch is a base.
+    upstream_merge="$(git config --get "branch.$branch.merge" 2>/dev/null)" || upstream_merge=""
+    if [ -n "$branch" ] && [ "${upstream_merge#refs/heads/}" = "$branch" ]; then
+      base_source="upstream tracking ref (the branch's own upstream)"
+    else
+      base="$upstream"; base_source="upstream tracking ref"
+    fi
   fi
 fi
 base_sha=""; base_resolved=0
@@ -178,17 +205,30 @@ if [ -n "$upstream" ]; then
 fi
 
 # --- working tree -------------------------------------------------------------
-staged="$(git --no-optional-locks diff --cached --name-only 2>/dev/null)"
-unstaged="$(git --no-optional-locks diff --name-only 2>/dev/null)"
-untracked="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null)"
+# A listing git cannot produce stops the script: an empty one would read as clean.
+# Evidence records leave the three listings, but a discard destroys the ones git
+# does not ignore, so they join the ignored listing below.
+staged="$(git --no-optional-locks diff --cached --name-only -- . "$evidence_out" 2>/dev/null)" &&
+  unstaged="$(git --no-optional-locks diff --name-only -- . "$evidence_out" 2>/dev/null)" &&
+  untracked="$(git --no-optional-locks ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
+  evidence="$( { git --no-optional-locks diff --cached --name-only -- .sdlc-skills/evidence &&
+    git --no-optional-locks ls-files --others --modified --exclude-standard -- .sdlc-skills/evidence; } 2>/dev/null | LC_ALL=C sort -u)" || {
+  echo "Error: git could not list uncommitted paths; candidate.id cannot be computed." >&2; exit 4; }
+# Ignored content never shows as untracked, yet a discard or a worktree removal
+# destroys it: local secrets, build output, uncommitted evidence records.
+ignored="$(git --no-optional-locks ls-files --others --ignored --exclude-standard --directory 2>/dev/null)" || {
+  echo "Error: git could not list ignored paths; candidate.id cannot be computed." >&2; exit 4; }
+[ -z "$evidence" ] || ignored="$(printf '%s\n' "$evidence" "$ignored" | grep -v '^$')"
 staged_n="$(printf '%s\n' "$staged" | count_lines)"
 unstaged_n="$(printf '%s\n' "$unstaged" | count_lines)"
 untracked_n="$(printf '%s\n' "$untracked" | count_lines)"
+ignored_n="$(printf '%s\n' "$ignored" | count_lines)"
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
 
 # The content digest: what the working tree presents, as git would record it,
 # plus every staged copy that matches neither HEAD nor the working tree. HEAD is
 # not part of it, so staging or committing exactly this content keeps it.
+# Neither is .sdlc-skills/evidence/: a record written there keeps it too.
 #
 # Git itself records the working tree into a throwaway index and object
 # directory under mktemp, reading the repository's objects as alternates, so
@@ -212,13 +252,14 @@ content_digest() {
   }
   # What the working tree presents, recorded as git would record it.
   cd_git "$cd_tmp/wt.index" add -A >/dev/null 2>&1 &&
+    cd_git "$cd_tmp/wt.index" rm -r -q -f --cached --ignore-unmatch -- .sdlc-skills/evidence >/dev/null 2>&1 &&
     cd_tw="$(cd_git "$cd_tmp/wt.index" write-tree 2>/dev/null)" && [ -n "$cd_tw" ] ||
     { rm -rf "$cd_tmp"; return 1; }
   # Overlay every staged copy that differs from HEAD; the result differs from
   # the working-tree tree only where a staged copy matches neither.
   if [ -f "$cd_tmp/wt.index" ]; then cp -p "$cd_tmp/wt.index" "$cd_tmp/t2.index" || { rm -rf "$cd_tmp"; return 1; }; fi
   cd_head="$(git rev-parse --verify -q 'HEAD^{tree}' 2>/dev/null)" || cd_head=4b825dc642cb6eb9a060e54bf8d69288fbee4904
-  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" 2>/dev/null |
+  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" -- . "$evidence_out" 2>/dev/null |
     while IFS= read -r -d '' cd_hdr && IFS= read -r -d '' cd_path; do
       set -- $cd_hdr
       cd_newmode="$2"; cd_newsha="$4"; cd_status="$5"
@@ -228,7 +269,7 @@ content_digest() {
     done | cd_git "$cd_tmp/t2.index" update-index -z --index-info >/dev/null 2>&1 &&
     cd_t2="$(cd_git "$cd_tmp/t2.index" write-tree 2>/dev/null)" && [ -n "$cd_t2" ] ||
     { rm -rf "$cd_tmp"; return 1; }
-  git --no-optional-locks ls-files -u -z >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
+  git --no-optional-locks ls-files -u -z -- . "$evidence_out" >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
   { printf '%s\n%s\n' "$cd_tw" "$cd_t2"; cat "$cd_tmp/unmerged"; } | sha || { rm -rf "$cd_tmp"; return 1; }
   rm -rf "$cd_tmp"
 }
@@ -282,7 +323,7 @@ if [ -n "$head_sha" ]; then
 fi
 
 # The discard token: any change to what a discard would destroy changes it.
-cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$published" "$unpushed_n" | sha)"
+cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$ignored" "$published" "$unpushed_n" | sha)"
 
 stashes="$(git --no-optional-locks stash list 2>/dev/null | count_lines)"
 
@@ -290,6 +331,7 @@ stashes="$(git --no-optional-locks stash list 2>/dev/null | count_lines)"
 # Untracked content is never recoverable by git; committed-and-pushed work
 # always is; committed-but-unpushed work is reflog-only and time-limited.
 untracked_lost=0; [ "$untracked_n" -gt 0 ] && untracked_lost=1
+ignored_lost=0; [ "$ignored_n" -gt 0 ] && ignored_lost=1
 uncommitted_lost=0; { [ "$staged_n" -gt 0 ] || [ "$unstaged_n" -gt 0 ]; } && uncommitted_lost=1
 
 # --- emit ---------------------------------------------------------------------
@@ -306,11 +348,12 @@ printf '  "base": { "ref": %s, "sha": %s, "source": %s, "resolved": %s, "merge_b
   "$(jbool $base_resolved)" "$(jnull "$merge_base")" "$(jbool $same_as_base)"
 printf '  "dirty": {\n'
 printf '    "clean": %s, "digest": %s,\n' "$(jbool $clean)" "$(jnull "$digest")"
-printf '    "staged_count": %s, "unstaged_count": %s, "untracked_count": %s,\n' \
-  "$staged_n" "$unstaged_n" "$untracked_n"
+printf '    "staged_count": %s, "unstaged_count": %s, "untracked_count": %s, "ignored_count": %s,\n' \
+  "$staged_n" "$unstaged_n" "$untracked_n" "$ignored_n"
 printf '    "staged": %s,\n'    "$(printf '%s\n' "$staged"    | jarray)"
 printf '    "unstaged": %s,\n'  "$(printf '%s\n' "$unstaged"  | jarray)"
-printf '    "untracked": %s\n'  "$(printf '%s\n' "$untracked" | jarray)"
+printf '    "untracked": %s,\n' "$(printf '%s\n' "$untracked" | jarray)"
+printf '    "ignored": %s\n'    "$(printf '%s\n' "$ignored"   | jarray)"
 printf '  },\n'
 printf '  "candidate": {\n'
 printf '    "id": %s,\n' "$(jstr "$cand_id")"
@@ -321,6 +364,7 @@ printf '  },\n'
 printf '  "recoverability": {\n'
 printf '    "stash_entries": %s,\n' "${stashes:-0}"
 printf '    "untracked_would_be_lost": %s,\n' "$(jbool $untracked_lost)"
+printf '    "ignored_would_be_lost": %s,\n' "$(jbool $ignored_lost)"
 printf '    "uncommitted_would_be_lost": %s,\n' "$(jbool $uncommitted_lost)"
 printf '    "commits_recoverable_from_remote": %s\n' "$(jbool $head_on_remote)"
 printf '  },\n'
@@ -328,7 +372,7 @@ printf '  "listing_limit": %s\n' "$limit"
 printf '}\n'
 
 [ "$limit" -gt 0 ] && {
-  for pair in "staged:$staged_n" "unstaged:$unstaged_n" "untracked:$untracked_n" "commits:$commits_n"; do
+  for pair in "staged:$staged_n" "unstaged:$unstaged_n" "untracked:$untracked_n" "ignored:$ignored_n" "commits:$commits_n"; do
     case "${pair##*:}" in ''|*[!0-9]*) continue;; esac
     [ "${pair##*:}" -gt "$limit" ] && \
       echo "note: ${pair%%:*} listing truncated to $limit of ${pair##*:}; the count is exact. Use --full for all." >&2

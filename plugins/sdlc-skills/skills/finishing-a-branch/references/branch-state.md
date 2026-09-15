@@ -76,10 +76,11 @@ bind/reverify/re-review it, and obtain a new choice before any further history,
 remote, PR, or integration mutation. Rejection never permits bypass.
 
 Create only the commit set included in the direct transition choice—never amend,
-squash, rebase, or mix cleanup implicitly. Prove each created commit tree and
-the complete commit set materialize the reviewed digest with no omitted or
-unrelated content. If that equivalence cannot be shown, preserve the working
-tree and stop.
+squash, rebase, or mix cleanup implicitly. The created commit set holds the
+reviewed state only when a rerun of `scripts/branch-state.sh` reports
+`dirty.clean: true` and either `dirty.digest` equals the reviewed digest or
+`head.sha` equals the reviewed revision. Otherwise preserve the working tree
+and stop.
 
 ## Integrate locally
 
@@ -100,10 +101,10 @@ tree and stop.
 
 ## Commit exact candidate and keep
 
-Materialize the reviewed working tree through the procedure above. Verify the
-full created commit set and HEAD tree reproduce the reviewed digest and that no
-unrelated or missing path entered it. Do not push, open a PR, advance a base, or
-clean anything. Report the exact branch, commits, and workspace as
+Materialize the reviewed working tree through the procedure above, including
+its `dirty.clean: true` check, and confirm that no created commit adds an
+unrelated path. Do not push, open a PR, advance a base, or clean anything.
+Report the exact branch, commits, and workspace as
 `materialized-kept`. A later transition refreshes candidate/base/remote state
 and requires its own direct choice; the commit choice grants nothing else.
 
@@ -182,10 +183,13 @@ branch/HEAD and workspace path so work remains findable.
 
 ## Owned cleanup
 
-Reconfirm integration and resource ownership. Capture paths before changing
-directory; remove an owned worktree from outside it, then use safe branch
-deletion. Do not prune, force-delete, remove remotes, or clean adjacent
-workspaces unless each action and target was explicitly authorized.
+Reconfirm integration and resource ownership. Before removing a worktree, rerun
+`scripts/branch-state.sh --full` inside it. A non-zero exit, or a non-empty
+`dirty.ignored` the cleanup choice does not name, preserves the worktree; report
+it. Capture paths before changing directory; remove an owned worktree from
+outside it, then use safe branch deletion. Do not prune, force-delete, remove
+remotes, or clean adjacent workspaces unless each action and target was
+explicitly authorized.
 
 Detached, host-owned, shared, or ownership-uncertain workspaces are reported to
 their owner and left intact.
@@ -193,6 +197,9 @@ their owner and left intact.
 ## Confirmed discard
 
 The confirmation token must exactly match the displayed candidate inventory.
+The inventory includes the ignored listing (`dirty.ignored`), which no recovery
+restores; a listed ignored directory is confirmed whole. A removal git refuses
+without `--force` stops the discard; report it.
 Re-resolve state immediately before deletion; any delta invalidates the token
 and requires a new inventory. Include every open/closed PR, exact head/base,
 remote ref, and whether the requested discard closes it. An unlisted, merged,

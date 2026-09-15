@@ -40,6 +40,13 @@ event and decision trail; do not invent a code defect to enter this skill.
 3. Fill `Risk-reduction claim` per action: prevent, detect earlier, limit
    blast radius, or recover faster, with baseline, target, horizon, residual
    risk. Never claim recurrence is impossible.
+4. Challenge the draft. Dispatch the template's independent escape-path
+   challenger per `dispatching-parallel-agents` Step 2; a material incident
+   without one needs the omission the `Expected reviewers` field requires.
+   Disposition every finding.
+5. Issue the immutable analysis with its `External lifecycle ledger` to the
+   user-set path or the template's path, under current storage authority, and
+   record its identity per the template. In-repository record → a new candidate.
 
 ## Step 3: Propose and get the actions accepted
 
@@ -48,7 +55,7 @@ event and decision trail; do not invent a code defect to enter this skill.
 2. Present:
 
    ```text
-   Post-mortem {{identifier}}
+   Post-mortem {{identity}} — {{path}}
    Impact: {{one line}}  Structural cause: {{one line}}  Escaped gate: {{one line}}
    Actions: {{each with owner and date}}
 
@@ -80,10 +87,8 @@ event and decision trail; do not invent a code defect to enter this skill.
    gate ran. Write `effective`, `ineffective`, or `inconclusive`. Reopen on
    either of the last two unless the exact approver rule accepts closure with
    residual risk.
-5. Issue the immutable analysis with its `External lifecycle ledger` to the
-   user-set path or the template default, under current storage authority.
-   In-repository record → a new candidate. Later events → append to the
-   ledger; never edit the issued analysis.
+5. Append every action state, proof, rollout result, and effectiveness verdict
+   to the ledger; never edit the issued analysis.
 
 ## Action states
 
@@ -104,11 +109,6 @@ Let no prose, merge, or local green skip a state.
 
 ## Common mistakes
 
-- A tidy memory-based story with missing raw evidence.
 - “Human error” or “reviewer missed it” instead of the conditions and absent
   gate that allowed the action to escape.
-- A training/promise action with no observable enforcement or effectiveness
-  measure.
-- A regression test that was never shown to fail on the incident case.
-- Closing when code merges rather than when the control is enforced and reviewed.
 - Publishing sensitive incident artifacts without access and retention controls.

@@ -118,6 +118,8 @@ Mirror the external ledger as a checkbox plus its exact state label:
   in the external ledger; do not use `[x] done with concerns`.
 - `[ ] todo`, `[ ] in progress`, `[ ] blocked`, `[ ] needs context`,
   `[ ] cancelled`, and `[ ] superseded` do not count toward completion.
+- Nothing follows the state label; blocker, owner, and next-gate text go in the
+  ledger.
 
 This projection is navigation, not evidence. Normalize it to `[ ] todo` when
 computing the identity. On mismatch, the external ledger wins.
