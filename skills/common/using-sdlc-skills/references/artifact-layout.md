@@ -19,7 +19,7 @@ nothing.
 | `post-mortems/` | post-mortems | yes |
 | `verification/` | assurance matrices | yes |
 | `evidence/` | run records bound to one state | only its `.gitignore` |
-| `handoffs/` | handoff notes | only when safe to share |
+| `handoffs/` | handoff notes and containment records | only when safe to share |
 | `views/` | the generated project view | the project's choice |
 
 Name an artifact `{{YYYY-MM-DD}}-{{topic}}.md`; a plan is a directory with that
@@ -108,8 +108,9 @@ identity it ran on.
 
 `handoffs/` is the durable handoff store:
 `.sdlc-skills/handoffs/{{YYYY-MM-DD}}-{{topic}}.md`. A handoff can carry session
-detail that nobody chose to publish, so commit one only when its reader works
-from another checkout and the content is safe to share.
+detail that nobody chose to publish, so commit a handoff note or a containment
+record only when its reader works from another checkout and the content is
+safe to share.
 
 ## Views
 

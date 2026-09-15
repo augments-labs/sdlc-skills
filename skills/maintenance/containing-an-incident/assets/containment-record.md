@@ -1,7 +1,10 @@
 # Containment record — {{incident-short-name}}
 
 Written when the lever is pulled, not afterwards. Its job is to make the
-mitigation reversible by somebody who was not here.
+mitigation reversible by somebody who was not here. Write it to
+`.sdlc-skills/handoffs/{{YYYY-MM-DD}}-{{topic}}-containment.md` unless the user or
+the incident owner names another place. Commit it only under the handoff
+store's rule.
 
 ## Impact
 
