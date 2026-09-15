@@ -11,7 +11,10 @@ OWNS: {{files/dirs it may edit}}
 DO NOT TOUCH: {{files/dirs owned by other agents, or off-limits}}
 SHARED/GENERATED: {{shared files, generators, outputs, manifests, lockfiles, and their sole integration owner}}
 CHECKPOINTS: {{withheld | repository-edit default or named policy, plus required gate}}
-ROUTE: invoke using-sdlc-skills once from this packet; do not reopen settled scope
+ROUTE: invoke using-sdlc-skills once from this packet; do not reopen settled scope.
+At DONE WHEN, invoke verification-before-completion and return REPORT;
+requesting-code-review, finishing-a-branch, and any push, PR, or merge belong
+to the coordinator.
 SUBDISPATCH: {{prohibited | allocated sub-scope, capacity, data/egress boundary,
 and coordinator/reconciliation owner}}
 START FROM: {{pasted verbatim: the task contract, the exact spec, the failing test name}}
