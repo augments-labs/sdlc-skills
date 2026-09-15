@@ -105,10 +105,13 @@ class PreviewHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):  # quiet: the agent reads JSON records
         pass
 
-    def authorized(self):
+    def key_matches(self):
         query = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
         key = query.get("key", [""])[0]
-        if key and hmac.compare_digest(key, self.server.token):
+        return bool(key) and hmac.compare_digest(key, self.server.token)
+
+    def authorized(self):
+        if self.key_matches():
             return True
         cookie = self.headers.get("Cookie", "")
         for part in cookie.split(";"):
@@ -128,11 +131,14 @@ class PreviewHandler(http.server.BaseHTTPRequestHandler):
         # both are served from this one origin.
         self.send_header("X-Frame-Options", "SAMEORIGIN")
         self.send_header("Content-Security-Policy", "frame-ancestors 'self'")
-        self.send_header(
-            "Set-Cookie",
-            "%s=%s; HttpOnly; SameSite=Strict; Path=/"
-            % (self.server.cookie_name, self.server.token),
-        )
+        # Plant the session cookie only for a request that carried the valid
+        # key. A refusal or any other keyless response never hands it out.
+        if self.key_matches():
+            self.send_header(
+                "Set-Cookie",
+                "%s=%s; HttpOnly; SameSite=Strict; Path=/"
+                % (self.server.cookie_name, self.server.token),
+            )
         self.end_headers()
 
     def refuse(self):

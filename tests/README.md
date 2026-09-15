@@ -35,7 +35,8 @@ session start: valid JSON in each harness's envelope, the canonical router body
 present *verbatim* with its frontmatter stripped, escaping that survives the
 quotes and tables inside it, and the event name echoed back.
 `run-serve-preview.sh` starts each skill's bundled preview server on loopback
-and asserts the auth gate, path confinement, and clean stop. It then runs the
+and asserts the auth gate, that a refused request receives no cookie, path
+confinement, and clean stop. It then runs the
 start and stop commands each skill body documents, as written, against a
 fixture project. Both run in CI.
 `run-plugin-smoke.sh` needs the harness's CLI installed, so it runs locally: it
