@@ -25,9 +25,16 @@ The page carries state, not documents.
 
 ## Step 1: Read the trail
 
-1. Read `.sdlc-skills/` at the project root: `briefs/`, `specs/`,
-   `designs/`, `plans/`, `verification/`, `audits/`, `post-mortems/`. Absent
-   folder → unreached phase.
+1. Resolve the project root: the main checkout, even from a linked task
+   worktree, because the trail and its plan mirrors live there.
+
+   ```bash
+   common="$(git rev-parse --git-common-dir 2>/dev/null)" && root="$(cd "$common/.." && pwd -P)" || root="$PWD"
+   ```
+
+   Read `$root/.sdlc-skills/`: `briefs/`, `specs/`, `designs/`, `plans/`,
+   `verification/`, `audits/`, `post-mortems/`. Absent folder → unreached
+   phase.
 2. No `.sdlc-skills/`, or artifact paths overridden → render the template's
    empty state naming what produces artifacts. Never search the filesystem
    for look-alikes.
@@ -50,15 +57,16 @@ The page carries state, not documents.
 3. Entity-encode every artifact-derived value before inserting: `&` first,
    then `<`, `>`, `"`. Derived values go in as text, never into `href` or
    `src`.
-4. Write exactly one file: `.sdlc-skills/views/index.html`. Create `views/`
-   if missing. No external URLs, no JavaScript, no scratch or backup files.
-   Regeneration recomputes from the trail and rewrites in place; never merge
-   a previous render.
+4. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
+   inside a linked task worktree. Create `views/` if missing. No external
+   URLs, no JavaScript, no scratch or backup files. Regeneration recomputes
+   from the trail and rewrites in place; never merge a previous render.
 
 ## Step 3: Deliver
 
 1. Deliver the file path and offer to serve the page, root `.sdlc-skills/`,
-   entry `views/index.html`. Start it only after the user accepts:
+   entry `views/index.html`. Start it from `$root`, only after the user
+   accepts:
 
    ```bash
    bash scripts/start-server.sh --root .sdlc-skills --entry views/index.html
@@ -80,6 +88,12 @@ The page carries state, not documents.
   preview started.
 - A status request is not consent to a background listener: a preview started
   unasked opens a local port the user never agreed to.
+- From a linked task worktree, the `.sdlc-skills/` beside the worktree's files
+  is absent or an older committed copy: reading it shows a false empty trail,
+  and a view written there changes the candidate digest that a pending
+  verification or review is bound to.
+- In a checkout that is itself the candidate, a view written under a trail the
+  project does not ignore still changes that checkout's digest.
 
 ## Common mistakes
 
