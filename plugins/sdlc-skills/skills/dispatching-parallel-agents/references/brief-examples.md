@@ -50,7 +50,7 @@ WORKSPACE: {{owned auth-fix branch/workspace}}
 OWNS: tests/auth/expiry_test.go, src/auth/expiry.go
 DO NOT TOUCH: anything under tests/billing/ or src/billing/ — another agent owns it.
 SHARED/GENERATED: no shared output; the coordinator alone owns any manifest or lockfile update.
-CHECKPOINTS: {{withheld | repository-edit default or named policy, plus required gate}}
+CHECKPOINTS: {{withheld | the coordinator's recorded local commit authority, quoted from its workspace record, plus required gate}}
 ROUTE: invoke using-sdlc-skills once from this packet; do not reopen settled scope.
 START FROM: failing assertion, verbatim:
   expected status 401, got 200 for a token expired 1 minute ago
@@ -93,7 +93,7 @@ WORKSPACE: {{owned export-fix branch/workspace}}
 OWNS: src/export/
 DO NOT TOUCH: src/settings/ or anything UI-facing — another agent owns a separate fix there.
 SHARED/GENERATED: the coordinator alone owns shared manifests, generated output, and lockfiles.
-CHECKPOINTS: {{withheld | repository-edit default or named policy, plus required gate}}
+CHECKPOINTS: {{withheld | the coordinator's recorded local commit authority, quoted from its workspace record, plus required gate}}
 ROUTE: invoke using-sdlc-skills once from this packet; do not reopen settled scope.
 START FROM: reproduce: 1) new project, 2) delete all images, 3) Export → crash with
   "TypeError: cannot read 'width' of undefined" at export/render.ts:88
