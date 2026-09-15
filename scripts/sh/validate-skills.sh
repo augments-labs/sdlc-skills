@@ -232,12 +232,17 @@ while IFS= read -r ref; do
   esac
 done < <(find skills -path '*/references/*.md' -type f | sort)
 
-# The nudge ships too — and is injected into every session, so a scanner
-# trigger-word there fires constantly, not just when one skill loads.
-echo "• hooks (scanner trigger-words)"
-while IFS= read -r f; do
-  sed 's/`[^`]*`//g' "$f" | grep -qiE "$SCANNER_TRIGGERS" && err "$f: harness scanner trigger-word"
-done < <(find hooks -name '*.md' 2>/dev/null)
+# The session-start text ships too, and is injected into every session, so a
+# scanner trigger-word there fires constantly, not just when one skill loads.
+# Both copies are read raw. The router body they wrap is scanned with its skill.
+echo "• session-start injection (scanner trigger-words)"
+for f in scripts/sh/session-start.sh plugins/sdlc-skills/scripts/sh/session-start.sh; do
+  if [ ! -f "$f" ]; then
+    err "$f: missing, so the text it injects cannot be scanned"
+  elif grep -qiE "$SCANNER_TRIGGERS" "$f"; then
+    err "$f: harness scanner trigger-word"
+  fi
+done
 
 # Routing belongs in session-start context; no tool or turn-end hooks ship.
 echo "• session-start-only activation"
