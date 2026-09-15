@@ -45,8 +45,8 @@ section.
 ## Step 3: Write and present
 
 1. Write the immutable section to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the project's
-   standing conventions path, preserving approved sections around it.
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+   preserving approved sections around it.
 2. Present:
 
    ```text

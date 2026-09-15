@@ -2,6 +2,16 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [9.1.2] — 2026-09-15
+
+This release fixes the 32 findings of the v9.1.1 adversarial review:
+- An edit git hides — behind an assume-unchanged or skip-worktree flag, or inside an embedded repository — now gets no state digest or discard token instead of passing as clean, and a submodule change hidden by an ignore setting no longer reads as clean.
+- A plan with an approved cancelled task reaches plan end, and worktree setup never commits a `.gitignore`.
+- The design preview link opens its comparison page.
+- Incident, security, and boundary records have a stated location, and a handoff note's digest lives in its ledger.
+
+The gate now reads backticked text and the session-start text, the preview stop guard stops only its own server, and reviewer, dispatch, and section templates agree with the rules they cite.
+
 ## [9.1.1] — 2026-09-15
 
 This release fixes the 23 findings of the 9.1 adversarial review:

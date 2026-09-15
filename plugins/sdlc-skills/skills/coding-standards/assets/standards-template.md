@@ -11,9 +11,8 @@ nothing.
 ## Coding standards
 
 **Status:** {{draft | proposed; lifecycle stays external}}
-**Identity:** recorded in the ledger row, never here: the first 7 characters of
-`git hash-object --stdin` over this section, from its heading to the next `##`
-heading, without trailing blank lines
+**Identity:** recorded in the ledger row, never here: this section's identity
+under the Identity rule of the artifact layout reference (`using-sdlc-skills`)
 **Predecessor:** {{prior normative identity or none; proposal only links it}}
 **External decision ledger:** {{location or returned record; pending / changes
 requested / approved / rejected / cancelled / superseded by approved normative

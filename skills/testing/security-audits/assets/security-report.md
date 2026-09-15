@@ -2,8 +2,9 @@
 
 The independent auditor fills this report for the exact candidate; the author
 never fills it. Copy both full identities from its
-descriptor. Write only to the assigned location outside the candidate, or
-return the report directly. Include no secret values.
+descriptor. Write only to the assigned location — under
+`.sdlc-skills/evidence/`, which the content digest leaves out, or outside the
+candidate workspace — or return the report directly. Include no secret values.
 
 ```markdown
 # Security review

@@ -36,8 +36,10 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 
 ## Step 3: State the boundaries
 
-1. Write the boundary record: what the region owns, what it delegates, where
-   its seams are, which downstream obligations a change must preserve.
+1. Write the boundary record to
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/boundary-record.md` unless
+   the user names another path: what the region owns, what it delegates,
+   where its seams are, which downstream obligations a change must preserve.
 2. Set a freshness limit. Past it, or a material input changed → revalidate
    affected claims before relying on them.
 3. Implementation finds a caller or surface the map never covered → stop and
@@ -53,7 +55,6 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 
 ## Common mistakes
 
-- Editing first and understanding later — the pattern-match that looks right and isn't.
 - A map of files instead of responsibilities — paths don't tell you what owns what.
 - Tracing direct imports while missing generated inputs, stored state, external
   consumers, or deployment paths that carry the real blast radius.

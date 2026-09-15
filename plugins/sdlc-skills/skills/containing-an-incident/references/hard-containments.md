@@ -43,8 +43,9 @@ A restart clears the memory state, a rollback replaces the running code, a
 truncation drops the poison message. Resolve it in this order:
 
 1. Contain anyway if the capture would take more than seconds.
-2. Capture what is cheap first — a copy of the failing input, the current
-   config, a snapshot of the queue head, the last N log lines.
+2. Capture what is cheap first, under Step 3.3's authority, redaction, and
+   location — a copy of the failing input, the current config, a snapshot of
+   the queue head, the last N log lines.
 3. Say plainly in the record what was lost, so the investigation does not
    quietly assume it exists.
 

@@ -12,7 +12,7 @@ A UI topic is not automatically a visual question. “Which steps belong in chec
 
 1. **Existing project preview.** Inspect project instructions, scripts, routes, component examples, design-system documentation, fixtures, visual tests, and development tooling. Build isolated variants from the real components, tokens, content shapes, and states. Do not replace the setup or change the production screen before a direction is chosen.
 2. **Private native interactive page.** If the environment can create a private, self-contained interactive page, use it for side-by-side comparison or direct tuning. Keep the page grounded in project assets available to the session. Review its audience and content before publishing or sharing it.
-3. **Self-contained local page.** Write one page per decision at `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals/{{decision-slug}}.html` (another path only if the user set one). One stable path per decision — never one file per version, and never a `-v2` sibling: the path the user opened the first time keeps working. Start from `assets/comparison-template.html` — it carries the chrome (tokens, variant and version switchers, decision scaffolding, status pills) and its own fill rules; author only the variants. Use inline styles and vector or embedded assets; make no external requests. Deliver the file path and offer to serve the surface. Only after the user accepts, run `scripts/start-server.sh` on the visuals directory and hand over the printed URL (it carries a one-time key that plants a cookie) — and never run an ad-hoc server. Stop the preview with `scripts/stop-server.sh` and the `pid` from its startup record when it is no longer needed. If the script answers `needs python3`, say so, name the platform's install route, and deliver the file path instead — install a runtime on the user's machine only when the user explicitly asks. Where nothing can display the page, give the path and preserve a text summary.
+3. **Self-contained local page.** Write one page per decision at `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals/{{decision-slug}}.html` (another path only if the user set one). One stable path per decision — never one file per version, and never a `-v2` sibling: the path the user opened the first time keeps working. Start from `assets/comparison-template.html` — it carries the chrome (tokens, variant and version switchers, decision scaffolding, status pills) and its own fill rules; author only the variants. Use inline styles and vector or embedded assets; make no external requests. Deliver the file path and offer to serve the surface. Only after the user accepts, run `bash scripts/start-server.sh --root .sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals --entry {{decision-slug}}.html`, with the user-set directory as `--root` when there is one, and hand over the printed URL (it carries a one-time key that plants a cookie) — and never run an ad-hoc server. Stop the preview with `scripts/stop-server.sh` and the `pid` from its startup record when it is no longer needed. If the script answers `needs python3`, say so, name the platform's install route, and deliver the file path instead — install a runtime on the user's machine only when the user explicitly asks. Where nothing can display the page, give the path and preserve a text summary.
 4. **Screenshots or wireframes.** Use rendered screenshots when a real preview exists but cannot be shared interactively. Use annotated wireframes when structure is the question and polished visuals would create false confidence. Use text diagrams only when they preserve the relationship being judged.
 
 The richer medium is not automatically better. Match fidelity to the decision: low fidelity for flow and hierarchy, realistic components for density and states, high fidelity for typography, color, imagery, and motion.
@@ -55,15 +55,30 @@ The richer medium is not automatically better. Match fidelity to the decision: l
 
    Do not silently overwrite the evidence, and prove it rather than intending
    it: a new version's diff on the surface adds a block and changes only which
-   radio carries `checked`. If `git diff` shows deletions inside an existing
-   version block, an earlier comparison was rewritten — restore it before
+   radio carries `checked`. `git diff` cannot prove it: it shows nothing for an
+   untracked or ignored page. Record each block's SHA-256 under
+   `.sdlc-skills/evidence/` when you issue it, and compare against that record.
+   From the project root, with the page's own path in `page`:
+
+   ```bash
+   page=.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals/{{decision-slug}}.html
+   record=.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/{{decision-slug}}-versions.txt
+   block_sha() { grep -qF "comparison-version:start $1 -->" "$page" && grep -qF "comparison-version:end $1 -->" "$page" && awk -v s="comparison-version:start $1 -->" -v e="comparison-version:end $1 -->" 'index($0, s) {f = 1} f {print} f && index($0, e) {exit}' "$page" | { sha256sum 2>/dev/null || shasum -a 256; } | cut -d' ' -f1; }
+   issue_version() { sum="$(block_sha "$1")" && [ -n "$sum" ] && mkdir -p "${record%/*}" && printf '%s %s\n' "$1" "$sum" >> "$record"; }
+   check_versions() { [ -s "$record" ] || { echo "no version record: $record"; return 1; }; bad=0; while read -r id sum; do [ "$(block_sha "$id")" = "$sum" ] || { echo "rewritten: $id"; bad=1; }; done < "$record"; return "$bad"; }
+   ```
+
+   A new shell keeps no functions, so run each call in the same command that
+   defines them: `issue_version {{version-id}}` after appending a block, and
+   `check_versions` before presenting. A non-zero exit names each earlier block
+   whose lines changed or disappeared, or the missing record — restore it before
    presenting. Retire a version in metadata outside its immutable block; do not
    delete it.
 
-   Bind each version block to its own content identity and controlled inputs; a
+   Bind each version block to its recorded digest and controlled inputs; a
    changed surface/input invalidates affected comparison evidence until
-   reconfirmed. Cite evidence as path plus version identity — once versions
-   share one path, the path alone no longer identifies what was seen.
+   reconfirmed. Cite evidence as path, version ID, and recorded digest — once
+   versions share one path, the path alone no longer identifies what was seen.
 6. **Confirm and record.** Write the decision into the versioned whole design.
    Variant confirmation alone does not approve the combined flow; obtain direct
    approval of the exact compiled version before implementation planning.
@@ -78,10 +93,11 @@ The richer medium is not automatically better. Match fidelity to the decision: l
 
    Make identity fit the medium. For local HTML, put immutable start/end markers
    around each issued version and identify the stable path, version ID, selected
-   variant ID, marker-bounded version bytes, and their SHA-256; appending a new
-   version must not alter that digest. Bind shared chrome, assets, controlled
-   inputs, and their digest or revision as the Rendering-input identity, so
-   unchanged block bytes cannot hide a changed presentation.
+   variant ID, and the SHA-256 `issue_version` recorded for its marker-bounded
+   lines; appending a new version must not alter that digest. Bind shared
+   chrome, assets, controlled inputs, and their digest or revision as the
+   Rendering-input identity, so unchanged block bytes cannot hide a changed
+   presentation.
 
    For an existing project preview, or a native preview, bind an immutable
    source or artifact revision plus the route, fixture, environment,

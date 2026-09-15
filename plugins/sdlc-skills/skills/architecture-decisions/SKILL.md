@@ -28,17 +28,18 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
    consequences, how to undo, what it closes off. Only upsides → not
    examined.
 
-## Step 2: Challenge and persist
+## Step 2: Persist, then challenge
 
-1. A reviewer other than the sole author challenges options, assumptions,
+1. Append the immutable `proposed` ADR to
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+   preserving what is there. Compute its identity (per template) now; the
+   challenge binds to this path and identity.
+2. A reviewer other than the sole author challenges options, assumptions,
    consequences, reversal, under the template's challenge contract. Fill
-   `assets/adr-challenger.md` before dispatching it per
-   `dispatching-parallel-agents` Step 2. Approval waits for `clear` on this ADR
-   identity. Skip only when a current independent design review covers this
-   exact ADR identity.
-2. Append the immutable `proposed` ADR to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the project's
-   decision log, preserving what is there.
+   `assets/adr-challenger.md` with that path and identity before dispatching
+   it per `dispatching-parallel-agents` Step 2. Approval waits for `clear` on
+   this ADR identity. Skip only when a current independent design review
+   covers this exact ADR identity.
 
 ## Step 3: Present and track
 

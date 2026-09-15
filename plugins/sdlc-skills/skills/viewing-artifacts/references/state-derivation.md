@@ -7,8 +7,7 @@ produce a value.
 ## Threading by slug
 
 `YYYY-MM-DD-<topic>` is the identity and the allowlist: only files and
-directories whose names match that shape are threaded; anything else is
-ignored. The same slug across folders is one topic — `designs/<slug>.md`, its
+directories whose names match that shape are threaded; anything else is ignored, except an artifact at a user-set path that a trail record names — a pointer field, a ledger row's `Location`, or a plan's bound inputs: it threads to the topic of the artifact holding that record. The same slug across folders is one topic — `designs/<slug>.md`, its
 `<slug>-migration.md` sibling, and its `<slug>/visuals/` directory all belong
 to it. Plans are directories (`plans/<slug>/00-index.md`). Audits and
 post-mortems thread to their topic by the same slug but render in the sidebar
@@ -26,11 +25,15 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
 - **Derive state and dependencies per section.** Shared files can hold goals,
   scope, feasibility, or ADRs with separate identities and ledger rows. A
   change in one section does not invalidate an unrelated section's approval.
-- **Execute** derives from the plan index's checkbox rows. Only the exact marker
-  `[x] done` counts complete; `[x] done with concerns`, `blocked`,
-  `in progress`, `needs context`, `cancelled`, `superseded`, and `todo` each
-  count separately — the same label under a different checkbox is a different
-  signal.
+- **Execute** derives from the plan's execution ledger (00-index.ledger.md
+  beside the index, or the path its pointer names): each task's state is its
+  latest row bound to the plan's current identity, and a task with no such row
+  is `todo`. Only the exact state `done` counts complete; `done with concerns`,
+  `blocked`, `in progress`, `needs context`, `cancelled`, `superseded`, and
+  `todo` each count separately. The index checkbox rows are a navigation
+  mirror, never the source: a task whose mirror disagrees with its ledger state
+  renders the ledger state with a mismatch flag. No readable ledger → Execute
+  unknown, with its cause class.
 
 ## Approval comes only from the decision ledger
 
@@ -83,8 +86,9 @@ Git, use mtime only as that qualified signal and disclose the fallback.
 ## Attention grouping
 
 Needs attention first — drift or possible-staleness flags, blocked tasks,
-unmet feasibility conditions, decisions derivably pending
-from a parsed ledger row — and its first topic is the preselected one. Then
+ledger and checkbox mismatches, unmet feasibility conditions, decisions
+derivably pending from a parsed ledger row — and its first topic is the
+preselected one. Then
 Waiting: active, nothing flagged. Then Complete: everything reached is done,
 nothing flagged. With no attention topics, preselect the first waiting, else the
 first complete.

@@ -41,13 +41,14 @@ index="$dir/00-index.md"
 # A task row reads: - [ ] `ID` — title · `file.md` · `state`
 # The task file is the backticked .md token just before the state label.
 states='todo|in progress|done|done with concerns|blocked|needs context|cancelled|superseded'
-task_files=$(sed -nE 's/^- \[[ xX]\] .*`([^`]+\.md)`[^`]*`('"$states"')`[[:space:]]*$/\1/p' "$index")
 # A task row is any list-item checkbox under ## Tasks, at any indentation. A row
 # there that does not parse, or a parsed row outside that section, would change
 # what the version covers without a word, so either one fails. Lines inside a
-# fenced code block are examples: they neither open a section nor count as rows.
-# A fence that never closes fails too, so nothing after it hides.
-bad=$(awk -v st="$states" '
+# fenced code block are examples: they neither open a section nor count as rows,
+# and the task files come only from the rows this pass accepts. A fence that
+# never closes fails too, so nothing after it hides. A backtick run followed by
+# another backtick on its line is inline code, never a fence.
+scan='
   {n++; R[n] = $0; l = $0; sub(/[ \t\r]+$/, "", l); L[n] = l; u = l; sub(/^ */, "", u); U[n] = u}
   END {
     for (i = n; i >= 1; i--) {
@@ -58,17 +59,24 @@ bad=$(awk -v st="$states" '
     for (i = 1; i <= n; i++) {
       l = L[i]; u = U[i]
       if (z) { if (index(u, o) == 1 && u ~ /^([`]+|~+)$/) z = 0; continue }
-      if (u ~ /^([`][`][`]|~~~)/) {
+      if (u ~ /^([`][`][`]+[^`]*$|~~~)/) {
         match(u, /^([`]+|~+)/); r = substr(u, 1, RLENGTH)
         if ((substr(r, 1, 1) == "~" ? T[i] : B[i]) >= RLENGTH) { z = 1; o = r; continue }
-        print "  line " i ": a code fence opens here and never closes"; continue
+        if (want != "files") print "  line " i ": a code fence opens here and never closes"
+        continue
       }
       if (l ~ /^## /) { t = (l == "## Tasks"); continue }
       ok = (l ~ ("^- \\[[ xX]\\] .*`[^`]+\\.md`[^`]*`(" st ")`$"))
+      if (want == "files") {
+        if (t && ok) { f = l; sub(/`[^`]+`$/, "", f); match(f, /`[^`]+\.md`[^`]*$/); f = substr(f, RSTART + 1); sub(/`.*/, "", f); print f }
+        continue
+      }
       if (t && !ok && l ~ /^[ \t]*([-*+]|[0-9]+[.)])[ \t]+\[[ xX]\]/) print "  " R[i]
       else if (!t && ok) print "  " R[i] "  (outside ## Tasks)"
     }
-  }' "$index")
+  }'
+task_files=$(awk -v st="$states" -v want=files "$scan" "$index")
+bad=$(awk -v st="$states" "$scan" "$index")
 if [ -z "$task_files" ] || [ -n "$bad" ]; then
   echo "Error: $index needs every checkbox row under ## Tasks to read - [ ] \`ID\` — title · \`file.md\` · \`state\`, with nothing after the state, and no task row outside it:" >&2
   [ -z "$bad" ] || printf '%s\n' "$bad" >&2

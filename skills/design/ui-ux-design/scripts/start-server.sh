@@ -2,7 +2,9 @@
 # Start the governed localhost preview (serve.py) in the background and print
 # its one-line JSON startup record. The URL in that record is the one to hand
 # to the user: it carries a one-time ?key= that plants a cookie, after which
-# plain URLs work in that browser. Other local processes get 403.
+# plain URLs work in that browser. A request with neither gets 403. Browsers
+# scope cookies by host, not port: any other listener on this host that the
+# browser visits while the preview runs receives the cookie.
 #
 # Why a wrapper instead of running serve.py directly: the owner PID must be
 # resolved BEFORE backgrounding — once this shell exits, the server re-parents

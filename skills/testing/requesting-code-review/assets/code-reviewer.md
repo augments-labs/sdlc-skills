@@ -37,8 +37,9 @@ You independently review this candidate on two axes: project standards and the o
 
 - **Read-only candidate.** Never edit product files, switch branches, check out
   commits, or mutate candidate git state. Write only to the assigned review
-  artifact location outside the candidate workspace, or return the report if
-  none is writable. If a finding needs a destructive probe, copy the candidate
+  artifact location, under `.sdlc-skills/evidence/` or outside the candidate
+  workspace, or return the report if none is writable. If a finding needs a
+  destructive probe, copy the candidate
   into an authorized temporary workspace, bind its pre-state/effects/recovery/
   cleanup authority to the supplied identity, and mutate only that copy. Never
   probe shared or production state without exact direct authority.
@@ -80,8 +81,9 @@ Missing, failed, or inconclusive required verification prevents readiness.
 A conditional verdict remains non-ready until a new verified and reviewed
 candidate exists.
 
-Write only at the descriptor's assigned report location outside the candidate,
-then return that location; if no safe location exists, return the full report.
+Write only at the descriptor's assigned report location, under
+`.sdlc-skills/evidence/` or outside the candidate workspace, then return that
+location; if no safe location exists, return the full report.
 
 ## Report template
 

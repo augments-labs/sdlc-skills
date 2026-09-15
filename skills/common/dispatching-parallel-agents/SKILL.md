@@ -36,15 +36,14 @@ yourself before anything integrates.
 3. Fill one `assets/dispatch-packet.md` per agent, every field, before its
    dispatch. Read `references/brief-examples.md` before writing the first one.
    Never paste session history.
-   - `START FROM` → what defines the task: the contract, the exact spec, the
-     failing assertion.
-   - `READ` → a path to what informs it: a diff, a log, a large fixture.
    - `SUBDISPATCH: prohibited` unless the packet allocates sub-scope,
      capacity, data and egress boundary, and who reconciles grandchildren.
    - `DATA/ACCESS` → what is reachable, who may hold it, what is prohibited,
      who cleans up. Configuration grants no disclosure authority.
 4. Freeze the expected packet IDs and count, the terminal deadline, and the
    timeout and cancel action with its owner, before the first dispatch.
+   Deadline: the user's, else the harness's agent timeout. Neither → ask the
+   user once, and dispatch nothing until answered.
 
 ## Model selection
 

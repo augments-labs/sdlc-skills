@@ -15,10 +15,10 @@ nothing.
 | `specs/` | specifications | yes |
 | `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts | yes |
 | `plans/` | plan directories: an index and its task files | yes |
-| `audits/` | complexity and security audit reports | yes; a security report with open findings once disclosing it is safe |
+| `audits/` | complexity audit reports, and security reports copied after their verdict, outside the candidate workspace | yes; a security report with open findings once disclosing it is safe |
 | `post-mortems/` | post-mortems | yes |
 | `verification/` | assurance matrices | yes |
-| `evidence/` | run records bound to one state, prototype results included | only its `.gitignore` |
+| `evidence/` | run records bound to one state, prototype results and boundary records included | only its `.gitignore` |
 | `handoffs/` | handoff notes and containment records | only when safe to share |
 | `views/` | the generated project view | the project's choice |
 
@@ -92,8 +92,9 @@ identity, and so a successor.
 
 `evidence/` holds records that bind to one state and go stale with it:
 verification ledgers, TDD RED records, debugging hypothesis and attempt
-ledgers, review descriptors, dispatch receipts and reports, gate-state records,
-and prototype results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
+ledgers, review descriptors, dispatch receipts and reports, security reports
+until their verdict, gate-state records, boundary records, and prototype
+results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
 
 The candidate digest (`state-identity.sh`, `branch-state.sh`) leaves `evidence/`
 out, so a record written there never changes the candidate it describes. Write

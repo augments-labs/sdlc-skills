@@ -22,6 +22,9 @@ section.
 1. Fill every dimension row with its accountable owner: technical, delivery
    and budget, operations and recovery, security and compliance, data,
    external dependencies. "Technically possible" answers one row.
+   Every owner this section names, go-if conditions included, comes from the
+   approved goals' decision rule and stakeholder roles.
+   None named there → ask the user who owns it; never invent one.
 2. List the killer assumptions: false → the goal sinks. Rank likelihood ×
    impact. Per risk: evidence source, freshness, confidence. `unknown` is a
    valid confidence.

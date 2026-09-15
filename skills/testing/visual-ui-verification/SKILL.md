@@ -19,9 +19,15 @@ candidate. Never return "looks good".
 ## Step 1: Bind the target
 
 1. Open `assets/evidence-record.md`. Fill the `Run` header before any capture.
-2. Write the candidate as an immutable source or artifact identity, or a
-   working-tree digest covering staged, unstaged, untracked, and relevant
-   ignored inputs. Keep the record outside that identity.
+2. Write the candidate as an immutable source or artifact identity, or the
+   working-tree digest `verification-before-completion` captures, which covers
+   staged, unstaged, and untracked non-ignored paths only. List the ignored
+   inputs the launch path reads — build output, generated assets, local
+   configuration — with
+   `git ls-files --others --ignored --exclude-standard -- {{input paths}}`, and
+   record each one's path and SHA-256 under `Ignored inputs`. Recompute those
+   hashes before the verdict; a changed hash invalidates every pass captured
+   before it. Keep the record outside that identity.
 3. Establish whether an approved design applies. Plan-bound: the task's
    `Context` and `Applicable visual references` say. Otherwise check
    `.sdlc-skills/designs/` and any user-set design path, and record what you
@@ -106,6 +112,9 @@ candidate. Never return "looks good".
   rendering is recorded as the source.
 - A "pre-change" rendering captured from the edited workspace is the candidate
   itself, and it compares the change with itself.
+- A working-tree digest leaves ignored paths out, so a rebuilt bundle or changed
+  local configuration renders a different screen under the same digest; only
+  the recorded per-path hashes show that the pass is stale.
 
 ## Common mistakes
 

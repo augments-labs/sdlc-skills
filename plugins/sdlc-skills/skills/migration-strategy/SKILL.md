@@ -79,20 +79,22 @@ the section it names.
    written. A partial, failed, or validation-failed action there blocks
    release and cleanup.
 
-## Step 4: Challenge, then decide
+## Step 4: Write, challenge, then decide
 
-1. Fill `assets/migration-challenger.md` before approval, then dispatch per
-   `dispatching-parallel-agents` Step 2 two read-only challengers bound to the
-   contract's `Independent challenge contract`: one who knows the source and its
-   domain, one who owns operations and data. They challenge fact completeness,
+1. Write the contract to
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`. Keep
+   stable-ID delta, review, and execution state external. Compute its identity
+   (per template) now; the challengers bind to this path and identity.
+2. Fill `assets/migration-challenger.md` with that path and identity before
+   approval, then dispatch per `dispatching-parallel-agents` Step 2 two
+   read-only challengers bound to the contract's
+   `Independent challenge contract`: one who knows the source and its domain,
+   one who owns operations and data. They challenge fact completeness,
    mappings and mixed states, intake path and partitions, trial slice and
    recovery plan.
-2. Record an accountable skip for any role left out. Bind each challenge to an
+3. Record an accountable skip for any role left out. Bind each challenge to an
    exact attempt with a deadline. A required role blocks approval until its
    current report on this contract identity reads `clear`.
-3. Write the contract to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`. Keep
-   stable-ID delta, review, and execution state external.
 4. Present the contract:
 
    ```text

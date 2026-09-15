@@ -104,18 +104,23 @@ for skill in "${skills[@]}"; do
 
   # No external references, vendor model names, or <angle> placeholders — in every
   # .md of the skill, RECURSIVELY (covers references/ and scripts/ subfolders).
+  # The external-reference, vendor, and trigger-word scans read the raw text: a
+  # backticked URL, issue, model name, or trigger word still ships and still
+  # reaches a keyword scanner. Only the placeholder check skips inline code
+  # spans, where a literal <tag> can be what the text is about.
   while IFS= read -r f; do
-    body=$(sed 's/`[^`]*`//g' "$f")   # ignore inline code spans
+    raw=$(cat "$f")
+    body=$(sed 's/`[^`]*`//g' "$f")   # inline code spans removed, for the placeholder check
     # The Agent Skills specification is the one external host a skill may cite:
     # strip only its scheme and host so a path is still scanned, and fail closed
     # when sed cannot run the edit.
-    if ! scanned=$(printf '%s\n' "$body" | sed -E 's@https?://agentskills\.io([/?#[:space:])>])@\1@g; s@https?://agentskills\.io$@@'); then
+    if ! scanned=$(printf '%s\n' "$raw" | sed -E 's@https?://agentskills\.io([/?#[:space:])>])@\1@g; s@https?://agentskills\.io$@@'); then
       err "$(basename "$f"): external-reference scan could not run"
     elif grep -qiE "$EXT_REFS" <<<"$scanned"; then
       err "$(basename "$f"): external reference (repo/issue/URL) — state the principle directly"
     fi
-    echo "$body" | grep -qiE "$VENDORS"         && err "$(basename "$f"): vendor model name — use a capability tier (small|medium|large)"
-    echo "$body" | grep -qiE "$SCANNER_TRIGGERS" && err "$(basename "$f"): harness scanner trigger-word — rephrase so a keyword scan can't hijack the session"
+    printf '%s\n' "$raw" | grep -qiE "$VENDORS"         && err "$(basename "$f"): vendor model name — use a capability tier (small|medium|large)"
+    printf '%s\n' "$raw" | grep -qiE "$SCANNER_TRIGGERS" && err "$(basename "$f"): harness scanner trigger-word — rephrase so a keyword scan can't hijack the session"
     echo "$body" | grep -qE  '<[a-z][a-z0-9 -]*>' && err "$(basename "$f"): bare <angle> placeholder — use {{double-curly}}"
     # The .sdlc-skills/ output location is mandatory (overridable only by the user),
     # never an optional "default" — keep the convention from drifting back.
@@ -227,12 +232,17 @@ while IFS= read -r ref; do
   esac
 done < <(find skills -path '*/references/*.md' -type f | sort)
 
-# The nudge ships too — and is injected into every session, so a scanner
-# trigger-word there fires constantly, not just when one skill loads.
-echo "• hooks (scanner trigger-words)"
-while IFS= read -r f; do
-  sed 's/`[^`]*`//g' "$f" | grep -qiE "$SCANNER_TRIGGERS" && err "$f: harness scanner trigger-word"
-done < <(find hooks -name '*.md' 2>/dev/null)
+# The session-start text ships too, and is injected into every session, so a
+# scanner trigger-word there fires constantly, not just when one skill loads.
+# Both copies are read raw. The router body they wrap is scanned with its skill.
+echo "• session-start injection (scanner trigger-words)"
+for f in scripts/sh/session-start.sh plugins/sdlc-skills/scripts/sh/session-start.sh; do
+  if [ ! -f "$f" ]; then
+    err "$f: missing, so the text it injects cannot be scanned"
+  elif grep -qiE "$SCANNER_TRIGGERS" "$f"; then
+    err "$f: harness scanner trigger-word"
+  fi
+done
 
 # Routing belongs in session-start context; no tool or turn-end hooks ship.
 echo "• session-start-only activation"

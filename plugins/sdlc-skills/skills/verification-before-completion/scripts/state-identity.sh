@@ -43,13 +43,19 @@ Output:
   submodule count once its checked-out commit moves. Paths under
   .sdlc-skills/evidence/ are left out of the digest, the counts, and
   --committed, so a record written there never moves the candidate.
+  An edit git hides is content no digest can read: an assume-unchanged entry;
+  a skip-worktree entry whose path exists, or is gone outside a sparse
+  checkout; or a directory holding its own repository, untracked or in place
+  of a tracked file (an embedded repository). While one exists, every mode
+  exits 4 and names each path on stderr.
 
 Exit codes:
   0  state captured, or --compare matched
   1  --compare found drift: the evidence does not describe this state
   2  not a git repository, or bad arguments
   3  a required tool is missing
-  4  a git step failed: no digest or committed identity, so no evidence binds
+  4  a git step failed, or git hides an edit (assume-unchanged, skip-worktree,
+     embedded repository): no digest or committed identity, so no evidence binds
   5  --committed found uncommitted content: the commit does not hold the captured state
 
 Examples:
@@ -96,6 +102,45 @@ jstr() {
 }
 jnull() { [ -n "${1-}" ] && jstr "$1" || printf 'null'; }
 jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
+
+# Paths whose edits git hides from its own listings and from the digest, as
+# kind<TAB>path lines outside .sdlc-skills/evidence/, quoted as git quotes paths.
+# Git never reads the working-tree copy of an assume-unchanged entry (a
+# lowercase tag), or of a skip-worktree entry (S) whose path exists or, outside
+# a sparse checkout, is gone: only a sparse checkout's absent paths are not
+# edits. A directory holding its own repository, untracked or where a tracked or
+# intent-to-add entry was (a symlink to one is only a symlink), is one entry git
+# never reads inside. Listed with fsmonitor off, as the digest is. Fails only
+# when git cannot list.
+hidden_paths() {
+  local hp_index hp_others hp_types hp_sparse hp_line hp_path hp_raw
+  hp_git() { git --no-optional-locks -c core.quotePath=true -c core.fsmonitor=false "$@"; }
+  hp_index="$(hp_git ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
+    hp_others="$(hp_git ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
+    hp_types="$(hp_git diff --ignore-submodules=dirty --name-only --diff-filter=AT -- . "$evidence_out" 2>/dev/null)" ||
+    return 1
+  hp_sparse="$(git config --bool core.sparseCheckout 2>/dev/null)"
+  printf '%s\n' "$hp_index" | LC_ALL=C grep -E '^([a-z]|S) ' | while IFS= read -r hp_line; do
+    hp_path="${hp_line#? }"
+    case "$hp_line" in
+      S\ *)
+        hp_raw="$hp_path"
+        case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+        if [ -e "$hp_raw" ] || [ -L "$hp_raw" ] || [ "$hp_sparse" != true ]; then printf 'skip-worktree\t%s\n' "$hp_path"; fi ;;
+      *) printf 'assume-unchanged\t%s\n' "$hp_path" ;;
+    esac
+  done
+  printf '%s\n' "$hp_others" | LC_ALL=C grep -E '/"?$' | while IFS= read -r hp_line; do
+    printf 'embedded repository\t%s\n' "$hp_line"
+  done
+  printf '%s\n' "$hp_types" | while IFS= read -r hp_line; do
+    [ -n "$hp_line" ] || continue
+    hp_raw="$hp_line"
+    case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+    if [ ! -L "$hp_raw" ] && [ -d "$hp_raw" ] && [ -e "$hp_raw/.git" ]; then printf 'embedded repository\t%s\n' "$hp_line"; fi
+  done
+  return 0
+}
 
 # The content digest: what the working tree presents, as git would record it,
 # plus every staged copy that matches neither HEAD nor the working tree. HEAD is
@@ -146,6 +191,17 @@ content_digest() {
   rm -rf "$cd_tmp"
 }
 
+# An edit git hides passes every check below unseen, so no mode prints an
+# identity while one exists.
+hidden="$(hidden_paths)" || {
+  echo "Error: git could not list the paths whose edits it hides; no identity." >&2; exit 4; }
+if [ -n "$hidden" ]; then
+  echo "Error: git hides edits to these paths, so no digest or committed identity can hold them:" >&2
+  printf '%s\n' "$hidden" | while IFS=$'\t' read -r kind path; do printf '  %s: %s\n' "$kind" "$path" >&2; done
+  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree; with core.ignoreStat set, git sets it again on every add), or commit, ignore, or move the embedded repository, then rerun." >&2
+  exit 4
+fi
+
 # The digest that decides whether evidence still applies.
 digest="$(content_digest)" || {
   echo "Error: git could not record the working tree (try \`git add -A --dry-run\`); there is no digest to bind evidence to." >&2; exit 4; }
@@ -194,7 +250,10 @@ count() { # the line count of a git listing outside evidence/; fails when git do
   local out; out="$(git --no-optional-locks "$@" -- . "$evidence_out" 2>/dev/null)" || return 1
   printf '%s\n' "$out" | grep -c . || true
 }
-staged_n="$(count diff --cached --name-only)" && unstaged_n="$(count diff --name-only)" &&
+# --ignore-submodules=untracked is git's default, stated so that no ignore setting
+# hides a submodule change from the counts.
+staged_n="$(count diff --cached --ignore-submodules=untracked --name-only)" &&
+  unstaged_n="$(count diff --ignore-submodules=untracked --name-only)" &&
   untracked_n="$(count ls-files --others --exclude-standard)" || {
   echo "Error: git could not list uncommitted paths; no identity." >&2; exit 4; }
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1

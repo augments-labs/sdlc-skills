@@ -54,9 +54,13 @@ a minute you chose to spend.
 2. Signal unchanged → not contained. Record the attempted lever and result;
    return to Step 2 only for a different justified intervention. Exhausted
    options → its hard-containment fallback. The action taken proves nothing.
-3. Cheap to capture → save a failing example, the logs, or the current
-   configuration before a rollback or restart erases it. Seconds, not
-   minutes. Never delay containment for evidence.
+3. Cheap to capture, and the user, the incident owner, or a designated runbook
+   currently authorizes keeping that data → redact credentials and personal
+   data, then save a failing example, the logs, or the current configuration
+   to `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/` before a rollback or
+   restart erases it. Seconds, not minutes. Never delay containment for
+   evidence.
+   No such authority → keep nothing, and name what was lost in the record.
 
 ## Step 4: Record and hand off
 
@@ -111,10 +115,6 @@ Without a recorded hard-containment fallback, stop and go to step 2 for these:
 
 ## Common mistakes
 
-- Treating the runbook as background reading rather than a menu of actions.
-- Reaching for the widest lever available — a full rollback where a flag would
-  have done.
-- Verifying containment by the action taken instead of by the signal.
 - Waiting to be sure of the cause first. Certainty is not the goal here; the
   impact stopping is.
 - Calling the incident resolved because the bleeding stopped.

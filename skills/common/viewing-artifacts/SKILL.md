@@ -25,18 +25,39 @@ The page carries state, not documents.
 
 ## Step 1: Read the trail
 
-1. Read `.sdlc-skills/` at the project root: `briefs/`, `specs/`,
-   `designs/`, `plans/`, `verification/`, `audits/`, `post-mortems/`. Absent
-   folder → unreached phase.
-2. No `.sdlc-skills/`, or artifact paths overridden → render the template's
-   empty state naming what produces artifacts. Never search the filesystem
-   for look-alikes.
+1. Resolve the project root: the main checkout, even from a linked task
+   worktree, because the trail and its plan mirrors live there. When the
+   common git directory is not a checkout's `.git` (a submodule, a separate
+   git directory, a bare repository's worktree), the root is the current
+   checkout's top.
+
+   ```bash
+   if common="$(git rev-parse --git-common-dir 2>/dev/null)" && common="$(cd "$common" && pwd -P)"; then
+     case "$common:$(unset GIT_DIR GIT_WORK_TREE; git -C "${common%/.git}" rev-parse --is-bare-repository 2>/dev/null)" in
+       */.git:false) root="${common%/.git}" ;;
+       *) root="$(git rev-parse --show-toplevel 2>/dev/null)" || root="$PWD" ;;
+     esac
+   else
+     root="$PWD"
+   fi
+   ```
+
+   Read `$root/.sdlc-skills/`: `briefs/`, `specs/`, `designs/`, `plans/`,
+   `verification/`, `audits/`, `post-mortems/`. Absent folder → unreached
+   phase.
+2. No `.sdlc-skills/` → render the template's empty state naming what
+   produces artifacts. An artifact at a user-set path → read it where its
+   recorded pointer names it: a pointer field, a ledger row's `Location`, or a
+   plan's bound inputs. A recorded path that cannot be read → that artifact's
+   values unknown, and Step 3.3 names the cause class. Never search the
+   filesystem for look-alikes.
 3. Read `references/state-derivation.md` before deriving a value. Derive
    every value by its rules: slug allowlist, phase artifacts, approval
    sources, drift, attention grouping.
 4. Match each section's normative version and location to its decision ledger;
-   preserve its own decision vocabulary. Only the exact `[x] done` marker
-   counts complete. Compare consumed identities for drift; timestamps alone
+   preserve its own decision vocabulary. Take task progress from the plan's
+   ledger rows, never the index checkboxes; only the state `done` counts
+   complete. Compare consumed identities for drift; timestamps alone
    indicate possible staleness, never prove freshness. No value → unknown.
 
 ## Step 2: Render
@@ -48,17 +69,21 @@ The page carries state, not documents.
    topic the spine nodes, drift connector, ADR chain, embedded visuals, every
    task row, the assurance matrix from `verification/`.
 3. Entity-encode every artifact-derived value before inserting: `&` first,
-   then `<`, `>`, `"`. Derived values go in as text, never into `href` or
-   `src`.
-4. Write exactly one file: `.sdlc-skills/views/index.html`. Create `views/`
-   if missing. No external URLs, no JavaScript, no scratch or backup files.
-   Regeneration recomputes from the trail and rewrites in place; never merge
-   a previous render.
+   then `<`, `>`, `"`. Derived values go in as text, except two attribute
+   values the template needs: a topic anchor `href`, `#topic-` plus an
+   allowlisted slug; and an open-file `href` or visual `src`, the path of a
+   file read in Step 1, relative to `views/index.html` and starting with `../`.
+   Never write a URL or a scheme into `href` or `src`.
+4. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
+   inside a linked task worktree. Create `views/` if missing. No external
+   URLs, no JavaScript, no scratch or backup files. Regeneration recomputes
+   from the trail and rewrites in place; never merge a previous render.
 
 ## Step 3: Deliver
 
 1. Deliver the file path and offer to serve the page, root `.sdlc-skills/`,
-   entry `views/index.html`. Start it only after the user accepts:
+   entry `views/index.html`. Start it from `$root`, only after the user
+   accepts:
 
    ```bash
    bash scripts/start-server.sh --root .sdlc-skills --entry views/index.html
@@ -80,13 +105,19 @@ The page carries state, not documents.
   preview started.
 - A status request is not consent to a background listener: a preview started
   unasked opens a local port the user never agreed to.
+- From a linked task worktree, the `.sdlc-skills/` beside the worktree's files
+  is absent or an older committed copy: reading it shows a false empty trail,
+  and a view written there changes the candidate digest that a pending
+  verification or review is bound to.
+- In a checkout that is itself the candidate, a view written under a trail the
+  project does not ignore still changes that checkout's digest.
 
 ## Common mistakes
 
 - Treating `**Status:** proposed`, or an impressive document, as approval → approval lives only in a matching ledger row; otherwise the page says unknown.
-- Counting `[x] done with concerns` as done → only the exact `[x] done` counts; every other label counts separately.
+- Counting a `[x] done` checkbox, or `done with concerns`, as done → only a `done` ledger row for the plan's current identity counts; every other state counts separately.
 - Pasting artifact prose into nodes or tiles → the page carries state; prose stays behind open-file links.
 - Inferring drift from timestamps alone or a checkbox-only update → compare the consumed normative content; label time-only evidence as possible staleness.
-- Hunting the filesystem when the convention is absent or overridden → render the empty state naming what produces artifacts.
+- Hunting the filesystem for an artifact no trail record names → with no `.sdlc-skills/`, render the empty state; at a user-set path, follow its recorded pointer, else say unknown.
 - Starting an ad-hoc server (`python3 -m http.server`, a dev-server forward) to show the page → the key gate and self-terminating lifecycle are the contract; use `scripts/start-server.sh` or deliver the plain file path.
 - Linkifying a URL found in artifact text, or adding a script for interactivity → self-containment: no external requests, no JavaScript; navigation is pure CSS.

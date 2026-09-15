@@ -51,8 +51,9 @@ identities. Never infer equivalence from compilation or aggregate green alone.
 - Evidence: {{source and target observations; reproduction or gate}}
 - Correction: {{required change}}
 
-Write only at the descriptor's assigned report location outside the candidate,
-then return that location; if no safe location exists, return the full report.
+Write only at the descriptor's assigned report location, under
+`.sdlc-skills/evidence/` or outside the candidate workspace, then return that
+location; if no safe location exists, return the full report.
 
 ## Report template
 

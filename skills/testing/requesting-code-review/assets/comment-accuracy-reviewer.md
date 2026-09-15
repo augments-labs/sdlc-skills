@@ -26,7 +26,7 @@ You independently review whether comments and docstrings in this candidate tell 
 
 ## Rules
 
-- **Read-only review** — you share the author's checkout: never modify the working tree or git state; inspect with non-mutating commands only.
+- **Read-only review** — you share the author's checkout: never modify candidate files or git state; inspect with non-mutating commands only.
 - Read before you claim; cite `file:line` and quote the comment against the code it contradicts.
 - Comment *rot* is a function of how likely the code is to change — flag a comment that duplicates volatile detail it will soon contradict.
 - Scope to comments the candidate adds/changes and existing comments whose
@@ -47,8 +47,9 @@ Repeat this block for each finding:
 - Comment claim: {{quote and code or contract it describes}}
 - Correction: {{concrete recommendation}}
 
-Write only at the descriptor's assigned report location outside the candidate,
-then return that location; if no safe location exists, return the full report.
+Write only at the descriptor's assigned report location, under
+`.sdlc-skills/evidence/` or outside the candidate workspace, then return that
+location; if no safe location exists, return the full report.
 
 ## Report template
 

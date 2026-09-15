@@ -22,7 +22,10 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 
 1. Map every requirement, preserved obligation, and material risk to the
    component, interface, and owning evaluator reference covering it. Define no
-   assurance gates here. Unmapped row → approval blocked.
+   assurance gates here. Look each evaluator reference up where its owner
+   keeps it: a placeholder, an invented ID, or a gate that does not exist
+   there leaves its row unmapped.
+   Unmapped row → approval blocked.
 2. Name each module by what it does and does not do. Removing it would spread
    its complexity across callers → it stays. Complexity merely relocates →
    merge it.
@@ -78,9 +81,9 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 ## Gotchas
 
 - Step 1's mapping table needs a real owning evaluator for every row, but
-  this skill defines no assurance gates itself. A row with only a
-  placeholder or invented evaluator still reads as mapped on the page until
-  that gate actually exists elsewhere.
+  this skill defines no assurance gates itself. A row naming a placeholder or
+  a gate its owner never defined still reads as mapped on the page; only the
+  lookup in Step 1 shows it is unmapped.
 - The Skip condition in *When to use* is checked once, at intake. Nothing
   here re-checks it as scope grows, so a feature that starts small and
   later crosses into several components can stay embedded in its task plan
