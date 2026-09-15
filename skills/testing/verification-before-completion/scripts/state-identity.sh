@@ -40,14 +40,16 @@ Output:
   that matches neither HEAD nor the working tree. HEAD is not part of it:
   staging or committing exactly the captured content keeps the digest. It does
   NOT change when only the time or the environment changes. Changes inside a
-  submodule count once its checked-out commit moves.
+  submodule count once its checked-out commit moves. Paths under
+  .sdlc-skills/evidence/ are left out of the digest, the counts, and
+  --committed, so a record written there never moves the candidate.
 
 Exit codes:
   0  state captured, or --compare matched
   1  --compare found drift: the evidence does not describe this state
   2  not a git repository, or bad arguments
   3  a required tool is missing
-  4  git could not record the working tree: no digest, so no evidence binds
+  4  a git step failed: no digest or committed identity, so no evidence binds
   5  --committed found uncommitted content: the commit does not hold the captured state
 
 Examples:
@@ -75,6 +77,11 @@ git rev-parse --git-dir >/dev/null 2>&1 || {
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 # Scope every listing to the whole workspace, not the current directory.
 [ -n "$root" ] && cd "$root" || { echo "Error: could not resolve the repository root." >&2; exit 2; }
+# Records under .sdlc-skills/evidence/ describe a candidate and never belong to
+# it, so the digest and the uncommitted listings leave that directory out. The
+# pathspec means what it says whatever pathspec settings the caller exported.
+evidence_out=':(exclude).sdlc-skills/evidence'
+unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
 
 if command -v sha256sum >/dev/null 2>&1; then sha() { sha256sum | cut -c1-16; }
 elif command -v shasum  >/dev/null 2>&1; then sha() { shasum -a 256 | cut -c1-16; }
@@ -93,6 +100,7 @@ jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
 # The content digest: what the working tree presents, as git would record it,
 # plus every staged copy that matches neither HEAD nor the working tree. HEAD is
 # not part of it, so staging or committing exactly this content keeps it.
+# Neither is .sdlc-skills/evidence/: a record written there keeps it too.
 #
 # Git itself records the working tree into a throwaway index and object
 # directory under mktemp, reading the repository's objects as alternates, so
@@ -116,13 +124,14 @@ content_digest() {
   }
   # What the working tree presents, recorded as git would record it.
   cd_git "$cd_tmp/wt.index" add -A >/dev/null 2>&1 &&
+    cd_git "$cd_tmp/wt.index" rm -r -q -f --cached --ignore-unmatch -- .sdlc-skills/evidence >/dev/null 2>&1 &&
     cd_tw="$(cd_git "$cd_tmp/wt.index" write-tree 2>/dev/null)" && [ -n "$cd_tw" ] ||
     { rm -rf "$cd_tmp"; return 1; }
   # Overlay every staged copy that differs from HEAD; the result differs from
   # the working-tree tree only where a staged copy matches neither.
   if [ -f "$cd_tmp/wt.index" ]; then cp -p "$cd_tmp/wt.index" "$cd_tmp/t2.index" || { rm -rf "$cd_tmp"; return 1; }; fi
   cd_head="$(git rev-parse --verify -q 'HEAD^{tree}' 2>/dev/null)" || cd_head=4b825dc642cb6eb9a060e54bf8d69288fbee4904
-  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" 2>/dev/null |
+  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" -- . "$evidence_out" 2>/dev/null |
     while IFS= read -r -d '' cd_hdr && IFS= read -r -d '' cd_path; do
       set -- $cd_hdr
       cd_newmode="$2"; cd_newsha="$4"; cd_status="$5"
@@ -132,7 +141,7 @@ content_digest() {
     done | cd_git "$cd_tmp/t2.index" update-index -z --index-info >/dev/null 2>&1 &&
     cd_t2="$(cd_git "$cd_tmp/t2.index" write-tree 2>/dev/null)" && [ -n "$cd_t2" ] ||
     { rm -rf "$cd_tmp"; return 1; }
-  git --no-optional-locks ls-files -u -z >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
+  git --no-optional-locks ls-files -u -z -- . "$evidence_out" >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
   { printf '%s\n%s\n' "$cd_tw" "$cd_t2"; cat "$cd_tmp/unmerged"; } | sha || { rm -rf "$cd_tmp"; return 1; }
   rm -rf "$cd_tmp"
 }
@@ -151,13 +160,13 @@ if [ "$committed" = 1 ]; then
   uncommitted=0
   if [ -z "$head_full" ]; then uncommitted=1
   else
-    git --no-optional-locks diff --cached --quiet --ignore-submodules=dirty 2>/dev/null; rc=$?
+    git --no-optional-locks diff --cached --quiet --ignore-submodules=dirty -- . "$evidence_out" 2>/dev/null; rc=$?
     [ "$rc" -le 1 ] || { echo "Error: git could not compare the index with HEAD; no identity." >&2; exit 4; }
     [ "$rc" -eq 1 ] && uncommitted=1
-    git --no-optional-locks diff --quiet --ignore-submodules=dirty 2>/dev/null; rc=$?
+    git --no-optional-locks diff --quiet --ignore-submodules=dirty -- . "$evidence_out" 2>/dev/null; rc=$?
     [ "$rc" -le 1 ] || { echo "Error: git could not compare the working tree with the index; no identity." >&2; exit 4; }
     [ "$rc" -eq 1 ] && uncommitted=1
-    untracked="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null)" || {
+    untracked="$(git --no-optional-locks ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" || {
       echo "Error: git could not list untracked paths; no identity." >&2; exit 4; }
     [ -n "$untracked" ] && uncommitted=1
   fi
@@ -181,9 +190,13 @@ fi
 
 head_sha="$(git rev-parse HEAD 2>/dev/null)" || head_sha=""
 branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" || branch=""
-staged_n="$(git --no-optional-locks diff --cached --name-only 2>/dev/null | grep -c . || true)"
-unstaged_n="$(git --no-optional-locks diff --name-only 2>/dev/null | grep -c . || true)"
-untracked_n="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null | grep -c . || true)"
+count() { # the line count of a git listing outside evidence/; fails when git does
+  local out; out="$(git --no-optional-locks "$@" -- . "$evidence_out" 2>/dev/null)" || return 1
+  printf '%s\n' "$out" | grep -c . || true
+}
+staged_n="$(count diff --cached --name-only)" && unstaged_n="$(count diff --name-only)" &&
+  untracked_n="$(count ls-files --others --exclude-standard)" || {
+  echo "Error: git could not list uncommitted paths; no identity." >&2; exit 4; }
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
 
 printf '{\n'

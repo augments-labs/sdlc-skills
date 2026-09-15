@@ -95,6 +95,10 @@ verification ledgers, TDD RED records, debugging hypothesis and attempt
 ledgers, review descriptors, dispatch receipts and reports, and gate-state
 records. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
 
+The candidate digest (`state-identity.sh`, `branch-state.sh`) leaves `evidence/`
+out, so a record written there never changes the candidate it describes. Write
+run records nowhere else inside the workspace.
+
 The directory holds a `.gitignore` containing `*` and `!.gitignore`. Commit
 that file with the trail, so every clone and worktree ignores the rest. A
 result worth keeping is summarized into the artifact's ledger with the
