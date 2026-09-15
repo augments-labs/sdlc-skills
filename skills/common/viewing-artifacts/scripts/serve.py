@@ -7,7 +7,9 @@ the session that asked for it. Python 3 standard library only.
 
 The printed URL carries a one-time ?key=; the first authorized load
 plants an HttpOnly cookie, after which plain URLs keep working in that
-browser. Any other local process gets 403.
+browser. A request with neither the key nor the cookie gets 403. Browsers
+scope cookies by host, not port: while the preview runs, any other listener
+on this host that the browser visits receives the cookie and can replay it.
 
 Start it backgrounded and read the one-line JSON startup record:
 
