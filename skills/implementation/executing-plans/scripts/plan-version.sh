@@ -22,8 +22,8 @@ Exit codes:
   0  version printed
   2  usage error, the index or a listed task file is missing, a checkbox row
      under ## Tasks does not parse (indented, missing its backticked file,
-     text after its state label, an unlisted state), or a task row sits
-     outside ## Tasks
+     text after its state label, an unlisted state), a task row sits
+     outside ## Tasks, or a code fence never closes
   3  git is not on PATH
 USAGE
 }
@@ -46,14 +46,29 @@ task_files=$(sed -nE 's/^- \[[ xX]\] .*`([^`]+\.md)`[^`]*`('"$states"')`[[:space
 # there that does not parse, or a parsed row outside that section, would change
 # what the version covers without a word, so either one fails. Lines inside a
 # fenced code block are examples: they neither open a section nor count as rows.
+# A fence that never closes fails too, so nothing after it hides.
 bad=$(awk -v st="$states" '
-  {l = $0; sub(/[ \t\r]+$/, "", l); u = l; sub(/^ */, "", u)}
-  z {if (index(u, o) == 1 && u ~ /^([`]+|~+)$/) z = 0; next}
-  u ~ /^([`][`][`]|~~~)/ {z = 1; match(u, /^([`]+|~+)/); o = substr(u, 1, RLENGTH); next}
-  l ~ /^## / {t = (l == "## Tasks"); next}
-  {ok = (l ~ ("^- \\[[ xX]\\] .*`[^`]+\\.md`[^`]*`(" st ")`$"))}
-  t && !ok && l ~ /^[ \t]*([-*+]|[0-9]+[.)])[ \t]+\[[ xX]\]/ {print "  " $0}
-  !t && ok {print "  " $0 "  (outside ## Tasks)"}' "$index")
+  {n++; R[n] = $0; l = $0; sub(/[ \t\r]+$/, "", l); L[n] = l; u = l; sub(/^ */, "", u); U[n] = u}
+  END {
+    for (i = n; i >= 1; i--) {
+      B[i] = cb; T[i] = ct
+      if (U[i] ~ /^[`]+$/ && length(U[i]) > cb) cb = length(U[i])
+      if (U[i] ~ /^~+$/ && length(U[i]) > ct) ct = length(U[i])
+    }
+    for (i = 1; i <= n; i++) {
+      l = L[i]; u = U[i]
+      if (z) { if (index(u, o) == 1 && u ~ /^([`]+|~+)$/) z = 0; continue }
+      if (u ~ /^([`][`][`]|~~~)/) {
+        match(u, /^([`]+|~+)/); r = substr(u, 1, RLENGTH)
+        if ((substr(r, 1, 1) == "~" ? T[i] : B[i]) >= RLENGTH) { z = 1; o = r; continue }
+        print "  line " i ": a code fence opens here and never closes"; continue
+      }
+      if (l ~ /^## /) { t = (l == "## Tasks"); continue }
+      ok = (l ~ ("^- \\[[ xX]\\] .*`[^`]+\\.md`[^`]*`(" st ")`$"))
+      if (t && !ok && l ~ /^[ \t]*([-*+]|[0-9]+[.)])[ \t]+\[[ xX]\]/) print "  " R[i]
+      else if (!t && ok) print "  " R[i] "  (outside ## Tasks)"
+    }
+  }' "$index")
 if [ -z "$task_files" ] || [ -n "$bad" ]; then
   echo "Error: $index needs every checkbox row under ## Tasks to read - [ ] \`ID\` — title · \`file.md\` · \`state\`, with nothing after the state, and no task row outside it:" >&2
   [ -z "$bad" ] || printf '%s\n' "$bad" >&2
