@@ -50,8 +50,8 @@ Output:
                          remote-tracking refs: a stale or single-branch clone
                          can report false for pushed commits
     dirty.*_count        staged / unstaged / untracked / ignored, counted separately.
-                         An assume-unchanged path, or a skip-worktree path that
-                         exists, counts as unstaged: git hides its edits
+                         An assume-unchanged or skip-worktree path whose edits
+                         git hides counts as unstaged
     dirty.digest         state-identity.sh's source.digest, or null when git hides
                          an edit. It, the counts, and dirty.clean leave
                          .sdlc-skills/evidence/ out
@@ -77,9 +77,10 @@ Exit codes:
   3  a required tool is missing
   4  git could not record or list the working tree, so candidate.id cannot
      be computed and nothing prints; or git hides an edit (an assume-unchanged
-     entry, a skip-worktree entry whose path exists, an untracked embedded
-     repository), so the JSON prints with dirty.clean false, dirty.digest and
-     candidate.id null, and stderr names each path
+     entry, a skip-worktree entry whose path exists or, outside a sparse
+     checkout, is gone, or an embedded repository), so the JSON prints with
+     dirty.clean false and dirty.digest and candidate.id null, and stderr
+     names each path
 
 Examples:
   bash scripts/branch-state.sh
@@ -139,29 +140,37 @@ jarray() {
 count_lines() { grep -c . 2>/dev/null || true; }
 
 # Paths whose edits git hides from its own listings and from the digest, as
-# kind<TAB>path lines outside .sdlc-skills/evidence/. Git never reads the
-# working-tree copy of an assume-unchanged entry (a lowercase tag), or of a
-# skip-worktree entry whose path exists (S); a sparse checkout's absent paths
-# are not edits. A path git quotes is tested by the bytes its quoting names. An
-# untracked directory holding its own repository is one entry git never reads
-# inside. Fails only when git cannot list.
+# kind<TAB>path lines outside .sdlc-skills/evidence/, quoted as git quotes paths.
+# Git never reads the working-tree copy of an assume-unchanged entry (a
+# lowercase tag), or of a skip-worktree entry (S) whose path exists or, outside
+# a sparse checkout, is gone: only a sparse checkout's absent paths are not
+# edits. A directory holding its own repository, untracked or where a tracked
+# file was, is one entry git never reads inside. Fails only when git cannot list.
 hidden_paths() {
-  local hp_index hp_others hp_line hp_path hp_raw
-  hp_index="$(git --no-optional-locks -c core.quotePath=false ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
-    hp_others="$(git --no-optional-locks -c core.quotePath=false ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" ||
+  local hp_index hp_others hp_types hp_sparse hp_line hp_path hp_raw
+  hp_index="$(git --no-optional-locks ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
+    hp_others="$(git --no-optional-locks ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
+    hp_types="$(git --no-optional-locks diff --name-only --diff-filter=T -- . "$evidence_out" 2>/dev/null)" ||
     return 1
+  hp_sparse="$(git config --bool core.sparseCheckout 2>/dev/null)"
   printf '%s\n' "$hp_index" | LC_ALL=C grep -E '^([a-z]|S) ' | while IFS= read -r hp_line; do
     hp_path="${hp_line#? }"
     case "$hp_line" in
       S\ *)
         hp_raw="$hp_path"
-        case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; hp_raw="$(printf -- "${hp_raw//%/%%}x")"; hp_raw="${hp_raw%x}" ;; esac
-        { [ -e "$hp_raw" ] || [ -L "$hp_raw" ]; } && printf 'skip-worktree\t%s\n' "$hp_path" ;;
+        case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+        if [ -e "$hp_raw" ] || [ -L "$hp_raw" ] || [ "$hp_sparse" != true ]; then printf 'skip-worktree\t%s\n' "$hp_path"; fi ;;
       *) printf 'assume-unchanged\t%s\n' "$hp_path" ;;
     esac
   done
   printf '%s\n' "$hp_others" | LC_ALL=C grep -E '/"?$' | while IFS= read -r hp_line; do
     printf 'embedded repository\t%s\n' "$hp_line"
+  done
+  printf '%s\n' "$hp_types" | while IFS= read -r hp_line; do
+    [ -n "$hp_line" ] || continue
+    hp_raw="$hp_line"
+    case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+    if [ -d "$hp_raw" ] && [ -e "$hp_raw/.git" ]; then printf 'embedded repository\t%s\n' "$hp_line"; fi
   done
   return 0
 }
@@ -260,7 +269,7 @@ untracked_n="$(printf '%s\n' "$untracked" | count_lines)"
 ignored_n="$(printf '%s\n' "$ignored" | count_lines)"
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
 # An edit git hides reaches none of the listings above, yet a discard destroys
-# it. Its path counts as unstaged (an embedded repository is already untracked),
+# it. Its path counts as unstaged (an embedded repository is already listed),
 # the state is not clean, and no digest or discard token is computed below.
 hidden="$(hidden_paths)" || {
   echo "Error: git could not list the paths whose edits it hides; candidate.id cannot be computed." >&2; exit 4; }
@@ -434,7 +443,7 @@ printf '}\n'
 if [ -n "$hidden" ]; then
   echo "Error: git hides edits to these paths, so dirty.digest and candidate.id are null and no discard token binds this state:" >&2
   printf '%s\n' "$hidden" | while IFS=$'\t' read -r kind path; do printf '  %s: %s\n' "$kind" "$path" >&2; done
-  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree), or commit, ignore, or move the embedded repository, then rerun." >&2
+  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree; with core.ignoreStat set, git sets it again on every add), or commit, ignore, or move the embedded repository, then rerun." >&2
   exit 4
 fi
 exit 0

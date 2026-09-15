@@ -43,9 +43,10 @@ Output:
   submodule count once its checked-out commit moves. Paths under
   .sdlc-skills/evidence/ are left out of the digest, the counts, and
   --committed, so a record written there never moves the candidate.
-  An edit git hides is content no digest can read: an assume-unchanged entry,
-  a skip-worktree entry whose path exists, or an untracked directory holding
-  its own repository (an embedded repository). While one exists, every mode
+  An edit git hides is content no digest can read: an assume-unchanged entry;
+  a skip-worktree entry whose path exists, or is gone outside a sparse
+  checkout; or a directory holding its own repository, untracked or in place
+  of a tracked file (an embedded repository). While one exists, every mode
   exits 4 and names each path on stderr.
 
 Exit codes:
@@ -103,29 +104,37 @@ jnull() { [ -n "${1-}" ] && jstr "$1" || printf 'null'; }
 jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
 
 # Paths whose edits git hides from its own listings and from the digest, as
-# kind<TAB>path lines outside .sdlc-skills/evidence/. Git never reads the
-# working-tree copy of an assume-unchanged entry (a lowercase tag), or of a
-# skip-worktree entry whose path exists (S); a sparse checkout's absent paths
-# are not edits. A path git quotes is tested by the bytes its quoting names. An
-# untracked directory holding its own repository is one entry git never reads
-# inside. Fails only when git cannot list.
+# kind<TAB>path lines outside .sdlc-skills/evidence/, quoted as git quotes paths.
+# Git never reads the working-tree copy of an assume-unchanged entry (a
+# lowercase tag), or of a skip-worktree entry (S) whose path exists or, outside
+# a sparse checkout, is gone: only a sparse checkout's absent paths are not
+# edits. A directory holding its own repository, untracked or where a tracked
+# file was, is one entry git never reads inside. Fails only when git cannot list.
 hidden_paths() {
-  local hp_index hp_others hp_line hp_path hp_raw
-  hp_index="$(git --no-optional-locks -c core.quotePath=false ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
-    hp_others="$(git --no-optional-locks -c core.quotePath=false ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" ||
+  local hp_index hp_others hp_types hp_sparse hp_line hp_path hp_raw
+  hp_index="$(git --no-optional-locks ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
+    hp_others="$(git --no-optional-locks ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
+    hp_types="$(git --no-optional-locks diff --name-only --diff-filter=T -- . "$evidence_out" 2>/dev/null)" ||
     return 1
+  hp_sparse="$(git config --bool core.sparseCheckout 2>/dev/null)"
   printf '%s\n' "$hp_index" | LC_ALL=C grep -E '^([a-z]|S) ' | while IFS= read -r hp_line; do
     hp_path="${hp_line#? }"
     case "$hp_line" in
       S\ *)
         hp_raw="$hp_path"
-        case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; hp_raw="$(printf -- "${hp_raw//%/%%}x")"; hp_raw="${hp_raw%x}" ;; esac
-        { [ -e "$hp_raw" ] || [ -L "$hp_raw" ]; } && printf 'skip-worktree\t%s\n' "$hp_path" ;;
+        case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+        if [ -e "$hp_raw" ] || [ -L "$hp_raw" ] || [ "$hp_sparse" != true ]; then printf 'skip-worktree\t%s\n' "$hp_path"; fi ;;
       *) printf 'assume-unchanged\t%s\n' "$hp_path" ;;
     esac
   done
   printf '%s\n' "$hp_others" | LC_ALL=C grep -E '/"?$' | while IFS= read -r hp_line; do
     printf 'embedded repository\t%s\n' "$hp_line"
+  done
+  printf '%s\n' "$hp_types" | while IFS= read -r hp_line; do
+    [ -n "$hp_line" ] || continue
+    hp_raw="$hp_line"
+    case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+    if [ -d "$hp_raw" ] && [ -e "$hp_raw/.git" ]; then printf 'embedded repository\t%s\n' "$hp_line"; fi
   done
   return 0
 }
@@ -186,7 +195,7 @@ hidden="$(hidden_paths)" || {
 if [ -n "$hidden" ]; then
   echo "Error: git hides edits to these paths, so no digest or committed identity can hold them:" >&2
   printf '%s\n' "$hidden" | while IFS=$'\t' read -r kind path; do printf '  %s: %s\n' "$kind" "$path" >&2; done
-  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree), or commit, ignore, or move the embedded repository, then rerun." >&2
+  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree; with core.ignoreStat set, git sets it again on every add), or commit, ignore, or move the embedded repository, then rerun." >&2
   exit 4
 fi
 
