@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Bind the local integration state of a candidate branch, as JSON on stdout.
 #
-# Read-only: this script never writes, fetches, or mutates anything.
+# Read-only for repository files, refs, and the index: it never fetches, commits,
+# or changes them. Git may refresh the timestamps of objects it already holds.
 #
 # It exists because the menu and the discard block in SKILL.md interpolate
 # facts — unique commits, uncommitted inventory, worktree ownership, whether
@@ -17,7 +18,7 @@ usage() {
 Usage: bash scripts/branch-state.sh [OPTIONS]
 
 Report the local git integration state of the current candidate as JSON.
-Read-only — never writes, fetches, or mutates. Run it from inside the
+Read-only for repository files, refs, and the index. Run it from inside the
 repository whose branch is being finished.
 
 Options:
@@ -36,8 +37,8 @@ Output:
     base.resolved        false when the base is ambiguous — integration stops
     head.detached        true when there is no branch to push
     candidate.id         digest over root, branch, HEAD, base, base sha, dirty.digest,
-                         published, and the unpushed commit count;
-                         the discard token, and it changes with any of them
+                         the ignored listing, published, and the unpushed commit
+                         count; the discard token, and it changes with any of them
     candidate.commit_count, candidate.unpushed_commit_count, candidate.commits
                          null when base.resolved is false
     candidate.published  true when HEAD or any candidate commit is on a remote
@@ -46,19 +47,28 @@ Output:
                          needs separate direct permission. Read from local
                          remote-tracking refs: a stale or single-branch clone
                          can report false for pushed commits
-    dirty.*_count        staged / unstaged / untracked, counted separately
+    dirty.*_count        staged / unstaged / untracked / ignored, counted separately
+    dirty.ignored        ignored entries as git lists them (git ls-files --others
+                         --ignored --exclude-standard --directory), capped like
+                         the other listings. A directory whose content is all
+                         ignored is one entry, and a change inside it leaves
+                         candidate.id unchanged. Removing their worktree
+                         destroys them
     recoverability       what a discard would and would not be able to undo;
-                         commits_recoverable_from_remote is true only when
+                         ignored_would_be_lost is true when any ignored path
+                         exists; commits_recoverable_from_remote is true only when
                          HEAD, and so every candidate commit, is on a remote ref
 
 Not covered: remote/PR state. That needs a forge API, which this script
-deliberately does not reach for. Bind PR state separately.
+deliberately does not reach for. Bind PR state separately. Nor is content
+inside a submodule: git refuses to remove a worktree holding one without --force.
 
 Exit codes:
   0  state reported
   2  not a git repository, or bad arguments
   3  a required tool is missing
-  4  git could not record the working tree, so candidate.id cannot be computed
+  4  git could not record the working tree or list its ignored paths, so
+     candidate.id cannot be computed
 
 Examples:
   bash scripts/branch-state.sh
@@ -181,9 +191,14 @@ fi
 staged="$(git --no-optional-locks diff --cached --name-only 2>/dev/null)"
 unstaged="$(git --no-optional-locks diff --name-only 2>/dev/null)"
 untracked="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null)"
+# Ignored content never shows as untracked, yet a discard or a worktree removal
+# destroys it: local secrets, build output, uncommitted evidence records.
+ignored="$(git --no-optional-locks ls-files --others --ignored --exclude-standard --directory 2>/dev/null)" || {
+  echo "Error: git could not list ignored paths; candidate.id cannot be computed." >&2; exit 4; }
 staged_n="$(printf '%s\n' "$staged" | count_lines)"
 unstaged_n="$(printf '%s\n' "$unstaged" | count_lines)"
 untracked_n="$(printf '%s\n' "$untracked" | count_lines)"
+ignored_n="$(printf '%s\n' "$ignored" | count_lines)"
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
 
 # The content digest: what the working tree presents, as git would record it,
@@ -282,7 +297,7 @@ if [ -n "$head_sha" ]; then
 fi
 
 # The discard token: any change to what a discard would destroy changes it.
-cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$published" "$unpushed_n" | sha)"
+cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$ignored" "$published" "$unpushed_n" | sha)"
 
 stashes="$(git --no-optional-locks stash list 2>/dev/null | count_lines)"
 
@@ -290,6 +305,7 @@ stashes="$(git --no-optional-locks stash list 2>/dev/null | count_lines)"
 # Untracked content is never recoverable by git; committed-and-pushed work
 # always is; committed-but-unpushed work is reflog-only and time-limited.
 untracked_lost=0; [ "$untracked_n" -gt 0 ] && untracked_lost=1
+ignored_lost=0; [ "$ignored_n" -gt 0 ] && ignored_lost=1
 uncommitted_lost=0; { [ "$staged_n" -gt 0 ] || [ "$unstaged_n" -gt 0 ]; } && uncommitted_lost=1
 
 # --- emit ---------------------------------------------------------------------
@@ -306,11 +322,12 @@ printf '  "base": { "ref": %s, "sha": %s, "source": %s, "resolved": %s, "merge_b
   "$(jbool $base_resolved)" "$(jnull "$merge_base")" "$(jbool $same_as_base)"
 printf '  "dirty": {\n'
 printf '    "clean": %s, "digest": %s,\n' "$(jbool $clean)" "$(jnull "$digest")"
-printf '    "staged_count": %s, "unstaged_count": %s, "untracked_count": %s,\n' \
-  "$staged_n" "$unstaged_n" "$untracked_n"
+printf '    "staged_count": %s, "unstaged_count": %s, "untracked_count": %s, "ignored_count": %s,\n' \
+  "$staged_n" "$unstaged_n" "$untracked_n" "$ignored_n"
 printf '    "staged": %s,\n'    "$(printf '%s\n' "$staged"    | jarray)"
 printf '    "unstaged": %s,\n'  "$(printf '%s\n' "$unstaged"  | jarray)"
-printf '    "untracked": %s\n'  "$(printf '%s\n' "$untracked" | jarray)"
+printf '    "untracked": %s,\n' "$(printf '%s\n' "$untracked" | jarray)"
+printf '    "ignored": %s\n'    "$(printf '%s\n' "$ignored"   | jarray)"
 printf '  },\n'
 printf '  "candidate": {\n'
 printf '    "id": %s,\n' "$(jstr "$cand_id")"
@@ -321,6 +338,7 @@ printf '  },\n'
 printf '  "recoverability": {\n'
 printf '    "stash_entries": %s,\n' "${stashes:-0}"
 printf '    "untracked_would_be_lost": %s,\n' "$(jbool $untracked_lost)"
+printf '    "ignored_would_be_lost": %s,\n' "$(jbool $ignored_lost)"
 printf '    "uncommitted_would_be_lost": %s,\n' "$(jbool $uncommitted_lost)"
 printf '    "commits_recoverable_from_remote": %s\n' "$(jbool $head_on_remote)"
 printf '  },\n'
@@ -328,7 +346,7 @@ printf '  "listing_limit": %s\n' "$limit"
 printf '}\n'
 
 [ "$limit" -gt 0 ] && {
-  for pair in "staged:$staged_n" "unstaged:$unstaged_n" "untracked:$untracked_n" "commits:$commits_n"; do
+  for pair in "staged:$staged_n" "unstaged:$unstaged_n" "untracked:$untracked_n" "ignored:$ignored_n" "commits:$commits_n"; do
     case "${pair##*:}" in ''|*[!0-9]*) continue;; esac
     [ "${pair##*:}" -gt "$limit" ] && \
       echo "note: ${pair%%:*} listing truncated to $limit of ${pair##*:}; the count is exact. Use --full for all." >&2
