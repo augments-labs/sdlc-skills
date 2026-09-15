@@ -65,7 +65,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    only after the user accepts, then present its URL:
 
    ```bash
-   bash scripts/start-server.sh --root .sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals
+   bash scripts/start-server.sh --root .sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals --entry {{decision-slug}}.html
    ```
 
    Serving fails or is declined → the file path stands.
@@ -121,6 +121,9 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
   treated as a constraint instead of being flagged as unknown.
 - Run without `--root`, `scripts/start-server.sh` exits 1, and the file-path
   fallback in Step 3.3 hides that no surface was served.
+- Run without `--entry`, the printed URL opens the visuals directory, which
+  holds `{{decision-slug}}.html` pages and no `index.html`, so the link the
+  user gets returns 404.
 - A design request is not consent to a background listener: a preview started
   unasked opens a local port the user never agreed to.
 

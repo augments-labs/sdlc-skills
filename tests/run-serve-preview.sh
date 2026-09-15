@@ -147,10 +147,13 @@ repo_root="$PWD"
 project="$fixture/project"
 mkdir -p "$project/.sdlc-skills/views" "$project/.sdlc-skills/designs/2026-01-01-fixture/visuals"
 echo '<h1>trail view</h1>' > "$project/.sdlc-skills/views/index.html"
-echo '<h1>visual decision</h1>' > "$project/.sdlc-skills/designs/2026-01-01-fixture/visuals/index.html"
+# ui-ux-design writes one page per decision and no index.html, so this
+# directory holds only that page: a start command without --entry serves 404
+# here, in CI, instead of in front of a user.
+echo '<h1>visual decision</h1>' > "$project/.sdlc-skills/designs/2026-01-01-fixture/visuals/fixture-decision.html"
 
 fill() { # $1 documented command, $2 pid; fills the placeholders bodies use
-  printf '%s' "$1" | sed -e 's/{{YYYY-MM-DD}}/2026-01-01/g' -e 's/{{topic}}/fixture/g' -e "s/{{pid}}/$2/g"
+  printf '%s' "$1" | sed -e 's/{{YYYY-MM-DD}}/2026-01-01/g' -e 's/{{topic}}/fixture/g' -e 's/{{decision-slug}}/fixture-decision/g' -e "s/{{pid}}/$2/g"
 }
 stop_preview() { # $1 pid: SIGTERM, then wait until it has exited
   kill "$1" 2>/dev/null
