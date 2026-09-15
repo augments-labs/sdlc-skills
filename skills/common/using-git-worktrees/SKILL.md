@@ -93,13 +93,13 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    root="$(cd "$common_dir/.." && pwd -P)" && cd "$root"   # main checkout root, even from inside a linked worktree
    dir=".worktrees"
    [ -d "$root/worktrees" ] && [ ! -d "$root/.worktrees" ] && dir="worktrees"
-   git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null || echo "NOT IGNORED"
-   git check-ignore -q "$dir" || echo "$dir itself is not ignored"
+   git check-ignore -q "$dir/" || echo "$dir/ is not ignored"
    ```
 
-4. Either line printed → do not edit `.gitignore` in the shared checkout.
-   Exclude locally, then make adding `{{dir}}/` to `.gitignore` the first
-   commit on the task branch:
+4. That line printed → do not edit `.gitignore` in the shared checkout;
+   exclude locally below. Local commit authority recorded (Step 5) → also make
+   adding `{{dir}}/` to `.gitignore` the first commit on the task branch. None
+   recorded → the local exclude alone.
 
    ```bash
    printf '%s/\n' "$dir" >> "$(git rev-parse --git-common-dir)/info/exclude"
