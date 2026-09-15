@@ -31,9 +31,9 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
 ## Step 2: Persist, then challenge
 
 1. Append the immutable `proposed` ADR to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the project's
-   decision log, preserving what is there. Compute its identity (per template)
-   now; the challenge binds to this path and identity.
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+   preserving what is there. Compute its identity (per template) now; the
+   challenge binds to this path and identity.
 2. A reviewer other than the sole author challenges options, assumptions,
    consequences, reversal, under the template's challenge contract. Fill
    `assets/adr-challenger.md` with that path and identity before dispatching
