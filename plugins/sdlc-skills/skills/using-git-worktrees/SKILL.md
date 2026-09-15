@@ -19,8 +19,6 @@ down what you found there before you change anything.
 
 ## When to use
 
-- You are about to edit files, implement a feature/fix/refactor, execute a plan, or dispatch agents.
-- Runtime or review isolation matters: parallel agents, risky changes, separate ports, databases, fixtures, or long-running app state.
 - **Skip creation** when the user explicitly says to stay, or Step 1 confirms
   a linked worktree owned by this task or the harness. Reuse its current workspace
   and baseline record; retain Step 5 checkpoints and handoff. Skip read-only work.
@@ -85,9 +83,13 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    guidance → harness-native worktree command or session flag (use the name
    above, confirm HEAD is the proven base, skip to Step 4) → a worktree you
    create below.
-3. Choose the directory and prove it is ignored. User-given path wins.
+3. Inside a submodule → stop here. Create an owned branch in the submodule and
+   write an explicit plan for the parent gitlink; never run Steps 3.3–3.5 from
+   the superproject's paths. Otherwise choose the directory and prove it is
+   ignored. User-given path wins.
 
    ```bash
+   [ -z "$(git rev-parse --show-superproject-working-tree)" ] || echo "SUBMODULE: stop; follow the submodule rule"
    root="$(cd "$common_dir/.." && pwd -P)" && cd "$root"   # main checkout root, even from inside a linked worktree
    dir=".worktrees"
    [ -d "$root/worktrees" ] && [ ! -d "$root/.worktrees" ] && dir="worktrees"
@@ -113,8 +115,7 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
 
 6. `worktree add` or `cd` fails on a permission or sandbox boundary → try a
    path the boundary allows and ask the user to confirm it. None works →
-   report and stop. Never edit the shared checkout instead. Submodule → an
-   owned branch and an explicit plan for the parent gitlink.
+   report and stop. Never edit the shared checkout instead.
 
 ## Step 4: Baseline it
 
