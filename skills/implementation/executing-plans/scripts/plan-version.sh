@@ -42,9 +42,9 @@ index="$dir/00-index.md"
 states='todo|in progress|done|done with concerns|blocked|needs context|cancelled|superseded'
 task_files=$(sed -nE 's/^- \[[ xX]\] .*`([^`]+\.md)`[^`]*`('"$states"')`[[:space:]]*$/\1/p' "$index")
 # A checkbox line, at any indentation, is a task row when it ends in a state
-# label or opens with a backticked ID followed by another backticked token. One
-# that fails to parse would otherwise drop its task out of the version silently.
-candidates=$(grep -E '\[[ xX]\]([[:space:]]+`[^`]+`.*`[^`]+`|.*`('"$states"')`[[:space:]]*$)' "$index")
+# label or opens with a backticked ID and names a backticked .md file. One that
+# fails to parse would otherwise drop its task out of the version silently.
+candidates=$(grep -E '\[[ xX]\]([[:space:]]+`[^`]+`.*`[^`]+\.md`|.*`('"$states"')`[[:space:]]*$)' "$index")
 rows=$(printf '%s\n' "$candidates" | grep -c .)
 parsed=$(printf '%s\n' "$task_files" | grep -c .)
 if [ "$parsed" -eq 0 ] || [ "$parsed" -ne "$rows" ]; then
