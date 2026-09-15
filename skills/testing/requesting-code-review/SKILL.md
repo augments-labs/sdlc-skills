@@ -95,11 +95,10 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 2. Otherwise open `assets/code-reviewer.md` before dispatch, with each
    selected specialist template. Fill Inputs from the descriptor and raw
    evidence. Insert `assets/review-report.md` before sending, in its Report
-   template slot; leave the report fields for the reviewer. Send each filled
-   fenced prompt through the harness's dispatch action.
-3. Then dispatch per `dispatching-parallel-agents` Step 2, using the
-   descriptor's deadline as the frozen deadline. The answer assigns
-   self-review → quote it as the Shallow assignment in a successor
+   template slot; leave the report fields for the reviewer.
+3. Send each filled fenced prompt once, per `dispatching-parallel-agents`
+   Step 2, using the descriptor's deadline as the frozen deadline. The answer
+   assigns self-review → quote it as the Shallow assignment in a successor
    descriptor and return to Step 3.1.
 4. Success = exactly one current report for each role.
 5. Read each returned report, opening its file if only a location was returned.
