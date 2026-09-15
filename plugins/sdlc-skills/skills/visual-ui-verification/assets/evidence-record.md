@@ -10,7 +10,9 @@ per required observation; use stable `{{double-curly}}` values.
   covering staged, unstaged, untracked, and relevant ignored inputs}}`
 - **Launch path:** `{{command or controlled action}}`
 - **Acceptance source:** `{{approved full design path/version, requirements and
-  rubric identity; include flows, states, conditions and decisions outside any preview}}`
+  rubric identity; include flows, states, conditions and decisions outside any
+  preview; or, with no approved design, the acceptance criteria identity or the
+  pre-change capture identity}}`
 - **Selected visual references:** `{{keyed collection applicable to this
   candidate, copied field for field from the approved design and, when
   plan-bound, the approved plan; or not applicable}}`
