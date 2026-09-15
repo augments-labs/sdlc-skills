@@ -44,9 +44,12 @@ states='todo|in progress|done|done with concerns|blocked|needs context|cancelled
 task_files=$(sed -nE 's/^- \[[ xX]\] .*`([^`]+\.md)`[^`]*`('"$states"')`[[:space:]]*$/\1/p' "$index")
 # A task row is any list-item checkbox under ## Tasks, at any indentation. A row
 # there that does not parse, or a parsed row outside that section, would change
-# what the version covers without a word, so either one fails.
+# what the version covers without a word, so either one fails. Lines inside a
+# fenced code block are examples: they neither open a section nor count as rows.
 bad=$(awk -v st="$states" '
-  {l = $0; sub(/[ \t\r]+$/, "", l)}
+  {l = $0; sub(/[ \t\r]+$/, "", l); u = l; sub(/^ */, "", u)}
+  z {if (index(u, o) == 1 && u ~ /^([`]+|~+)$/) z = 0; next}
+  u ~ /^([`][`][`]|~~~)/ {z = 1; match(u, /^([`]+|~+)/); o = substr(u, 1, RLENGTH); next}
   l ~ /^## / {t = (l == "## Tasks"); next}
   {ok = (l ~ ("^- \\[[ xX]\\] .*`[^`]+\\.md`[^`]*`(" st ")`$"))}
   t && !ok && l ~ /^[ \t]*([-*+]|[0-9]+[.)])[ \t]+\[[ xX]\]/ {print "  " $0}
