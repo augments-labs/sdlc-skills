@@ -75,18 +75,18 @@ available lever reopens containment.
 
 Count hypothesis tests and applied fixes separately. Re-entered from
 `test-driven-development`, inherit the attempt count from the existing ledger;
-never restart it. After three applied fixes in one failure class miss the
-predeclared criterion, stop before a fourth: the class is `unconverged`,
-meaning no further patch on the current model, not an end to diagnosis.
+never restart it. After three applied fixes or wrong-reason RED re-entries in
+one failure class miss the predeclared criterion, stop before a fourth: the
+class is `unconverged`, meaning no further patch on the current model, not an
+end to diagnosis.
 Re-examine the reproduction, causal model, layer, environment, instrumentation
 perturbation, assumptions, and design; treat architecture as one possible
 finding, not the answer. Update the model or escalate with the ledger.
 
 ## Gotchas
 
-- An attempt count that restarts on each re-entry never trips the breaker. A fix
-  that bounces between here and `test-driven-development` keeps one count in the
-  attempt ledger.
+- A wrong-reason RED bounce with `test-driven-development` applies no fix:
+  restart the count, or count only applied fixes, and the breaker never trips.
 
 ## Hard stops
 
