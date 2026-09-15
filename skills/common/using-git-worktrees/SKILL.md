@@ -14,14 +14,11 @@ tests, and project gates are.
 
 # Using Git Worktrees
 
-Give every task its own checkout, prove the base it starts from, and write
-down what you found there before you change anything.
-
 ## When to use
 
 - **Skip creation** when the user explicitly says to stay, or Step 1 confirms
   a linked worktree owned by this task or the harness. Reuse its current workspace
-  and baseline record; retain Step 5 checkpoints and handoff. Skip read-only work.
+  and baseline record; retain Step 5 checkpoints. Skip read-only work.
 
 ## Step 1: Detect what you are in
 
@@ -40,31 +37,25 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    ```
 
 2. Read the submodule line first: inside a submodule the two directories
-   match without a linked worktree. Write down any harness-native workspace
-   metadata.
+   match without a linked worktree.
 3. Detached or host-owned checkout with unknown owner → do not nest, attach,
    switch, or clean it.
-4. Write every resource and dirty change into the inventory: created by this
-   task, or pre-existing/user-owned/shared/host-owned. Unknown → second
-   column. It blocks cleanup. Never stash dirty state you do
-   not own.
+4. Write every resource and dirty change into the inventory, by who created
+   it. Never stash dirty state you do not own.
 5. Planned in another workspace → rerun 1 before the first product edit.
 
 ## Step 2: Prove the base
 
 1. Take the base from direct user or project guidance. None → the current
-   branch this task started from, at its recorded revision. Detached HEAD or
-   conflicting guidance → ask for the base and stop. Record revision and
-   remote freshness:
+   branch this task started from. Detached HEAD or conflicting guidance → ask
+   and stop. Record its revision and remote freshness:
 
    ```bash
    git fetch origin "$BASE"          # only with network authority; otherwise record "not fetched"
    git rev-parse "$BASE" "origin/$BASE"
    ```
 
-2. Record gate inputs outside the source tree (ignored, generated, external)
-   in their own section.
-3. Read `references/baseline-contract.md` before any install or baseline
+2. Read `references/baseline-contract.md` before any install or baseline
    command.
 
 ## Step 3: Create the workspace
@@ -76,30 +67,27 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    git check-ref-format --branch "$BRANCH"
    git show-ref --verify --quiet "refs/heads/$BRANCH" && echo "local branch exists"
    git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" && echo "remote branch exists"
-   git worktree list | grep -F "[$BRANCH]"
    ```
 
    Anything prints → pick another name. Never overwrite or reuse.
 2. Pick the mechanism, first that applies: user instruction → project
-   guidance → harness-native worktree command or session flag (use the name
-   above, confirm HEAD is the proven base, skip to Step 4) → a worktree you
-   create below.
+   guidance → a harness-native worktree command (with the name above, HEAD at
+   the proven base; skip to Step 4) → the steps below.
 3. Inside a submodule → stop here. Create an owned branch in the submodule and
-   write an explicit plan for the parent gitlink; never run Steps 3.3–3.5 from
-   the superproject's paths. Otherwise choose the directory and prove it is
-   ignored. User-given path wins.
+   write an explicit plan for the parent gitlink; never run the rest of Step 3
+   from the superproject's paths. Otherwise choose the directory and prove it
+   is ignored; a user-given path wins.
 
    ```bash
-   [ -z "$(git rev-parse --show-superproject-working-tree)" ] || echo "SUBMODULE: stop; follow the submodule rule"
-   root="$(cd "$common_dir/.." && pwd -P)" && cd "$root"   # main checkout root, even from inside a linked worktree
+   [ -z "$(git rev-parse --show-superproject-working-tree)" ] || echo "SUBMODULE: stop"
+   root="$(cd "$common_dir/.." && pwd -P)" && cd "$root"   # the main checkout root
    dir=".worktrees"
-   [ -d "$root/worktrees" ] && [ ! -d "$root/.worktrees" ] && dir="worktrees"
    git check-ignore -q "$dir/" || echo "$dir/ is not ignored"
    ```
 
-4. That line printed → exclude it locally below; that is the whole change.
-   Never add `{{dir}}/` to `.gitignore` in any checkout: local commit authority
-   covers task checkpoints, not a project change nobody requested.
+4. That line printed → exclude it locally; that is the whole change. Never add
+   `{{dir}}/` to `.gitignore` in any checkout: local commit authority covers
+   task checkpoints, not a project change nobody requested.
 
    ```bash
    printf '%s/\n' "$dir" >> "$(git rev-parse --git-common-dir)/info/exclude"
@@ -113,19 +101,17 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    cd "$path" && git status --short --branch   # expect: ## $BRANCH, clean
    ```
 
-6. `worktree add` or `cd` fails on a permission or sandbox boundary → try a
-   path the boundary allows and ask the user to confirm it. None works →
-   report and stop. Never edit the shared checkout instead.
+6. `worktree add` or `cd` fails on a sandbox or permission boundary → try a
+   path the boundary allows, confirmed with the user. None works → report and
+   stop; never edit the shared checkout instead.
 
 ## Step 4: Baseline it
 
 1. Claim distinct runtime identities (ports, databases, fixtures).
 2. Run project setup inside the worktree by the project's own instructions.
-3. Run the real baseline under `references/baseline-contract.md` after setup: pre-run
-   inspection, pre/post capture, each red cell bound. Red cell you cannot
-   attribute, or an effect you did not contain → stop work.
-4. Hand the completed `assets/workspace-record.md`, after the baseline, to
-   whatever invoked this skill.
+3. Run the real baseline under `references/baseline-contract.md` after setup.
+   Red cell you cannot attribute, or an effect you did not contain → stop work.
+4. Hand the completed record to whatever invoked this skill.
 
 ## Pressure points
 
@@ -150,9 +136,7 @@ authority.
 
 1. After each coherent piece a reviewer could accept or reject separately:
    **REQUIRED SUB-SKILL:** invoke `verification-before-completion`, run its smallest
-   real gate, and commit locally under the recorded authority. Do not wait for
-   the final candidate. None recorded → keep it uncommitted until the answer
-   arrives.
+   real gate, and commit locally under the recorded authority.
 2. Candidate ready for integration → **REQUIRED SUB-SKILL:** invoke
    `finishing-a-branch` with the recorded workspace, base, and ownership. Run
    no push, publish, integrate, discard, delete, history rewrite, or cleanup
@@ -169,7 +153,7 @@ authority.
 
 ## Gotchas
 
-- Being able to run `git commit` is not authority to commit: a commit runs hooks
-  and signing and shapes history.
+- Read `references/checkpointing.md` when the task will make more than one
+  commit: the unit, and what `git commit` does not grant.
 - A gate written during planning lands on whatever branch the shared checkout
   is on.
