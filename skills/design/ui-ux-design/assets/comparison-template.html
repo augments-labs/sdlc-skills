@@ -266,9 +266,9 @@
 
   <div class="variants">
 
-  <!-- comparison-version:start {{version-1-identity}} -->
-  <div class="version version-1" data-version-id="{{version-1-identity}}" aria-label="Version 1">
-    <p class="v-stamp meta">Version <span class="mono">{{version-1-identity}}</span> · {{YYYY-MM-DD}} · {{what changed from the previous version, or "first version"}} · fixture {{fixture identity}}</p>
+  <!-- comparison-version:start {{version-1-id}} -->
+  <div class="version version-1" data-version-id="{{version-1-id}}" aria-label="Version 1">
+    <p class="v-stamp meta">Version <span class="mono">{{version-1-id}}</span> · {{YYYY-MM-DD}} · {{what changed from the previous version, or "first version"}} · fixture {{fixture identity}}</p>
     <div class="board">
 
     <section class="variant variant-1" data-variant-id="{{variant-1-stable-ID}}" aria-label="Variant 1">
@@ -319,13 +319,15 @@
 
     </div><!-- .board -->
   </div><!-- .version-1 -->
-  <!-- comparison-version:end {{version-1-identity}} -->
+  <!-- comparison-version:end {{version-1-id}} -->
 
   <!-- APPEND THE NEXT VERSION HERE — copy the start marker, .version block,
-       and end marker above with a new immutable version identity, class
-       `version-2`, its own v-stamp, and only the axes that feedback implicated
-       changed. The bytes from a version's start marker through its end marker
-       are its stable digest boundary: never edit them after issue. Retire a
+       and end marker above with a new stable version ID (a label such as v2,
+       never a digest: a block cannot hold its own hash), class `version-2`,
+       its own v-stamp, and only the axes that feedback implicated changed.
+       The lines from a version's start marker through its end marker are its
+       digest boundary: never edit them after issue, and record their digest
+       outside this file (visual-decisions.md, decision loop step 5). Retire a
        version outside that boundary; do not delete it. -->
 
   </div><!-- .variants -->
@@ -339,7 +341,7 @@
       <li><strong>{{variant-3-name}}</strong> — {{same}}</li>
       <li><strong>{{variant-4-name}}</strong> — {{same}}</li>
     </ul>
-    <p>All variants render the same fixture: {{fixture identity — date, content, states}}. Showing version <span class="mono">{{current-version-identity}}</span>; earlier versions stay selectable above, in this same file. Cite comparison evidence as this path plus the version identity — the path alone no longer says which version was seen.</p>
+    <p>All variants render the same fixture: {{fixture identity — date, content, states}}. Showing version <span class="mono">{{current-version-id}}</span>; earlier versions stay selectable above, in this same file. Cite comparison evidence as this path, the version ID, and that version's recorded digest — the path alone no longer says which version was seen.</p>
     <p><strong>Feedback needed:</strong> which variant, and — more useful than the number — which dimension drove the preference and what fails. A click is not approval; the direction is confirmed in conversation, then recorded in the design section.</p>
   </footer>
 
