@@ -26,10 +26,20 @@ The page carries state, not documents.
 ## Step 1: Read the trail
 
 1. Resolve the project root: the main checkout, even from a linked task
-   worktree, because the trail and its plan mirrors live there.
+   worktree, because the trail and its plan mirrors live there. When the
+   common git directory is not a checkout's `.git` (a submodule, a separate
+   git directory, a bare repository's worktree), the root is the current
+   checkout's top.
 
    ```bash
-   common="$(git rev-parse --git-common-dir 2>/dev/null)" && root="$(cd "$common/.." && pwd -P)" || root="$PWD"
+   if common="$(git rev-parse --git-common-dir 2>/dev/null)" && common="$(cd "$common" && pwd -P)"; then
+     case "$common:$(unset GIT_DIR GIT_WORK_TREE; git -C "${common%/.git}" rev-parse --is-bare-repository 2>/dev/null)" in
+       */.git:false) root="${common%/.git}" ;;
+       *) root="$(git rev-parse --show-toplevel 2>/dev/null)" || root="$PWD" ;;
+     esac
+   else
+     root="$PWD"
+   fi
    ```
 
    Read `$root/.sdlc-skills/`: `briefs/`, `specs/`, `designs/`, `plans/`,
