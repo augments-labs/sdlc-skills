@@ -44,8 +44,8 @@ says it may go.
    authority, evidence, gotchas and permissions, resume first action,
    suggested skills, references.
 2. `Handoff identity` → name the predecessor record and append. Several
-   terminal successors, or content identity does not verify → stop and
-   resolve the lineage.
+   terminal successors, or a written predecessor that no longer matches the
+   digest in its ledger → stop and resolve the lineage.
 3. `Decisions and authority` → for each decision, the direct answer or the
    standing default that authorized it. Every open decision listed as open.
    Never write an assumption as approval.
@@ -59,11 +59,15 @@ says it may go.
    before executing.
 8. Before writing, remove every key, token, password, and piece of personal
    data.
+9. After writing a note, record `git hash-object` of it in the ledger beside
+   it (`.ledger.md` in place of `.md`), never in the note.
 
 ## Gotchas
 
 - Session state can hold credentials, customer data, or unreviewed findings. A
   store the session invents discloses it to readers nobody chose.
+- A digest written inside the note changes the bytes it names, so the note
+  never matches it and every later handoff stops on its lineage.
 
 ## Common mistakes
 
