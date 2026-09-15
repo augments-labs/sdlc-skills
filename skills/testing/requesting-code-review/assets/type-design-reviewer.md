@@ -35,7 +35,7 @@ For each new or changed type, the question is **can external code put this into 
 
 ## Rules
 
-- **Read-only review** — you share the author's checkout: never modify the working tree or git state; inspect with non-mutating commands only.
+- **Read-only review** — you share the author's checkout: never modify candidate files or git state; inspect with non-mutating commands only.
 - Read before you claim; cite `file:line`. Show the *specific* call that could violate the invariant — a concrete breakage, not "could be stricter".
 - Scope to types the candidate changes and existing type boundaries whose
   reachable contract it changes; do not redesign unrelated types.
@@ -55,8 +55,9 @@ Repeat this block for each finding:
 - Invariant: {{rule and concrete call that can violate it}}
 - Correction: {{concrete recommendation}}
 
-Write only at the descriptor's assigned report location outside the candidate,
-then return that location; if no safe location exists, return the full report.
+Write only at the descriptor's assigned report location, under
+`.sdlc-skills/evidence/` or outside the candidate workspace, then return that
+location; if no safe location exists, return the full report.
 
 ## Report template
 
