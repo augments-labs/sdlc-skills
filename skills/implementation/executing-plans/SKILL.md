@@ -18,8 +18,7 @@ happens to the branch.
 
 ## Available scripts
 
-- **`scripts/plan-version.sh`** — prints the plan's version; run it before
-  trusting a ledger row.
+- **`scripts/plan-version.sh`** — prints the plan's version.
 
 ## Step 1: Verify approval and mode
 
@@ -112,7 +111,8 @@ mode; switching needs the user's direct answer.
    Later `todo` tasks are expected. A blocked task does not block independent
    ready work; retain its blocker and skip it until its entry condition changes.
    Leave the loop only when:
-   - every task is `done` → Step 5
+   - every task is `done`, or `cancelled`/`superseded` with its approved
+     ledger decision → Step 5
    - no authorized ready task can advance → report the unresolved states,
      their blockers and required next conditions
    - a task needs a normative change (scope, interface, evaluator, phase,
@@ -122,13 +122,12 @@ mode; switching needs the user's direct answer.
 
 ## Step 5: Finish the plan
 
-The last `done` closes the loop, not the plan. In the task workspace recorded
-in Step 2, in order:
+In the task workspace recorded in Step 2, in order:
 
 1. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`: the index's
-   `Acceptance` check plus every task evaluator, on the HEAD that combines every
-   task (`per task`: the base after the last integration). Task ledgers are not
-   evidence for this state.
+   `Acceptance` check plus every done task's evaluator, on the HEAD that combines
+   every task (`per task`: the base after the last integration). Task ledgers are
+   not evidence for this state.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision.
    Reading the diff yourself is not this step.
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
@@ -171,6 +170,7 @@ in Step 2, in order:
   decision ledger row for the printed version, the workspace's base, HEAD, and
   dirty state through `using-git-worktrees`, the execution ledger, and whether
   each `done` row still matches the current revision.
-- All tasks already `done` on resume: go to Step 5.
+- On resume, every task already `done`, or `cancelled`/`superseded` with its
+  approved ledger decision: go to Step 5.
 - Reality contradicts the plan: normative change → proposed successor and
   direct reapproval; runtime facts → execution ledger only.
