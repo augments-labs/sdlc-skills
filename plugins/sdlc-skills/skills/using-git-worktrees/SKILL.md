@@ -97,10 +97,9 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    git check-ignore -q "$dir/" || echo "$dir/ is not ignored"
    ```
 
-4. That line printed → do not edit `.gitignore` in the shared checkout;
-   exclude locally below. Local commit authority recorded (Step 5) → also make
-   adding `{{dir}}/` to `.gitignore` the first commit on the task branch. None
-   recorded → the local exclude alone.
+4. That line printed → exclude it locally below; that is the whole change.
+   Never add `{{dir}}/` to `.gitignore` in any checkout: local commit authority
+   covers task checkpoints, not a project change nobody requested.
 
    ```bash
    printf '%s/\n' "$dir" >> "$(git rev-parse --git-common-dir)/info/exclude"
