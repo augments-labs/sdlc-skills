@@ -66,8 +66,9 @@ A product-scope trade is `decision`, never your approval. `clear` requires
 complete coverage with every surface `keep`; any `simplify` or `decision`
 means `findings`; incomplete coverage or any `investigate` is `inconclusive`.
 
-Write only at the descriptor's assigned report location outside the candidate,
-then return that location; if no safe location exists, return the full report.
+Write only at the descriptor's assigned report location, under
+`.sdlc-skills/evidence/` or outside the candidate workspace, then return that
+location; if no safe location exists, return the full report.
 
 ## Report template
 

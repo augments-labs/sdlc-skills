@@ -29,7 +29,7 @@ Walk each place the candidate can fail and ask *where does the failure go?*
 
 ## Rules
 
-- **Read-only review** — you share the author's checkout: never modify the working tree or git state; inspect with non-mutating commands only.
+- **Read-only review** — you share the author's checkout: never modify candidate files or git state; inspect with non-mutating commands only.
 - Read before you claim; cite `file:line`, never assert from memory.
 - High signal bar: report only failures the candidate introduces or makes newly
   reachable, not unrelated pre-existing handlers.
@@ -51,8 +51,9 @@ Repeat this block for each finding:
 - Hidden failure / affected party: {{error swallowed; caller, operator, or user harmed}}
 - Correction: {{concrete recommendation}}
 
-Write only at the descriptor's assigned report location outside the candidate,
-then return that location; if no safe location exists, return the full report.
+Write only at the descriptor's assigned report location, under
+`.sdlc-skills/evidence/` or outside the candidate workspace, then return that
+location; if no safe location exists, return the full report.
 
 ## Report template
 

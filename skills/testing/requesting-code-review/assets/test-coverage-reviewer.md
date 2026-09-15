@@ -42,7 +42,7 @@ A test can exist and still not protect:
 
 - **Read-only review** — never modify candidate/git state. Run an existing test
   only under the descriptor's authorized attempt/effect/pre-post contract;
-  adding or editing files is forbidden.
+  adding or editing candidate files is forbidden.
 - Read before you claim; cite `file:line` for both the untested code and where its test should live.
 - **Check before you flag** — confirm an existing unit or integration test doesn't already cover the path; a false "missing test" is noise. Skip trivial getters/setters with no logic.
 - For each gap, **name the regression it would catch** — the concrete failure that ships if the test stays absent.
@@ -63,8 +63,9 @@ Repeat this block for each finding:
 - Missing protection: {{regression that would escape; test location}}
 - Correction: {{concrete recommendation}}
 
-Write only at the descriptor's assigned report location outside the candidate,
-then return that location; if no safe location exists, return the full report.
+Write only at the descriptor's assigned report location, under
+`.sdlc-skills/evidence/` or outside the candidate workspace, then return that
+location; if no safe location exists, return the full report.
 
 ## Report template
 
