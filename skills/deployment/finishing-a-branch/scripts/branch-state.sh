@@ -49,6 +49,9 @@ Output:
                          remote-tracking refs: a stale or single-branch clone
                          can report false for pushed commits
     dirty.*_count        staged / unstaged / untracked / ignored, counted separately
+    dirty.digest         state-identity.sh's source.digest. It, the counts, and
+                         dirty.clean leave .sdlc-skills/evidence/ out; that
+                         directory's files git does not ignore join dirty.ignored
     dirty.ignored        ignored entries as git lists them (git ls-files --others
                          --ignored --exclude-standard --directory), capped like
                          the other listings. A directory whose content is all
@@ -68,8 +71,8 @@ Exit codes:
   0  state reported
   2  not a git repository, or bad arguments
   3  a required tool is missing
-  4  git could not record the working tree or list its ignored paths, so
-     candidate.id cannot be computed
+  4  git could not record or list the working tree, so candidate.id cannot
+     be computed
 
 Examples:
   bash scripts/branch-state.sh
@@ -135,6 +138,9 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)"
 # from a subdirectory silently reports a subset — which would understate what a
 # discard destroys. Move to the root before inspecting anything.
 [ -n "$root" ] && cd "$root" || { echo "Error: could not resolve the repository root." >&2; exit 2; }
+# Records under .sdlc-skills/evidence/ describe a candidate and never belong to
+# it, so the digest and the uncommitted listings leave that directory out.
+evidence_out=':(exclude).sdlc-skills/evidence'
 git_dir="$(git rev-parse --absolute-git-dir 2>/dev/null)"
 common_dir="$(cd "$(git rev-parse --git-common-dir 2>/dev/null)" 2>/dev/null && pwd)"
 # A linked worktree has its own git-dir but shares the common dir. Removing one
@@ -197,13 +203,20 @@ if [ -n "$upstream" ]; then
 fi
 
 # --- working tree -------------------------------------------------------------
-staged="$(git --no-optional-locks diff --cached --name-only 2>/dev/null)"
-unstaged="$(git --no-optional-locks diff --name-only 2>/dev/null)"
-untracked="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null)"
+# A listing git cannot produce stops the script: an empty one would read as clean.
+# Evidence records leave the three listings, but a discard destroys the ones git
+# does not ignore, so they join the ignored listing below.
+staged="$(git --no-optional-locks diff --cached --name-only -- . "$evidence_out" 2>/dev/null)" &&
+  unstaged="$(git --no-optional-locks diff --name-only -- . "$evidence_out" 2>/dev/null)" &&
+  untracked="$(git --no-optional-locks ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
+  evidence="$( { git --no-optional-locks diff --cached --name-only -- .sdlc-skills/evidence &&
+    git --no-optional-locks ls-files --others --modified --exclude-standard -- .sdlc-skills/evidence; } 2>/dev/null | LC_ALL=C sort -u)" || {
+  echo "Error: git could not list uncommitted paths; candidate.id cannot be computed." >&2; exit 4; }
 # Ignored content never shows as untracked, yet a discard or a worktree removal
 # destroys it: local secrets, build output, uncommitted evidence records.
 ignored="$(git --no-optional-locks ls-files --others --ignored --exclude-standard --directory 2>/dev/null)" || {
   echo "Error: git could not list ignored paths; candidate.id cannot be computed." >&2; exit 4; }
+[ -z "$evidence" ] || ignored="$(printf '%s\n' "$evidence" "$ignored" | grep -v '^$')"
 staged_n="$(printf '%s\n' "$staged" | count_lines)"
 unstaged_n="$(printf '%s\n' "$unstaged" | count_lines)"
 untracked_n="$(printf '%s\n' "$untracked" | count_lines)"
@@ -213,6 +226,7 @@ clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] 
 # The content digest: what the working tree presents, as git would record it,
 # plus every staged copy that matches neither HEAD nor the working tree. HEAD is
 # not part of it, so staging or committing exactly this content keeps it.
+# Neither is .sdlc-skills/evidence/: a record written there keeps it too.
 #
 # Git itself records the working tree into a throwaway index and object
 # directory under mktemp, reading the repository's objects as alternates, so
@@ -235,14 +249,15 @@ content_digest() {
       git --no-optional-locks -c core.fsmonitor=false -c core.splitIndex=false -c core.hooksPath=/dev/null "$@"
   }
   # What the working tree presents, recorded as git would record it.
-  cd_git "$cd_tmp/wt.index" add -A >/dev/null 2>&1 &&
+  cd_git "$cd_tmp/wt.index" add -A -- . "$evidence_out" >/dev/null 2>&1 &&
+    cd_git "$cd_tmp/wt.index" rm -r -q -f --cached --ignore-unmatch -- .sdlc-skills/evidence >/dev/null 2>&1 &&
     cd_tw="$(cd_git "$cd_tmp/wt.index" write-tree 2>/dev/null)" && [ -n "$cd_tw" ] ||
     { rm -rf "$cd_tmp"; return 1; }
   # Overlay every staged copy that differs from HEAD; the result differs from
   # the working-tree tree only where a staged copy matches neither.
   if [ -f "$cd_tmp/wt.index" ]; then cp -p "$cd_tmp/wt.index" "$cd_tmp/t2.index" || { rm -rf "$cd_tmp"; return 1; }; fi
   cd_head="$(git rev-parse --verify -q 'HEAD^{tree}' 2>/dev/null)" || cd_head=4b825dc642cb6eb9a060e54bf8d69288fbee4904
-  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" 2>/dev/null |
+  git --no-optional-locks diff-index --cached --raw -z --no-renames --ita-invisible-in-index --ignore-submodules=none "$cd_head" -- . "$evidence_out" 2>/dev/null |
     while IFS= read -r -d '' cd_hdr && IFS= read -r -d '' cd_path; do
       set -- $cd_hdr
       cd_newmode="$2"; cd_newsha="$4"; cd_status="$5"
@@ -252,7 +267,7 @@ content_digest() {
     done | cd_git "$cd_tmp/t2.index" update-index -z --index-info >/dev/null 2>&1 &&
     cd_t2="$(cd_git "$cd_tmp/t2.index" write-tree 2>/dev/null)" && [ -n "$cd_t2" ] ||
     { rm -rf "$cd_tmp"; return 1; }
-  git --no-optional-locks ls-files -u -z >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
+  git --no-optional-locks ls-files -u -z -- . "$evidence_out" >"$cd_tmp/unmerged" 2>/dev/null || { rm -rf "$cd_tmp"; return 1; }
   { printf '%s\n%s\n' "$cd_tw" "$cd_t2"; cat "$cd_tmp/unmerged"; } | sha || { rm -rf "$cd_tmp"; return 1; }
   rm -rf "$cd_tmp"
 }

@@ -2,8 +2,9 @@
 
 Create a mutable pre-identity draft, then issue this immutable descriptor before
 dispatch and freeze the candidate while reviewers work. Store it and reports
-outside the candidate workspace. Any later field change creates a successor
-descriptor and new invocation. This template is never copied into that workspace.
+under `.sdlc-skills/evidence/`, which the candidate identity leaves out, or
+outside the workspace. Any later field change creates a successor descriptor
+and new invocation. Never copy this template anywhere else in the workspace.
 
 ## Identity
 
