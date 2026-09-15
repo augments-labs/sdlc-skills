@@ -2,6 +2,16 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [9.1.1] — 2026-09-15
+
+This release fixes the 23 findings of the 9.1 adversarial review:
+- A partial commit no longer passes as the verified state.
+- A refused preview request no longer carries the key cookie.
+- Discard and cleanup name the ignored content they destroy.
+- A heading inside a code fence no longer ends a section's identity.
+
+Evidence records under `.sdlc-skills/evidence/` never change the candidate they describe. Every task row now counts toward a plan's version, and the challengers for migration contracts and ADRs have their own prompts and verdicts.
+
 ## [9.1.0] — 2026-09-14
 
 Shared rules now each have one owner: decision presentation in `interview-me`, artifact layout and identity in `using-sdlc-skills`, and dispatch receipts with the no-dispatch ask in `dispatching-parallel-agents`. Verification now returns its ledger to review instead of routing onward.
