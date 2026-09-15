@@ -104,18 +104,23 @@ for skill in "${skills[@]}"; do
 
   # No external references, vendor model names, or <angle> placeholders — in every
   # .md of the skill, RECURSIVELY (covers references/ and scripts/ subfolders).
+  # The external-reference, vendor, and trigger-word scans read the raw text: a
+  # backticked URL, issue, model name, or trigger word still ships and still
+  # reaches a keyword scanner. Only the placeholder check skips inline code
+  # spans, where a literal <tag> can be what the text is about.
   while IFS= read -r f; do
-    body=$(sed 's/`[^`]*`//g' "$f")   # ignore inline code spans
+    raw=$(cat "$f")
+    body=$(sed 's/`[^`]*`//g' "$f")   # inline code spans removed, for the placeholder check
     # The Agent Skills specification is the one external host a skill may cite:
     # strip only its scheme and host so a path is still scanned, and fail closed
     # when sed cannot run the edit.
-    if ! scanned=$(printf '%s\n' "$body" | sed -E 's@https?://agentskills\.io([/?#[:space:])>])@\1@g; s@https?://agentskills\.io$@@'); then
+    if ! scanned=$(printf '%s\n' "$raw" | sed -E 's@https?://agentskills\.io([/?#[:space:])>])@\1@g; s@https?://agentskills\.io$@@'); then
       err "$(basename "$f"): external-reference scan could not run"
     elif grep -qiE "$EXT_REFS" <<<"$scanned"; then
       err "$(basename "$f"): external reference (repo/issue/URL) — state the principle directly"
     fi
-    echo "$body" | grep -qiE "$VENDORS"         && err "$(basename "$f"): vendor model name — use a capability tier (small|medium|large)"
-    echo "$body" | grep -qiE "$SCANNER_TRIGGERS" && err "$(basename "$f"): harness scanner trigger-word — rephrase so a keyword scan can't hijack the session"
+    printf '%s\n' "$raw" | grep -qiE "$VENDORS"         && err "$(basename "$f"): vendor model name — use a capability tier (small|medium|large)"
+    printf '%s\n' "$raw" | grep -qiE "$SCANNER_TRIGGERS" && err "$(basename "$f"): harness scanner trigger-word — rephrase so a keyword scan can't hijack the session"
     echo "$body" | grep -qE  '<[a-z][a-z0-9 -]*>' && err "$(basename "$f"): bare <angle> placeholder — use {{double-curly}}"
     # The .sdlc-skills/ output location is mandatory (overridable only by the user),
     # never an optional "default" — keep the convention from drifting back.
