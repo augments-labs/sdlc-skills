@@ -25,7 +25,7 @@ says it may go.
    ```text
    Where should the handoff go?
 
-   1. .sdlc-skills/handoffs/ in this project — readable by anyone who can read this checkout; once committed, by everyone with repository access
+   1. .sdlc-skills/handoffs/ in this project — readable by anyone who can read this checkout; committed only when the reader works from another checkout and the content is safe to share, and then readable by everyone with repository access
    2. A path you name
    3. This reply only — nothing written
 
