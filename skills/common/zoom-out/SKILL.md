@@ -43,12 +43,18 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 3. Implementation finds a caller or surface the map never covered → stop and
    reorient. Never extend the map from memory.
 
+## Gotchas
+
+- A caller reached through configuration, reflection, a generated route, or a
+  scheduler never appears in an import search, so a map built from imports
+  draws a boundary that a runtime caller crosses.
+- A boundary record carries no signal of its own staleness; past its freshness
+  limit it reads exactly like a current one.
+
 ## Common mistakes
 
 - Editing first and understanding later — the pattern-match that looks right and isn't.
 - A map of files instead of responsibilities — paths don't tell you what owns what.
 - Tracing direct imports while missing generated inputs, stored state, external
   consumers, or deployment paths that carry the real blast radius.
-- Presenting remembered architecture as current repository evidence.
-- Reusing a previously correct map after its source or external inputs changed.
 - Generic vocabulary that doesn't match how the team talks about the code.
