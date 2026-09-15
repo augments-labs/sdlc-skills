@@ -2,7 +2,7 @@
 
 Create a mutable pre-identity draft, then issue this immutable descriptor before
 dispatch and freeze the candidate while reviewers work. Store it and reports
-under `.sdlc-skills/evidence/`, which the candidate identity leaves out, or
+under `.sdlc-skills/evidence/`, which the content digest leaves out, or
 outside the workspace. Any later field change creates a successor descriptor
 and new invocation. Never copy this template anywhere else in the workspace.
 
@@ -38,8 +38,8 @@ and new invocation. Never copy this template anywhere else in the workspace.
   changing the candidate or reviewer does not start a new delivery task.}}`
 - **Design/migration/assurance contracts:** `{{exact versions or N/A reasons}}`
 - **Raw verification evidence:** `{{commands, outputs, state, timestamps}}`
-- **Review artifacts:** `{{reviewer-owned paths outside the candidate workspace,
-  or "returned directly"}}`
+- **Review artifacts:** `{{reviewer-owned paths under .sdlc-skills/evidence/ or
+  outside the candidate workspace, or "returned directly"}}`
 - **Artifact controls:** `{{data class, access/storage/egress authority,
   retention/expiry, exact cleanup targets/effects/recoverability, cleanup
   authority, and disposition}}`

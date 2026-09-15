@@ -50,14 +50,14 @@ Output:
                          can report false for pushed commits
     dirty.*_count        staged / unstaged / untracked / ignored, counted separately
     dirty.digest         state-identity.sh's source.digest. It, the counts, and
-                         dirty.clean leave .sdlc-skills/evidence/ out; that
-                         directory's files git does not ignore join dirty.ignored
+                         dirty.clean leave .sdlc-skills/evidence/ out
     dirty.ignored        ignored entries as git lists them (git ls-files --others
-                         --ignored --exclude-standard --directory), capped like
-                         the other listings. A directory whose content is all
-                         ignored is one entry, and a change inside it leaves
-                         candidate.id unchanged. Removing their worktree
-                         destroys them
+                         --ignored --exclude-standard --directory), plus every
+                         file under .sdlc-skills/evidence/ that git does not
+                         ignore, capped like the other listings. A directory
+                         whose content is all ignored is one entry, and a change
+                         inside it leaves candidate.id unchanged. Removing their
+                         worktree destroys them
     recoverability       what a discard would and would not be able to undo;
                          ignored_would_be_lost is true when any ignored path
                          exists; commits_recoverable_from_remote is true only when
@@ -139,8 +139,10 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)"
 # discard destroys. Move to the root before inspecting anything.
 [ -n "$root" ] && cd "$root" || { echo "Error: could not resolve the repository root." >&2; exit 2; }
 # Records under .sdlc-skills/evidence/ describe a candidate and never belong to
-# it, so the digest and the uncommitted listings leave that directory out.
+# it, so the digest and the uncommitted listings leave that directory out. The
+# pathspec means what it says whatever pathspec settings the caller exported.
 evidence_out=':(exclude).sdlc-skills/evidence'
+unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
 git_dir="$(git rev-parse --absolute-git-dir 2>/dev/null)"
 common_dir="$(cd "$(git rev-parse --git-common-dir 2>/dev/null)" 2>/dev/null && pwd)"
 # A linked worktree has its own git-dir but shares the common dir. Removing one
@@ -249,7 +251,7 @@ content_digest() {
       git --no-optional-locks -c core.fsmonitor=false -c core.splitIndex=false -c core.hooksPath=/dev/null "$@"
   }
   # What the working tree presents, recorded as git would record it.
-  cd_git "$cd_tmp/wt.index" add -A -- . "$evidence_out" >/dev/null 2>&1 &&
+  cd_git "$cd_tmp/wt.index" add -A >/dev/null 2>&1 &&
     cd_git "$cd_tmp/wt.index" rm -r -q -f --cached --ignore-unmatch -- .sdlc-skills/evidence >/dev/null 2>&1 &&
     cd_tw="$(cd_git "$cd_tmp/wt.index" write-tree 2>/dev/null)" && [ -n "$cd_tw" ] ||
     { rm -rf "$cd_tmp"; return 1; }

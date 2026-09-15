@@ -78,8 +78,10 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)"
 # Scope every listing to the whole workspace, not the current directory.
 [ -n "$root" ] && cd "$root" || { echo "Error: could not resolve the repository root." >&2; exit 2; }
 # Records under .sdlc-skills/evidence/ describe a candidate and never belong to
-# it, so the digest and the uncommitted listings leave that directory out.
+# it, so the digest and the uncommitted listings leave that directory out. The
+# pathspec means what it says whatever pathspec settings the caller exported.
 evidence_out=':(exclude).sdlc-skills/evidence'
+unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
 
 if command -v sha256sum >/dev/null 2>&1; then sha() { sha256sum | cut -c1-16; }
 elif command -v shasum  >/dev/null 2>&1; then sha() { shasum -a 256 | cut -c1-16; }
@@ -121,7 +123,7 @@ content_digest() {
       git --no-optional-locks -c core.fsmonitor=false -c core.splitIndex=false -c core.hooksPath=/dev/null "$@"
   }
   # What the working tree presents, recorded as git would record it.
-  cd_git "$cd_tmp/wt.index" add -A -- . "$evidence_out" >/dev/null 2>&1 &&
+  cd_git "$cd_tmp/wt.index" add -A >/dev/null 2>&1 &&
     cd_git "$cd_tmp/wt.index" rm -r -q -f --cached --ignore-unmatch -- .sdlc-skills/evidence >/dev/null 2>&1 &&
     cd_tw="$(cd_git "$cd_tmp/wt.index" write-tree 2>/dev/null)" && [ -n "$cd_tw" ] ||
     { rm -rf "$cd_tmp"; return 1; }
