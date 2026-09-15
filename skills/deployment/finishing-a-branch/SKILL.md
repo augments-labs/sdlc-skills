@@ -119,7 +119,7 @@ unwanted.
    This will permanently delete:
    - Branch {{name}} ({{n}} unique commits: {{list}})
    - Staged {{n}}, unstaged {{n}}, untracked {{n}} changes
-   - Ignored {{n}}: {{list}} (never recoverable)
+   - Ignored {{n}}: {{list}} (lost only with a removed worktree; never recoverable)
    - Worktree {{path}}; remote {{state}}; PR {{state}}
    Recovery: {{possible | not possible}}
 

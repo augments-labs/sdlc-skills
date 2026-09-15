@@ -48,22 +48,27 @@ Output:
                          remote-tracking refs: a stale or single-branch clone
                          can report false for pushed commits
     dirty.*_count        staged / unstaged / untracked / ignored, counted separately
-    dirty.ignored        ignored paths (git ls-files --others --ignored
-                         --exclude-standard --directory), capped like the other
-                         listings; a discard or worktree removal destroys them
+    dirty.ignored        ignored entries as git lists them (git ls-files --others
+                         --ignored --exclude-standard --directory), capped like
+                         the other listings. A directory whose content is all
+                         ignored is one entry, and a change inside it leaves
+                         candidate.id unchanged. Removing their worktree
+                         destroys them
     recoverability       what a discard would and would not be able to undo;
                          ignored_would_be_lost is true when any ignored path
                          exists; commits_recoverable_from_remote is true only when
                          HEAD, and so every candidate commit, is on a remote ref
 
 Not covered: remote/PR state. That needs a forge API, which this script
-deliberately does not reach for. Bind PR state separately.
+deliberately does not reach for. Bind PR state separately. Nor is content
+inside a submodule: git refuses to remove a worktree holding one without --force.
 
 Exit codes:
   0  state reported
   2  not a git repository, or bad arguments
   3  a required tool is missing
-  4  git could not record the working tree, so candidate.id cannot be computed
+  4  git could not record the working tree or list its ignored paths, so
+     candidate.id cannot be computed
 
 Examples:
   bash scripts/branch-state.sh
