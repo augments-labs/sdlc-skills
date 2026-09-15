@@ -6,9 +6,8 @@ identity is issued.
 ## Architecture
 
 **Status:** {{draft | proposed; decision and adoption state stay external}}
-**Identity:** recorded in the ledger row, never here: the first 7 characters of
-`git hash-object --stdin` over this section, from its heading to the next `##`
-heading, without trailing blank lines
+**Identity:** recorded in the ledger row, never here: this section's identity
+under the Identity rule of the artifact layout reference (`using-sdlc-skills`)
 **Predecessor:** {{prior normative identity, or none; a proposal only links it}}
 **Approval rule:** {{one accountable decision owner, or the required approvers
 plus the conflict resolver and the rule that decides}}

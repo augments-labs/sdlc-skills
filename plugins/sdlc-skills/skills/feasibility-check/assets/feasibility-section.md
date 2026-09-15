@@ -5,9 +5,8 @@ Drop a dimension row only by writing why it does not apply, never by silence.
 ```markdown
 ## Feasibility
 
-- **Identity:** recorded in the ledger row, never here: the first 7 characters of
-  `git hash-object --stdin` over this section, from its heading to the next `##`
-  heading, without trailing blank lines
+- **Identity:** recorded in the ledger row, never here: this section's identity
+  under the Identity rule of the artifact layout reference (`using-sdlc-skills`)
 - **Predecessor:** {{prior normative identity, or none}}
 - **External condition and decision ledger:** {{ledger path: the brief's path
   with .ledger.md for .md, rows naming this section, unless the user sets

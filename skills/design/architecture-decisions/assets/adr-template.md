@@ -16,9 +16,8 @@ Copyable template behind `../SKILL.md`. Loaded on demand.
 
 **Status:** {{draft | proposed; decision and lifecycle stay external}}
 
-**Identity:** recorded in the ledger row, never here: the first 7 characters of
-`git hash-object --stdin` over this section, from its heading to the next `##`
-heading, without trailing blank lines
+**Identity:** recorded in the ledger row, never here: this section's identity
+under the Identity rule of the artifact layout reference (`using-sdlc-skills`)
 
 **Predecessor:** {{prior ADR normative identity or none; proposal only links it}}
 
@@ -122,9 +121,8 @@ recorded externally. The owner's decision and adoption evidence are still pendin
 
 **Status:** proposed
 
-**Identity:** recorded in the ledger row, never here: the first 7 characters of
-`git hash-object --stdin` over this section, from its heading to the next `##`
-heading, without trailing blank lines
+**Identity:** recorded in the ledger row, never here: this section's identity
+under the Identity rule of the artifact layout reference (`using-sdlc-skills`)
 
 **Predecessor:** none
 
