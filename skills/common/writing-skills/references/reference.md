@@ -68,3 +68,7 @@ Match instruction density to how constrained the task is:
 - No vague words such as helper, utils, or tools, and no pronoun or particle
   suffix such as `-it`, `-me`, or `-out`.
 - The invoked name is `sdlc-skills:<name>` regardless of which phase folder holds it — the folder is organization for humans, not part of the address.
+
+The gerund, vague-word, and suffix rules apply when a name is chosen: a new
+skill, or a rename planned as its own change. Editing a skill never renames
+it, so a shipped name that predates them stays until that rename.
