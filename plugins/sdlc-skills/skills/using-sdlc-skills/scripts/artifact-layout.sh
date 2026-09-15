@@ -25,7 +25,8 @@ Output: each directory or file created, one per line, on stdout.
 
 Exit codes:
   0  the layout is present
-  1  a directory or file could not be created
+  1  a directory or file could not be created, or evidence/.gitignore exists
+     without a * line followed by a !.gitignore line
   2  usage error
 USAGE
 }
@@ -52,6 +53,16 @@ done
 ignore="$base/evidence/.gitignore"
 if [ -e "$ignore" ] || [ -L "$ignore" ]; then
   [ -f "$ignore" ] || { echo "Error: $ignore exists but is not a file" >&2; exit 1; }
+  # An existing file is never rewritten, but it must still ignore run records
+  # and not itself: git reads the last matching line, and a CRLF line matches
+  # as if the CR were not there.
+  lines=$(awk '{sub(/\r$/, "")} $0 == "*" {s = NR} $0 == "!.gitignore" {k = NR} END {print s + 0, k + 0}' "$ignore") ||
+    { echo "Error: cannot read $ignore" >&2; exit 1; }
+  star=${lines% *}; keep=${lines#* }; missing=""
+  [ "$star" -gt 0 ] || missing="*"
+  [ "$keep" -gt 0 ] || missing="${missing:+$missing and }!.gitignore"
+  [ -z "$missing" ] || { echo "Error: $ignore exists but lacks the line(s) $missing, so run records are not ignored; add them (this script never overwrites a file)" >&2; exit 1; }
+  [ "$star" -lt "$keep" ] || { echo "Error: $ignore has its last * line after its last !.gitignore line, so git ignores the file itself; move !.gitignore below it (this script never overwrites a file)" >&2; exit 1; }
 else
   { printf '*\n!.gitignore\n' > "$ignore"; } 2>/dev/null || { echo "Error: cannot write $ignore" >&2; exit 1; }
   echo "$ignore"
