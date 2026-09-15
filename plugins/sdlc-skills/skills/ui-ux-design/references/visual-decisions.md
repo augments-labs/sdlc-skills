@@ -65,13 +65,15 @@ The richer medium is not automatically better. Match fidelity to the decision: l
    record=.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/{{decision-slug}}-versions.txt
    block_sha() { grep -qF "comparison-version:start $1 -->" "$page" && grep -qF "comparison-version:end $1 -->" "$page" && awk -v s="comparison-version:start $1 -->" -v e="comparison-version:end $1 -->" 'index($0, s) {f = 1} f {print} f && index($0, e) {exit}' "$page" | { sha256sum 2>/dev/null || shasum -a 256; } | cut -d' ' -f1; }
    issue_version() { sum="$(block_sha "$1")" && [ -n "$sum" ] && mkdir -p "${record%/*}" && printf '%s %s\n' "$1" "$sum" >> "$record"; }
-   check_versions() { [ -s "$record" ] || return 1; bad=0; while read -r id sum; do [ "$(block_sha "$id")" = "$sum" ] || { echo "rewritten: $id"; bad=1; }; done < "$record"; return "$bad"; }
+   check_versions() { [ -s "$record" ] || { echo "no version record: $record"; return 1; }; bad=0; while read -r id sum; do [ "$(block_sha "$id")" = "$sum" ] || { echo "rewritten: $id"; bad=1; }; done < "$record"; return "$bad"; }
    ```
 
-   After appending a block, run `issue_version {{version-id}}`. Before
-   presenting, run `check_versions`: a non-zero exit names each earlier block
-   whose lines changed or disappeared — restore it before presenting. Retire a
-   version in metadata outside its immutable block; do not delete it.
+   A new shell keeps no functions, so run each call in the same command that
+   defines them: `issue_version {{version-id}}` after appending a block, and
+   `check_versions` before presenting. A non-zero exit names each earlier block
+   whose lines changed or disappeared, or the missing record — restore it before
+   presenting. Retire a version in metadata outside its immutable block; do not
+   delete it.
 
    Bind each version block to its recorded digest and controlled inputs; a
    changed surface/input invalidates affected comparison evidence until
