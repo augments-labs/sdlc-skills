@@ -46,7 +46,8 @@ states='todo|in progress|done|done with concerns|blocked|needs context|cancelled
 # what the version covers without a word, so either one fails. Lines inside a
 # fenced code block are examples: they neither open a section nor count as rows,
 # and the task files come only from the rows this pass accepts. A fence that
-# never closes fails too, so nothing after it hides.
+# never closes fails too, so nothing after it hides. A backtick run followed by
+# another backtick on its line is inline code, never a fence.
 scan='
   {n++; R[n] = $0; l = $0; sub(/[ \t\r]+$/, "", l); L[n] = l; u = l; sub(/^ */, "", u); U[n] = u}
   END {
@@ -58,7 +59,7 @@ scan='
     for (i = 1; i <= n; i++) {
       l = L[i]; u = U[i]
       if (z) { if (index(u, o) == 1 && u ~ /^([`]+|~+)$/) z = 0; continue }
-      if (u ~ /^([`][`][`]|~~~)/) {
+      if (u ~ /^([`][`][`]+[^`]*$|~~~)/) {
         match(u, /^([`]+|~+)/); r = substr(u, 1, RLENGTH)
         if ((substr(r, 1, 1) == "~" ? T[i] : B[i]) >= RLENGTH) { z = 1; o = r; continue }
         if (want != "files") print "  line " i ": a code fence opens here and never closes"
