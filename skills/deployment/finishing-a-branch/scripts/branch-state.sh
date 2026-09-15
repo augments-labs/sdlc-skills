@@ -39,7 +39,8 @@ Output:
     head.detached        true when there is no branch to push
     candidate.id         digest over root, branch, HEAD, base, base sha, dirty.digest,
                          the ignored listing, published, and the unpushed commit
-                         count; the discard token, and it changes with any of them
+                         count; the discard token, and it changes with any of them.
+                         null, with exit 4, when git hides an edit
     candidate.commit_count, candidate.unpushed_commit_count, candidate.commits
                          null when base.resolved is false
     candidate.published  true when HEAD or any candidate commit is on a remote
@@ -48,9 +49,12 @@ Output:
                          needs separate direct permission. Read from local
                          remote-tracking refs: a stale or single-branch clone
                          can report false for pushed commits
-    dirty.*_count        staged / unstaged / untracked / ignored, counted separately
-    dirty.digest         state-identity.sh's source.digest. It, the counts, and
-                         dirty.clean leave .sdlc-skills/evidence/ out
+    dirty.*_count        staged / unstaged / untracked / ignored, counted separately.
+                         An assume-unchanged or skip-worktree path whose edits
+                         git hides counts as unstaged
+    dirty.digest         state-identity.sh's source.digest, or null when git hides
+                         an edit. It, the counts, and dirty.clean leave
+                         .sdlc-skills/evidence/ out
     dirty.ignored        ignored entries as git lists them (git ls-files --others
                          --ignored --exclude-standard --directory), plus every
                          file under .sdlc-skills/evidence/ that git does not
@@ -72,7 +76,11 @@ Exit codes:
   2  not a git repository, or bad arguments
   3  a required tool is missing
   4  git could not record or list the working tree, so candidate.id cannot
-     be computed
+     be computed and nothing prints; or git hides an edit (an assume-unchanged
+     entry, a skip-worktree entry whose path exists or, outside a sparse
+     checkout, is gone, or an embedded repository), so the JSON prints with
+     dirty.clean false and dirty.digest and candidate.id null, and stderr
+     names each path
 
 Examples:
   bash scripts/branch-state.sh
@@ -130,6 +138,45 @@ jarray() {
 }
 
 count_lines() { grep -c . 2>/dev/null || true; }
+
+# Paths whose edits git hides from its own listings and from the digest, as
+# kind<TAB>path lines outside .sdlc-skills/evidence/, quoted as git quotes paths.
+# Git never reads the working-tree copy of an assume-unchanged entry (a
+# lowercase tag), or of a skip-worktree entry (S) whose path exists or, outside
+# a sparse checkout, is gone: only a sparse checkout's absent paths are not
+# edits. A directory holding its own repository, untracked or where a tracked or
+# intent-to-add entry was (a symlink to one is only a symlink), is one entry git
+# never reads inside. Listed with fsmonitor off, as the digest is. Fails only
+# when git cannot list.
+hidden_paths() {
+  local hp_index hp_others hp_types hp_sparse hp_line hp_path hp_raw
+  hp_git() { git --no-optional-locks -c core.quotePath=true -c core.fsmonitor=false "$@"; }
+  hp_index="$(hp_git ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
+    hp_others="$(hp_git ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
+    hp_types="$(hp_git diff --ignore-submodules=dirty --name-only --diff-filter=AT -- . "$evidence_out" 2>/dev/null)" ||
+    return 1
+  hp_sparse="$(git config --bool core.sparseCheckout 2>/dev/null)"
+  printf '%s\n' "$hp_index" | LC_ALL=C grep -E '^([a-z]|S) ' | while IFS= read -r hp_line; do
+    hp_path="${hp_line#? }"
+    case "$hp_line" in
+      S\ *)
+        hp_raw="$hp_path"
+        case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+        if [ -e "$hp_raw" ] || [ -L "$hp_raw" ] || [ "$hp_sparse" != true ]; then printf 'skip-worktree\t%s\n' "$hp_path"; fi ;;
+      *) printf 'assume-unchanged\t%s\n' "$hp_path" ;;
+    esac
+  done
+  printf '%s\n' "$hp_others" | LC_ALL=C grep -E '/"?$' | while IFS= read -r hp_line; do
+    printf 'embedded repository\t%s\n' "$hp_line"
+  done
+  printf '%s\n' "$hp_types" | while IFS= read -r hp_line; do
+    [ -n "$hp_line" ] || continue
+    hp_raw="$hp_line"
+    case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+    if [ ! -L "$hp_raw" ] && [ -d "$hp_raw" ] && [ -e "$hp_raw/.git" ]; then printf 'embedded repository\t%s\n' "$hp_line"; fi
+  done
+  return 0
+}
 
 # --- repository and worktree --------------------------------------------------
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
@@ -224,6 +271,19 @@ unstaged_n="$(printf '%s\n' "$unstaged" | count_lines)"
 untracked_n="$(printf '%s\n' "$untracked" | count_lines)"
 ignored_n="$(printf '%s\n' "$ignored" | count_lines)"
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
+# An edit git hides reaches none of the listings above, yet a discard destroys
+# it. Its path counts as unstaged (an embedded repository is already listed),
+# the state is not clean, and no digest or discard token is computed below.
+hidden="$(hidden_paths)" || {
+  echo "Error: git could not list the paths whose edits it hides; candidate.id cannot be computed." >&2; exit 4; }
+if [ -n "$hidden" ]; then
+  flagged="$(printf '%s\n' "$hidden" | awk -F'\t' '$1 != "embedded repository" { print $2 }')"
+  if [ -n "$flagged" ]; then
+    unstaged="$(printf '%s\n' "$unstaged" "$flagged" | LC_ALL=C grep -v '^$')"
+    unstaged_n="$(printf '%s\n' "$unstaged" | LC_ALL=C grep -c .)"
+  fi
+  clean=0
+fi
 
 # The content digest: what the working tree presents, as git would record it,
 # plus every staged copy that matches neither HEAD nor the working tree. HEAD is
@@ -275,8 +335,10 @@ content_digest() {
 }
 
 # The same digest state-identity.sh prints as source.digest: two runs agree only
-# if the content matches, which is what binds evidence to a candidate.
-digest="$(content_digest)" || {
+# if the content matches, which is what binds evidence to a candidate. None is
+# computed while git hides an edit.
+digest=""
+[ -n "$hidden" ] || digest="$(content_digest)" || {
   echo "Error: git could not record the working tree (try \`git add -A --dry-run\`); candidate.id cannot be computed." >&2; exit 4; }
 
 # --- candidate commits --------------------------------------------------------
@@ -322,8 +384,10 @@ if [ -n "$head_sha" ]; then
   fi
 fi
 
-# The discard token: any change to what a discard would destroy changes it.
-cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$ignored" "$published" "$unpushed_n" | sha)"
+# The discard token: any change to what a discard would destroy changes it. None
+# binds content git hides.
+cand_id=""
+[ -n "$hidden" ] || cand_id="$(printf '%s\n' "$root" "$branch" "$head_sha" "$base" "$base_sha" "$digest" "$ignored" "$published" "$unpushed_n" | sha)"
 
 stashes="$(git --no-optional-locks stash list 2>/dev/null | count_lines)"
 
@@ -333,6 +397,7 @@ stashes="$(git --no-optional-locks stash list 2>/dev/null | count_lines)"
 untracked_lost=0; [ "$untracked_n" -gt 0 ] && untracked_lost=1
 ignored_lost=0; [ "$ignored_n" -gt 0 ] && ignored_lost=1
 uncommitted_lost=0; { [ "$staged_n" -gt 0 ] || [ "$unstaged_n" -gt 0 ]; } && uncommitted_lost=1
+[ -z "$hidden" ] || uncommitted_lost=1
 
 # --- emit ---------------------------------------------------------------------
 printf '{\n'
@@ -356,7 +421,7 @@ printf '    "untracked": %s,\n' "$(printf '%s\n' "$untracked" | jarray)"
 printf '    "ignored": %s\n'    "$(printf '%s\n' "$ignored"   | jarray)"
 printf '  },\n'
 printf '  "candidate": {\n'
-printf '    "id": %s,\n' "$(jstr "$cand_id")"
+printf '    "id": %s,\n' "$(jnull "$cand_id")"
 printf '    "commit_count": %s, "published": %s, "unpushed_commit_count": %s,\n' \
   "$commits_n" "$(jbool $published)" "$unpushed_n"
 printf '    "commits": %s\n' "$commits_json"
@@ -378,4 +443,10 @@ printf '}\n'
       echo "note: ${pair%%:*} listing truncated to $limit of ${pair##*:}; the count is exact. Use --full for all." >&2
   done
 }
+if [ -n "$hidden" ]; then
+  echo "Error: git hides edits to these paths, so dirty.digest and candidate.id are null and no discard token binds this state:" >&2
+  printf '%s\n' "$hidden" | while IFS=$'\t' read -r kind path; do printf '  %s: %s\n' "$kind" "$path" >&2; done
+  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree; with core.ignoreStat set, git sets it again on every add), or commit, ignore, or move the embedded repository, then rerun." >&2
+  exit 4
+fi
 exit 0
