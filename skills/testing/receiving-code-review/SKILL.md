@@ -23,8 +23,10 @@ looks obvious — verify before agreeing, editing, replying, or resolving.
    pending.
 3. Record the reviewed candidate and review-input identities, location,
    reviewer, governing requirement. Keep one delivery-task review history and
-   finite repair budget across revisions, reviewers, and skill calls. Link
-   recurring causal findings to their earlier evidence and dispositions.
+   finite repair budget across revisions, reviewers, and skill calls: five
+   repair rounds per delivery task unless the user or the plan sets another.
+   Record the budget and each round in the review history. Link recurring
+   causal findings to their earlier evidence and dispositions.
 4. Stale location, or changed candidate, base, contract, evidence, or external
    state → re-evaluate. Never auto-dismiss, never auto-accept.
 

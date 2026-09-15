@@ -34,8 +34,9 @@ and new invocation. Never copy this template anywhere else in the workspace.
   and the state it covers. A terminal handoff has no pending caller step.}}`
 - **Review history:** `{{delivery task, agreed scope and acceptance, prior rounds
   and candidate identities, stable causal finding IDs, dispositions/evidence,
-  and remaining finite repair budget. Preserve across successor descriptors;
-  changing the candidate or reviewer does not start a new delivery task.}}`
+  and the repair budget and rounds used against it. Preserve across successor
+  descriptors; changing the candidate or reviewer does not start a new delivery
+  task.}}`
 - **Design/migration/assurance contracts:** `{{exact versions or N/A reasons}}`
 - **Raw verification evidence:** `{{commands, outputs, state, timestamps}}`
 - **Review artifacts:** `{{reviewer-owned paths under .sdlc-skills/evidence/ or
