@@ -27,6 +27,7 @@ Options:
                      and no staged, unstaged, or untracked non-ignored path.
                      Otherwise exit 5. A partial commit leaves the digest
                      unchanged, so only this flag proves a commit holds it.
+                     Dirt inside a submodule counts once its commit moves.
   --quiet            Print only the source digest, or with --committed HEAD's
                      full revision, one line, no JSON.
   --help             Show this message.
@@ -59,7 +60,7 @@ EOF
 compare=""; quiet=0; committed=0
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --compare) compare="${2:-}"; [ -n "$compare" ] || { echo "Error: --compare needs a digest." >&2; exit 2; }; shift 2;;
+    --compare) compare="${2:-}"; [ -n "$compare" ] || { echo "Error: --compare needs a value." >&2; exit 2; }; shift 2;;
     --quiet)   quiet=1; shift;;
     --committed) committed=1; shift;;
     --help|-h) usage; exit 0;;
@@ -145,7 +146,8 @@ digest="$(content_digest)" || {
 # above still matches, so digest equality alone never proves a commit holds it.
 head_full=""
 if [ "$committed" = 1 ]; then
-  head_full="$(git rev-parse --verify -q 'HEAD^{commit}' 2>/dev/null)" || head_full=""
+  head_full="$(git rev-parse --verify -q 'HEAD^{commit}' 2>/dev/null)"; rc=$?
+  [ "$rc" -le 1 ] || { echo "Error: git could not resolve HEAD; no identity." >&2; exit 4; }
   uncommitted=0
   if [ -z "$head_full" ]; then uncommitted=1
   else

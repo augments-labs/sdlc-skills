@@ -73,7 +73,7 @@ for the exact state it ran on.
    `1` → the source moved. Identify the writer or normalization before
    recapturing from Step 1.4. Repeated drift → stabilize the input under current
    authority or return pending with its evidence; do not chase moving digests.
-   `5` → uncommitted content: commit it, or capture the working tree.
+   `5` → content outside the commit: handle it as `1`; never commit here.
    `2`–`4` → no identity; the claim stays pending.
    Zero → reconcile the other `State` inputs yourself.
 

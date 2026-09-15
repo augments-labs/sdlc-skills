@@ -102,8 +102,9 @@ and stop.
 ## Commit exact candidate and keep
 
 Materialize the reviewed working tree through the procedure above, including
-its `dirty.clean: true` check, and confirm no unrelated or missing path entered
-the commit set. Do not push, open a PR, advance a base, or clean anything. Report the exact branch, commits, and workspace as
+its `dirty.clean: true` check, and confirm that no created commit adds an
+unrelated path. Do not push, open a PR, advance a base, or clean anything.
+Report the exact branch, commits, and workspace as
 `materialized-kept`. A later transition refreshes candidate/base/remote state
 and requires its own direct choice; the commit choice grants nothing else.
 
