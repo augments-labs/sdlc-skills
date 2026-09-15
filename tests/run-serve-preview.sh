@@ -134,6 +134,18 @@ check "wrapper-started server serves with the key" "$code" "200"
 bash "$S/stop-server.sh" $$ >/dev/null 2>&1
 check "stop-server refuses a PID that is not the preview" "$?" "1"
 
+# Another directory's serve.py is refused too: the guard binds to the serve.py
+# beside stop-server.sh, by absolute path.
+other="$fixture/other"; mkdir -p "$other" && cp "$S/serve.py" "$other/serve.py"
+(cd "$other" && exec python3 serve.py --root "$fixture/root" --no-owner-watchdog --idle-timeout-minutes 5 >"$fixture/other.log" 2>&1) &
+opid=$!
+for i in $(seq 1 50); do grep -q server-started "$fixture/other.log" 2>/dev/null && break; sleep 0.1; done
+bash "$S/stop-server.sh" "$opid" >/dev/null 2>&1
+check "stop-server refuses another directory's serve.py" "$?" "1"
+kill -0 "$opid" 2>/dev/null && ok "another directory's serve.py keeps running" || bad "another directory's serve.py keeps running"
+kill "$opid" 2>/dev/null
+for i in $(seq 1 50); do kill -0 "$opid" 2>/dev/null || break; sleep 0.1; done
+
 bash "$S/stop-server.sh" "$pid" >/dev/null 2>&1
 check "stop-server stops the preview" "$?" "0"
 kill -0 "$pid" 2>/dev/null && bad "preview process is gone after stop" || ok "preview process is gone after stop"
