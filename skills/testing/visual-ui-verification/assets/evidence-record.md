@@ -6,8 +6,8 @@ per required observation; use stable `{{double-curly}}` values.
 ## Run
 
 - **Run ID / time:** `{{stable attempt identity and UTC interval}}`
-- **Candidate:** `{{immutable source/artifact identity, or working-tree digest
-  covering staged, unstaged, untracked, and relevant ignored inputs}}`
+- **Candidate:** `{{immutable source/artifact identity, or working-tree digest of staged, unstaged, and untracked non-ignored paths}}`
+- **Ignored inputs:** `{{path and SHA-256 of each ignored input the launch path reads (build output, generated assets, local configuration), recomputed before the verdict; or none}}`
 - **Launch path:** `{{command or controlled action}}`
 - **Acceptance source:** `{{approved full design path/version, requirements and
   rubric identity; include flows, states, conditions and decisions outside any
