@@ -1,6 +1,7 @@
 # Security report template
 
-Fill this report for the exact candidate. Copy both full identities from its
+The independent auditor fills this report for the exact candidate; the author
+never fills it. Copy both full identities from its
 descriptor. Write only to the assigned location outside the candidate, or
 return the report directly. Include no secret values.
 
