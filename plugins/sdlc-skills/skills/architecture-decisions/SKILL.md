@@ -31,8 +31,11 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
 ## Step 2: Challenge and persist
 
 1. A reviewer other than the sole author challenges options, assumptions,
-   consequences, reversal, under the template's challenge contract. Skip only
-   when a current independent design review covers this exact ADR identity.
+   consequences, reversal, under the template's challenge contract. Fill
+   `assets/adr-challenger.md` before dispatching it per
+   `dispatching-parallel-agents` Step 2. Approval waits for `clear` on this ADR
+   identity. Skip only when a current independent design review covers this
+   exact ADR identity.
 2. Append the immutable `proposed` ADR to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the project's
    decision log, preserving what is there.

@@ -84,8 +84,9 @@ user's main-session model and any model reserved for orchestration untouched.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Independence required (`security clear`, or an audit the user asked to be
-   independent) → omit option 1 and say why.
+   Independence required (`security clear`, a role the calling skill's contract
+   requires to be independent, or an audit the user asked to be independent) →
+   omit option 1 and say why.
    Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
    Record the answer as the written assignment and continue under it. A named
    reviewer's report counts only when it arrives from outside this session,
@@ -123,7 +124,5 @@ user's main-session model and any model reserved for orchestration untouched.
 
 ## Common mistakes
 
-- Shared file, order, or runtime ownership — one writer or a sequence, never
-  “coordinate.”
 - Session-history briefs, or undeclared data and egress — neither is bounded
   context.
