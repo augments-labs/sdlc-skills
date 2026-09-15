@@ -19,7 +19,8 @@ or comment as a verdict.
 
 ## Step 1: Freeze and model
 
-1. Stop anything still writing to the candidate.
+1. Stop writers this task started; report any other writer to its owner and
+   keep review pending until it stops.
 2. Reuse a current `requesting-code-review` descriptor, or invoke that skill
    and fill its review-candidate descriptor.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the exact-state

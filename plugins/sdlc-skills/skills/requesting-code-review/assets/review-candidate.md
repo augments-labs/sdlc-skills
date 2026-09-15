@@ -79,7 +79,8 @@ use the full immutable revision alone. Working-tree mode uses the full tree
 digest alone while recording HEAD/base separately. Never concatenate or prefix
 the report's candidate value with labels or a second identity.
 
-Stop candidate writers before computing the result identity. Compare it with
+Stop the writers this task started before computing the result identity;
+another owner's writer keeps review pending. Compare it with
 the exact state identity carried by every relied-on verification row. Any
 mismatch or later mutation invalidates the evidence and returns the frozen state
 to `verification-before-completion`; never attach evidence from one identity to another.
