@@ -55,8 +55,11 @@ The page carries state, not documents.
    topic the spine nodes, drift connector, ADR chain, embedded visuals, every
    task row, the assurance matrix from `verification/`.
 3. Entity-encode every artifact-derived value before inserting: `&` first,
-   then `<`, `>`, `"`. Derived values go in as text, never into `href` or
-   `src`.
+   then `<`, `>`, `"`. Derived values go in as text, except two attribute
+   values the template needs: a topic anchor `href`, `#topic-` plus an
+   allowlisted slug; and an open-file `href` or visual `src`, the path of a
+   file read in Step 1, relative to `views/index.html` and starting with `../`.
+   Never write a URL or a scheme into `href` or `src`.
 4. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
    inside a linked task worktree. Create `views/` if missing. No external
    URLs, no JavaScript, no scratch or backup files. Regeneration recomputes
