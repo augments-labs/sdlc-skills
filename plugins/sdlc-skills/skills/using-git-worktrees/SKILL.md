@@ -8,8 +8,8 @@ NEVER START REPO EDITS IN A SHARED CHECKOUT — one where Step 1 reports
 `git-dir` equal to `common-dir` — WHATEVER BRANCH IT IS ON. Create or enter a
 dedicated workspace — a git worktree unless the user or project says otherwise —
 *before* the first edit, unless the user explicitly okayed the current checkout.
-Writing the `.sdlc-skills/` artifact trail (briefs, specs, designs, plans) is
-not a repo edit here; product code, tests, and project gates are.
+Writing anything under `.sdlc-skills/` is not a repo edit here; product code,
+tests, and project gates are.
 </EXTREMELY-IMPORTANT>
 
 # Using Git Worktrees
@@ -27,7 +27,7 @@ down what you found there before you change anything.
 
 Open `assets/workspace-record.md` before the first command. Fill each section as its step runs.
 
-1. Run this. Do not judge the checkout from the prompt or the path name:
+1. Run this:
 
    ```bash
    git rev-parse --show-toplevel
@@ -48,12 +48,13 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    task, or pre-existing/user-owned/shared/host-owned. Unknown → second
    column. It blocks cleanup. Never stash dirty state you do
    not own.
-5. Planning happened in another workspace → rerun 1 before the first product
-   edit. Plan approval says nothing about code isolation.
+5. Planned in another workspace → rerun 1 before the first product edit.
 
 ## Step 2: Prove the base
 
-1. Take the base from direct user or project guidance. Record revision and
+1. Take the base from direct user or project guidance. None → the current
+   branch this task started from, at its recorded revision. Detached HEAD or
+   conflicting guidance → ask for the base and stop. Record revision and
    remote freshness:
 
    ```bash
