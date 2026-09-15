@@ -7,8 +7,7 @@ produce a value.
 ## Threading by slug
 
 `YYYY-MM-DD-<topic>` is the identity and the allowlist: only files and
-directories whose names match that shape are threaded; anything else is
-ignored. The same slug across folders is one topic — `designs/<slug>.md`, its
+directories whose names match that shape are threaded; anything else is ignored, except an artifact at a user-set path that a trail record names — a pointer field, a ledger row's `Location`, or a plan's bound inputs: it threads to the topic of the artifact holding that record. The same slug across folders is one topic — `designs/<slug>.md`, its
 `<slug>-migration.md` sibling, and its `<slug>/visuals/` directory all belong
 to it. Plans are directories (`plans/<slug>/00-index.md`). Audits and
 post-mortems thread to their topic by the same slug but render in the sidebar

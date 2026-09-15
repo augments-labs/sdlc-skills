@@ -35,9 +35,12 @@ The page carries state, not documents.
    Read `$root/.sdlc-skills/`: `briefs/`, `specs/`, `designs/`, `plans/`,
    `verification/`, `audits/`, `post-mortems/`. Absent folder → unreached
    phase.
-2. No `.sdlc-skills/`, or artifact paths overridden → render the template's
-   empty state naming what produces artifacts. Never search the filesystem
-   for look-alikes.
+2. No `.sdlc-skills/` → render the template's empty state naming what
+   produces artifacts. An artifact at a user-set path → read it where its
+   recorded pointer names it: a pointer field, a ledger row's `Location`, or a
+   plan's bound inputs. A recorded path that cannot be read → that artifact's
+   values unknown, and Step 3.3 names the cause class. Never search the
+   filesystem for look-alikes.
 3. Read `references/state-derivation.md` before deriving a value. Derive
    every value by its rules: slug allowlist, phase artifacts, approval
    sources, drift, attention grouping.
@@ -104,6 +107,6 @@ The page carries state, not documents.
 - Counting `[x] done with concerns` as done → only the exact `[x] done` counts; every other label counts separately.
 - Pasting artifact prose into nodes or tiles → the page carries state; prose stays behind open-file links.
 - Inferring drift from timestamps alone or a checkbox-only update → compare the consumed normative content; label time-only evidence as possible staleness.
-- Hunting the filesystem when the convention is absent or overridden → render the empty state naming what produces artifacts.
+- Hunting the filesystem for an artifact no trail record names → with no `.sdlc-skills/`, render the empty state; at a user-set path, follow its recorded pointer, else say unknown.
 - Starting an ad-hoc server (`python3 -m http.server`, a dev-server forward) to show the page → the key gate and self-terminating lifecycle are the contract; use `scripts/start-server.sh` or deliver the plain file path.
 - Linkifying a URL found in artifact text, or adding a script for interactivity → self-containment: no external requests, no JavaScript; navigation is pure CSS.
