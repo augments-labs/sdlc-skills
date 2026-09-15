@@ -30,9 +30,10 @@ term below reads unfamiliar.
 3. Inventory the surface and the friction with stable IDs. Trace callers,
    behavior, performance and resource profile, compatibility surface.
    Unmeasured friction is a preference.
-4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for the
-   preservation cycle: baseline green, deliberate divergence red, exact
-   restoration green. Compile-only or target-derived oracle → insufficient.
+4. **REQUIRED SUB-SKILLS:** invoke `using-git-worktrees`, then
+   `test-driven-development` for the preservation cycle in that workspace:
+   baseline green, deliberate divergence red, exact restoration green.
+   Compile-only or target-derived oracle → insufficient.
 
 ## Step 2: Decide the structure
 
