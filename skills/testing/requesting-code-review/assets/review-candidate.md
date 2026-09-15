@@ -18,8 +18,10 @@ descriptor and new invocation. This template is never copied into that workspace
 - **Intended base:** `{{immutable revision and freshness}}`
 - **Result identity:** `{{full HEAD/checkpoint/integrated revision, or full
   working-tree digest; never a shortened display prefix}}`
-- **Verification state identity:** `{{exact value from completion evidence;
-  must equal Result identity byte-for-byte}}`
+- **Verification state identity:** `{{the value the verification ledger
+  recorded: in checkpoint-range and integrated-result modes, the full revision
+  captured with state-identity.sh --quiet --committed; in working-tree mode,
+  the digest from --quiet; either way equal to Result identity byte-for-byte}}`
 - **Review-input identity:** `{{immutable identity over result/base, requirement
   and contract versions, complete inventory, evidence set/freshness, deviations,
   and every bound external state supplied to reviewers}}`

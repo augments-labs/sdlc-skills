@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Capture the exact state a piece of evidence is bound to, as JSON on stdout.
 #
-# Read-only: this script never writes, fetches, or mutates anything.
+# Read-only for repository files, refs, and the index: it never fetches, commits,
+# or changes them. Git may refresh the timestamps of objects it already holds.
 #
 # Evidence is only valid for the state it was taken on. Recalling that state
 # from memory is how a green result gets carried across an edit and reported as
@@ -19,9 +20,16 @@ Capture the identity of the state a gate is about to run against — or just ran
 against — as JSON. Read-only.
 
 Options:
-  --compare DIGEST   Compare the current source digest against DIGEST (the
-                     `source.digest` from an earlier run). Exit 1 on drift.
-  --quiet            Print only the source digest, one line, no JSON.
+  --compare VALUE    Compare the current state against VALUE: the
+                     `source.digest` from an earlier run, or with --committed
+                     a full revision. Exit 1 on drift.
+  --committed        Require a commit that holds the whole state: a born HEAD
+                     and no staged, unstaged, or untracked non-ignored path.
+                     Otherwise exit 5. A partial commit leaves the digest
+                     unchanged, so only this flag proves a commit holds it.
+                     Dirt inside a submodule counts once its commit moves.
+  --quiet            Print only the source digest, or with --committed HEAD's
+                     full revision, one line, no JSON.
   --help             Show this message.
 
 Output:
@@ -40,6 +48,7 @@ Exit codes:
   2  not a git repository, or bad arguments
   3  a required tool is missing
   4  git could not record the working tree: no digest, so no evidence binds
+  5  --committed found uncommitted content: the commit does not hold the captured state
 
 Examples:
   before=$(bash scripts/state-identity.sh --quiet)
@@ -48,11 +57,12 @@ Examples:
 EOF
 }
 
-compare=""; quiet=0
+compare=""; quiet=0; committed=0
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --compare) compare="${2:-}"; [ -n "$compare" ] || { echo "Error: --compare needs a digest." >&2; exit 2; }; shift 2;;
+    --compare) compare="${2:-}"; [ -n "$compare" ] || { echo "Error: --compare needs a value." >&2; exit 2; }; shift 2;;
     --quiet)   quiet=1; shift;;
+    --committed) committed=1; shift;;
     --help|-h) usage; exit 0;;
     *) echo "Error: unknown argument \"$1\". Run with --help for usage." >&2; exit 2;;
   esac
@@ -131,19 +141,43 @@ content_digest() {
 digest="$(content_digest)" || {
   echo "Error: git could not record the working tree (try \`git add -A --dry-run\`); there is no digest to bind evidence to." >&2; exit 4; }
 
+# --committed: the commit must hold the whole state, or no committed identity
+# exists. A partial commit leaves reviewed content uncommitted while the digest
+# above still matches, so digest equality alone never proves a commit holds it.
+head_full=""
+if [ "$committed" = 1 ]; then
+  head_full="$(git rev-parse --verify -q 'HEAD^{commit}' 2>/dev/null)"; rc=$?
+  [ "$rc" -le 1 ] || { echo "Error: git could not resolve HEAD; no identity." >&2; exit 4; }
+  uncommitted=0
+  if [ -z "$head_full" ]; then uncommitted=1
+  else
+    git --no-optional-locks diff --cached --quiet --ignore-submodules=dirty 2>/dev/null; rc=$?
+    [ "$rc" -le 1 ] || { echo "Error: git could not compare the index with HEAD; no identity." >&2; exit 4; }
+    [ "$rc" -eq 1 ] && uncommitted=1
+    git --no-optional-locks diff --quiet --ignore-submodules=dirty 2>/dev/null; rc=$?
+    [ "$rc" -le 1 ] || { echo "Error: git could not compare the working tree with the index; no identity." >&2; exit 4; }
+    [ "$rc" -eq 1 ] && uncommitted=1
+    untracked="$(git --no-optional-locks ls-files --others --exclude-standard 2>/dev/null)" || {
+      echo "Error: git could not list untracked paths; no identity." >&2; exit 4; }
+    [ -n "$untracked" ] && uncommitted=1
+  fi
+  [ "$uncommitted" = 0 ] || { echo "uncommitted content: the commit does not hold the captured state" >&2; exit 5; }
+fi
+
 if [ -n "$compare" ]; then
-  if [ "$digest" = "$compare" ]; then
-    echo "$digest"
+  identity="${head_full:-$digest}"
+  if [ "$digest" = "$compare" ] || { [ -n "$head_full" ] && [ "$head_full" = "$compare" ]; }; then
+    echo "$identity"
     echo "match: source unchanged; evidence taken on $compare still describes this state." >&2
     exit 0
   fi
-  echo "$digest"
-  echo "DRIFT: source digest is $digest but the evidence was taken on $compare." >&2
+  echo "$identity"
+  echo "DRIFT: source digest is $digest${head_full:+ at HEAD $head_full} but the evidence was taken on $compare." >&2
   echo "       That evidence describes a state that no longer exists. Rerun the gate." >&2
   exit 1
 fi
 
-[ "$quiet" = 1 ] && { echo "$digest"; exit 0; }
+[ "$quiet" = 1 ] && { echo "${head_full:-$digest}"; exit 0; }
 
 head_sha="$(git rev-parse HEAD 2>/dev/null)" || head_sha=""
 branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" || branch=""

@@ -37,9 +37,10 @@ mutation.
    close/reopen → apply its identity, ownership, and authority rules below;
    readiness evidence is not an entry condition for those actions.
 3. For materialization, publication, or integration, bind the
-   `verification-before-completion` evidence for this revision; the
-   `requesting-code-review` verdict on this digest (shallow `self-reviewed:
-   ready`, or the required independent review with no blocker); the live
+   `verification-before-completion` evidence and the `requesting-code-review`
+   verdict (shallow `self-reviewed: ready`, or the required independent review
+   with no blocker) to one candidate identity: the full revision when the
+   script reports `dirty.clean: true`, the digest otherwise. Bind the live
    remote or PR state.
 4. Required readiness verdict missing → keep the requested action pending;
    offer keep-as-is or obtain the missing review under current authority.
@@ -138,8 +139,3 @@ unwanted.
   not 0, and a block filled from them hides commits.
 - A tip-only remote check reads pushed history as unpublished once a local
   commit follows the push.
-
-## Common mistakes
-
-- Treating PR creation, ownership-looking paths, praise, or "get rid of it" as
-  cleanup, integration, or discard authority.

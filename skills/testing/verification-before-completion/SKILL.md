@@ -6,13 +6,11 @@ description: "Runs the checks and reads their output before any claim that work 
 # Verification Before Completion
 
 Run the gate, read its raw output, and claim only what that output supports
-for the exact state it ran on. This skill produces evidence; it does not
-design the gates, review the change, integrate the branch, or decide release.
+for the exact state it ran on.
 
 ## When to use
 
-- Before any claim that work is complete, fixed, passing, or done; before any
-  commit, push, or PR; before moving to the next task of a plan.
+- Before moving to the next task of a plan.
 - **Never skip.** The gate set comes from Step 1.3, never from the size of
   the change. A one-line fix still runs the smallest gate that can fail.
 - A candidate with an integrated UI adds `visual-ui-verification` to its gate
@@ -28,7 +26,7 @@ design the gates, review the change, integrate the branch, or decide release.
 
 1. List every item the request asked for, including items added
    mid-conversation. Write a disposition beside each: delivered, pending,
-   blocked, or declined with a reason. Four of five delivered is not done.
+   blocked, or declined with a reason.
 2. Open `assets/evidence-ledger.md` before the first gate runs. Write the
    claim and its transition in `Claim`: task green, review evidence,
    integrated acceptance, or releasable artifact. Record the requesting skill
@@ -37,7 +35,7 @@ design the gates, review the change, integrate the branch, or decide release.
    assurance matrix's cadence for this transition, one row each in `Results`.
    A gate missing, planned, blocked, or omitted without a reason → claim
    pending before anything runs.
-4. Capture the source state:
+4. Capture the source state; add `--committed` when the candidate is a commit:
 
    ```bash
    before=$(bash scripts/state-identity.sh --quiet)
@@ -66,15 +64,17 @@ design the gates, review the change, integrate the branch, or decide release.
 6. Read what the gate asserted, not its exit code. Assertions that could not
    have failed for this code: write that in the row; do not cite the green.
    Repairing such a gate belongs to `verification-strategy`.
-7. Re-check the source state:
+7. Re-check with the flags used at capture:
 
    ```bash
    bash scripts/state-identity.sh --compare "$before"
    ```
 
-   Non-zero → the source moved. Identify the writer or normalization before
+   `1` → the source moved. Identify the writer or normalization before
    recapturing from Step 1.4. Repeated drift → stabilize the input under current
    authority or return pending with its evidence; do not chase moving digests.
+   `5` → content outside the commit: handle it as `1`; never commit here.
+   `2`–`4` → no identity; the claim stays pending.
    Zero → reconcile the other `State` inputs yourself.
 
 ## Step 3: Claim and return
@@ -87,7 +87,8 @@ design the gates, review the change, integrate the branch, or decide release.
 3. Write the claim the rows support and nothing wider: what passed, on which
    state identity, what is pending. Any required row failed or unrun → not
    complete.
-4. A checkpoint commit with an identical tree may reuse content-check rows.
+4. A checkpoint commit reuses content-check rows only when
+   `--compare "$before" --committed` exits 0.
    Commit, CI, and review gates bind to their own revision. A checkpoint is
    neither reviewed nor merge-ready.
 5. **REQUIRED — return the ledger; this skill routes nowhere:**
@@ -112,8 +113,9 @@ cannot self-certify a human-owned judgment.
 - A green ledger ends this skill's work, not the claim's route. Invoking review
   from here makes review and verification call each other on one frozen state;
   return the ledger, and `using-sdlc-skills`' done rule runs review.
-- A reused row binds to the state it ran on. A new commit with a different tree
-  reruns its content checks, however small the change looks.
+- A reused row binds to the state it ran on. A partial commit leaves reviewed
+  files uncommitted while the digest still matches; only `--committed` proves a
+  commit holds them.
 
 ## Hard stops
 
