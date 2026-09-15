@@ -81,14 +81,15 @@ the section it names.
 
 ## Step 4: Challenge, then decide
 
-1. Before approval, dispatch per `dispatching-parallel-agents` Step 2 two
-   read-only challengers bound to the contract's `Independent challenge
-   contract`: one who knows the source and its domain, one who owns operations
-   and data. They challenge fact completeness, mappings and mixed states,
-   intake path and partitions, trial slice and recovery plan.
+1. Fill `assets/migration-challenger.md` before approval, then dispatch per
+   `dispatching-parallel-agents` Step 2 two read-only challengers bound to the
+   contract's `Independent challenge contract`: one who knows the source and its
+   domain, one who owns operations and data. They challenge fact completeness,
+   mappings and mixed states, intake path and partitions, trial slice and
+   recovery plan.
 2. Record an accountable skip for any role left out. Bind each challenge to an
-   exact attempt with a deadline. A required role without a current,
-   successful, resolved report blocks approval.
+   exact attempt with a deadline. A required role blocks approval until its
+   current report on this contract identity reads `clear`.
 3. Write the contract to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`. Keep
    stable-ID delta, review, and execution state external.

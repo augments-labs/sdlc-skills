@@ -35,9 +35,10 @@ external-fact identities plus freshness/invalidation rules}}
 external invalidation state, and revalidation/reconciliation gate}}
 
 **Independent challenge contract:** {{reviewer other than sole author, or exact
-current design-review identity that covers this ADR; deadline,
-timeout/cancel owner/action, required report and verdict; actual dispatch receipts
-stay in the External challenge ledger}}
+current design-review identity that covers this ADR; deadline and
+timeout/cancel owner/action; the report uses the shipped ADR challenger prompt,
+and approval waits for its clear verdict; actual dispatch receipts stay in the
+External challenge ledger}}
 
 **External challenge ledger:** {{reviewer-owned location; attempt lineage,
 cancellation-requested/quiescent state, quarantined partials, report, findings,
