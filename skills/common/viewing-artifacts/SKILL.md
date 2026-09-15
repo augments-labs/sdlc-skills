@@ -33,8 +33,8 @@ The page carries state, not documents.
 
    ```bash
    if common="$(git rev-parse --git-common-dir 2>/dev/null)" && common="$(cd "$common" && pwd -P)"; then
-     case "$common" in
-       */.git) root="${common%/.git}" ;;
+     case "$common:$(git -C "$common" rev-parse --is-bare-repository 2>/dev/null)" in
+       */.git:false) root="${common%/.git}" ;;
        *) root="$(git rev-parse --show-toplevel 2>/dev/null)" || root="$PWD" ;;
      esac
    else
