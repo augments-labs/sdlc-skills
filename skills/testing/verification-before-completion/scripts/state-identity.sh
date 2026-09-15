@@ -108,13 +108,16 @@ jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
 # Git never reads the working-tree copy of an assume-unchanged entry (a
 # lowercase tag), or of a skip-worktree entry (S) whose path exists or, outside
 # a sparse checkout, is gone: only a sparse checkout's absent paths are not
-# edits. A directory holding its own repository, untracked or where a tracked
-# file was, is one entry git never reads inside. Fails only when git cannot list.
+# edits. A directory holding its own repository, untracked or where a tracked or
+# intent-to-add entry was (a symlink to one is only a symlink), is one entry git
+# never reads inside. Listed with fsmonitor off, as the digest is. Fails only
+# when git cannot list.
 hidden_paths() {
   local hp_index hp_others hp_types hp_sparse hp_line hp_path hp_raw
-  hp_index="$(git --no-optional-locks ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
-    hp_others="$(git --no-optional-locks ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
-    hp_types="$(git --no-optional-locks diff --name-only --diff-filter=T -- . "$evidence_out" 2>/dev/null)" ||
+  hp_git() { git --no-optional-locks -c core.quotePath=true -c core.fsmonitor=false "$@"; }
+  hp_index="$(hp_git ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
+    hp_others="$(hp_git ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
+    hp_types="$(hp_git diff --name-only --diff-filter=AT -- . "$evidence_out" 2>/dev/null)" ||
     return 1
   hp_sparse="$(git config --bool core.sparseCheckout 2>/dev/null)"
   printf '%s\n' "$hp_index" | LC_ALL=C grep -E '^([a-z]|S) ' | while IFS= read -r hp_line; do
@@ -134,7 +137,7 @@ hidden_paths() {
     [ -n "$hp_line" ] || continue
     hp_raw="$hp_line"
     case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
-    if [ -d "$hp_raw" ] && [ -e "$hp_raw/.git" ]; then printf 'embedded repository\t%s\n' "$hp_line"; fi
+    if [ ! -L "$hp_raw" ] && [ -d "$hp_raw" ] && [ -e "$hp_raw/.git" ]; then printf 'embedded repository\t%s\n' "$hp_line"; fi
   done
   return 0
 }
