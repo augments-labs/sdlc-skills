@@ -62,17 +62,24 @@ over the exact text the artifact owns:
 - **A file of its own:** the whole file.
 - **A section in a shared file:** from its heading down to the next heading at
   the same or a higher level, without trailing blank lines, so appending the
-  next section does not change it.
+  next section does not change it. A `#` or `##` line inside a fenced code
+  block is not a heading. The block opens at three or more backticks or
+  tildes and closes only at a line holding nothing but a run of the same
+  character at least as long.
 - **A brief's own text:** from the top of the file down to its first `##`
-  heading; the goals, scope, and feasibility sections are other artifacts.
+  heading outside a fenced code block; the goals, scope, and feasibility
+  sections are other artifacts.
 - **A plan:** its index, with every task checkbox and state label normalized to
   `[ ]` and `todo`, followed by every task file in index order.
 
 ```bash
 git hash-object .sdlc-skills/specs/2026-01-15-login.md | cut -c1-7
-awk -v h='## Architecture' '$0 == h {f = 1; print; next} f && /^##? / {exit} f {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/designs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
-awk '/^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/briefs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+awk -v h='## Architecture' '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && $0 == h {f = 1; print; next} f && !z && /^##? / {exit} f {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/designs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+awk '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && /^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/briefs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
 ```
+
+A `# comment` in a fenced shell example stays inside its section, so an edit
+below it changes the identity.
 
 `e69de29` is the hash of nothing: the heading did not match exactly, so fix it
 before recording. The agent that issues the artifact runs the command at issue;
