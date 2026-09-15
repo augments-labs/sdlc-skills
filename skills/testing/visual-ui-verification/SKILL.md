@@ -22,9 +22,13 @@ candidate. Never return "looks good".
 2. Write the candidate as an immutable source or artifact identity, or a
    working-tree digest covering staged, unstaged, untracked, and relevant
    ignored inputs. Keep the record outside that identity.
-3. No approved design exists and the direction is settled → take the
-   observation source from the spec's or task's acceptance criteria, or from a
-   pre-change rendering captured under the same matrix before the edit, and
+3. Establish whether an approved design applies. Plan-bound: the task's
+   `Context` and `Applicable visual references` say. Otherwise check
+   `.sdlc-skills/designs/` and any user-set design path, and record what you
+   checked. Uncertain → verdict pending. No approved design exists and the
+   direction is settled → take the observation source from the spec's, task's,
+   or settling request's acceptance criteria, or from a rendering of the
+   pre-change revision captured in its own workspace under Step 2's matrix, and
    record which one in `Acceptance source`. An approved design exists → read
    the approved design itself: flows, states, conditions, decisions and
    acceptance checks. Map each applicable obligation to a required observation
@@ -100,8 +104,8 @@ candidate. Never return "looks good".
 - A UI fix with no design artifact reads as a missing source, and the verdict
   stays pending for good unless the acceptance criteria or a pre-change
   rendering is recorded as the source.
-- A "pre-change" rendering captured after the edit is the candidate itself,
-  and it compares the change with itself.
+- A "pre-change" rendering captured from the edited workspace is the candidate
+  itself, and it compares the change with itself.
 
 ## Common mistakes
 
