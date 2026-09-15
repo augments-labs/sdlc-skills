@@ -250,7 +250,10 @@ count() { # the line count of a git listing outside evidence/; fails when git do
   local out; out="$(git --no-optional-locks "$@" -- . "$evidence_out" 2>/dev/null)" || return 1
   printf '%s\n' "$out" | grep -c . || true
 }
-staged_n="$(count diff --cached --name-only)" && unstaged_n="$(count diff --name-only)" &&
+# --ignore-submodules=untracked is git's default, stated so that no ignore setting
+# hides a submodule change from the counts.
+staged_n="$(count diff --cached --ignore-submodules=untracked --name-only)" &&
+  unstaged_n="$(count diff --ignore-submodules=untracked --name-only)" &&
   untracked_n="$(count ls-files --others --exclude-standard)" || {
   echo "Error: git could not list uncommitted paths; no identity." >&2; exit 4; }
 clean=0; [ "$staged_n" = 0 ] && [ "$unstaged_n" = 0 ] && [ "$untracked_n" = 0 ] && clean=1
