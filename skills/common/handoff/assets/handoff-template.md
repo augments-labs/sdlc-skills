@@ -15,7 +15,7 @@ class, allowed access, retention/expiry, exact cleanup targets/effects/
 recoverability, cleanup owner, cleanup authority, and pending/completed state}}
 
 ## Handoff identity
-- ID / content identity: {{stable ID and digest}}
+- ID: {{stable handoff ID; the note's digest goes in its ledger, never here}}
 - Created / sender / intended recipient and scope: {{exact transfer facts}}
 - Predecessor: {{prior handoff identity, or "none"; records are append-only}}
 
@@ -75,7 +75,7 @@ recoverable from retained task artifacts; current session owner has not yet
 received cleanup authority, so cleanup is pending.
 
 ## Handoff identity
-- ID / content identity: session-idle-expiry-h4 / store-recorded digest
+- ID: session-idle-expiry-h4
 - Created / sender / intended recipient and scope: 2026-07-30 10:05 UTC /
   current task session / successor task session, resume-only
 - Predecessor: session-idle-expiry-h3; this is an append-only successor
