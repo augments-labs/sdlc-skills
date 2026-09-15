@@ -21,8 +21,10 @@ or comment as a verdict.
 
 1. Stop writers this task started; report any other writer to its owner and
    keep review pending until it stops.
-2. Reuse a current `requesting-code-review` descriptor, or invoke that skill
-   and fill its review-candidate descriptor.
+2. Reuse a current review-candidate descriptor, or fill a new one from
+   `requesting-code-review`'s `review-candidate.md` template alone: that
+   skill's steps would dispatch a second review and route this audit back
+   here.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the exact-state
    gates that apply. Join its state identity byte-for-byte.
 4. Inventory the threat model: protected assets, trusted and untrusted actors,
