@@ -1,9 +1,9 @@
 ---
-name: scope-it
+name: scoping
 description: "Defines a project's delivery boundary: what is in, what is out, and what is sufficient for the goal. Use when a project's goals are set and its scope needs defining or revising, including scope growth during delivery. Skip single-feature requirements, unresolved intent, and speculative additions at the implementation level."
 ---
 
-# Scope It
+# Scoping
 
 Scope is decided by what you say no to. An unbounded project never ships — name the boundary before anyone starts building.
 
@@ -12,8 +12,8 @@ Scope is decided by what you say no to. An unbounded project never ships — nam
 - After goals are approved—whether already present or produced by
   `define-goals`—and before an unresolved project boundary is consumed.
 - When scope is unclear or creeping mid-project.
-- **Skip** for a single feature. Use `interview-me` only when its intent or
-  boundary is ambiguous; `spec-it` owns its detailed requirements and non-goals.
+- **Skip** for a single feature. Use `clarifying-intent` only when its intent or
+  boundary is ambiguous; `writing-specs` owns its detailed requirements and non-goals.
 
 ## Step 1: Cut the scope
 
@@ -54,8 +54,8 @@ Open `assets/scope-section.md` before starting; each step fills its section.
    Recommendation: {{thinnest answer that reaches the goal}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
-3. **REQUIRED SUB-SKILL:** on option 1, invoke `spec-it` when detailed
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+3. **REQUIRED SUB-SKILL:** on option 1, invoke `writing-specs` when detailed
    requirements are the next missing input. Never impose a phase already
    complete.
 

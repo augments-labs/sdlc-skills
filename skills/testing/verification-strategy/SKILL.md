@@ -79,7 +79,7 @@ reading the code, a coverage number, or the builder's opinion.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 4. Approve nothing yourself. Authority to draft gates is not authority to
    accept unseen risks, thresholds, omissions, or exceptions.
 5. Keep the matrix file at `proposed`.

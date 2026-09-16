@@ -26,7 +26,7 @@ change. Watch it happen; keep the output.
    for each. Never aim a test at a shared or production surface not written
    here.
 2. Pin the public interface and the behavior it promises from the task, spec,
-   or approved design. Unresolved meaning → `interview-me`. Never guess it
+   or approved design. Unresolved meaning → `clarifying-intent`. Never guess it
    into a test.
 3. Pick the cycle:
    - new or intentionally changed behavior → Step 2

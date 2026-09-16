@@ -56,12 +56,12 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | common | `writing-skills` | Author concise skills and evaluate their behavior |
 | common | `viewing-artifacts` | View the state and consistency of briefs, specs, designs, plans, and execution in a local artifact viewer |
 | planning | `define-goals` | At project kickoff — pin the objective and measurable success criteria into the project brief |
-| planning | `scope-it` | Draw the boundary — what's in, what's explicitly out, the MVP cut |
+| planning | `scoping` | Draw the boundary — what's in, what's explicitly out, the MVP cut |
 | planning | `feasibility-check` | Assess whole-initiative achievability and give the accountable owner an evidence-bound go / no-go / go-if recommendation |
-| analysis | `spec-it` | Turn a goal or feature into a requirements spec — testable requirements, acceptance criteria, edge cases |
-| common | `interview-me` | Resolve only material unknowns the codebase cannot answer, and require direct answers for decisions rather than inferring approval |
+| analysis | `writing-specs` | Turn a goal or feature into a requirements spec — testable requirements, acceptance criteria, edge cases |
+| common | `clarifying-intent` | Resolve only material unknowns the codebase cannot answer, and require direct answers for decisions rather than inferring approval |
 | common | `prototyping` | Answer one uncertain design or feasibility question with a throwaway spike, then delete it |
-| common | `zoom-out` | Before changing unfamiliar code, go up a layer and map the relevant modules and their callers in the project's own vocabulary |
+| common | `mapping-the-codebase` | Before changing unfamiliar code, go up a layer and map the relevant modules and their callers in the project's own vocabulary |
 | common | `handoff` | Write a durable, resumable handoff when a session ends — goal, state, decisions, gotchas, and the one concrete next step |
 | common | `using-git-worktrees` | Create an owned, gitignored git worktree on a proven base with a real baseline and isolated runtime state before edits, then checkpoint locally as the work goes; integration and cleanup remain separate decisions |
 | common | `dispatching-parallel-agents` | Fan out independent work only with exclusive ownership and isolated state, then inspect raw results and run a combined gate |

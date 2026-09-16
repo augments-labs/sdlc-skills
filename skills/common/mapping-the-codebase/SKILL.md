@@ -1,9 +1,9 @@
 ---
-name: zoom-out
+name: mapping-the-codebase
 description: "Maps how a region of code fits together — its callers, owners, and boundaries — before it is changed. Use when code whose structure and callers have not been established for this task is about to be changed or debugged, or when asked how a change travels through the codebase. Skip only when a current boundary record covers the region and its inputs."
 ---
 
-# Zoom Out
+# Mapping the Codebase
 
 Before you touch unfamiliar code, understand its shape. The failure this prevents is editing a region by pattern-matching on syntax while missing how it actually fits together — who calls it, what it owns, where the boundaries are.
 

@@ -67,7 +67,7 @@ event and decision trail; do not invent a code defect to enter this skill.
    Recommendation: {{the answer the evidence and ownership support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 3. Move an action out of `proposed` only on a complete trusted receipt for
    the exact scope and dates. Record rejection, cancellation, or supersession
    with its residual risk and replacement.

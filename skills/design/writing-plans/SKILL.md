@@ -14,8 +14,8 @@ not the code.
 
 - Detailed requirements are approved, or a precise task spans ≥3 steps or multiple files.
 - **Skip** for single-step or trivial changes — planning them costs more than doing them.
-- Intent still ambiguous: invoke `interview-me` first. Verifiable behavior
-  still missing: invoke `spec-it` first. A precise task needs neither.
+- Intent still ambiguous: invoke `clarifying-intent` first. Verifiable behavior
+  still missing: invoke `writing-specs` first. A precise task needs neither.
 - Fill the classification block. High-risk means any answer is off the
   ordinary route, or the user marks the work so. For a
   high-risk target, read the approved migration and assurance contracts
@@ -110,7 +110,7 @@ not the code.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 2. Do not invoke `executing-plans`, create a workspace, or write code in this
    turn.
 3. Standing order → proceed unpaused only when its scope, owner, constraints,
@@ -129,7 +129,7 @@ not the code.
    ```
 
    Offer delegated only if the harness has a subagent action.
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 5. Append one row to the `External decision ledger`, a ledger (append-only,
    outside the plan): `Identity` = the printed
    version, `Location` = the index path, `State` = approved, `Bound evidence` =

@@ -58,7 +58,7 @@ Exit codes:
   3  a required tool is missing
 
 Examples:
-  bash scripts/check-skill.sh ../../planning/scope-it
+  bash scripts/check-skill.sh ../../planning/scoping
   bash scripts/check-skill.sh --strict --format json ~/my-skills/pdf-tools
 EOF
 }

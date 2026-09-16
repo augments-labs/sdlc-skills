@@ -20,8 +20,8 @@ Overlapping triggers alone are a reason to write the case, not to merge.
 ## Decisions
 
 - merged: none
-- kept: `test-driven-development` + `yagni`; `zoom-out` + `debugging`;
-  `define-goals` + `scope-it` + `feasibility-check`
+- kept: `test-driven-development` + `yagni`; `mapping-the-codebase` + `debugging`;
+  `define-goals` + `scoping` + `feasibility-check`
 
 ## test-driven-development + yagni
 
@@ -49,18 +49,18 @@ The case tells them apart, so they stay two skills that load together.
 
 decision: kept
 
-## zoom-out + debugging
+## mapping-the-codebase + debugging
 
 **Trigger overlap.** Both fire on a bug with an unknown cause in code whose
 structure and callers have not been established for the task. Outside that
-they part: `zoom-out` also fires before changing or extending unfamiliar code
-with nothing broken, and `debugging` also fires where a current boundary record
-already covers the region.
+they part: `mapping-the-codebase` also fires before changing or extending
+unfamiliar code with nothing broken, and `debugging` also fires where a current
+boundary record already covers the region.
 
 **What each catches that the other would not.**
 
-- `zoom-out` catches a boundary drawn too small: a caller reached through
-  configuration, reflection, a generated route, or a scheduler; a
+- `mapping-the-codebase` catches a boundary drawn too small: a caller reached
+  through configuration, reflection, a generated route, or a scheduler; a
   compatibility-sensitive change stopped at its direct callers; a boundary
   record relied on past its freshness limit. None of these needs a failure, so
   `debugging` never looks for them.
@@ -74,11 +74,11 @@ The case tells them apart, so they stay two skills.
 
 decision: kept
 
-## define-goals + scope-it + feasibility-check
+## define-goals + scoping + feasibility-check
 
 **Trigger overlap.** All three belong to starting a project or initiative,
 skip a single feature, and write their own section of one project brief. They
-part on timing: `scope-it` also fires when scope creeps mid-project, and
+part on timing: `scoping` also fires when scope creeps mid-project, and
 `feasibility-check` is skipped when the path is well-trodden and the risk
 obviously low.
 
@@ -88,7 +88,7 @@ obviously low.
   source, horizon, or owner, a guardrail nobody could check, and approvers with
   no rule for settling a disagreement. The other two consume approved goals and
   never ask why the work exists.
-- `scope-it` catches a missing out-of-scope list, compatibility, security, or
+- `scoping` catches a missing out-of-scope list, compatibility, security, or
   rollback cut as "out of scope" to shrink the MVP, a large dependency hidden in
   a one-word assumption, and a deferred item's ID reissued for another item.
 - `feasibility-check` catches a go decided on optimism with no named risks, a
@@ -102,9 +102,9 @@ an artifact.
 
 decision: kept
 
-## Analysis is cohesive — `spec-it`
+## Analysis is cohesive — `writing-specs`
 
-Gathering requirements, analyzing them, identifying challenges, and writing the spec is one interleaved reasoning pass. You don't gather everything, then analyze everything, then write — you write each requirement while reasoning about its acceptance criterion, its edge cases, and its assumptions, all at once. "Identify the requirement risks" is not independently invokable: you can't do it without the requirements, and once you have them you are already inside `spec-it`. One skill.
+Gathering requirements, analyzing them, identifying challenges, and writing the spec is one interleaved reasoning pass. You don't gather everything, then analyze everything, then write — you write each requirement while reasoning about its acceptance criterion, its edge cases, and its assumptions, all at once. "Identify the requirement risks" is not independently invokable: you can't do it without the requirements, and once you have them you are already inside `writing-specs`. One skill.
 
 ## Don't split for its own sake
 
@@ -114,4 +114,4 @@ template can preserve required information without making each section a skill.
 
 ## Cross-cutting techniques are a third case
 
-A technique used across many phases — grilling (`interview-me`), code comprehension (`zoom-out`) — is neither a phase's skill nor a split of one. It lives in `common/` because it is *reused everywhere*, not because a phase was divided.
+A technique used across many phases — grilling (`clarifying-intent`), code comprehension (`mapping-the-codebase`) — is neither a phase's skill nor a split of one. It lives in `common/` because it is *reused everywhere*, not because a phase was divided.
