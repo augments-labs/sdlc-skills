@@ -3,7 +3,10 @@
 Worked examples behind `../SKILL.md` — loaded on demand. Each pair shows a weak brief and the strong one for the same task. The difference is never length; it's that the strong one is self-contained: a subagent with zero shared session can start cold and finish to a reconcilable "done."
 
 The packet you fill in is `../assets/dispatch-packet.md`. What follows is why its
-fields are shaped that way, and what a filled one looks like.
+fields are shaped that way, and what a filled one looks like. The examples show
+the slim packet; a high-risk run or a phase queue fills
+`../assets/dispatch-packet-controlled.md` as well, and the last four rules below
+are about those fields.
 
 ## The rules behind the template
 
@@ -46,27 +49,14 @@ Why it fails: the agent touches both — that was one agent doing two tasks seri
 TASK: Make the failing test 'rejects an expired token' pass in tests/auth/expiry_test.go.
 TIER: medium
 BASE: {{immutable revision shared by all writers}}
-WORKSPACE: {{owned auth-fix branch/workspace}}
 OWNS: tests/auth/expiry_test.go, src/auth/expiry.go
 DO NOT TOUCH: anything under tests/billing/ or src/billing/ — another agent owns it.
-SHARED/GENERATED: no shared output; the coordinator alone owns any manifest or lockfile update.
-CHECKPOINTS: {{withheld | the coordinator's recorded local commit authority, quoted from its workspace record, plus required gate}}
-ROUTE: invoke using-sdlc-skills once from this packet; do not reopen settled scope.
 START FROM: failing assertion, verbatim:
   expected status 401, got 200 for a token expired 1 minute ago
 READ: {{path to the token-lifetime docs}} — skim only if expiry.go isn't self-explanatory.
 DONE WHEN: `go test ./tests/auth/ -run TestExpiredToken` exits 0. Run the command; read the output.
-STOP IF: the fix requires a shared generator, manifest, billing path, or state.
 REPORT: base/result revisions and diff; root cause; files changed; exact command
   and raw verdict; authorized checkpoint commits or none; scope exceptions.
-ISOLATION: none needed — tests are self-contained, no server, no db.
-DATA/ACCESS: repository source and synthetic test data only; the selected worker/
-  provider and owned task workspace may access them; no credentials, production
-  data, or external effects; retain the report until reconciliation; cleanup is
-  pending unless current authority names its exact target/effects/recoverability.
-RESOURCES: one bounded test process per worker; no server/network; coordinator
-  confirms aggregate process, memory, time, and cost headroom before fan-out and
-  kills/reaps either worker on its timeout.
 ```
 
 Dispatch the billing test as a second, symmetric brief. Note what the strong one carries that the weak one doesn't: the failing assertion pasted (the agent never runs a red suite to discover it), the exact verification command, and a boundary that keeps the two agents apart.
@@ -89,31 +79,15 @@ Why it fails: session history is not context — it carries your dead ends and m
 TASK: Find and fix the crash when exporting a project with zero images.
 TIER: medium
 BASE: {{immutable revision shared by all writers}}
-WORKSPACE: {{owned export-fix branch/workspace}}
 OWNS: src/export/
 DO NOT TOUCH: src/settings/ or anything UI-facing — another agent owns a separate fix there.
-SHARED/GENERATED: the coordinator alone owns shared manifests, generated output, and lockfiles.
-CHECKPOINTS: {{withheld | the coordinator's recorded local commit authority, quoted from its workspace record, plus required gate}}
-ROUTE: invoke using-sdlc-skills once from this packet; do not reopen settled scope.
 START FROM: reproduce: 1) new project, 2) delete all images, 3) Export → crash with
   "TypeError: cannot read 'width' of undefined" at export/render.ts:88
 READ: src/export/render.ts, src/export/pipeline.ts
 DONE WHEN: the reproduce steps complete and produce a valid export file; `npm test -- export` exits 0.
-STOP IF: export changes require a shared generator, manifest, UI path, or other writer's state.
 REPORT: base/result revisions and diff; root cause; fix location; raw command
   verdicts; authorized checkpoint commits or none; checked edge cases; scope
   exceptions.
-ISOLATION: run in your own workspace copy; the dev server port is 3000 — if you need one, take a distinct port in the 3xxx range and say which.
-DATA/ACCESS: repository source and synthetic fixtures only; the selected worker/
-  provider and owned workspace may access them; no credentials, production data,
-  or external writes; retain evidence until coordinator reconciliation; cleanup
-  stays pending unless exact targets, effects, recoverability, and current
-  cleanup authority are bound.
-RESOURCES: {{measured per-worker CPU, memory, temporary disk, processes,
-  sockets, time, and cost}} inside {{aggregate host capacity and reserve}};
-  enforce the available ceilings, monitor them, and terminate on {{threshold}};
-  cleanup is {{exact task-owned child-process/temporary-state targets, effects,
-  recoverability, and current authority, or pending}}.
 ```
 
 The typo gets its own brief at the small tier. Note the reproduce steps pasted
@@ -140,27 +114,15 @@ Why it fails: "best" undefined — each agent optimises a different axis; no cri
 TASK: Evaluate {{approach}} as the cache for the product-list endpoint.
 TIER: small
 BASE: {{immutable repository revision}}
-WORKSPACE: read-only checkout at BASE
 OWNS: nothing — read-only. Do not modify files.
-SHARED/GENERATED: none — read-only research.
-CHECKPOINTS: not authorized — read-only.
-ROUTE: invoke using-sdlc-skills once from this packet; do not reopen settled scope.
 READ: src/api/product_list.ts (the endpoint), src/api/README.md (current load profile).
 JUDGE AGAINST, in order: 1) correctness under concurrent writes, 2) p95 read latency at the load in README, 3) operational cost (new infra? new failure modes?), 4) lines-of-code cost to adopt.
 DONE WHEN: you can answer all four criteria from evidence you actually read — a file, a measurement, or the approach's documented semantics. No "it should be fine."
-STOP IF: the criteria require evidence outside the authorized scope; report the unknown instead.
 REPORT, exactly this shape:
   - Approach: {{approach}}
   - Per criterion: verdict (good/bad/risky) + one line of evidence + where you read it
   - Deal-breaker if any, else "none"
   - Unknowns: what you could not determine from the repo
-ISOLATION: none — read-only.
-DATA/ACCESS: repository documents at the immutable base only; selected research
-  worker/provider access; no secrets, customer data, external writes, or copied
-  repository; retain the bounded report through comparison; cleanup is {{exact
-  report target, effect, recoverability, and current authority, or pending}}.
-RESOURCES: no runtime process or writable temporary state; bound research time
-  and cost per worker and in aggregate.
 ```
 
 One brief per approach, identical except `{{approach}}`. The shared report shape is what makes the coordinator's job mechanical: line the four criteria up side by side and the recommendation falls out. The weak version gives you three opinions; the strong one gives you one comparison table.
