@@ -96,7 +96,6 @@ term below reads unfamiliar.
 ## Common mistakes
 
 - Refactoring for tidiness, not leverage — change structure only where it cuts real friction.
-- Adding a port for hypothetical variation with no real impedance or volatility.
 - Removing old tests because the new suite is green without mapping the
   invariants and falsifying the surviving gate.
 - Combining so many structural moves that behavior, performance, compatibility,

@@ -30,9 +30,7 @@ diagnosis, not permission to change code.
    report changes the digest the audit froze. Uncommitted target with an
    in-tree, unignored report path → stop; ask for a checkpoint or an ignored or
    out-of-repository report path. Target drifts → stop or restart.
-3. Fill the inventory table: code, dependencies, configuration, build and
-   test machinery, generated sources, dynamic, reflection, and registration
-   paths, external consumers, operational ownership.
+3. Fill every row of the template's inventory table.
 4. Prefer one bounded audit. Large surface → partitions with stable IDs,
    exclusive inventories, cross-boundary edges. Invoke
    `dispatching-parallel-agents` only when read sets, resources, data
@@ -44,9 +42,8 @@ diagnosis, not permission to change code.
    dispatching each exact partition, then dispatch per `dispatching-parallel-agents` Step 2.
 2. Empty, refused, or unavailable → follow the no-dispatch rule in
    `dispatching-parallel-agents` Step 2.
-3. Fill the reconciliation block before any finding: every partition,
-   exclusion, cross-boundary candidate, duplicate, failed attempt,
-   inconclusive area.
+3. Fill every line of the template's coverage-reconciliation block before any
+   finding.
 4. Read each returned partition report; open its file if only a location was
    returned. Match Target, Audit inputs, Partition, and Verdict to the frozen
    request and auditor's allowed verdicts. Missing, unreadable, conflicting,
@@ -55,9 +52,8 @@ diagnosis, not permission to change code.
 
 ## Step 3: Publish decisions
 
-1. Per finding: `keep`, `simplify`, `remove`, `decision`, or `investigate`,
-   with evidence, guarantee at stake, replacement, how it is verified, what a
-   migration or recovery owes. Line count is not authority.
+1. Fill every column of the template's findings table, one row per finding.
+   Line count is not authority.
 2. Apply or approve nothing. Accepted structural change → `refactor-architecture`.
    Behavior work → its feature or bug route, producing a new verified
    candidate.

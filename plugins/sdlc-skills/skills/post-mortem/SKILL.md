@@ -35,11 +35,10 @@ event and decision trail; do not invent a code defect to enter this skill.
    more likely. Name conditions, never a person. Keep several conditions
    separate.
 2. Fill `Escape-path audit`: freeze the gate and surface inventory with its
-   source digest, then mark each entry `missing / too weak / skipped / stale /
-   failed but ignored / held`, with an accountable disposition per omission.
-3. Fill `Risk-reduction claim` per action: prevent, detect earlier, limit
-   blast radius, or recover faster, with baseline, target, horizon, residual
-   risk. Never claim recurrence is impossible.
+   source digest, then fill every column for each entry, with an accountable
+   disposition per omission.
+3. Fill every bullet of `Risk-reduction claim` per action. Never claim
+   recurrence is impossible.
 4. Challenge the draft. Dispatch the template's independent escape-path
    challenger per `dispatching-parallel-agents` Step 2; a serious incident
    without one needs the omission the `Expected reviewers` field requires.
