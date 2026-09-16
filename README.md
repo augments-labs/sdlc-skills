@@ -123,8 +123,9 @@ This is an instruction to a non-deterministic agent, not enforced invocation.
 Project tests, review, CI, and release controls govern whether results advance.
 See [`docs/activation.md`](docs/activation.md) for the distinction.
 
-Adapters register no tool, prompt, or turn-end hooks and do not re-inject after
-compaction. The current lifecycle policy, its evidence limits, and the packaging
+Adapters register no tool, prompt, or turn-end hooks. They supply the router
+again after compaction, which replaces the transcript rather than carrying
+injected text forward. The current lifecycle policy, its evidence limits, and the packaging
 step that keeps the Codex mirror current are documented once in
 [`docs/harness-support.md`](docs/harness-support.md).
 

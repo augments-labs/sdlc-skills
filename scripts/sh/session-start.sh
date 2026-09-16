@@ -9,10 +9,9 @@
 # get skipped — measured, in a real session, on exactly the task it governs.
 # Injecting the body removes the skippable step: the entry mandate is simply
 # resident, so there is nothing left to forget. It costs ~1.5k tokens once per
-# context epoch instead of ~90, and it is re-applied only where the harness
-# reports context was actually lost (start, resume, clear) — never after
-# compaction, which carries loaded context forward, and never on a per-turn
-# cadence.
+# context epoch instead of ~90, and it is re-applied wherever the harness
+# reports the context was replaced — start, resume, clear, and compaction —
+# never on a per-turn cadence.
 #
 # The text is READ from the canonical skill, never copied here: one source of
 # truth, so editing the skill cannot silently stop shipping.
@@ -25,19 +24,17 @@ set -uo pipefail
 
 event="${1:-SessionStart}"
 
-# Compaction is not context loss on the supported harnesses: loaded skills and
-# session context are carried across it, so re-injecting the same body is pure
-# redundant cost. Claude Code excludes compact in the hook matcher, Kimi
-# registers no PostCompact hook, and Codex reports compaction as a SessionStart
-# whose payload source is "compact" — filtered here because its hook cannot
-# filter by source. Do not add compact re-injection back.
+# Compaction IS context loss. It replaces the transcript with a summary, and
+# text injected at session start does not survive into what replaces it: this
+# body is gone from the compacted context, which is the state the agent then
+# works in. So compaction is re-injected like any other epoch boundary.
+#
+# It is re-injected through SessionStart, not a dedicated compaction event: the
+# harnesses that report compaction report it as a SessionStart whose source is
+# "compact", and that is the invocation whose output is added to the compacted
+# context. A PostCompact-style hook fires for monitoring; its output is not
+# added to any context, so answering it injects nothing and costs a run.
 case "$event" in PostCompact) exit 0 ;; esac
-if [ ! -t 0 ]; then
-    payload="$(cat 2>/dev/null || true)"
-    case "$payload" in
-        *'"source":"compact"'*|*'"source": "compact"'*) exit 0 ;;
-    esac
-fi
 
 script_dir="$(dirname "$0")"
 plugin_root="$(cd "$script_dir/../.." 2>/dev/null && pwd)"
@@ -103,8 +100,8 @@ elif [ -n "${COPILOT_CLI:-}" ]; then
     # SDK-style hooks consume top-level camelCase additional context.
     printf '{\n  "additionalContext": "%s"\n}\n' "$esc"
 else
-    # Claude Code and Codex consume the nested SessionStart envelope. Codex
-    # also fires SessionStart after compaction (source=compact); the skip at
-    # the top of this script drops that invocation before reaching here.
+    # Claude Code and Codex consume the nested SessionStart envelope, including
+    # the post-compaction invocation (source=compact), which reaches here like
+    # any other source and is answered the same way.
     printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "%s",\n    "additionalContext": "%s"\n  }\n}\n' "$event" "$esc"
 fi

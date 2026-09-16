@@ -28,6 +28,12 @@ step to load that body. They register no tool, prompt, or turn-end enforcement
 hooks. Packaging and lifecycle details belong in
 [`harness-support.md`](harness-support.md).
 
+Compaction replaces the transcript with a summary, and text injected at session
+start is not carried into the replacement, so the body is supplied again at that
+boundary wherever the harness exposes it. A post-compaction hook whose output
+only reports the event, rather than entering the context it produced, cannot
+carry the router and is left unregistered.
+
 The router body stays within 700 words, because every session loads all of it.
 
 Resident instructions can influence a non-deterministic agent; they do not prove

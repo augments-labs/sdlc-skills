@@ -11,9 +11,9 @@ tools, and lifecycle events.
 
 | Harness | Adapter | Entry-skill injection | Re-applied after compaction |
 | --- | --- | --- | --- |
-| Claude Code | `.claude-plugin/` and `hooks/hooks.json` | `SessionStart` hook | No — `compact` is excluded from the matcher |
-| Codex | `plugins/sdlc-skills/` and `.agents/plugins/marketplace.json` | bundled `SessionStart` hook | No — the injector drops `source=compact` payloads |
-| Kimi Code | `.kimi-plugin/plugin.json` | `sessionStart.skill` | No — no `PostCompact` hook is registered |
+| Claude Code | `.claude-plugin/` and `hooks/hooks.json` | `SessionStart` hook | Yes — `compact` is in the matcher |
+| Codex | `plugins/sdlc-skills/` and `.agents/plugins/marketplace.json` | bundled `SessionStart` hook | Yes — the hook is unfiltered, so `source=compact` reaches the injector |
+| Kimi Code | `.kimi-plugin/plugin.json` | `sessionStart.skill` | Not exposed — the manifest declares no compaction event |
 
 The Codex plugin manifest carries the skill catalogue but has no session-start
 field, so the entry skill arrives through hooks the plugin itself bundles
@@ -37,9 +37,16 @@ and the skill set exposed by all three manifests.
 ## Lifecycle policy and evidence
 
 All adapters supply the full router through session-start mechanisms and
-register no tool, prompt, or turn-end hooks. The current policy does not
-re-inject after compaction: the hook matcher or injector excludes compact
-payloads, and the shared injector also ignores `PostCompact` events.
+register no tool, prompt, or turn-end hooks. Compaction is an epoch boundary
+like start, resume, and clear: it replaces the transcript with a summary, and
+text injected at session start is not carried into the replacement, so the
+router is supplied again wherever the harness exposes the event.
+
+It arrives through the session-start mechanism, not a dedicated compaction
+hook. Where a harness has both, the post-compaction `SessionStart` output is
+added to the compacted context and a `PostCompact` hook's output is not — that
+event reports compaction rather than contributing to it. The shared injector
+therefore answers `SessionStart` for every source and ignores `PostCompact`.
 
 `tests/run-session-start.sh` checks those registrations and synthetic payload
 branches, including the injected body and envelope. It does not compact a real

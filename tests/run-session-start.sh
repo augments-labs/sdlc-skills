@@ -138,7 +138,10 @@ echo "--- event name is reported back to the harness"
 check "default event is SessionStart" \
   "$(env CLAUDE_PLUGIN_ROOT=/p bash "$S" 2>/dev/null | jq -r '.hookSpecificOutput.hookEventName // empty')" \
   "SessionStart"
-check "PostCompact invocation is skipped entirely (compact re-injection is retired)" \
+# A PostCompact hook's output is not added to the compacted context on any
+# supported harness, so answering that event injects nothing and costs a run.
+# Compaction is served by SessionStart source=compact instead.
+check "PostCompact invocation stays silent (its output could not reach the context)" \
   "$(env KIMI_CODE_HOME=/p bash "$S" PostCompact 2>/dev/null)" \
   ""
 
@@ -176,14 +179,14 @@ else
   pkg_abs="$(cd "$pkg" && pwd)"
   elsewhere="$(mktemp -d)"
   if jq -e '.hooks | has("PostCompact")' "$pkg_hooks" >/dev/null; then
-    bad "Codex plugin registers PostCompact (compact re-injection is retired, and that output cannot carry context)"
+    bad "Codex plugin registers PostCompact (its output cannot carry context; SessionStart source=compact does)"
   else
     ok "Codex plugin registers no PostCompact hook"
   fi
   if jq -e '.hooks.SessionStart[0] | has("matcher")' "$pkg_hooks" >/dev/null; then
-    bad "Codex SessionStart hook must stay unfiltered — the injector itself drops source=compact"
+    bad "Codex SessionStart hook must stay unfiltered — a matcher there would filter compaction out"
   else
-    ok "Codex SessionStart hook is unfiltered; the injector drops source=compact"
+    ok "Codex SessionStart hook is unfiltered, so compaction reaches the injector"
   fi
 
   cmd="$(jq -r '.hooks.SessionStart[0].hooks[0].command // empty' "$pkg_hooks")"
@@ -202,14 +205,18 @@ else
       *)                      bad "SessionStart source=startup injected no entry-skill body (an install would route nothing)" ;;
     esac
 
-    # Codex reports compaction as SessionStart source=compact. Loaded context
-    # survives compaction, so the injector must skip that invocation entirely;
-    # re-injecting the same body would be redundant cost.
+    # Compaction replaces the transcript with a summary, so the router injected
+    # at startup is gone from the post-compaction context. SessionStart with
+    # source=compact is the invocation that can put it back, and it is the only
+    # one whose output reaches that context — so it must inject, not skip.
     compact_input='{"cwd":"/w","hook_event_name":"SessionStart","model":"test","permission_mode":"default","session_id":"s1","source":"compact","transcript_path":null}'
     compact_out="$(cd "$elsewhere" && printf '%s' "$compact_input" | \
       env PLUGIN_ROOT="$pkg_abs" bash -c "$cmd" 2>/dev/null)"
-    check "SessionStart source=compact is skipped entirely (compact re-injection is retired)" \
-      "$compact_out" ""
+    compact_body="$(printf '%s' "$compact_out" | jq -r '.hookSpecificOutput.additionalContext // empty' 2>/dev/null)"
+    case "$compact_body" in
+      *'Catch one and stop'*) ok "SessionStart source=compact re-injects the entry-skill body" ;;
+      *)                      bad "SessionStart source=compact injected no body (the router would be lost after every compaction)" ;;
+    esac
   fi
   rm -rf "$elsewhere"
 fi

@@ -2,6 +2,18 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.1.1] — 2026-09-16
+
+The entry skill is supplied again after compaction. Compaction replaces the
+transcript with a summary, and text injected at session start is not carried
+into the replacement, so the router was absent for the rest of every compacted
+session — the long ones, where the routing discipline matters most.
+
+The session-start hook now matches the compaction source where a harness exposes
+it, and the injector no longer drops those payloads. A post-compaction
+monitoring hook stays unregistered: its output reaches no context, so it could
+not carry the router.
+
 ## [10.1.0] — 2026-09-16
 
 A new skill, `subagent-driven-development`, runs an approved plan's tasks through a cold implementer, an independent task reviewer, and a re-reviewer, each carrying only its filled brief. `executing-plans` hands its delegated mode to it instead of describing one.
