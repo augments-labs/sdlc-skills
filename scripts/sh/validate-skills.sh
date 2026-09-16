@@ -15,15 +15,15 @@ scripts/sh/validate-skills.sh — structural gate for every skill in skills/.
 
 Checks frontmatter shape, line and description budgets, directory layout,
 resolvable reference paths, absent external references and vendor model names,
-and that every skill is registered in each plugin manifest. CI runs this on
-every push and PR.
+and that each plugin manifest parses as JSON and registers every skill. CI runs
+this on every push and PR.
 
   --strict  fail on the policy checks check-skill.sh otherwise reports as
             warnings, reference-load-condition included
   --help    this text
 
 Exit codes: 0 every skill passed · 1 violations printed above the summary
-            2 not run from the repo, or an unknown argument
+            2 not run from the repo, or an unknown argument · requires `jq`
 EOF
     exit 0;;
   --strict) strict=--strict ;;
@@ -275,12 +275,23 @@ manifest=.claude-plugin/plugin.json
 echo "• $manifest (skills array sync)"
 if [ ! -f "$manifest" ]; then
   err "missing $manifest"
+elif ! command -v jq >/dev/null 2>&1; then
+  err "jq is required to read $manifest (the adapter checks below need it too)"
+elif ! jq -e . "$manifest" >/dev/null 2>&1; then
+  err "$manifest does not parse as JSON — a harness loads no skill from it"
 else
-  declared=$(grep -oE '"\./skills/[^"]+"' "$manifest" | tr -d '"' | sort -u)
-  missing=$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
-  dead=$(comm -13 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
-  [ -n "$missing" ] && while IFS= read -r m; do err "skill not in $manifest 'skills' (won't load): $m"; done <<< "$missing"
-  [ -n "$dead" ]    && while IFS= read -r d; do err "$manifest 'skills' entry has no SKILL.md: $d"; done <<< "$dead"
+  # Read the array itself: a grep over the whole file also matches paths under
+  # a renamed or absent "skills" key, so the gate passed manifests no harness
+  # can load.
+  declared=$(jq -r '.skills[]? // empty' "$manifest" | sort -u)
+  if [ -z "$declared" ]; then
+    err "$manifest has no non-empty \"skills\" array — no skill would load"
+  else
+    missing=$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
+    dead=$(comm -13 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
+    [ -n "$missing" ] && while IFS= read -r m; do err "skill not in $manifest 'skills' (won't load): $m"; done <<< "$missing"
+    [ -n "$dead" ]    && while IFS= read -r d; do err "$manifest 'skills' entry has no SKILL.md: $d"; done <<< "$dead"
+  fi
 fi
 
 echo "• Codex adapter"
