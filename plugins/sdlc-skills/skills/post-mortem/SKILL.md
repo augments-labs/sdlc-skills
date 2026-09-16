@@ -39,10 +39,11 @@ event and decision trail; do not invent a code defect to enter this skill.
    disposition per omission.
 3. Fill every bullet of `Risk-reduction claim` per action. Never claim
    recurrence is impossible.
-4. Challenge the draft. Dispatch the template's independent escape-path
-   challenger per `dispatching-parallel-agents` Step 2; a serious incident
-   without one needs the omission the `Expected reviewers` field requires.
-   Disposition every finding.
+4. Challenge the draft. Fill `assets/escape-path-challenger.md` before
+   dispatching it read-only per `dispatching-parallel-agents` Step 2; a serious
+   incident without one needs the omission the `Expected reviewers` field
+   requires. Disposition every finding; `findings` blocks issue until the
+   corrected draft is challenged again.
 5. Issue the immutable analysis with its `External lifecycle ledger` to the
    user-set path or the template's path, under current storage authority, and
    record its identity per the template. In-repository record → a new candidate.
