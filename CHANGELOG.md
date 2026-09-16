@@ -2,6 +2,14 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.1.6] — 2026-09-16
+
+The inline and delegated plan executors are peers: the mode answer from
+`writing-plans` names which one runs, and a delegated run no longer sits inside
+the inline loop, invoking the same gates twice and skipping the branch
+decision. `subagent-driven-development` now verifies approval, checks the plan
+contract, and ends at `finishing-a-branch` like its inline counterpart.
+
 ## [10.1.5] — 2026-09-16
 
 A section appended under a heading its predecessor already carries no longer
