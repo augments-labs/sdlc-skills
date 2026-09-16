@@ -122,8 +122,7 @@ debugging, and receiving review. For these only:
    mistakes** for the mistakes the steps do not already forbid.
    Favor procedures over declarations: the steps an agent performs, not a
    description of the outcome it should reach.
-4. Move anything heavy to a sibling: `assets/` if the agent fills it in,
-   `references/` if the agent reads it.
+4. Move anything heavy to a sibling (format rule 3).
 5. Verify the shape (below). Then prove the behavior at the failure surface:
    trigger, artifact or side effect, or pressured discipline. Read
    `references/testing.md` before choosing the proof. An agent explaining the
