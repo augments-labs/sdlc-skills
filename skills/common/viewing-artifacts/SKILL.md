@@ -72,7 +72,12 @@ The page carries state, not documents.
    allowlisted slug; and an open-file `href` or visual `src`, the path of a
    file read in Step 1, relative to `views/index.html` and starting with `../`.
    Never write a URL or a scheme into `href` or `src`.
-3. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
+3. Before writing, `git check-ignore -q` the view path. Not ignored, and this
+   checkout holds a candidate a verification or review is bound to → ask
+   whether to write it there and stop until the user answers: the write is
+   content, and it moves that candidate's digest. A status question is not
+   consent to that.
+4. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
    inside a linked task worktree. Create `views/` if missing. No external
    URLs, no JavaScript, no scratch or backup files. Regeneration recomputes
    from the trail and rewrites in place; never merge a previous render.
