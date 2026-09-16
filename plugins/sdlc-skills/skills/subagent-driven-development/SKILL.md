@@ -49,9 +49,10 @@ never decides what happens to the branch.
 4. `mode: inline` in that row → stop; `executing-plans` owns it, and only the
    user's direct answer changes the mode.
 5. `mode: delegated` on an index with phases or shards → this skill cannot
-   run it and `executing-plans` will not: ask the user for a direct inline
-   answer, append it as a new approved row for this version with
-   `mode: inline`, and stop. The last row's mode is the one 1.1 reads.
+   run it and `executing-plans` will not: ask the `Approval rule` owner for a
+   direct inline answer, append it as a new approved row for this version in
+   the shape `writing-plans` Step 4.5 gives, with `mode: inline`, and stop.
+   The last row's mode is the one 1.1 reads.
 
 ## Step 2: Open the run
 
