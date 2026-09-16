@@ -9,8 +9,7 @@ Before scope or design, name the outcome — and how you'll know you hit it.
 
 ## When to use
 
-- Starting a new project, product, or substantial initiative with a fuzzy "why";
-  this procedure elicits the objective, stakeholders, and measures.
+- Starting a new project, product, or substantial initiative with a fuzzy "why".
 - **Skip** for a single feature or task. Use `clarifying-intent` only for genuine
   ambiguity about which initiative or procedure is intended; `writing-specs` owns
   settled detailed feature requirements.

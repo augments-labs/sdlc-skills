@@ -65,7 +65,3 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
   the settled question gets argued again.
 - A probe that wrote outside its registered scratch targets leaves those writes
   behind when cleanup removes only the registered ones.
-
-## Common mistakes
-
-- Quietly probing a real service or sensitive data because “it is only a spike.”

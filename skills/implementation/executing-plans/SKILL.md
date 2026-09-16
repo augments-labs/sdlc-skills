@@ -160,7 +160,5 @@ In the task workspace recorded in Step 2, in order:
   decision ledger row for the printed version, the workspace's base, HEAD, and
   dirty state through `using-git-worktrees`, the execution ledger, and whether
   each `done` row still matches the current revision.
-- On resume, every task already `done`, or `cancelled`/`superseded` with its
-  approved ledger decision: go to Step 5.
 - Reality contradicts the plan: a change to what was approved → proposed
   successor and direct reapproval; runtime facts → execution ledger only.
