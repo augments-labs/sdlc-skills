@@ -98,6 +98,4 @@ the descriptor's approver rule), or **blocking**.
 
 ## Common mistakes
 
-- Rebuilding after tests and assuming the bytes are equivalent.
-- Treating local/pre-merge green as release evidence, or skipping package gates.
 - Calling a bare flag a rollout plan, or an unbounded recovery promise rollback.

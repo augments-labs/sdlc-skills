@@ -12,8 +12,6 @@ mutation.
 ## When to use
 
 - Present the permitted choices even without a Git request.
-- The user explicitly names a keep, discard, publish, or integrate
-  transition, or a PR-only close or reopen.
 - **Skip** ordinary mid-development checkpoints; `using-git-worktrees` owns
   those. Skip an unchanged state with an already settled branch choice unless
   the user requests another transition.
@@ -84,9 +82,8 @@ mutation.
 
 2. Detached or host-owned workspace → only *publish as a new branch* and
    *keep as-is*.
-3. Existing PR → read `references/branch-state.md` before offering anything:
-   only the transitions it lists for the PR's state and its policy permits.
-   Never conflate, retarget, rewrite, delete, or duplicate a PR.
+3. Existing PR → only the transitions permitted for the PR's state and its
+   policy. Never conflate, retarget, rewrite, delete, or duplicate a PR.
 4. Never put discard on this menu.
 5. Wait for one listed entry. Praise, constraints, partial answers, silence,
    "looks good", an adjacent decision → re-present the menu unchanged.
