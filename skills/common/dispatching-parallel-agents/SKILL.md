@@ -106,7 +106,7 @@ user's main-session model and any model reserved for orchestration untouched.
 ## Step 3: Reconcile
 
 1. Inspect every returned diff yourself against its declared base, ownership
-   set, authorized checkpoints, and raw evaluator evidence. Reject a scope
+   set, authorized checkpoints, and raw gate evidence. Reject a scope
    leak, a mixed change, or missing evidence even under a green suite.
 2. Advance required scope only when every packet has an accepted success
    report, or a directly approved scope change or reassignment.

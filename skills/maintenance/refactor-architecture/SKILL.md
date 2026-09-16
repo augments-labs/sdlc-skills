@@ -47,7 +47,7 @@ term below reads unfamiliar.
    structures compared, removals and where their invariants now live, slice
    table, approver rule. Decision outcome and slice progress stay outside it.
 4. Hard-to-reverse choice → invoke `architecture-decisions`.
-5. Present. Never self-select a material structure:
+5. Present. Never pick the structure yourself:
 
    ```text
    Structural proposal {{identity (per template)}}
@@ -63,7 +63,8 @@ term below reads unfamiliar.
    ```
 
    Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
-6. Input or normative drift → an approved successor; affected slices invalid.
+6. Input drift, or a change to what was approved → an approved successor;
+   affected slices invalid.
 
 ## Step 3: Transform under preservation
 

@@ -12,7 +12,7 @@ Turn an intent into a requirements spec (SRS): gather and analyze what the softw
 - You have a goal, brief, or feature request and need its detailed requirements before designing or building.
 - **Skip** for a trivial change whose single requirement is obvious — just state it and go.
 - If the intent itself is unclear, grill it first with `interview-me`; this skill assumes you roughly know what you want.
-- A reply that has not directly closed a pending material decision routes to
+- A reply that has not directly closed a pending decision routes to
   `interview-me`; this skill cannot convert it into approved requirements.
 
 ## Step 1: Gather and state
@@ -46,8 +46,8 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 5. List the edge cases and scenarios that break a naive build: empty input,
    concurrency, unhappy paths.
 6. Per assumption and dependency: stable ID, evidence or state, validation
-   action, owner, expiry, failure response. Unresolved material state → an
-   open decision, never a hidden premise.
+   action, owner, expiry, failure response. Unresolved state that would change
+   a requirement → an open decision, never a hidden premise.
 7. List open questions, requirement-level risks, and what is out of scope
    this round.
 

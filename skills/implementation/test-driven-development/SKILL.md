@@ -51,8 +51,8 @@ change. Watch it happen; keep the output.
    passing back the attempt count `debugging` handed it, when this cycle
    came from `debugging`.
 4. Keep the output.
-5. Record the test's identity, the evaluator's identity, and the expected
-   observable as of this RED. Any of the three changes later → the cycle is
+5. Record the test's identity, the identity of the evaluator — the check that
+   decides pass or fail — and the expected observable as of this RED. Any of the three changes later → the cycle is
    invalid; restart and reach RED again.
 6. Write only the code that makes this test pass.
 7. Run the test, then the gate the project requires. Both green.
@@ -83,8 +83,8 @@ change. Watch it happen; keep the output.
    Leave anything else pending for `finishing-a-branch`. Never delete
    inherited, shared, or user state to manufacture a cycle.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on the exact state
-   you are about to call done. This cycle's gate is one row of its ledger,
-   not the ledger.
+   you are about to call done. This cycle's gate is one row of its
+   ledger (append-only, outside the candidate), not the ledger.
 4. Return to whatever invoked this skill: a plan task, a worktree checkpoint,
    or a fix under `debugging`. Run no commit, push, or PR here.
 

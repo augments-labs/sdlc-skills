@@ -34,8 +34,8 @@ available lever reopens containment.
 
 ## Step 2: Find the cause
 
-1. Open a hypothesis and attempt ledger outside the descriptor. Search the
-   exact error text first.
+1. Open a hypothesis and attempt ledger (append-only, outside the descriptor).
+   Search the exact error text first.
 2. List only causes the evidence supports and a probe could falsify. Three to
    five. Do not pad.
 3. Give the failure class, each hypothesis, intervention, and attempt a stable

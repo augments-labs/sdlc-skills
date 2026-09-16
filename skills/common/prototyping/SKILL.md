@@ -40,7 +40,8 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 ## Step 3: Retain the result, dispose of the code
 
 1. Store the question, evidence, limitations and decision consequences. With a
-   pending caller → return them for its artifact's ledger. With none → write
+   pending caller → return them for its artifact's ledger (append-only,
+   outside that artifact). With none → write
    them to `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/prototype.md` unless
    the user names another path. A settled load-bearing choice with no pending
    caller → **REQUIRED SUB-SKILL:** invoke `architecture-decisions` and apply

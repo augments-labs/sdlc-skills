@@ -91,8 +91,8 @@ candidate. Never return "looks good".
 1. Edit nothing from this skill. Route each fix through
    `test-driven-development` and `yagni` under the authority that covers it.
 2. Recapture the fixed row and its affected neighbors. Keep before and after
-   evidence. Any candidate or material environment change invalidates
-   affected passes.
+   evidence. Any candidate change, or an environment change that could alter
+   the render, invalidates affected passes.
 3. Write the `Verdict`. Pass only when all four hold: calibrated probe caught
    and restored; every required row captured and inspected; no blocking
    defect; every human-owned row has its trusted receipt. Otherwise fail or

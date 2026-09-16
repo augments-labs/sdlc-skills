@@ -26,10 +26,10 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 1. Stop writers this task started; report any other writer to its owner and
    keep review pending until it stops.
-2. Consume the caller's evidence ledger for the frozen state and its raw
-   results. Reuse each row whose candidate, bound inputs/environment, gate
-   requirements, and evidence freshness still match. Never rerun a matching
-   row.
+2. Consume the caller's evidence ledger (append-only, outside the candidate)
+   for the frozen state and its raw results. Reuse each row whose candidate,
+   bound inputs/environment, gate requirements, and evidence freshness still
+   match. Never rerun a matching row.
 3. No ledger, or a missing or stale row → **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` to obtain evidence for this review, then
    resume here. Keep failures and pending results: they permit review, never

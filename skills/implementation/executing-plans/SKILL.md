@@ -5,9 +5,9 @@ description: "Runs an approved plan task by task through each task's evaluator. 
 
 # Executing Plans
 
-Run each task of an approved plan through its evaluator, then hand the
-integrated result to review and integration. This skill never decides what
-happens to the branch.
+Run each task of an approved plan through its evaluator (the check it must
+pass), then hand the integrated result to review and integration. This skill
+never decides what happens to the branch.
 
 ## When to use
 
@@ -23,9 +23,9 @@ happens to the branch.
 ## Step 1: Verify approval and mode
 
 1. Run `scripts/plan-version.sh` on the plan directory before reading the
-   `External decision ledger`. Find the row for this index whose `Identity` is
-   the printed version and whose `Bound evidence` names the `Approval rule`
-   owner's approval. The index cannot approve itself.
+   `External decision ledger`, a ledger (append-only). Find the row for this
+   index whose `Identity` is the printed version and whose `Bound evidence`
+   names the `Approval rule` owner's approval. The index cannot approve itself.
 2. No such row, or the script fails → stop and name the missing version or the
    script's error; never substitute a version read from the index.
 3. No mode in that row (`mode: inline` or `mode: delegated`): ask one question
@@ -101,7 +101,7 @@ mode; switching needs the user's direct answer.
      non-blocking; keep it out of the completion count
    - `blocked` or `needs context` — with blocker, owner, next gate
    Mirror only the task row's checkbox and adjacent label. **Do not change the
-   index's `Status` header or normalize it out of the normative identity.**
+   index's `Status` header or normalize it out of the plan's identity.**
 7. After parallel work: rerun the combined gate on the merged state before any
    of its tasks is `done`.
 8. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
@@ -115,9 +115,9 @@ mode; switching needs the user's direct answer.
      ledger decision → Step 5
    - no authorized ready task can advance → report the unresolved states,
      their blockers and required next conditions
-   - a task needs a normative change (scope, interface, evaluator, phase,
-     ownership, mode) → write the proposed successor, ask for reapproval,
-     end the turn
+   - a task needs a change to what was approved (scope, interface, evaluator,
+     phase, ownership, mode) → write the proposed successor, ask for
+     reapproval, end the turn
    - a high-risk entry gate has not passed → report it, end the turn
 
 ## Step 5: Finish the plan
@@ -172,5 +172,5 @@ In the task workspace recorded in Step 2, in order:
   each `done` row still matches the current revision.
 - On resume, every task already `done`, or `cancelled`/`superseded` with its
   approved ledger decision: go to Step 5.
-- Reality contradicts the plan: normative change → proposed successor and
-  direct reapproval; runtime facts → execution ledger only.
+- Reality contradicts the plan: a change to what was approved → proposed
+  successor and direct reapproval; runtime facts → execution ledger only.
