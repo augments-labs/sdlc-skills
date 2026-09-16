@@ -86,6 +86,3 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
 ## Common mistakes
 
 - Treating “the code now does this” as owner approval or conformance proof.
-
-See `assets/adr-template.md` when a copyable template, a filled example, or
-common failure patterns are needed.
