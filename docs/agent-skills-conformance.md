@@ -124,9 +124,10 @@ bash skills/common/writing-skills/scripts/check-skill.sh path/to/skill
 The first checks the library and its adapters; with `--strict` it also fails on
 the policy checks it otherwise reports as warnings, `reference-load-condition`
 included. The second reports pairs of
-skills that hand off to each other: a pair listed in `docs/allowed-cycles.txt`
-prints as allowed, and `--strict` fails on any other. The third sums the body
-words of one chain in `docs/chains.toml` and fails over its budget. The fourth
+skills that hand off to each other: a pair listed in
+`scripts/sh/data/allowed-cycles.txt` prints as allowed, and `--strict` fails on
+any other. The third sums the body words of one chain in
+`scripts/sh/data/chains.toml` and fails over its budget. The fourth
 reports each description clause of two or more words that more than one skill
 shares, and `--strict` fails on any. The fifth accepts a skill path, including
 one outside this repository, subject to the parsing and execution limits above.
