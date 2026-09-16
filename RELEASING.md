@@ -27,6 +27,7 @@ Nobody bumps in a contribution PR. Versioning is decided once per release, by th
 5. Commit the bump on a release branch off `dev` as `chore(release): vX.Y.Z — <one-line theme>`, and merge its PR into `dev`.
 6. Open the `dev` → `main` PR and merge it as a merge commit, so the individual changes stay in history and `main` never carries a commit `dev` lacks.
 7. Tag `vX.Y.Z` on `main` and create the release: title `SDLC skills vX.Y.Z`, notes carrying the narrative — the field report that drove the change, what changed, and the evidence behind it.
+8. Update the installed plugin, so the release is what actually runs. The updater reads the version from its own copy of the marketplace rather than from the remote, so refresh that first and then update the plugin — on Claude Code, `claude plugin marketplace update augments-labs` followed by `claude plugin update sdlc-skills@augments-labs`, which applies on the next restart. Skip it and every local session keeps loading the previous version while the tag says otherwise.
 
 ## Writing the changelog
 
