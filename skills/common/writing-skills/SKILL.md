@@ -46,9 +46,8 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    it fills in and emits — a document template — goes to `assets/`. A file it
    reads to decide or check — a rubric, a checklist, a reviewer brief, a worked
    example, a lookup table — goes to `references/`. Bundled executable code goes
-   to `scripts/`. `SKILL.md` names each file and says *when* to open it.
-   Keep short questions or response examples inline when their exact shape
-   matters at that step.
+   to `scripts/`. Keep short questions or response examples inline when their
+   exact shape matters at that step.
 4. **Scope and scale-down up top.** State applicability and any skip conditions.
    A mandatory gate may have no skip; define its smallest useful check instead.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
@@ -120,8 +119,6 @@ debugging, and receiving review. For these only:
 3. Write the body: **When to use** (incl. Skip), `## Step N:` sections of
    actions (format rule 6), `## Gotchas` (format rule 9), and **Common
    mistakes** for the mistakes the steps do not already forbid.
-   Favor procedures over declarations: the steps an agent performs, not a
-   description of the outcome it should reach.
 4. Move anything heavy to a sibling (format rule 3).
 5. Verify the shape (below). Then prove the behavior at the failure surface:
    trigger, artifact or side effect, or pressured discipline. Read

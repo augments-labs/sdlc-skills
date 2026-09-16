@@ -2,6 +2,14 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.1.4] — 2026-09-16
+
+A third cold read, by readers who had seen neither earlier pass, proposed
+nineteen removals across every phase folder; fourteen held. Each cut line
+restated a step, a format rule, or a template its own body already carries.
+The five that stayed each kept something no step states, and the read ends
+here.
+
 ## [10.1.3] — 2026-09-16
 
 The library was read cold a second time, by readers who had not seen the first

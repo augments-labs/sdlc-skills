@@ -83,7 +83,3 @@ Open `assets/spec-template.md` before starting; each step fills its section.
   citation of it: test names, review comments, out-of-scope links.
 - A gate written into the project while specifying lands in whichever checkout
   is open, before any task workspace exists.
-
-## Common mistakes
-
-- Requirements with no criterion — "fast", "secure", "intuitive" prove nothing.

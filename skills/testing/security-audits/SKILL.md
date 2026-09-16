@@ -6,9 +6,8 @@ description: "Audits what an attacker can make a change do, from attacker-contro
 # Security Audits
 
 Trace what an adversary can make the exact candidate do, from every
-attacker-controlled source to the sink it reaches. Audit the changed attack
-surface, not the changed lines. Never copy a prior finding, scanner summary,
-or comment as a verdict.
+attacker-controlled source to the sink it reaches. Never copy a prior finding,
+scanner summary, or comment as a verdict.
 
 ## When to use
 

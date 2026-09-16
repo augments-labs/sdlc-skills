@@ -127,5 +127,3 @@ looks obvious — verify before agreeing, editing, replying, or resolving.
 
 - Reproducing against the old revision but applying a fix to materially different
   current code.
-- Silently choosing between conflicting reviewers.
-- Replying “fixed” without the fix revision, gate output, and required re-review.
