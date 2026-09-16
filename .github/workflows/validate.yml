@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Structural validation (skills + adapter sync)
-        run: bash scripts/sh/validate-skills.sh
+        run: bash scripts/sh/validate-skills.sh --strict
       # No live agent runs here: every step below is deterministic.
       - name: Session-start router injection
         run: bash tests/run-session-start.sh
@@ -27,8 +27,8 @@ jobs:
         run: bash tests/run-serve-preview.sh
       - name: Token budget (always-loaded surface)
         run: bash scripts/sh/token-budget.sh --max 5000
-      - name: Handoff cycles (report-only)
-        run: bash scripts/sh/validate-skill-graph.sh
+      - name: Handoff cycles
+        run: bash scripts/sh/validate-skill-graph.sh --strict
       - name: Chain budgets (docs/chains.toml)
         run: |
           chains=$(sed -n 's/^\[\([a-z0-9-]*\)\]$/\1/p' docs/chains.toml)
@@ -39,21 +39,12 @@ jobs:
           done
           exit "$fail"
       # Descriptions are PR content; the runner must not read shared clauses as workflow commands.
-      - name: Trigger collisions (report-only)
+      - name: Trigger collisions
         run: |
           token=$(cat /proc/sys/kernel/random/uuid)
           echo "::stop-commands::$token"
           trap 'echo "::$token::"' EXIT
-          bash scripts/sh/validate-trigger-collisions.sh
-      # Report-only until 9.2; the details quote skill bodies, so workflow commands stop first.
-      - name: Reference load conditions (report-only)
-        run: |
-          token=$(cat /proc/sys/kernel/random/uuid)
-          echo "::stop-commands::$token"
-          trap 'echo "::$token::"' EXIT
-          for dir in skills/*/*/; do
-            bash skills/common/writing-skills/scripts/check-skill.sh "$dir" | awk -F'\t' -v d="$dir" '$2 == "reference-load-condition" {print d ": " $3}' || true
-          done
+          bash scripts/sh/validate-trigger-collisions.sh --strict
 
   reference-validator:
     # A parser cross-check with the Agent Skills reference validator, never a
