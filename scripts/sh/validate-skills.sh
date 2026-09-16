@@ -179,13 +179,17 @@ while IFS= read -r ref; do
     err "$ref: not referenced directly from $skill_file"
 done < <(find skills \( -path '*/references/*.md' -o -path '*/assets/*.md' \) -type f | sort)
 
-echo "• plan-version.sh copies are byte-identical"
-cmp -s skills/design/writing-plans/scripts/plan-version.sh skills/implementation/executing-plans/scripts/plan-version.sh ||
-  err "plan-version.sh: the writing-plans and executing-plans copies differ"
+# The plan's version script and mode question ship with every skill that reads
+# them, so each executor is self-contained; the copies must not drift.
+for copy in executing-plans subagent-driven-development; do
+  echo "• plan-version.sh: the $copy copy is byte-identical to writing-plans"
+  cmp -s skills/design/writing-plans/scripts/plan-version.sh "skills/implementation/$copy/scripts/plan-version.sh" ||
+    err "plan-version.sh: the writing-plans and $copy copies differ"
 
-echo "• mode-question.md copies are byte-identical"
-cmp -s skills/design/writing-plans/assets/mode-question.md skills/implementation/executing-plans/assets/mode-question.md ||
-  err "mode-question.md: the writing-plans and executing-plans copies differ"
+  echo "• mode-question.md: the $copy copy is byte-identical to writing-plans"
+  cmp -s skills/design/writing-plans/assets/mode-question.md "skills/implementation/$copy/assets/mode-question.md" ||
+    err "mode-question.md: the writing-plans and $copy copies differ"
+done
 
 # The checker enforces executable permission and successful `--help` as house
 # policy. These additional house checks require direct disclosure in SKILL.md

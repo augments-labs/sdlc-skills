@@ -1,20 +1,23 @@
 ---
 name: executing-plans
-description: "Runs an approved plan task by task through each task's evaluator. Use when the user asks to execute, continue, or resume work governed by an approved plan directory, including one remaining task or a reply choosing inline or delegated mode. Skip a standalone task with no plan directory."
+description: "Runs an approved plan task by task in this session, through each task's evaluator. Use when the user asks to execute, continue, or resume work governed by an approved plan directory in inline mode, including one remaining task or a reply choosing inline mode. Skip a standalone task with no plan directory, and a plan approved in delegated mode."
 ---
 
 # Executing Plans
 
-Run each task of an approved plan through its evaluator (the check it must
-pass), then hand the integrated result to review and integration. This skill
-never decides what happens to the branch.
+Run each task of an approved plan in this session through its evaluator (the
+check it must pass), then hand the integrated result to review and integration.
+This skill never decides what happens to the branch.
 
 ## When to use
 
 - The user asks to execute, continue, or resume a plan directory written by
-  `writing-plans`, or answers its execution-mode question.
+  `writing-plans`, or answers its execution-mode question with inline.
 - **Skip** a single task with no plan directory: use `test-driven-development`
   and `yagni` directly.
+- **Skip** a plan whose approval row records `mode: delegated`:
+  `subagent-driven-development` owns it, and it is the preferred mode wherever
+  the harness has a subagent action.
 
 ## Available scripts
 
@@ -32,9 +35,10 @@ never decides what happens to the branch.
 2. No such row, a later row closed the version, or the script fails → stop and
    name the missing version, the row that closed it, or the script's error;
    never substitute a version read from the index.
-3. No mode in that row (`mode: inline` or `mode: delegated`) → ask the mode
-   question from `assets/mode-question.md` before any workspace action, and
-   stop.
+3. No mode in that row → ask `assets/mode-question.md` before any workspace
+   action, and stop.
+4. `mode: delegated` in that row → **REQUIRED SUB-SKILL:** invoke
+   `subagent-driven-development`; this skill ends here and runs nothing.
 
 ## Step 2: Set up the workspace
 
@@ -80,8 +84,6 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - Delegated mode: **REQUIRED SUB-SKILL:** invoke
-     `subagent-driven-development`; it returns at Step 5.
    - Approved parallel work: invoke `dispatching-parallel-agents`.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
@@ -135,6 +137,7 @@ In the task workspace recorded in Step 2, in order:
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
 | "Task done — I'll check in before the next" | `done` is a ledger entry, not a decision point. Take the next task. |
+| "Subagents are available, but inline is what I'm already in" | The row's mode decides, and the user chose it. A delegated row here is a redirect, not a loop to run. |
 
 ## Gotchas
 

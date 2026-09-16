@@ -1,22 +1,26 @@
 ---
 name: subagent-driven-development
-description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, or when the user asks for subagents or workers to do the building. Skip a lone task with no plan directory, and independent tasks that want concurrent fan-out."
+description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, when the user asks for subagents or workers to do the building, or when the user replies choosing delegated mode. Skip a lone task with no plan directory, and independent tasks that want concurrent fan-out."
 ---
 
 # Subagent-Driven Development
 
 You are the controller. Fresh workers build and review one task at a time; you
-hold the plan, the ledger, and every decision they may not take.
+hold the plan, the ledger, and every decision they may not take. This skill
+never decides what happens to the branch.
 
 ## When to use
 
-- An approved plan is about to be built by dispatched workers rather than here.
-- **Skip** building the tasks in this session, a lone task with no plan
-  directory, and independent tasks that should run at the same time — that
-  fan-out belongs to `dispatching-parallel-agents`.
+- An approved plan is about to be built by dispatched workers rather than
+  here: the user asked for workers, or answered the execution-mode question
+  with delegated. Prefer this mode wherever the harness has a subagent action.
+- **Skip** building the tasks in this session — `executing-plans` owns that
+  — a lone task with no plan directory, and independent tasks that should run
+  at the same time — that fan-out belongs to `dispatching-parallel-agents`.
 
 ## Available scripts
 
+- **`scripts/plan-version.sh`** — prints the plan's version.
 - **`scripts/sdd-workspace.sh`** — opens the plan-scoped ledger and re-checks
   that it still binds to the plan. Run it before the first dispatch, and again
   after every compaction.
@@ -25,12 +29,32 @@ hold the plan, the ledger, and every decision they may not take.
 - **`scripts/review-package.sh`** — assembles one task's diff and file list for
   a reviewer. Run it when an implementer reports.
 
-## Step 1: Open the run
+## Step 1: Verify approval and mode
 
-1. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. One worktree holds the
+1. Run `scripts/plan-version.sh` on the plan directory before reading the
+   `External decision ledger`, a ledger (append-only). Read every row for this
+   index whose `Identity` is the printed version, in ledger order. The last of
+   them must be the row whose `Bound evidence` names the `Approval rule`
+   owner's approval; a later row that rejects, cancels, or supersedes this
+   version closes it. The index cannot approve itself.
+2. No such row, a later row closed the version, or the script fails → stop and
+   name the missing version, the row that closed it, or the script's error;
+   never substitute a version read from the index.
+3. No mode in that row → the user's direct request in this conversation for
+   workers on this plan is the answer: append `mode: delegated` to that row,
+   quoting it. No such request → ask the mode question from
+   `assets/mode-question.md` before any workspace action, and stop.
+4. `mode: inline` in that row → stop; `executing-plans` owns it, and only the
+   user's direct answer changes the mode.
+
+## Step 2: Open the run
+
+1. Record the approved plan directory by absolute path; read the plan only
+   there.
+2. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. One worktree holds the
    whole plan and every worker writes inside it. Never hand a worker the shared
    checkout.
-2. Open the ledger:
+3. Open the ledger:
 
    ```bash
    bash scripts/sdd-workspace.sh --plan {{plan-dir}}
@@ -38,12 +62,20 @@ hold the plan, the ledger, and every decision they may not take.
 
    Line 1 is the plan's identity. After a compaction, read the ledger before
    anything else and re-check it with `--check`: the ledger, not your memory of
-   the conversation, is where the run resumes.
-3. Scan for conflicts before the first dispatch. List the files each task
-   claims, and write every pair claiming the same file into the ledger as an
-   ordering.
+   the conversation, is where the run resumes. It is this run's execution
+   ledger; the decision ledger stays where the index points.
+4. Check the plan contract before the first dispatch: every `Consumes` names
+   an earlier task's exact `Produces`; every `Depends on` names a task that is
+   not cancelled; no task edits its own judge unless its approved `Evaluator
+   identity/owner` permits the exact change; `Implementation disciplines` is
+   filled. Any failure → report the field and task; dispatch nothing under an
+   invalid contract.
+5. Scan for conflicts. List the files each task claims, and write every pair
+   claiming the same file into the ledger as an ordering.
+6. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
+   Step 5.6.
 
-## Step 2: Rule, don't stall
+## Step 3: Rule, don't stall
 
 A worker that asks a question gets an answer and a ledger row, not a pause. Stop
 and ask the user only when the next act would be:
@@ -55,9 +87,11 @@ and ask the user only when the next act would be:
 
 Everything else is a ruling. Write it in the ledger with its reason and carry it
 into the next brief, so the next worker inherits the decision instead of
-re-litigating it.
+re-litigating it. A change to what was approved — scope, interface, evaluator,
+ownership, mode — is never a ruling: write the proposed successor, ask for
+reapproval, end the turn.
 
-## Step 3: Dispatch one task
+## Step 4: Dispatch one task
 
 1. Take the next task whose dependencies are done.
 2. Batch tasks into one dispatch only when they are small and the same shape —
@@ -77,7 +111,7 @@ re-litigating it.
 6. Then dispatch per `dispatching-parallel-agents` Step 2 — it owns the receipt,
    the not-dispatched rule, and cancellation.
 
-## Step 4: Review the diff, then fix
+## Step 5: Review the diff, then fix
 
 1. Build the package with `scripts/review-package.sh`, then fill
    `assets/task-reviewer.md` when the implementer reports.
@@ -88,25 +122,46 @@ re-litigating it.
    judges the fix and its blast radius rather than the task again.
 4. Five rounds without convergence trips the breaker. Stop dispatching, write
    the adjudication in the ledger — the finding, what each round changed, why it
-   did not converge — and then either decide it yourself under Step 2 or hand
+   did not converge — and then either decide it yourself under Step 3 or hand
    the user that row. Never open a sixth round.
-5. Read the diff yourself against the task before recording its state: done,
-   done with concerns, blocked, or needs context.
+5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
+   `verification-before-completion` with the task's `Evaluator` on the result
+   revision, before recording its state: done, done with concerns, blocked, or
+   needs context. Mirror only the task row's checkbox in the index.
+6. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
+   `requesting-code-review` on this task's revision, then `finishing-a-branch`.
+   Return after it records its decision.
+7. Go to Step 4 with the next ready task. Do not report, ask, or pause at
+   `done`. Every task `done`, or `cancelled`/`superseded` with its approved
+   ledger decision → Step 6. No ready task can advance → report the unresolved
+   states and their blockers, end the turn.
 
-## Step 5: Finish the branch
+## Step 6: Finish the plan
+
+In the worktree from Step 2, in order:
 
 1. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on the
-   integrated revision. Worker reports are claims; this is the evidence.
+   integrated revision: the index's `Acceptance` check plus every done task's
+   evaluator. Worker reports are claims; this is the evidence.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch,
    once, and let it drive a single fix wave.
-3. Close with "Rulings I made": every ruling in the ledger, one line each, so
+3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
+   record from Step 2. It asks the integration question and executes the
+   answer. Run no push, PR, merge, or delete here.
+4. Close with "Rulings I made": every ruling in the ledger, one line each, so
    the person reading the result sees the decisions taken on their behalf.
+
+| Thought | Reality |
+| --- | --- |
+| "Every worker returned DONE, so the plan is done" | DONE is a claim per task. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
+| "The reviewer subagent passed it, so review is covered" | That reviewed one task's diff against its contract. The branch review is a separate gate on the integrated state. |
+| "The user said not to ask, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision. |
 
 ## Gotchas
 
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
-  yourself; that is what Step 4.5 is for.
+  yourself; that is what Step 5.5 is for.
 - Resuming from the conversation after a compaction re-runs finished tasks and
   loses every ruling, because by then neither is in the conversation. Line 1 of
   the ledger exists for exactly that moment.
@@ -114,6 +169,9 @@ re-litigating it.
   file it does not have; give it the findings path and the task path.
 - A worker that dispatches its own workers returns a diff nobody reconciled and
   receipts you never held. Every brief here prohibits subdispatch; keep it.
+- The controller never edits, so `test-driven-development` and `yagni` load in
+  the implementer, where the brief requires them; loading them here proves
+  nothing about the worker's session.
 
 ## Common mistakes
 
