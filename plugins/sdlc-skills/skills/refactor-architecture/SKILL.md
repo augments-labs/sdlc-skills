@@ -96,7 +96,5 @@ term below reads unfamiliar.
 ## Common mistakes
 
 - Refactoring for tidiness, not leverage — change structure only where it cuts real friction.
-- Removing old tests because the new suite is green without mapping the
-  invariants and falsifying the surviving gate.
 - Combining so many structural moves that behavior, performance, compatibility,
   or rollback can no longer be attributed to one slice.
