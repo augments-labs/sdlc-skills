@@ -48,7 +48,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    impedance, failure policy, or test isolation. Hypothetical variation earns
    none.
 4. Hard-to-reverse choice → invoke `architecture-decisions`. Unresolved
-   design-changing choice → invoke `interview-me`. Use the domain's language
+   design-changing choice → invoke `clarifying-intent`. Use the domain's language
    throughout.
 
 ## Step 3: Write, review, present
@@ -75,7 +75,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 4. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
 

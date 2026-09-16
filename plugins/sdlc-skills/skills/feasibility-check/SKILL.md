@@ -58,12 +58,12 @@ section.
    Recommendation: {{option}} — {{one sentence of evidence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 4. Go-if → only the named evidence and owner move a condition's external
    state. Expiry, or any change to a bound input, gate, evidence, owner,
    or freshness → condition invalid, decision reopened.
 5. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
-   `satisfied`, invoke `scope-it` when the boundary is next. Never impose a
+   `satisfied`, invoke `scoping` when the boundary is next. Never impose a
    phase already complete.
 
 ## Gotchas

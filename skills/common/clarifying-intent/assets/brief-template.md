@@ -28,7 +28,7 @@
 
 ---
 
-*Source: interview-me on {{request/date}}. Keep this ≤ ~40 lines. Draft authority
+*Source: clarifying-intent on {{request/date}}. Keep this ≤ ~40 lines. Draft authority
 is not approval. Lifecycle state never mutates this normative brief. Material
 invalidity marks it blocked/changes-requested externally; only an approved
 replacement supersedes it. If this grows, hand approved intent onward instead of

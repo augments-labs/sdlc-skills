@@ -80,7 +80,7 @@ budgets”—then record:
 
 An open contract defers an artifact's shape, not the requirement's verification
 obligation. If no observable can be named, return the ambiguity to
-`interview-me`; do not counterfeit precision with code.
+`clarifying-intent`; do not counterfeit precision with code.
 
 ## Prose is correct for
 

@@ -1,6 +1,6 @@
 .worktrees/
 .claude/
-# local working artifacts — specs (spec-it) and plans (writing-plans); decisions
+# local working artifacts — specs (writing-specs) and plans (writing-plans); decisions
 # also live in durable memory, so ignoring these loses no record
 .sdlc-skills/
 .DS_Store

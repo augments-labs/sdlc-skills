@@ -3,12 +3,12 @@
 # budget_words. A rename or merge edits this file in the same change.
 
 [bug-fix]
-skills = ["using-sdlc-skills", "using-git-worktrees", "zoom-out", "debugging", "test-driven-development", "yagni", "verification-before-completion"]
+skills = ["using-sdlc-skills", "using-git-worktrees", "mapping-the-codebase", "debugging", "test-driven-development", "yagni", "verification-before-completion"]
 recorded_words = 6710
 budget_words = 6710
 
 [new-feature]
-skills = ["using-sdlc-skills", "interview-me", "spec-it", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
+skills = ["using-sdlc-skills", "clarifying-intent", "writing-specs", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
 recorded_words = 11314
 budget_words = 11314
 

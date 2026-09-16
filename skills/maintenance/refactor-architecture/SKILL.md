@@ -62,7 +62,7 @@ term below reads unfamiliar.
    Recommendation: {{option the friction and recovery evidence support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 6. Input drift, or a change to what was approved → an approved successor;
    affected slices invalid.
 
