@@ -126,8 +126,8 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 10. **REQUIRED — continue a `ready` verdict through the recorded owner:**
     - caller awaiting this review → return to its pending step; never invoke
       the caller recursively
-    - task or plan owned by `executing-plans` → return there; it owns cadence
-      and plan-end finishing
+    - task or plan owned by `executing-plans` or `subagent-driven-development`
+      → return there; it owns cadence and plan-end finishing
     - review-only request, unfinished checkpoint, or unchanged state with an
       already settled branch choice → return the verdict
     - completed standalone implementation or integration boundary with an

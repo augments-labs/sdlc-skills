@@ -36,8 +36,8 @@ under a stricter house rule is not automatically a standard violation.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 167 (33% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~1907 |
+| Body lines | At most 500; longest is 201 (40% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker; largest is ~2277 |
 | Typical body size | Aim near 80–120 lines; longer discipline bodies need relevant behavioral evidence |
 | Presentation | The checker warns on long undifferentiated prose; keep readable sentences |
 | Supporting paths | Resolve inside the installed skill and keep direct references shallow |
@@ -90,7 +90,7 @@ are not a universal prohibition on other valid organizations.
 | `finishing-a-branch` | `branch-state.sh` | Inspects commits, dirty state, ownership, and recoverability |
 | `verification-before-completion` | `state-identity.sh` | Captures source identity and environment for evidence binding |
 | `writing-skills` | `check-skill.sh` | Inspects skill files and executes bundled scripts with `--help` |
-| `writing-plans`, `executing-plans` | `plan-version.sh`, one byte-identical copy each | Prints a plan's version from its normalized index and task files; read-only; the gate fails when the copies differ |
+| `writing-plans`, `executing-plans`, `subagent-driven-development` | `plan-version.sh`, one byte-identical copy each | Prints a plan's version from its normalized index and task files; read-only; the gate fails when the copies differ |
 | `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Opens and re-checks a plan's run ledger, renders one role brief and refuses a half-filled one, and assembles a task's diff for its reviewer |
 | `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`; never overwrites a file |
 | `viewing-artifacts` | `serve.py`, `start-server.sh`, `stop-server.sh` | Starts and stops an owned local preview, writes a log, and may open a browser |
