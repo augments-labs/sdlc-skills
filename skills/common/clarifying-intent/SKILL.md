@@ -131,10 +131,3 @@ that binds user origin to the exact version; otherwise refresh the decision.
 - A persisted `Approval:` line carried forward into a successor draft looks like
   a receipt, but it binds the predecessor's version; in a fresh context it
   approves nothing about the successor.
-
-## Common mistakes
-
-- Asking what a 30-second code search would answer.
-- Dumping many questions at once instead of adapting to answers.
-- Producing a heavy spec — the brief is a short paragraph plus a few bullets.
-- Interviewing trivial tasks.
