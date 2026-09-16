@@ -5,7 +5,7 @@ description: "Defines a project's delivery boundary: what is in, what is out, an
 
 # Scoping
 
-Scope is decided by what you say no to. An unbounded project never ships — name the boundary before anyone starts building.
+Name the boundary before anyone starts building.
 
 ## When to use
 
@@ -69,11 +69,3 @@ Open `assets/scope-section.md` before starting; each step fills its section.
 - An assumption recorded with a validation action but no expiry or decision
   point reads as settled forever. Nothing then re-checks it once whatever
   it depended on changes underneath it.
-
-## Common mistakes
-
-- No explicit out-of-scope list — then everything is in scope, and nothing ships.
-- Scoping to what's interesting to build rather than what the goal needs.
-- Hiding a large dependency as a one-word "assumption".
-- Calling compatibility, rollback, accessibility, security, or data preservation
-  “out of scope” to make the cut look smaller.

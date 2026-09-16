@@ -5,7 +5,7 @@ description: "Checks whether an initiative can be delivered before committing to
 
 # Feasibility Check
 
-Optimism is not a plan. Before commitment, assess the killer risks honestly and
+Before commitment, assess the killer risks honestly and
 put an evidence-bound recommendation to the accountable owner.
 
 ## When to use
@@ -77,12 +77,3 @@ section.
 - Assigning a risk a confidence level it hasn't earned, rather than
   recording "unknown", launders a risk with no real evidence into one
   that reads as already assessed.
-
-## Common mistakes
-
-- Greenlighting on optimism — no named risks means you didn't look.
-- Treating "we'll figure it out" as feasibility — name what would make it *infeasible*.
-- Endless analysis instead of a cheap spike to kill the biggest unknown.
-- Treating a technical proof as delivery, operational, compliance, or recovery
-  proof.
-- Skipping Option Zero — the cheapest path is sometimes to not build it: an existing tool, a config change, or a smaller change to the problem. Rule it out before greenlighting a build.
