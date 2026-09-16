@@ -2,6 +2,13 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.1.2] — 2026-09-16
+
+Every skill body was read cold against its own steps, and the lines that only
+repeated a step, a format rule, or a template the body already opens are gone.
+`writing-skills` now states the rule that produced them: a `Common mistakes`
+section is for the mistakes the steps do not already forbid.
+
 ## [10.1.1] — 2026-09-16
 
 The entry skill is supplied again after compaction. Compaction replaces the
