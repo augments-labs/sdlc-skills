@@ -29,10 +29,10 @@ jobs:
         run: bash scripts/sh/token-budget.sh --max 5000
       - name: Handoff cycles
         run: bash scripts/sh/validate-skill-graph.sh --strict
-      - name: Chain budgets (docs/chains.toml)
+      - name: Chain budgets (scripts/sh/data/chains.toml)
         run: |
-          chains=$(sed -n 's/^\[\([a-z0-9-]*\)\]$/\1/p' docs/chains.toml)
-          [ -n "$chains" ] || { echo "no chains in docs/chains.toml"; exit 1; }
+          chains=$(sed -n 's/^\[\([a-z0-9-]*\)\]$/\1/p' scripts/sh/data/chains.toml)
+          [ -n "$chains" ] || { echo "no chains in scripts/sh/data/chains.toml"; exit 1; }
           fail=0
           for chain in $chains; do
             bash scripts/sh/token-budget.sh --chain "$chain" || fail=1
