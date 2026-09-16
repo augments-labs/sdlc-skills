@@ -53,10 +53,12 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    defining layout, type, color, spacing, shape, imagery, motion as one
    product-specific system. Decorate nothing around an unresolved hierarchy.
 2. Open visual, spatial, or motion decision → read
-   `references/visual-decisions.md` before building the comparison surface.
-   Build it from `assets/comparison-template.html` before authoring any
-   variant, then author 2–4 controlled, meaningfully different variants. Give
-   every version block and variant a stable ID.
+   `references/visual-decisions.md` before building the comparison surface,
+   then build it on the first medium in that order which fits. A
+   self-contained local page starts from
+   `assets/comparison-template.html` before its first variant. Author 2–4
+   controlled, meaningfully different variants. Give every version block and
+   variant a stable ID.
 3. Deliver the file path and offer to serve the surface. Start the preview
    only after the user accepts, then present its URL:
 
