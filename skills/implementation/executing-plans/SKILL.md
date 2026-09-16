@@ -23,11 +23,15 @@ never decides what happens to the branch.
 ## Step 1: Verify approval and mode
 
 1. Run `scripts/plan-version.sh` on the plan directory before reading the
-   `External decision ledger`, a ledger (append-only). Find the row for this
-   index whose `Identity` is the printed version and whose `Bound evidence`
-   names the `Approval rule` owner's approval. The index cannot approve itself.
-2. No such row, or the script fails → stop and name the missing version or the
-   script's error; never substitute a version read from the index.
+   `External decision ledger`, a ledger (append-only). Read every row for this
+   index whose `Identity` is the printed version, in ledger order. The last of
+   them must be the row whose `Bound evidence` names the `Approval rule`
+   owner's approval: a later row that rejects, cancels, or supersedes this
+   version closes it, and an append-only ledger keeps the approval visible
+   above it. The index cannot approve itself.
+2. No such row, a later row closed the version, or the script fails → stop and
+   name the missing version, the row that closed it, or the script's error;
+   never substitute a version read from the index.
 3. No mode in that row (`mode: inline` or `mode: delegated`) → ask the mode
    question from `assets/mode-question.md` before any workspace action, and
    stop.
@@ -157,8 +161,8 @@ In the task workspace recorded in Step 2, in order:
 - Remaining work will not fit this session: finish the current ledger row,
   then invoke `handoff`.
 - On resume, rerun `scripts/plan-version.sh`, then re-read before trusting: the
-  decision ledger row for the printed version, the workspace's base, HEAD, and
-  dirty state through `using-git-worktrees`, the execution ledger, and whether
-  each `done` row still matches the current revision.
+  latest decision ledger row for the printed version, the workspace's base,
+  HEAD, and dirty state through `using-git-worktrees`, the execution ledger,
+  and whether each `done` row still matches the current revision.
 - Reality contradicts the plan: a change to what was approved → proposed
   successor and direct reapproval; runtime facts → execution ledger only.

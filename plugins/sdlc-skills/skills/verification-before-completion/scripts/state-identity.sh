@@ -27,7 +27,7 @@ Options:
                      and no staged, unstaged, or untracked non-ignored path.
                      Otherwise exit 5. A partial commit leaves the digest
                      unchanged, so only this flag proves a commit holds it.
-                     Dirt inside a submodule counts once its commit moves.
+                     Uncommitted content inside a submodule exits 4.
   --quiet            Print only the source digest, or with --committed HEAD's
                      full revision, one line, no JSON.
   --help             Show this message.
@@ -40,14 +40,16 @@ Output:
   that matches neither HEAD nor the working tree. HEAD is not part of it:
   staging or committing exactly the captured content keeps the digest. It does
   NOT change when only the time or the environment changes. Changes inside a
-  submodule count once its checked-out commit moves. Paths under
+  submodule count once its checked-out commit moves; until they are committed
+  there, no digest reads them and every mode exits 4. Paths under
   .sdlc-skills/evidence/ are left out of the digest, the counts, and
   --committed, so a record written there never moves the candidate.
   An edit git hides is content no digest can read: an assume-unchanged entry;
   a skip-worktree entry whose path exists, or is gone outside a sparse
-  checkout; or a directory holding its own repository, untracked or in place
-  of a tracked file (an embedded repository). While one exists, every mode
-  exits 4 and names each path on stderr.
+  checkout; a directory holding its own repository, untracked or in place
+  of a tracked file (an embedded repository); or a submodule holding
+  uncommitted content. While one exists, every mode exits 4 and names each
+  path on stderr.
 
 Exit codes:
   0  state captured, or --compare matched
@@ -55,7 +57,8 @@ Exit codes:
   2  not a git repository, or bad arguments
   3  a required tool is missing
   4  a git step failed, or git hides an edit (assume-unchanged, skip-worktree,
-     embedded repository): no digest or committed identity, so no evidence binds
+     embedded repository, uncommitted submodule content): no digest or
+     committed identity, so no evidence binds
   5  --committed found uncommitted content: the commit does not hold the captured state
 
 Examples:
@@ -113,11 +116,12 @@ jbool() { [ "${1:-}" = 1 ] && printf 'true' || printf 'false'; }
 # never reads inside. Listed with fsmonitor off, as the digest is. Fails only
 # when git cannot list.
 hidden_paths() {
-  local hp_index hp_others hp_types hp_sparse hp_line hp_path hp_raw
+  local hp_index hp_others hp_types hp_subs hp_sparse hp_line hp_path hp_raw
   hp_git() { git --no-optional-locks -c core.quotePath=true -c core.fsmonitor=false "$@"; }
   hp_index="$(hp_git ls-files -v -- . "$evidence_out" 2>/dev/null)" &&
     hp_others="$(hp_git ls-files --others --exclude-standard -- . "$evidence_out" 2>/dev/null)" &&
-    hp_types="$(hp_git diff --ignore-submodules=dirty --name-only --diff-filter=AT -- . "$evidence_out" 2>/dev/null)" ||
+    hp_types="$(hp_git diff --ignore-submodules=dirty --name-only --diff-filter=AT -- . "$evidence_out" 2>/dev/null)" &&
+    hp_subs="$(hp_git ls-files --stage -- . 2>/dev/null | LC_ALL=C awk '$1 == "160000" { sub(/^[0-7]+ [0-9a-f]+ [0-9]+\t/, ""); print }')" ||
     return 1
   hp_sparse="$(git config --bool core.sparseCheckout 2>/dev/null)"
   printf '%s\n' "$hp_index" | LC_ALL=C grep -E '^([a-z]|S) ' | while IFS= read -r hp_line; do
@@ -138,6 +142,17 @@ hidden_paths() {
     hp_raw="$hp_line"
     case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
     if [ ! -L "$hp_raw" ] && [ -d "$hp_raw" ] && [ -e "$hp_raw/.git" ]; then printf 'embedded repository\t%s\n' "$hp_line"; fi
+  done
+  # A submodule is its own repository: the index records the commit its gitlink
+  # names, never the working tree inside it, so uncommitted content there is
+  # content no digest reads while the gitlink stays put.
+  printf '%s\n' "$hp_subs" | while IFS= read -r hp_line; do
+    [ -n "$hp_line" ] || continue
+    hp_raw="$hp_line"
+    case "$hp_raw" in \"*) hp_raw="${hp_raw#\"}"; hp_raw="${hp_raw%\"}"; printf -v hp_raw -- "${hp_raw//%/%%}" ;; esac
+    [ -e "$hp_raw/.git" ] || continue
+    [ -n "$(hp_git -C "$hp_raw" status --porcelain --ignore-submodules=none 2>/dev/null)" ] &&
+      printf 'uncommitted submodule content\t%s\n' "$hp_line"
   done
   return 0
 }
@@ -198,7 +213,7 @@ hidden="$(hidden_paths)" || {
 if [ -n "$hidden" ]; then
   echo "Error: git hides edits to these paths, so no digest or committed identity can hold them:" >&2
   printf '%s\n' "$hidden" | while IFS=$'\t' read -r kind path; do printf '  %s: %s\n' "$kind" "$path" >&2; done
-  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree; with core.ignoreStat set, git sets it again on every add), or commit, ignore, or move the embedded repository, then rerun." >&2
+  echo "  Clear the flag (git update-index --no-assume-unchanged or --no-skip-worktree; with core.ignoreStat set, git sets it again on every add), commit, ignore, or move the embedded repository, or commit the submodule's content and the gitlink naming it, then rerun." >&2
   exit 4
 fi
 
