@@ -77,8 +77,8 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - Delegated mode: read `references/subagent-dispatch.md` before
-     building the packet, then send it.
+   - Delegated mode: **REQUIRED SUB-SKILL:** invoke
+     `subagent-driven-development`; it returns at Step 5.
    - Approved parallel work: invoke `dispatching-parallel-agents`.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
