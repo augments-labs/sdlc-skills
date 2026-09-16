@@ -121,8 +121,4 @@ candidate. Never return "looks good".
 
 ## Common mistakes
 
-- Treating widget snapshots as integrated-app evidence.
-- Capturing frames without driving interactions or retaining raw identity.
-- Overwriting failed frames with re-shots or storing evidence in the candidate.
 - Calling subjective preference a defect when the design direction is unsettled.
-- Returning “looks good” without a calibrated rubric and row-by-row verdict.
