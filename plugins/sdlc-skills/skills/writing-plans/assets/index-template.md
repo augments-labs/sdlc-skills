@@ -46,9 +46,10 @@ conformance evaluator; no row may be inferred from task prose.
   append-only task states/evidence bind this version}}
 - **Invalidation triggers:** {{any bound-input drift or normative scope/interface/
   evaluator/phase/ownership/cutover/rollback/decommission change}}
-- **Required executor:** `executing-plans` after this exact version has direct
-  approval and an explicit `inline | delegated` mode. A mode reply triggers that
-  skill; it never starts implementation by itself.
+- **Required executor:** `executing-plans` for `inline`,
+  `subagent-driven-development` for `delegated`, after this exact version has
+  direct approval and an explicit mode. A mode reply triggers that skill; it
+  never starts implementation by itself.
 - **Implementation entry:** every behavior-affecting task invokes
   `test-driven-development` and `yagni` before its first project command or code
   edit. Naming either skill here is routing evidence, not invocation evidence.

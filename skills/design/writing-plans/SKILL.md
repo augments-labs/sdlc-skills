@@ -6,9 +6,9 @@ description: "Writes an executable plan: ordered tasks, their dependencies, and 
 # Writing Plans
 
 Write a small durable index plus one thin contract per task, get the exact
-version approved, then hand it to `executing-plans`. Leave the implementation
-to the executor: write what each task must make true and how that is judged,
-not the code.
+version approved, then hand it to the executor the chosen mode names. Leave
+the implementation to the executor: write what each task must make true and
+how that is judged, not the code.
 
 ## When to use
 
@@ -110,7 +110,7 @@ not the code.
    ```
 
    Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
-2. Do not invoke `executing-plans`, create a workspace, or write code in this
+2. Do not invoke either executor, create a workspace, or write code in this
    turn.
 3. Standing order → proceed unpaused only when its scope, owner, constraints,
    and mode explicitly cover unseen plan versions. Bind the exact version to
@@ -124,9 +124,10 @@ not the code.
    version, `Location` = the index path, `State` = approved, `Bound evidence` =
    the `Approval rule` owner and their answer, then `mode: inline` or
    `mode: delegated`. Write nothing about approval into the index.
-6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke `executing-plans`
-   against the approved version before any workspace or implementation
-   action. This skill writes no code.
+6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke the executor that
+   mode names against the approved version before any workspace or
+   implementation action: `executing-plans` for inline,
+   `subagent-driven-development` for delegated. This skill writes no code.
 
 ## Gotchas
 

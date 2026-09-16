@@ -69,7 +69,7 @@ term below reads unfamiliar.
 
 1. Only after exact scope and decision authority: **REQUIRED SUB-SKILLS:**
    invoke `test-driven-development` and `yagni`. Multi-step slices → invoke
-   `writing-plans`, then `executing-plans`.
+   `writing-plans`; its mode answer names the executor.
 2. Per slice: migrate its callers, run the bound and project gates, compare
    accepted floors, retain the known-green state. Checkpoint under
    `using-git-worktrees`.
