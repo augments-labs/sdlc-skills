@@ -76,18 +76,16 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
 3. Inside a submodule → stop here. Create an owned branch in the submodule and
    write an explicit plan for the parent gitlink; never run the rest of Step 3
    from the superproject's paths. Otherwise choose the directory and prove it
-   is ignored; a user-given path wins. The main checkout is the common git
-   directory's parent only when that directory is a checkout's `.git`; a bare
-   repository or a separate git directory has no such parent, so ask where the
-   worktree goes and stop until the user answers.
+   is ignored; a user-given path wins. A common git directory that is not a
+   checkout's `.git` — bare repository, separate git directory — has no main
+   checkout: ask where the worktree goes and stop.
 
    ```bash
    [ -z "$(git rev-parse --show-superproject-working-tree)" ] || echo "SUBMODULE: stop"
    root="${common_dir%/.git}"
-   [ "$root" != "$common_dir" ] &&
-     (unset GIT_DIR GIT_WORK_TREE; git -C "$root" rev-parse --is-inside-work-tree >/dev/null 2>&1) ||
+   [ "$root" != "$common_dir" ] && git -C "$root" rev-parse --is-inside-work-tree >/dev/null 2>&1 ||
      echo "NO MAIN CHECKOUT: ask where the worktree goes"
-   cd "$root"   # only when nothing printed above
+   cd "$root"
    dir=".worktrees"
    git check-ignore -q "$dir/" || echo "$dir/ is not ignored"
    ```
