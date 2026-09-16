@@ -5,7 +5,7 @@ description: "Defines domain concepts, relationships, state transitions, and inv
 
 # Data Model
 
-Model the domain before the code that manipulates it. A domain model is more than columns — it's the concepts, how they relate, the transitions they may make, and the invariants that must always hold. That is true whether or not any of it is ever stored; getting it wrong is the most expensive mistake to fix later.
+Model the domain before the code that manipulates it. A domain model is more than columns — it's the concepts, how they relate, the transitions they may make, and the invariants that must always hold. That is true whether or not any of it is ever stored.
 
 ## When to use
 
@@ -82,17 +82,6 @@ Open `assets/data-model-section.md` before the steps below fill it in.
   separate the two, so documenting only the steady state leaves the code
   free to do anything at those edges without that being a documented
   deviation.
-
-## Common mistakes
-
-- Skipping the model because nothing is stored — a stateless engine's invariants are still the spec its tests come from.
-- Columns without invariants — the schema says what *can* be stored, not what must be *true*.
-- Ignoring null semantics and cardinality — where data bugs are born.
-- Naming an invariant without the transaction, constraint, test, or repair that
-  keeps it true under races and retries.
-- Treating migration, deletion, or mixed-version operation as somebody else's
-  problem after the model is approved.
-- Modeling the UI's shape instead of the domain's.
 
 See `references/worked-example.md` when a full domain needs modeling end to
 end at this level of rigor: null semantics, momentary vs lifetime cardinality,

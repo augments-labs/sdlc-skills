@@ -18,10 +18,7 @@ Design the experience and decide its direction before implementation. In an exis
 
 - **`scripts/start-server.sh` / `scripts/stop-server.sh`** — start and stop
   the governed localhost preview (per-session key, owner watchdog, idle
-  timeout) for a comparison surface. Offer to serve a surface; start the
-  preview only after the user accepts, then present its URL. Always deliver
-  the file path; it is the fallback when serving fails or is declined.
-  They wrap `scripts/serve.py`; read
+  timeout) for a comparison surface. They wrap `scripts/serve.py`; read
   [visual-decisions.md](references/visual-decisions.md) before starting or
   stopping a preview; it owns the details.
 
@@ -129,12 +126,4 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 
 ## Common mistakes
 
-- Inventing a parallel design system before reading the one already in the project.
-- Showing cosmetic variations when the decision is really hierarchy or flow.
-- Describing visual directions in prose when the user needed to see them — the comparison surface is the default for an open direction, not an extra.
-- Visualizing a question whose answer is requirements or technical trade-offs.
-- Using placeholder content that hides overflow, density, error, and empty-state problems.
-- Calling stakeholder preference “usability evidence,” or hiding an unresolved
-  risk behind polished visuals.
 - Combining individually selected screens into an unreviewed journey.
-- Self-approving subjective criteria instead of assigning a human check.

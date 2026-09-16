@@ -27,8 +27,7 @@ not the code.
 
 ## Available scripts
 
-- **`scripts/plan-version.sh`** — prints the plan's version; run it before
-  presenting a plan.
+- **`scripts/plan-version.sh`** — prints the plan's version.
 
 ## Step 1: Write the index
 
