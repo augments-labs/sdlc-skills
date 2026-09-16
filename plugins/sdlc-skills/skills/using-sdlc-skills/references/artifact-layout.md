@@ -65,7 +65,10 @@ over the exact text the artifact owns:
   next section does not change it. A `#` or `##` line inside a fenced code
   block is not a heading. The block opens at three or more backticks or
   tildes and closes only at a line holding nothing but a run of the same
-  character at least as long.
+  character at least as long. A successor never reuses its predecessor's
+  heading: give it its own file, or a heading that sets it apart, such as
+  `## Scope (successor)`. Reuse it and the command below reads the
+  predecessor and hands the successor its identity.
 - **A brief's own text:** from the top of the file down to its first `##`
   heading outside a fenced code block; the goals, scope, and feasibility
   sections are other artifacts.
@@ -74,15 +77,16 @@ over the exact text the artifact owns:
 
 ```bash
 git hash-object .sdlc-skills/specs/2026-01-15-login.md | cut -c1-7
-awk -v h='## Architecture' '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && $0 == h {f = 1; print; next} f && !z && /^##? / {exit} f {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/designs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+awk -v h='## Architecture' '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && $0 == h {n++; f = 1; s = s $0 "\n"; next} f && !z && /^##? / {f = 0} f {b = b $0 "\n"; if (NF) {s = s b; b = ""}} END {if (n != 1) {printf "%d headings match\n", n > "/dev/stderr"; exit 1} printf "%s", s}' .sdlc-skills/designs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
 awk '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && /^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/briefs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
 ```
 
 A `# comment` in a fenced shell example stays inside its section, so an edit
 below it changes the identity.
 
-`e69de29` is the hash of nothing: the heading did not match exactly, so fix it
-before recording. The agent that issues the artifact runs the command at issue;
+`e69de29` is the hash of nothing: the heading matched no line, or matched more
+than once and the command named the count on stderr. Fix the headings before
+recording. The agent that issues the artifact runs the command at issue;
 whoever later checks an approval or drift recomputes it the same way. Record the
 value in the ledger row and show it in the decision block. Never write it into
 the artifact: that changes the bytes it names. Any later byte change is a new
