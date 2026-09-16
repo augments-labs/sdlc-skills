@@ -40,6 +40,7 @@
     "./skills/design/ui-ux-design",
     "./skills/design/writing-plans",
     "./skills/implementation/executing-plans",
+    "./skills/implementation/subagent-driven-development",
     "./skills/implementation/test-driven-development",
     "./skills/maintenance/complexity-audit",
     "./skills/maintenance/containing-an-incident",

@@ -53,7 +53,8 @@ See [`activation.md`](activation.md) for routing versus enforcement.
 
 ## Dispatch capability
 
-`dispatching-parallel-agents` and `executing-plans` hand work to a cold agent
+`dispatching-parallel-agents`, `executing-plans`, and
+`subagent-driven-development` hand work to a cold agent
 through "the real callable action". The skills stay portable by never naming it;
 each adapter binds it, and each harness decides whether it exists at all.
 
@@ -76,6 +77,28 @@ it holds no receipts for, or silently does the work itself.
 Check the harness's own configuration reference for the current form, and verify
 by asking the installed CLI what tools it exposes rather than trusting a
 second-hand snippet.
+
+### Role binding for subagent-driven development
+
+`subagent-driven-development` dispatches through the same action and adds one
+more binding. Its three role briefs — `assets/implementer.md`,
+`assets/task-reviewer.md`, and `assets/re-reviewer.md` — are the specification; a
+named harness agent is only a runtime that carries one. Where a harness exposes
+an agent whose contract covers the role, the adapter maps the role to that name
+and the filled brief is dispatched to it. Where it does not, the same brief goes
+to a general subagent. The mapping lives in the adapters and in this table, never
+in the skill body, so a harness that renames or removes an agent changes no
+shipped skill.
+
+| Harness | Agents a role can bind to | Fallback |
+| --- | --- | --- |
+| Claude Code | the built-in general-purpose type, plus any agent defined under `.claude/agents/`, selected with the `Agent` tool's `subagent_type` | the general-purpose type carrying the role prompt |
+| Codex | the agent roles the installed build exposes to `spawn_agent` | a general agent carrying the role prompt |
+| Kimi Code | the `subagent_type` values bound in `.kimi-plugin/plugin.json` `skillInstructions` | the general-purpose type carrying the role prompt |
+
+The tier is a separate choice from the agent: the skill sets `small`, `medium`,
+or `large` explicitly per dispatch, and the adapter binds that tier to a model.
+An agent name never implies a tier.
 
 ## Repository instruction files
 
