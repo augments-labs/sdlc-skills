@@ -5,7 +5,7 @@ description: "Records a significant, hard-to-reverse technical decision and the 
 
 # Architecture Decisions
 
-Record the decisions you'd regret not being able to explain in six months. An ADR (Architecture Decision Record) captures *why*, not just *what* — so the next person, or you, doesn't relitigate it or quietly undo it.
+An ADR (Architecture Decision Record) captures *why*, not just *what*.
 
 ## When to use
 
@@ -85,11 +85,6 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
 
 ## Common mistakes
 
-- Recording the *what* without the *why* — it reads as arbitrary and gets undone.
-- No rejected alternatives — the next person re-explores the same dead ends.
-- An ADR for a reversible choice — only the decisions you'd defend belong here.
-- An accepted ADR never moved `in force` when work landed, or an obsolete
-  in-force ADR was never linked as superseded or retired.
 - Treating “the code now does this” as owner approval or conformance proof.
 
 See `assets/adr-template.md` when a copyable template, a filled example, or

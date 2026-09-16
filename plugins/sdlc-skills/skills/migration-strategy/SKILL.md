@@ -130,12 +130,3 @@ the section it names.
   that reading retires a source a consumer from Step 1's inventory is still
   going to call.
 
-## Common mistakes
-
-- Calling the current implementation the contract instead of observable facts.
-- Hiding or approving behavior changes only inside the migration contract.
-- Parallelizing files without exclusive ownership, stable inventory, or
-  convergence accounting.
-- Letting source fixes land outside a reconciled freeze or change-intake queue.
-- Defining rollback after irreversible cutover, or treating cutover as decommission authority.
-- Putting target architecture or test commands here instead of handing them off.

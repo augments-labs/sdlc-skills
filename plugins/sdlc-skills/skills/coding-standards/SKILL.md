@@ -75,9 +75,3 @@ section.
   everything already there, so banning a generic label going forward can
   leave every existing occurrence exactly as inconsistent as before.
 
-## Common mistakes
-
-- A long list of rules no one reads — keep it to what actually matters here.
-- Standards told but never shown — point to a real exemplar file.
-- Generic vocabulary that lets one concept drift into many names.
-- “Reviewers will catch it” with no rubric, owner, or checked exemplar.

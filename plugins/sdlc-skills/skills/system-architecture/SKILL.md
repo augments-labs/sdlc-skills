@@ -93,10 +93,3 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 ## Common mistakes
 
 - Shallow modules — an interface as wide as the implementation behind it.
-- Untested external-service paths — "it'll work in prod" is not a design.
-- Components with no trace back to a requirement, or requirements with no
-  component and gate.
-- A happy-path diagram with no trust, recovery, runtime, or rollout view despite
-  risks on those surfaces.
-- Designing for hypothetical futures with no measured boundary pressure.
-- Generic vocabulary that hides the domain.
