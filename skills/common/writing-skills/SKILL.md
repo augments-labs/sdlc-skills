@@ -118,7 +118,8 @@ debugging, and receiving review. For these only:
 2. Write `description` as a trigger. Test it: does it say **when**, not
    **how**? Lists steps → rewrite.
 3. Write the body: **When to use** (incl. Skip), `## Step N:` sections of
-   actions (format rule 6), `## Gotchas` (format rule 9), **Common mistakes**.
+   actions (format rule 6), `## Gotchas` (format rule 9), and **Common
+   mistakes** for the mistakes the steps do not already forbid.
    Favor procedures over declarations: the steps an agent performs, not a
    description of the outcome it should reach.
 4. Move anything heavy to a sibling: `assets/` if the agent fills it in,
@@ -166,14 +167,3 @@ debugging, and receiving review. For these only:
   none; `check-skill.sh` reports `reference-load-condition`.
 - A support file that names another support file gets read partially, so the
   third file is missed; `check-skill.sh` warns `reference-depth`.
-
-## Common mistakes
-
-- A body that explains background without changing an action.
-- A description that summarizes the workflow → the model follows the summary and skips the skill body.
-- Inlining templates/examples that belong in sibling files.
-- No complexity gate → ceremony on trivial tasks (the #1 complaint about heavy skill libraries).
-- Claiming a skill prevents a failure without observing the relevant behavior;
-  report unproved claims and inconclusive runs explicitly.
-
-Read `references/reference.md` when a form, description, or name needs an example, and `references/testing.md` before proving a skill changes behavior.

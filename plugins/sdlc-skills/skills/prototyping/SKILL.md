@@ -68,10 +68,4 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 
 ## Common mistakes
 
-- No written question — you can't tell when you're done, and the code becomes "real" by accident.
-- Building production-grade tests or generality instead of the smallest
-  executable observation.
-- Variants that differ only in colour — that's a tweak, not an answer.
 - Quietly probing a real service or sensitive data because “it is only a spike.”
-- Keeping or copying the prototype “as a base” — rebuild the learned behavior
-  under the product's real gates.

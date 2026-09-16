@@ -45,9 +45,8 @@ Open `assets/spec-template.md` before starting; each step fills its section.
    intended gate, owner, handoff. Never invent an interface.
 5. List the edge cases and scenarios that break a naive build: empty input,
    concurrency, unhappy paths.
-6. Per assumption and dependency: stable ID, evidence or state, validation
-   action, owner, expiry, failure response. Unresolved state that would change
-   a requirement → an open decision, never a hidden premise.
+6. Fill every column of the template's assumptions-and-dependencies table, one
+   row per assumption or dependency.
 7. List open questions, requirement-level risks, and what is out of scope
    this round.
 
@@ -88,9 +87,3 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 ## Common mistakes
 
 - Requirements with no criterion — "fast", "secure", "intuitive" prove nothing.
-- **Promising verification you never wrote** — name the real artifact, or state
-  the future gate and owner plainly.
-- Prose by reflex — restating a behaviour in a sentence when a failing test would have pinned it exactly.
-- Smuggling design or mutation in — a guessed endpoint, schema, internal call, or
-  project edit is not made safe by calling it an acceptance criterion.
-- A thin happy-path spec with no edge cases, assumptions, or risks — that's exactly where builds break.

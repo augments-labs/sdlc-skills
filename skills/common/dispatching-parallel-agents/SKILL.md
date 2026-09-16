@@ -119,8 +119,3 @@ user's main-session model and any model reserved for orchestration untouched.
 - Doing the work yourself when dispatch fails reads as a fallback, but the
   result then claims an independence it never had. Only the user's recorded
   answer makes a self-review legitimate, and it stays labelled as one.
-
-## Common mistakes
-
-- Session-history briefs, or undeclared data and egress — neither is bounded
-  context.

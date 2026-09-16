@@ -53,10 +53,3 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
   draws a boundary that a runtime caller crosses.
 - A boundary record carries no signal of its own staleness; past its freshness
   limit it reads exactly like a current one.
-
-## Common mistakes
-
-- A map of files instead of responsibilities — paths don't tell you what owns what.
-- Tracing direct imports while missing generated inputs, stored state, external
-  consumers, or deployment paths that carry the real blast radius.
-- Generic vocabulary that doesn't match how the team talks about the code.

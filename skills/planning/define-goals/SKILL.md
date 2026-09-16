@@ -5,7 +5,7 @@ description: "Pins down what a new project or initiative is for: the objective, 
 
 # Define Goals
 
-A project without a clear goal ships features no one needed. Before scope or design, name the outcome — and how you'll know you hit it.
+Before scope or design, name the outcome — and how you'll know you hit it.
 
 ## When to use
 
@@ -71,11 +71,3 @@ Open `assets/goals-section.md` before starting; each step fills its section.
   resolver and a decision rule leaves no way to settle it when they disagree
   about what the goal actually is — the brief then stalls on a tie nobody is
   positioned to break.
-
-## Common mistakes
-
-- Listing features as goals — features are *how*; goals are *what changes*.
-- Unmeasurable goals ("make it great") — if you can't check it later, it isn't a success criterion.
-- A target with no baseline, source, horizon, owner, or guardrail —
-  measurable-looking is not measurable.
-- Jumping to scope before the goal is agreed.
