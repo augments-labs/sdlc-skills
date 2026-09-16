@@ -1,8 +1,8 @@
 # Mode question
 
 Ask this when a plan version is approved and its `External decision ledger` row
-records no `mode:`. Offer option 2 only when the harness has a subagent action,
-and recommend it whenever it is offered: a fresh worker per task keeps the
+records no `mode:`. Offer option 2 only when the harness has a subagent action
+and the index holds no phases or shards, and recommend it whenever it is offered: a fresh worker per task keeps the
 plan's context out of the build. `executing-plans` owns the inline loop and
 `subagent-driven-development` the delegated one; the answer picks which is
 invoked.

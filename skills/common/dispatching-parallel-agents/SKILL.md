@@ -14,8 +14,8 @@ yourself before anything integrates.
 - Two or more independent tasks: exclusive writes and mutable resources, with
   no task needing another's output. Overlapping reads of frozen inputs are safe.
 - **Skip** overlapping writes, shared mutable state, dependent outputs, and work that is
-  quicker done inline. Sequence it in the current task or plan; `executing-plans`
-  is for an approved plan only.
+  quicker done inline. Sequence it in the current task or plan; the plan executors
+  are for an approved plan only.
 
 ## Step 1: Before fan-out
 

@@ -17,6 +17,9 @@ never decides what happens to the branch.
 - **Skip** building the tasks in this session — `executing-plans` owns that
   — a lone task with no plan directory, and independent tasks that should run
   at the same time — that fan-out belongs to `dispatching-parallel-agents`.
+- **Skip** a plan whose index holds phases or shards: its queues, leases, and
+  capacity envelope run inline through `executing-plans`, never through a
+  slim brief.
 
 ## Available scripts
 
@@ -40,10 +43,9 @@ never decides what happens to the branch.
 2. No such row, a later row closed the version, or the script fails → stop and
    name the missing version, the row that closed it, or the script's error;
    never substitute a version read from the index.
-3. No mode in that row → the user's direct request in this conversation for
-   workers on this plan is the answer: append `mode: delegated` to that row,
-   quoting it. No such request → ask the mode question from
-   `assets/mode-question.md` before any workspace action, and stop.
+3. No mode in that row → ask `assets/mode-question.md` before any workspace
+   action, and stop. A request for workers made before approval is not the
+   answer; rendering the question collects it.
 4. `mode: inline` in that row → stop; `executing-plans` owns it, and only the
    user's direct answer changes the mode.
 
@@ -68,11 +70,15 @@ never decides what happens to the branch.
    an earlier task's exact `Produces`; every `Depends on` names a task that is
    not cancelled; no task edits its own judge unless its approved `Evaluator
    identity/owner` permits the exact change; `Implementation disciplines` is
-   filled. Any failure → report the field and task; dispatch nothing under an
-   invalid contract.
-5. Scan for conflicts. List the files each task claims, and write every pair
+   filled; a UI task's `Applicable visual references` match the index's
+   `Selected visual references` field for field, and each freshness evaluator
+   runs now. Any failure → report the field and task; dispatch nothing under
+   an invalid contract.
+5. High-risk task: blocked until its migration and assurance contracts are
+   approved and their entry gates passed. Report it; dispatch nothing for it.
+6. Scan for conflicts. List the files each task claims, and write every pair
    claiming the same file into the ledger as an ordering.
-6. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
+7. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
    Step 5.6.
 
 ## Step 3: Rule, don't stall
@@ -108,8 +114,10 @@ reapproval, end the turn.
    contract covers the role, dispatch that agent with the role brief; otherwise
    dispatch a general subagent with the role prompt. Name mappings belong in
    the adapters, never here.
-6. Then dispatch per `dispatching-parallel-agents` Step 2 — it owns the receipt,
-   the not-dispatched rule, and cancellation.
+6. Write the dispatch row before dispatching: task ID, attempt, base
+   revision, evaluator identity, tier. Then dispatch per
+   `dispatching-parallel-agents` Step 2 — it owns the receipt, the
+   not-dispatched rule, and cancellation.
 
 ## Step 5: Review the diff, then fix
 
@@ -125,24 +133,29 @@ reapproval, end the turn.
    did not converge — and then either decide it yourself under Step 3 or hand
    the user that row. Never open a sixth round.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
-   `verification-before-completion` with the task's `Evaluator` on the result
-   revision, before recording its state: done, done with concerns, blocked, or
-   needs context. Mirror only the task row's checkbox in the index.
+   `verification-before-completion` on the result revision: the task's
+   `Evaluator`, every `VCONF` row, `visual-ui-verification` for an integrated
+   UI. Then record its state: done, done with concerns, blocked, or needs
+   context. Mirror only the task row's checkbox and adjacent label. **Do not
+   change the index's `Status` header or normalize it out of the plan's
+   identity.**
 6. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then `finishing-a-branch`.
    Return after it records its decision.
 7. Go to Step 4 with the next ready task. Do not report, ask, or pause at
    `done`. Every task `done`, or `cancelled`/`superseded` with its approved
-   ledger decision → Step 6. No ready task can advance → report the unresolved
-   states and their blockers, end the turn.
+   ledger decision → Step 6. No ready task can advance, or a high-risk entry
+   gate has not passed → report the unresolved states and their blockers, end
+   the turn.
 
 ## Step 6: Finish the plan
 
 In the worktree from Step 2, in order:
 
 1. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on the
-   integrated revision: the index's `Acceptance` check plus every done task's
-   evaluator. Worker reports are claims; this is the evidence.
+   integrated revision (`per task`: the base after the last integration): the
+   index's `Acceptance` check plus every done task's evaluator. Worker reports
+   are claims; this is the evidence.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch,
    once, and let it drive a single fix wave.
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
@@ -172,6 +185,14 @@ In the worktree from Step 2, in order:
 - The controller never edits, so `test-driven-development` and `yagni` load in
   the implementer, where the brief requires them; loading them here proves
   nothing about the worker's session.
+
+## Stopping and resuming
+
+- Remaining work will not fit this session: finish the current ledger row,
+  then invoke `handoff`.
+- On resume, rerun `scripts/plan-version.sh` and re-read the latest decision
+  ledger row for the printed version before `--check` on the run ledger: the
+  run ledger detects an amended plan, not a row that closed the version.
 
 ## Common mistakes
 
