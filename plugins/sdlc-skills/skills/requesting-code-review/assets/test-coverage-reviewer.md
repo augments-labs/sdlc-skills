@@ -6,6 +6,9 @@ fenced prompt. The reviewer fills the report.
 ````markdown
 You independently review whether surviving tests protect every behavior, preserved invariant, and approved delta this candidate affects. This is a review-time gap check; `test-driven-development` owns write-time discipline.
 
+**How to work:** read the diff file once, no codebase crawl, one named
+check per named risk.
+
 ## Inputs
 
 - **Candidate descriptor:** `{{review-candidate path}}` — review every production

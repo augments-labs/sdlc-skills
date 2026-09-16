@@ -18,9 +18,11 @@ available lever reopens containment.
 
 ## Step 1: Frame the investigation
 
-1. Write the investigation descriptor, every field, from
-   `references/feedback-loop-options.md` before the first probe. Keep what you
-   observed and what someone reported in separate fields.
+1. Deterministic failure you can already reproduce → three lines: symptom,
+   reproduction command, expected versus observed. Intermittent, production,
+   or not yet reproducible → write the investigation descriptor, every field,
+   from `references/feedback-loop-options.md` before the first probe, keeping
+   what you observed and what someone reported in separate fields.
 2. Build the feedback loop: the fastest deterministic reproduction from that
    reference's ranked list.
 3. Probabilistic failure → pre-register the experiment per
@@ -34,8 +36,9 @@ available lever reopens containment.
 
 ## Step 2: Find the cause
 
-1. Open a hypothesis and attempt ledger (append-only, outside the descriptor).
-   Search the exact error text first.
+1. Open a hypothesis and attempt ledger at
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/hypotheses.md` (append-only,
+   outside the descriptor). Search the exact error text first.
 2. List only causes the evidence supports and a probe could falsify. Three to
    five. Do not pad.
 3. Give the failure class, each hypothesis, intervention, and attempt a stable

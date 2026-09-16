@@ -116,20 +116,10 @@ not the code.
 3. Standing order → proceed unpaused only when its scope, owner, constraints,
    and mode explicitly cover unseen plan versions. Bind the exact version to
    that receipt first.
-4. On approval, in a separate turn, ask the mode question:
-
-   ```text
-   How should the plan run?
-
-   1. Inline — every task in this session
-   2. Delegated — one fresh subagent per task, in sequence
-
-   {{one sentence on the context trade-off}}
-   Recommendation: {{the mode the harness supports}}.
-   ```
-
-   Offer delegated only if the harness has a subagent action.
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+4. On approval, in a separate turn, ask the mode question from
+   `assets/mode-question.md` when the ledger row for this version records no
+   `mode:`. That file owns the block, the subagent-action condition, and how
+   to ask it.
 5. Append one row to the `External decision ledger`, a ledger (append-only,
    outside the plan): `Identity` = the printed
    version, `Location` = the index path, `State` = approved, `Bound evidence` =

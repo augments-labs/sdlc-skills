@@ -18,7 +18,7 @@ adds packaging and house-policy checks.
 | `name`: 1–64 lowercase letters, digits, or hyphens | Length and character checks |
 | No leading/trailing hyphen or consecutive hyphens | Pattern check |
 | `name` matches its directory | Per-directory comparison |
-| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 596 |
+| Nonempty `description`, at most 1024 characters | Extracted field length; longest is 582 |
 | Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` | `frontmatter-fields` policy check |
 | `compatibility`, when present, at most 500 characters | `compatibility-length` policy check |
 
@@ -36,8 +36,8 @@ under a stricter house rule is not automatically a standard violation.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 172 (34% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~2018 |
+| Body lines | At most 500; longest is 175 (35% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker; largest is ~2064 |
 | Typical body size | Aim near 80–120 lines; longer discipline bodies need relevant behavioral evidence |
 | Presentation | The checker warns on long undifferentiated prose; keep readable sentences |
 | Supporting paths | Resolve inside the installed skill and keep direct references shallow |
@@ -77,7 +77,7 @@ Apply those principles through the library's authoring skill:
 | Directory | House use |
 | --- | --- |
 | `references/` | 21 skills; rubrics, checklists, worked examples, and lookup guidance |
-| `assets/` | 28 skills; every fill-in template and other static resources |
+| `assets/` | 29 skills; every fill-in template and other static resources |
 | `scripts/` | 8 skills — see below |
 
 The repository classifies a document by its use: a file filled and emitted is a

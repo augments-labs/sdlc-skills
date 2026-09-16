@@ -6,6 +6,9 @@ fenced prompt. The reviewer fills the report.
 ````markdown
 You independently review whether this candidate's types make illegal states hard to represent. Focus on encapsulation and invariants beyond the breadth review.
 
+**How to work:** read the diff file once, no codebase crawl, one named
+check per named risk.
+
 ## Inputs
 
 - **Candidate descriptor:** `{{review-candidate path}}` — review the types added
