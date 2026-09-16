@@ -30,8 +30,7 @@ never decides what happens to the branch.
    script's error; never substitute a version read from the index.
 3. No mode in that row (`mode: inline` or `mode: delegated`) → ask the mode
    question from `assets/mode-question.md` before any workspace action, and
-   stop. That file owns the block, the subagent-action condition, and how to
-   ask it.
+   stop.
 
 ## Step 2: Set up the workspace
 

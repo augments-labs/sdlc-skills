@@ -25,8 +25,6 @@ hold the plan, the ledger, and every decision they may not take.
 - **`scripts/review-package.sh`** — assembles one task's diff and file list for
   a reviewer. Run it when an implementer reports.
 
-Each documents its exit codes under `--help`.
-
 ## Step 1: Open the run
 
 1. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. One worktree holds the
@@ -82,8 +80,7 @@ re-litigating it.
 ## Step 4: Review the diff, then fix
 
 1. Build the package with `scripts/review-package.sh`, then fill
-   `assets/task-reviewer.md` when the implementer reports. The reviewer reads
-   the diff once, runs one named check per named risk, and re-runs no suite.
+   `assets/task-reviewer.md` when the implementer reports.
 2. Findings open a fix round. Rounds 1 to 3 go back to the same implementer,
    which still holds the task. Rounds 4 and 5 go to a fresh implementer one tier
    up, briefed from the findings file — it has read nothing.
