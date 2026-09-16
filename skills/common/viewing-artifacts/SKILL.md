@@ -109,7 +109,3 @@ The page carries state, not documents.
   verification or review is bound to.
 - In a checkout that is itself the candidate, a view written under a trail the
   project does not ignore still changes that checkout's digest.
-
-## Common mistakes
-
-- Starting an ad-hoc server (`python3 -m http.server`, a dev-server forward) to show the page → the key gate and self-terminating lifecycle are the contract; use `scripts/start-server.sh` or deliver the plain file path.

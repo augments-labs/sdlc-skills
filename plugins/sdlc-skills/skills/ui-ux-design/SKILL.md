@@ -10,7 +10,6 @@ Design the experience and decide its direction before implementation. In an exis
 ## When to use
 
 - A new or revised flow, screen, or interface leaves behavior, hierarchy, or visual direction open.
-- Visual direction is open — the default is a rendered side-by-side comparison, not a prose description.
 - **Skip** for backend-only or non-interactive work, and for an exact cosmetic edit whose direction is already fixed.
 - **Scale down:** a small, settled interface may need one flow, its states, hierarchy, and acceptance checks; alternatives are not mandatory.
 

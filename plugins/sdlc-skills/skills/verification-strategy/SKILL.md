@@ -25,8 +25,7 @@ reading the code, a coverage number, or the builder's opinion.
 2. Transformation: add its migration facts, invariants, and approved
    deviations.
 3. Instantiate `assets/assurance-matrix.md` before writing any gate. Fill
-   `Risk inventory` and `Risk-to-gate matrix`. Write no gate code before this
-   exists.
+   `Risk inventory` and `Risk-to-gate matrix`.
 4. Read `references/battery-catalogue.md` before filling `Catalogue
    disposition` for every category it lists: covered, or an accountable expiring
    approval plus a compensating gate. N/A needs evidence and an owner.
