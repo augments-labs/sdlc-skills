@@ -2,6 +2,13 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.1.3] — 2026-09-16
+
+The library was read cold a second time, by readers who had not seen the first
+pass, and three more bodies lost a line that only restated their own step,
+format rule, or template. Five of the eight folders produced nothing, which is
+what the second read was for.
+
 ## [10.1.2] — 2026-09-16
 
 Every skill body was read cold against its own steps, and the lines that only
