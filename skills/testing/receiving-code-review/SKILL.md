@@ -125,11 +125,7 @@ looks obvious — verify before agreeing, editing, replying, or resolving.
 
 ## Common mistakes
 
-- Acting on only visible inline comments while missing a top-level or specialist
-  blocker.
 - Reproducing against the old revision but applying a fix to materially different
   current code.
-- Dispatching focused re-review under the old invocation or identity after a fix.
 - Silently choosing between conflicting reviewers.
 - Replying “fixed” without the fix revision, gate output, and required re-review.
-- Mass-resolving threads because the aggregate candidate is green.
