@@ -19,7 +19,7 @@ never decides what happens to the branch.
   at the same time — that fan-out belongs to `dispatching-parallel-agents`.
 - **Skip** a plan whose index holds phases or shards: its queues, leases, and
   capacity envelope run inline through `executing-plans`, never through a
-  slim brief.
+  slim brief. Its row says delegated → Step 1.5 first.
 
 ## Available scripts
 
@@ -48,6 +48,10 @@ never decides what happens to the branch.
    answer; rendering the question collects it.
 4. `mode: inline` in that row → stop; `executing-plans` owns it, and only the
    user's direct answer changes the mode.
+5. `mode: delegated` on an index with phases or shards → this skill cannot
+   run it and `executing-plans` will not: ask the user for a direct inline
+   answer, append it as a new approved row for this version with
+   `mode: inline`, and stop. The last row's mode is the one 1.1 reads.
 
 ## Step 2: Open the run
 
