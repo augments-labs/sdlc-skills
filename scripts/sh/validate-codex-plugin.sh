@@ -122,6 +122,10 @@ done
 [ -f "$plugin_root/skills/using-sdlc-skills/SKILL.md" ] \
   || err "$plugin_root/skills/using-sdlc-skills/SKILL.md missing — the injector would find no router"
 
+echo "• Codex adapter reference"
+[ -f "$plugin_root/references/codex-tools.md" ] \
+  || err "missing $plugin_root/references/codex-tools.md — the adapter would bind the dispatch action nowhere"
+
 echo "• manifest versions agree"
 codex_v=""
 claude_v=""

@@ -38,12 +38,12 @@ case "${1-}" in
 scripts/sh/token-budget.sh — approximate context cost of the always-loaded surface.
 
   --max N        flag any SKILL.md body over N approx-tokens (default: report only)
-  --chain NAME   sum the body words of chain NAME's skills from docs/chains.toml
+  --chain NAME   sum the body words of chain NAME's skills from the chains file
                  (references excluded) and exit 1 over its budget_words
   --help         this text
 
 Environment:
-  CHAINS_TOML    the chains file to read instead of docs/chains.toml
+  CHAINS_TOML    the chains file to read instead of scripts/sh/data/chains.toml
 
 Tokens are approximated as characters/4 — a portable proxy for drift and
 comparison, not a billing figure. Discipline skills legitimately run large; see
@@ -59,10 +59,10 @@ esac
 max=0
 [ "${1:-}" = "--max" ] && max="${2:-0}"
 
-# --chain NAME: the summed body words of one chain from docs/chains.toml,
+# --chain NAME: the summed body words of one chain from scripts/sh/data/chains.toml,
 # checked against its budget_words. Word counts, not the chars/4 estimate above.
 if [ "${1:-}" = "--chain" ]; then
-  chain="${2:-}"; toml="${CHAINS_TOML:-docs/chains.toml}"
+  chain="${2:-}"; toml="${CHAINS_TOML:-scripts/sh/data/chains.toml}"
   case "$chain" in ''|*[!a-z0-9-]*) echo "--chain takes a chain name of a-z, 0-9 and -" >&2; exit 2 ;; esac
   [ -r "$toml" ] || { echo "cannot read $toml" >&2; exit 2; }
   # The chains file is a small TOML subset: [name] tables holding a skills array

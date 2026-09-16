@@ -53,15 +53,24 @@ See [`activation.md`](activation.md) for routing versus enforcement.
 
 ## Dispatch capability
 
-`dispatching-parallel-agents` and `executing-plans` hand work to a cold agent
+`dispatching-parallel-agents`, `executing-plans`, and
+`subagent-driven-development` hand work to a cold agent
 through "the real callable action". The skills stay portable by never naming it;
 each adapter binds it, and each harness decides whether it exists at all.
 
-| Harness | Dispatch action | Notes |
-| --- | --- | --- |
-| Claude Code | `Agent` tool | Native; no configuration needed |
-| Codex | `spawn_agent` / `wait_agent` / `list_agents` / `send_message` / `followup_task` / `interrupt_agent` | Availability depends on the installed build and configuration |
-| Kimi Code | `Agent` tool | Bound in `.kimi-plugin/plugin.json` `skillInstructions`, including `subagent_type` and the tier-in-prompt rule |
+| Harness | Dispatch action | Subagent loads skills | Nesting depth | Tier |
+| --- | --- | --- | --- | --- |
+| Claude Code | `Agent` tool | Yes — a subagent reaches skills unless its own definition withholds the action | One level for the read-only built-in types; a general subagent can dispatch again, which the packet prohibits unless it allocates sub-scope | Settable — the tier binds to the model parameter on the dispatch call |
+| Codex | `spawn_agent` / `wait_agent` / `list_agents` / `send_message` / `followup_task` / `interrupt_agent` | Only when the plugin is installed for the spawned agent, not for the session alone | Not declared by the build — treat a worker's own dispatch as prohibited | Settable — the spawn call carries the model the tier binds to |
+| Kimi Code | `Agent` tool | The brief names the file to read, because a subagent may not resolve plugin-relative paths | One level; a background run parallelises, it does not nest | Not settable — the tier is stated in the prompt and the harness binds it |
+
+The Codex tool names, their arguments, and the resume path live in
+`plugins/sdlc-skills/references/codex-tools.md`, inside that adapter, because a
+shipped skill never names a harness tool. What each row rests on: the Claude
+Code row was checked against the running harness's own tool surface; the other
+two are read from their adapter's declared binding, not from a live run.
+Availability, nesting, and agent names are properties of the installed build, so
+re-check a cell with the CLI before relying on it.
 
 Availability is a property of the installed build and its configuration, not of
 this library, and it changes between versions — some builds gate multi-agent
@@ -76,6 +85,28 @@ it holds no receipts for, or silently does the work itself.
 Check the harness's own configuration reference for the current form, and verify
 by asking the installed CLI what tools it exposes rather than trusting a
 second-hand snippet.
+
+### Role binding for subagent-driven development
+
+`subagent-driven-development` dispatches through the same action and adds one
+more binding. Its three role briefs — `assets/implementer.md`,
+`assets/task-reviewer.md`, and `assets/re-reviewer.md` — are the specification; a
+named harness agent is only a runtime that carries one. Where a harness exposes
+an agent whose contract covers the role, the adapter maps the role to that name
+and the filled brief is dispatched to it. Where it does not, the same brief goes
+to a general subagent. The mapping lives in the adapters and in this table, never
+in the skill body, so a harness that renames or removes an agent changes no
+shipped skill.
+
+| Harness | Agents a role can bind to | Fallback |
+| --- | --- | --- |
+| Claude Code | the built-in general-purpose type, plus any agent defined under `.claude/agents/`, selected with the `Agent` tool's `subagent_type` | the general-purpose type carrying the role prompt |
+| Codex | the agent roles the installed build exposes to `spawn_agent` | a general agent carrying the role prompt |
+| Kimi Code | the `subagent_type` values bound in `.kimi-plugin/plugin.json` `skillInstructions` | the general-purpose type carrying the role prompt |
+
+The tier is a separate choice from the agent: the skill sets `small`, `medium`,
+or `large` explicitly per dispatch, and the adapter binds that tier to a model.
+An agent name never implies a tier.
 
 ## Repository instruction files
 

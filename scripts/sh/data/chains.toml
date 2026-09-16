@@ -13,7 +13,7 @@ recorded_words = 11314
 budget_words = 10818
 
 [plan-execution]
-skills = ["using-sdlc-skills", "executing-plans", "using-git-worktrees", "dispatching-parallel-agents", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
+skills = ["using-sdlc-skills", "executing-plans", "using-git-worktrees", "subagent-driven-development", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
 recorded_words = 9653
 budget_words = 9150
 

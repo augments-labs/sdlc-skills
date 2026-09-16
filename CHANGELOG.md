@@ -2,6 +2,12 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.1.0] — 2026-09-16
+
+A new skill, `subagent-driven-development`, runs an approved plan's tasks through a cold implementer, an independent task reviewer, and a re-reviewer, each carrying only its filled brief. `executing-plans` hands its delegated mode to it instead of describing one.
+
+The dispatch packet is eleven fields now; the ten controlled fields it used to carry moved to a second template, loaded only for a high-risk plan or a phase queue. The Kimi Code and Codex adapters bind review roles to a read-only agent, and record what a fallback that can write costs.
+
 ## [10.0.0] — 2026-09-16
 
 Four skills are renamed to say what they do — `writing-specs`, `scoping`, `clarifying-intent`, `mapping-the-codebase`. Update explicit invocations when upgrading.

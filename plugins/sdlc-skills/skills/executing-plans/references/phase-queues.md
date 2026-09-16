@@ -7,6 +7,12 @@ environments, and failure response. Execution consumes their exact versions and
 records append-only state in the predeclared external ledgers; it does not
 rewrite normative contracts or improvise replacements.
 
+Every packet a phase dispatches is a controlled one: beside the slim packet,
+fill the controlled fields `dispatching-parallel-agents` ships as
+dispatch-packet-controlled.md, so workspace, sharing, checkpoints, routing, stop
+conditions, isolation, data, capacity, sub-dispatch, and terminal control are
+bound before a shard is claimed.
+
 ## Enter a phase
 
 Before claiming work:

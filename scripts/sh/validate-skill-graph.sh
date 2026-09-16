@@ -14,7 +14,7 @@ opens with Skip is a boundary redirect, not a handoff. Two skills that hand off
 to each other form a cycle, printed one per line; nothing prints when there is
 none:
 
-  cycle: a↔b      not listed in docs/allowed-cycles.txt
+  cycle: a↔b      not listed in scripts/sh/data/allowed-cycles.txt
   allowed: a↔b    listed there
 
   --strict    exit 1 when a cycle is not allowed (default: report only)
@@ -47,7 +47,7 @@ if [ -n "${SKILLS_ROOT:-}" ]; then
 fi
 cd "$(dirname "$0")/../.." || exit 2
 root="${root:-skills}"
-allow=docs/allowed-cycles.txt
+allow=scripts/sh/data/allowed-cycles.txt
 # Byte-wise matching and ordering, so every awk and locale reports the same pairs.
 export LC_ALL=C
 

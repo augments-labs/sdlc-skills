@@ -1,7 +1,8 @@
 # Mode question
 
 Ask this when a plan version is approved and its `External decision ledger` row
-records no `mode:`. Offer option 2 only when the harness has a subagent action.
+records no `mode:`. Offer option 2 only when the harness has a subagent action;
+`subagent-driven-development` owns the delegated loop.
 Ask through the harness's user-input action when one exists, else print the
 block as text; end the turn. Rendering the question collects an answer — never
 infer one; `clarifying-intent` owns a reply that names no option.

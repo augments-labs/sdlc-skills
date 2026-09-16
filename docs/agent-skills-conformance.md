@@ -77,8 +77,8 @@ Apply those principles through the library's authoring skill:
 | Directory | House use |
 | --- | --- |
 | `references/` | 21 skills; rubrics, checklists, worked examples, and lookup guidance |
-| `assets/` | 29 skills; every fill-in template and other static resources |
-| `scripts/` | 8 skills — see below |
+| `assets/` | 30 skills; every fill-in template and other static resources |
+| `scripts/` | 9 skills — see below |
 
 The repository classifies a document by its use: a file filled and emitted is a
 template even if its filename says otherwise. The gate rejects such templates
@@ -91,6 +91,7 @@ are not a universal prohibition on other valid organizations.
 | `verification-before-completion` | `state-identity.sh` | Captures source identity and environment for evidence binding |
 | `writing-skills` | `check-skill.sh` | Inspects skill files and executes bundled scripts with `--help` |
 | `writing-plans`, `executing-plans` | `plan-version.sh`, one byte-identical copy each | Prints a plan's version from its normalized index and task files; read-only; the gate fails when the copies differ |
+| `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Opens and re-checks a plan's run ledger, renders one role brief and refuses a half-filled one, and assembles a task's diff for its reviewer |
 | `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`; never overwrites a file |
 | `viewing-artifacts` | `serve.py`, `start-server.sh`, `stop-server.sh` | Starts and stops an owned local preview, writes a log, and may open a browser |
 | `ui-ux-design` | The same preview scripts | Provides the governed comparison preview; the gate checks byte equality with the viewer copies |
@@ -124,9 +125,10 @@ bash skills/common/writing-skills/scripts/check-skill.sh path/to/skill
 The first checks the library and its adapters; with `--strict` it also fails on
 the policy checks it otherwise reports as warnings, `reference-load-condition`
 included. The second reports pairs of
-skills that hand off to each other: a pair listed in `docs/allowed-cycles.txt`
-prints as allowed, and `--strict` fails on any other. The third sums the body
-words of one chain in `docs/chains.toml` and fails over its budget. The fourth
+skills that hand off to each other: a pair listed in
+`scripts/sh/data/allowed-cycles.txt` prints as allowed, and `--strict` fails on
+any other. The third sums the body words of one chain in
+`scripts/sh/data/chains.toml` and fails over its budget. The fourth
 reports each description clause of two or more words that more than one skill
 shares, and `--strict` fails on any. The fifth accepts a skill path, including
 one outside this repository, subject to the parsing and execution limits above.
