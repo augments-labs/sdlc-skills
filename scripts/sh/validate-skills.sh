@@ -183,6 +183,10 @@ echo "• plan-version.sh copies are byte-identical"
 cmp -s skills/design/writing-plans/scripts/plan-version.sh skills/implementation/executing-plans/scripts/plan-version.sh ||
   err "plan-version.sh: the writing-plans and executing-plans copies differ"
 
+echo "• mode-question.md copies are byte-identical"
+cmp -s skills/design/writing-plans/assets/mode-question.md skills/implementation/executing-plans/assets/mode-question.md ||
+  err "mode-question.md: the writing-plans and executing-plans copies differ"
+
 # The checker enforces executable permission and successful `--help` as house
 # policy. These additional house checks require direct disclosure in SKILL.md
 # so the agent can find the script, and documented exit codes so it can act on

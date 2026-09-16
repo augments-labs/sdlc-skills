@@ -34,11 +34,17 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving what is there. Compute its identity (per template) now; the
    challenge binds to this path and identity.
-2. A reviewer other than the sole author challenges options, assumptions,
-   consequences, reversal, under the template's challenge contract. Fill
-   `assets/adr-challenger.md` with that path and identity before dispatching
-   it per `dispatching-parallel-agents` Step 2. Approval waits for `clear` on
-   this ADR identity. Skip only when a current independent design review
+2. Fill `assets/adr-challenger.md` with that path and identity when the
+   choice is irreversible — Step 1.5's reversal row says undo is impossible
+   or unaffordable, not merely costly — and a dispatch action exists; then
+   dispatch it per `dispatching-parallel-agents` Step 2 to a reviewer other
+   than the sole author, who challenges options, assumptions, consequences,
+   and reversal under the template's challenge contract. Otherwise write the
+   strongest counter-case against that same contract yourself and label it
+   **self-challenge**: a self-challenge never issues `clear`, so its residual
+   risk goes to the decision owner in Step 3. Approval waits for `clear` on
+   this ADR identity, or for the decision owner accepting a labelled
+   self-challenge. Skip both only when a current independent design review
    covers this exact ADR identity.
 
 ## Step 3: Present and track
@@ -58,7 +64,7 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
    Recommendation: {{option the recorded trade-offs support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 2. Track decision and conformance separately. Acceptance puts nothing `in
    force`; conformance does. Retirement needs owner action and absence of the
    governed surface. Contradiction → reopen every affected owner.

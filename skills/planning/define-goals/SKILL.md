@@ -11,11 +11,11 @@ A project without a clear goal ships features no one needed. Before scope or des
 
 - Starting a new project, product, or substantial initiative with a fuzzy "why";
   this procedure elicits the objective, stakeholders, and measures.
-- **Skip** for a single feature or task. Use `interview-me` only for genuine
-  ambiguity about which initiative or procedure is intended; `spec-it` owns
+- **Skip** for a single feature or task. Use `clarifying-intent` only for genuine
+  ambiguity about which initiative or procedure is intended; `writing-specs` owns
   settled detailed feature requirements.
 - **Skip** when a drafted goal or brief is awaiting a direct answer; an
-  informative non-answer routes to `interview-me`, not a new goal pass.
+  informative non-answer routes to `clarifying-intent`, not a new goal pass.
 
 ## Step 1: Find the objective
 
@@ -26,7 +26,9 @@ Open `assets/goals-section.md` before starting; each step fills its section.
 2. Name who benefits, who operates or bears risk, what changes for each, who
    owns the outcome. Competing goals → separate metrics, never one average.
 3. Record one accountable decision owner, or the approvers, conflict
-   resolver, and decision rule.
+   resolver, and decision rule. Solo owner — the user is the only
+   stakeholder → they are the decision owner; leave the approver, conflict,
+   and decision-rule fields out.
 4. Per outcome: current baseline, target, time horizon, measurement source,
    accountable owner. No source or date → cannot be checked → not a goal.
 5. Write the guardrails (what must not degrade) and the failure criterion:
@@ -54,15 +56,15 @@ Open `assets/goals-section.md` before starting; each step fills its section.
    Recommendation: {{option the open assumptions support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` when
-   viability is unresolved; otherwise `scope-it` when the boundary is next.
+   viability is unresolved; otherwise `scoping` when the boundary is next.
    Never impose a phase already complete.
 
 ## Gotchas
 
 - A guardrail can look complete just by being written down while staying
-  unfalsifiable. `scope-it` treats every goal guardrail as a non-negotiable
+  unfalsifiable. `scoping` treats every goal guardrail as a non-negotiable
   constraint on each cut, so one with no observable threshold lets a cut
   violate it with nothing positioned to catch that.
 - Naming several approvers for the objective without also naming a conflict

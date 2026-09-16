@@ -26,10 +26,10 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 
 1. Stop writers this task started; report any other writer to its owner and
    keep review pending until it stops.
-2. Consume the caller's evidence ledger for the frozen state and its raw
-   results. Reuse each row whose candidate, bound inputs/environment, gate
-   requirements, and evidence freshness still match. Never rerun a matching
-   row.
+2. Consume the caller's evidence ledger (append-only, outside the candidate)
+   for the frozen state and its raw results. Reuse each row whose candidate,
+   bound inputs/environment, gate requirements, and evidence freshness still
+   match. Never rerun a matching row.
 3. No ledger, or a missing or stale row → **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` to obtain evidence for this review, then
    resume here. Keep failures and pending results: they permit review, never
@@ -49,7 +49,9 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    - **Shallow:** self-review. Only when the user, project policy, or the
      plan's task row assigns it in writing. Never chosen here: the size of
      the diff grants nothing.
-   - **Standard:** one independent breadth reviewer plus relevant specialists.
+   - **Standard:** one independent breadth reviewer. A specialist joins only
+     when the diff matches its trigger in 2.3, and at most three roles run
+     at once; the rest wait for a second round.
    - **Deep:** breadth, specialists, a security role filled from
      `security-audits`' report template and checklists before Step 3.2, and an
      independent adversarial pass.
@@ -57,7 +59,8 @@ wait on one, until the dispatch action has returned a non-empty receipt.
      assigning anyone.
 2. Give every role a stable ID, including each one omitted. An omission
    records evidence, owner, expiry, compensation, and approver.
-3. Add each applicable specialist role; open its prompt template:
+3. Add a specialist role only when the diff matches its trigger below, then
+   open its prompt template. No trigger matches → the breadth reviewer alone:
    - `assets/silent-failures-reviewer.md` when catches, retries, fallbacks,
      or defaults could swallow a failure
    - `assets/type-design-reviewer.md` when a type, interface, schema, or

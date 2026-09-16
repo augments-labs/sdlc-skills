@@ -1,6 +1,6 @@
 ---
 name: yagni
-description: "Challenges scope so only what the task needs gets built, and built completely. Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when behavior-affecting implementation or configuration is written or proposed; when scope drifts toward speculative or incomplete delivery; when a proposal needs a strict pre-edit challenge; or when anyone says we might need this later or let's make it configurable. Skip throwaway spikes and content or configuration with no behavior."
+description: "Challenges scope so only what the task needs gets built, and built completely. Use when code, files, flags, or dependencies are being removed as unused, dead, or legacy; when scope drifts toward speculative or incomplete delivery; when a proposal needs a strict pre-edit challenge; or when anyone says we might need this later or let's make it configurable. Skip throwaway spikes and content or configuration with no behavior."
 ---
 
 # YAGNI — build only what's needed, and make it work
@@ -13,6 +13,15 @@ latest prompt need not repeat those for them to bind.
 
 ## When to use
 
+- Code, files, flags, or dependencies are being removed as unused, dead, or
+  legacy.
+- Scope drifts toward a speculative addition or an incomplete delivery — "we
+  might need this later", "let's make it configurable".
+- A proposal needs a strict pre-edit challenge.
+- A skill that hands off here invokes it directly, and its own trigger governs:
+  the router, `debugging`, and `receiving-code-review` send a change that
+  affects behavior through `test-driven-development` and this skill before the
+  first edit.
 - **Skip** a throwaway spike answering one question, and non-behavioral config
   or content: nothing there has task behavior to scope.
 

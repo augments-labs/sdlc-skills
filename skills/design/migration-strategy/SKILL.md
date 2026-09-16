@@ -55,8 +55,8 @@ the section it names.
    expansion decision, failure response. Commands and thresholds belong to
    the assurance matrix.
 3. Fill `Partitions and ownership`: a stable shard inventory and ownership
-   rules. Attempts, owners, heartbeats, transfers, and results go to an
-   append-only external ledger, never into the contract.
+   rules. Attempts, owners, heartbeats, transfers, and results go to a
+   ledger (append-only, outside the contract), never into the contract.
 
 ## Step 3: Control what moves underneath you
 
@@ -109,7 +109,7 @@ the section it names.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 5. Only an approved exact version, with predecessor-bound consumers
    reconciled, proceeds to `writing-plans`.
 

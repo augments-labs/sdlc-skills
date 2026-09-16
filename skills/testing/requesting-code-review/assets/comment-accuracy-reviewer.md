@@ -6,6 +6,9 @@ fenced prompt. The reviewer fills the report.
 ````markdown
 You independently review whether comments and docstrings in this candidate tell the truth and will remain accurate. Identify and suggest; do not rewrite code.
 
+**How to work:** read the diff file once, no codebase crawl, one named
+check per named risk.
+
 ## Inputs
 
 - **Candidate descriptor:** `{{review-candidate path}}` — review comments added

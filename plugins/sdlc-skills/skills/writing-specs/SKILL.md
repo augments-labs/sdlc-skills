@@ -1,9 +1,9 @@
 ---
-name: spec-it
+name: writing-specs
 description: "Writes a specification: detailed requirements and acceptance criteria for settled intent, or a revision to an existing spec. Use when settled intent needs detailed requirements and acceptance criteria before building, including a revision to an existing spec, or when the user asks for a spec, requirements, or acceptance criteria. Skip when current requirements already cover the work, when choosing implementation details, or while a material decision about what the user wants is still pending."
 ---
 
-# Spec It
+# Writing Specs
 
 Turn an intent into a requirements spec (SRS): gather and analyze what the software must do, how each requirement is verified, and the assumptions, dependencies, and risks involved. Requirements are the *what* — keep the *how* (architecture, schemas, code) for design.
 
@@ -11,14 +11,14 @@ Turn an intent into a requirements spec (SRS): gather and analyze what the softw
 
 - You have a goal, brief, or feature request and need its detailed requirements before designing or building.
 - **Skip** for a trivial change whose single requirement is obvious — just state it and go.
-- If the intent itself is unclear, grill it first with `interview-me`; this skill assumes you roughly know what you want.
-- A reply that has not directly closed a pending material decision routes to
-  `interview-me`; this skill cannot convert it into approved requirements.
+- If the intent itself is unclear, grill it first with `clarifying-intent`; this skill assumes you roughly know what you want.
+- A reply that has not directly closed a pending decision routes to
+  `clarifying-intent`; this skill cannot convert it into approved requirements.
 
 ## Step 1: Gather and state
 
 1. Pull the goal or brief. Read the relevant existing code. Genuine gap →
-   invoke `interview-me`. Invent nothing you could have found.
+   invoke `clarifying-intent`. Invent nothing you could have found.
 2. State the problem in a line or two. Link the goal it serves.
 
 ## Step 2: Write the requirements
@@ -46,8 +46,8 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 5. List the edge cases and scenarios that break a naive build: empty input,
    concurrency, unhappy paths.
 6. Per assumption and dependency: stable ID, evidence or state, validation
-   action, owner, expiry, failure response. Unresolved material state → an
-   open decision, never a hidden premise.
+   action, owner, expiry, failure response. Unresolved state that would change
+   a requirement → an open decision, never a hidden premise.
 7. List open questions, requirement-level risks, and what is out of scope
    this round.
 
@@ -72,7 +72,7 @@ Open `assets/spec-template.md` before starting; each step fills its section.
    Recommendation: {{option the open-question state supports}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 4. **REQUIRED SUB-SKILL:** on option 1, invoke the next missing precondition:
    `ui-ux-design`, `system-architecture`, or `data-model` for unresolved
    non-trivial shape; otherwise `writing-plans`. Never impose a phase already

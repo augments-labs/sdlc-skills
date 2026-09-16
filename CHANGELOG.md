@@ -2,6 +2,12 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.0.0] — 2026-09-16
+
+Four skills are renamed to say what they do — `writing-specs`, `scoping`, `clarifying-intent`, `mapping-the-codebase`. Update explicit invocations when upgrading.
+
+Every body now scales down to the common case: one decision owner instead of an approver matrix, a one-row inline ledger for a task-green claim with a single gate, and one breadth reviewer at Standard review depth with specialists joining on a trigger. A security audit no longer calls back into review, the plan mode question has one wording, and CI fails on the load-condition, handoff-cycle, and trigger-collision checks it previously only reported.
+
 ## [9.1.2] — 2026-09-15
 
 This release fixes the 32 findings of the v9.1.1 adversarial review:

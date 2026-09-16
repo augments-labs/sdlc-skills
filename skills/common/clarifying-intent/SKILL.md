@@ -1,9 +1,9 @@
 ---
-name: interview-me
-description: "Asks the questions that settle what the user actually wants when a request has several plausible readings. Use when what the user wants has several plausible readings that would change the work and no phase skill's own procedure can settle it, or when a pending material decision got praise, constraints, silence, or a partial reply instead of an explicit answer or an explicit cancellation, including a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Skip inputs that another skill's own procedure asks for."
+name: clarifying-intent
+description: "Asks the questions that settle what the user actually wants before work is built on a guess. Use when what the user wants has several plausible readings that would change the work and no phase skill's own procedure can settle it, or when a pending material decision got praise, constraints, silence, or a partial reply instead of an explicit answer or an explicit cancellation, including a reply that approves of the work without choosing among the options put to the user, even if nobody asks for questions or clarification. Skip inputs that another skill's own procedure asks for."
 ---
 
-# Interview Me
+# Clarifying Intent
 
 Close the gap between what was asked and what is actually wanted — *before* you
 build on it. This is a cross-cutting clarification technique, not a universal
@@ -40,7 +40,8 @@ skill that owns eliciting the still-open inputs.
 3. Entered to resolve a caller's named decision → keep that decision and its
    pending step. When a direct answer settles it without changing the approved
    scope, record the answer and return to that step. Do not create another
-   alignment brief or approval round. New material intent → continue below.
+   alignment brief or approval round. New intent that changes that scope →
+   continue below.
 
 ## Step 2: Ask one question at a time
 
@@ -67,8 +68,9 @@ skill that owns eliciting the still-open inputs.
 ## Step 3: Write the brief and present it
 
 1. Fill `assets/brief-template.md` after Step 2.4's stop condition holds:
-   goal, decisions with rationale, non-goals, open risks, identity and ledger
-   fields. A brief, not a spec.
+   goal, decisions with rationale, non-goals, open risks, identity, and the
+   fields naming its ledger (append-only, outside the brief). A brief, not a
+   spec.
 2. Write it to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the
    user-set path, preserving approved sections around it. Tiny brief → inline
    beside its decision record.
@@ -110,9 +112,9 @@ Supersession requires an approved replacement.
 Write supplied facts or constraints into it only when current mutation authority
 covers it. Before identity is issued, update the draft.
 Never edit an issued identity, whether its decision is pending or closed:
-every normative change creates a new proposed successor naming its
-predecessor, with a per-ID `added / changed / removed / preserved` delta, and
-removing an ID needs its owner's approval. When a successor is approved,
+every change to what it binds downstream creates a new proposed successor
+naming its predecessor, with a per-ID `added / changed / removed / preserved`
+delta, and removing an ID needs its owner's approval. When a successor is approved,
 inventory everything bound to its predecessor and mark each binding invalid
 until its owner revalidates. Record lifecycle externally (approved or
 accepted, rejected, cancelled, superseded) with evidence of the exact version

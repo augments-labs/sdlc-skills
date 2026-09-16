@@ -86,7 +86,7 @@ user's main-session model and any model reserved for orchestration untouched.
    Independence required (`security clear`, a role the calling skill's contract
    requires to be independent, or an audit the user asked to be independent) →
    omit option 1 and say why.
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
    Record the answer as the written assignment and continue under it. A named
    reviewer's report counts only when it arrives from outside this session,
    bound to the exact identities; the recorded answer replaces the receipt. No
@@ -106,7 +106,7 @@ user's main-session model and any model reserved for orchestration untouched.
 ## Step 3: Reconcile
 
 1. Inspect every returned diff yourself against its declared base, ownership
-   set, authorized checkpoints, and raw evaluator evidence. Reject a scope
+   set, authorized checkpoints, and raw gate evidence. Reject a scope
    leak, a mixed change, or missing evidence even under a green suite.
 2. Advance required scope only when every packet has an accepted success
    report, or a directly approved scope change or reassignment.

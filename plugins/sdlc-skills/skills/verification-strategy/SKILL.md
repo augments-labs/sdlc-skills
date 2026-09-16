@@ -79,10 +79,10 @@ reading the code, a coverage number, or the builder's opinion.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 4. Approve nothing yourself. Authority to draft gates is not authority to
    accept unseen risks, thresholds, omissions, or exceptions.
-5. Keep the normative file at `proposed`.
+5. Keep the matrix file at `proposed`.
 
 ## Gotchas
 
@@ -121,6 +121,6 @@ reading the code, a coverage number, or the builder's opinion.
 - Deferring the independent challenge until after approval.
 - Granting yourself an exception.
 - Approving work the decision owner has not seen.
-- Writing lifecycle state into a normative candidate.
+- Writing lifecycle state into the matrix candidate.
 
 **Lowering a threshold, deleting a test, or accepting a deviation to make the matrix green.**

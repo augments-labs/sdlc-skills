@@ -13,7 +13,7 @@ event and decision trail; do not invent a code defect to enter this skill.
 
 ## When to use
 
-- A failure reached users/production, escaped far downstream, caused material
+- A failure reached users/production, escaped far downstream, caused real
   loss, or exposed a process failure worth correcting.
 - **Skip** an ordinary reproduced bug. For technical incidents, establish the
   technical cause and immediate containment first; unknown technical cause →
@@ -41,7 +41,7 @@ event and decision trail; do not invent a code defect to enter this skill.
    blast radius, or recover faster, with baseline, target, horizon, residual
    risk. Never claim recurrence is impossible.
 4. Challenge the draft. Dispatch the template's independent escape-path
-   challenger per `dispatching-parallel-agents` Step 2; a material incident
+   challenger per `dispatching-parallel-agents` Step 2; a serious incident
    without one needs the omission the `Expected reviewers` field requires.
    Disposition every finding.
 5. Issue the immutable analysis with its `External lifecycle ledger` to the
@@ -67,7 +67,7 @@ event and decision trail; do not invent a code defect to enter this skill.
    Recommendation: {{the answer the evidence and ownership support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 3. Move an action out of `proposed` only on a complete trusted receipt for
    the exact scope and dates. Record rejection, cancellation, or supersession
    with its residual risk and replacement.
@@ -92,7 +92,8 @@ event and decision trail; do not invent a code defect to enter this skill.
 
 ## Action states
 
-Record in the external ledger `proposed → {owner-accepted | rejected |
+Record in the external ledger (append-only, outside the issued analysis)
+`proposed → {owner-accepted | rejected |
 cancelled | superseded}`, and for accepted:
 `implemented → falsified → deployed/enforced → effectiveness reviewed → effective → closed`.
 Let no prose, merge, or local green skip a state.

@@ -20,9 +20,9 @@ Design the shape of the solution before anyone builds it: what the pieces are, h
 
 Open `assets/architecture-section.md` before the steps below fill it in.
 
-1. Map every requirement, preserved obligation, and material risk to the
-   component, interface, and owning evaluator reference covering it. Define no
-   assurance gates here. Look each evaluator reference up where its owner
+1. Map every requirement, preserved obligation, and significant risk to the
+   component, interface, and owning gate reference covering it. Define no
+   assurance gates here. Look each gate reference up where its owner
    keeps it: a placeholder, an invented ID, or a gate that does not exist
    there leaves its row unmapped.
    Unmapped row → approval blocked.
@@ -48,7 +48,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    impedance, failure policy, or test isolation. Hypothetical variation earns
    none.
 4. Hard-to-reverse choice → invoke `architecture-decisions`. Unresolved
-   material choice → invoke `interview-me`. Use the domain's language
+   design-changing choice → invoke `clarifying-intent`. Use the domain's language
    throughout.
 
 ## Step 3: Write, review, present
@@ -56,7 +56,8 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 1. Write the immutable section to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it. Fill the header: identity,
-   predecessor, approval rule, ledger location, stable ID delta.
+   predecessor, approval rule, the location of its ledger (append-only,
+   outside the design), stable ID delta.
 2. Fill the classification block. Any answer off the ordinary route, or the
    user marks the work high-risk → run `assets/design-review.md` before
    presenting. Blocking.
@@ -74,13 +75,13 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 4. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
 
 ## Gotchas
 
-- Step 1's mapping table needs a real owning evaluator for every row, but
+- Step 1's mapping table needs a real owning gate for every row, but
   this skill defines no assurance gates itself. A row naming a placeholder or
   a gate its owner never defined still reads as mapped on the page; only the
   lookup in Step 1 shows it is unmapped.
@@ -94,7 +95,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 - Shallow modules — an interface as wide as the implementation behind it.
 - Untested external-service paths — "it'll work in prod" is not a design.
 - Components with no trace back to a requirement, or requirements with no
-  component and evaluator.
+  component and gate.
 - A happy-path diagram with no trust, recovery, runtime, or rollout view despite
   risks on those surfaces.
 - Designing for hypothetical futures with no measured boundary pressure.

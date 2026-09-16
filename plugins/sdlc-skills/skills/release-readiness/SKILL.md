@@ -16,13 +16,14 @@ to the user. This skill never deploys or publishes.
 
 ## Step 1: Fix what is being released
 
-Open `assets/release-candidate.md`. Read `references/gate-details.md` at the
-row numbers below for each concrete check.
+Open `assets/release-candidate.md` before Step 1's actions; each step fills its
+sections. Read `references/gate-details.md` when a step below cites a row
+number and you need that row's concrete check.
 
 1. Fill the `Immutable release-input descriptor`: promotion, source, contracts,
    expected artifacts and gate cells, who may approve. No secret values.
-2. Write attempts and evidence in the `External attempt and evidence ledger`,
-   never in the descriptor.
+2. Write attempts and evidence in the `External attempt and evidence ledger` —
+   a ledger (append-only, outside the descriptor) — never in the descriptor.
 3. Freeze the artifact set: one terminal successful build per required member,
    from the recorded source. Record its identity (row 10).
 4. Test and promote *that* set. Reject a later rebuild, however equivalent.
@@ -71,6 +72,17 @@ the descriptor's approver rule), or **blocking**.
 
 5. Promote nothing until the user names one. The promotion then runs under its
    own authorized action, never on the strength of the verdict.
+
+## Gotchas
+
+- Step 2.6's prior-stage evidence has to be captured while that stage is
+  live. A rollout that expands on its own schedule — a percentage ramp, a
+  timed cohort — has already moved by the time anyone looks, and the
+  expansion is then approved against evidence nobody observed.
+- A row dispositioned **not applicable** counts identically to an evidenced
+  one in a bare gate tally, which is why Step 3.4 presents gates evidenced
+  and deviations owned as separate numbers. Collapsing them into one hides
+  how much of the release nobody checked.
 
 ## Hard stops
 

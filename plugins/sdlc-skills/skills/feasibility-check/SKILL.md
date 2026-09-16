@@ -12,7 +12,10 @@ put an evidence-bound recommendation to the accountable owner.
 
 - Before committing to a project or initiative (the go/no-go moment).
 - When feasibility is genuinely uncertain — new tech, hard constraints, unknown data.
-- **Skip** when the path is well-trodden and the risk is obviously low.
+- **Skip** only when an existing feasibility section already fills every
+  dimension row from evidence and no row is `unknown`.
+- **Solo owner** — the user is the only stakeholder: they own every dimension
+  row and every go-if condition, so Step 1.1's owner lookup is skipped.
 
 ## Step 1: Assess
 
@@ -37,7 +40,7 @@ section.
 ## Step 2: Recommend and present
 
 1. Write go / no-go / go-if bound to the exact recommendation version. Per
-   go-if condition: stable ID, evaluator or evidence, owner, expiry, state
+   go-if condition: stable ID, gate or evidence, owner, expiry, state
    `pending / satisfied / failed`, abort response.
 2. Write the immutable `## Feasibility` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
@@ -48,7 +51,7 @@ section.
    Feasibility {{path}} — version {{identity (per template)}}
    Recommendation: {{go | no-go | go-if}}
    Top risks: {{list with confidence}}
-   Conditions: {{each with owner and evaluator}}
+   Conditions: {{each with owner and gate}}
 
    1. Go
    2. Go-if every named condition is met
@@ -58,12 +61,12 @@ section.
    Recommendation: {{option}} — {{one sentence of evidence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 4. Go-if → only the named evidence and owner move a condition's external
-   state. Expiry, or any change to a bound input, evaluator, evidence, owner,
+   state. Expiry, or any change to a bound input, gate, evidence, owner,
    or freshness → condition invalid, decision reopened.
 5. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
-   `satisfied`, invoke `scope-it` when the boundary is next. Never impose a
+   `satisfied`, invoke `scoping` when the boundary is next. Never impose a
    phase already complete.
 
 ## Gotchas

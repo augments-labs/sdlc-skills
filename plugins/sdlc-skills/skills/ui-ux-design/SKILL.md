@@ -80,7 +80,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 
 1. Tag every claim with its *Evidence* kind. Stakeholder preference selects a
    direction; it never proves users can complete the flow. Open usability
-   risk → record it open with a named evaluator and owner.
+   risk → record it open with a named gate and owner.
 2. Preferences selected rendered variants → freeze the keyed **Selected
    visual references** collection exactly as `visual-decisions.md` defines
    before compiling. Memory, a path, or a label is not a contract.
@@ -101,7 +101,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
+   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
 5. A successor's delta includes the selected visual references.
 6. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
