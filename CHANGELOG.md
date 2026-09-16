@@ -2,6 +2,16 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.1.5] — 2026-09-16
+
+A section appended under a heading its predecessor already carries no longer
+inherits the predecessor's identity — the documented command now refuses unless
+the heading matches exactly once. Seven other gates hold where a release-candidate
+review found them open, among them an approval a later ledger row had closed, a
+status page written into a candidate a review is bound to, a workspace root taken
+from a bare repository's parent, and the challenger prompt `post-mortem`
+dispatches but never shipped.
+
 ## [10.1.4] — 2026-09-16
 
 A third cold read, by readers who had seen neither earlier pass, proposed
