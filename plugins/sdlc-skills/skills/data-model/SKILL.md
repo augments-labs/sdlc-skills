@@ -26,8 +26,8 @@ Open `assets/data-model-section.md` before the steps below fill it in.
 3. Map relationships: cardinality, ownership, what cascades on delete.
 4. Draw state transitions per concept with a lifecycle. An undrawn transition
    is one the code permits by accident.
-5. Per material invariant, name the constraint, transaction boundary, test,
-   or reconciliation enforcing it, and who owns failures.
+5. Per invariant that must never break, name the constraint, transaction
+   boundary, test, or reconciliation enforcing it, and who owns failures.
 
 ## Step 2: Lenses, storage, evidence
 
@@ -41,7 +41,7 @@ Open `assets/data-model-section.md` before the steps below fill it in.
    `migration-strategy` owns the contract.
 3. Trace representative reads, writes, transitions, concurrent operations,
    deletion, existing-data migration. Record the runnable query and result
-   when one exists. Otherwise name the future evaluator and owner; never
+   when one exists. Otherwise name the future gate and owner; never
    pretend it ran.
 
 ## Step 3: Write and present
@@ -49,7 +49,8 @@ Open `assets/data-model-section.md` before the steps below fill it in.
 1. Write the immutable section to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    preserving approved sections around it. Fill the header: identity,
-   predecessor, approval rule, ledger location, stable ID delta.
+   predecessor, approval rule, the location of its ledger (append-only,
+   outside the design), stable ID delta.
 2. Present:
 
    ```text

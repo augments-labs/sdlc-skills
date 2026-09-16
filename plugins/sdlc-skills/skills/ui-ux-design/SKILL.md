@@ -80,7 +80,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 
 1. Tag every claim with its *Evidence* kind. Stakeholder preference selects a
    direction; it never proves users can complete the flow. Open usability
-   risk → record it open with a named evaluator and owner.
+   risk → record it open with a named gate and owner.
 2. Preferences selected rendered variants → freeze the keyed **Selected
    visual references** collection exactly as `visual-decisions.md` defines
    before compiling. Memory, a path, or a label is not a contract.

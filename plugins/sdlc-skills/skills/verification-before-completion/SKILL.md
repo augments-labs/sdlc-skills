@@ -22,8 +22,9 @@ description: "Runs the checks and reads their output before any claim that work 
 1. List every item the request asked for, including any added
    mid-conversation, each with a disposition: delivered, pending, blocked, or
    declined with a reason.
-2. Open `assets/evidence-ledger.md` before the first gate runs and fill each
-   field as its step runs. `Claim` names the transition under evaluation.
+2. Open `assets/evidence-ledger.md` before the first gate runs, filling each
+   field as its step runs — a ledger (append-only, outside the candidate).
+   `Claim` names the transition under evaluation.
 3. One `Results` row per gate the task, plan, or assurance cadence requires
    here; missing, planned, blocked, or unreasoned → claim pending before
    anything runs. A named human acceptor → read
@@ -100,7 +101,7 @@ description: "Runs the checks and reads their output before any claim that work 
   and the claim that gate supported is now unproven.
 - A flaky green is unexplained nondeterminism; route it through `debugging`.
 - Verified is not reviewed. A candidate at a completion or integration
-  boundary requires `requesting-code-review`; task-local evaluator status
+  boundary requires `requesting-code-review`; task-local gate status
   is not that boundary unless its plan says so.
 
 ## When tempted to skip

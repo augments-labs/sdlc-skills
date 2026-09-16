@@ -21,8 +21,8 @@ row numbers below for each concrete check.
 
 1. Fill the `Immutable release-input descriptor`: promotion, source, contracts,
    expected artifacts and gate cells, who may approve. No secret values.
-2. Write attempts and evidence in the `External attempt and evidence ledger`,
-   never in the descriptor.
+2. Write attempts and evidence in the `External attempt and evidence ledger` —
+   a ledger (append-only, outside the descriptor) — never in the descriptor.
 3. Freeze the artifact set: one terminal successful build per required member,
    from the recorded source. Record its identity (row 10).
 4. Test and promote *that* set. Reject a later rebuild, however equivalent.

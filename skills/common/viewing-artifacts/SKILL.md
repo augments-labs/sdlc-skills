@@ -54,8 +54,9 @@ The page carries state, not documents.
 3. Read `references/state-derivation.md` before deriving a value. Derive
    every value by its rules: slug allowlist, phase artifacts, approval
    sources, drift, attention grouping.
-4. Match each section's normative version and location to its decision ledger;
-   preserve its own decision vocabulary. Take task progress from the plan's
+4. Match each section's approved version and location to its decision
+   ledger (append-only, outside the artifact); preserve its own decision
+   vocabulary. Take task progress from the plan's
    ledger rows, never the index checkboxes; only the state `done` counts
    complete. Compare consumed identities for drift; timestamps alone
    indicate possible staleness, never prove freshness. No value → unknown.
@@ -117,7 +118,7 @@ The page carries state, not documents.
 - Treating `**Status:** proposed`, or an impressive document, as approval → approval lives only in a matching ledger row; otherwise the page says unknown.
 - Counting a `[x] done` checkbox, or `done with concerns`, as done → only a `done` ledger row for the plan's current identity counts; every other state counts separately.
 - Pasting artifact prose into nodes or tiles → the page carries state; prose stays behind open-file links.
-- Inferring drift from timestamps alone or a checkbox-only update → compare the consumed normative content; label time-only evidence as possible staleness.
+- Inferring drift from timestamps alone or a checkbox-only update → compare the consumed content itself; label time-only evidence as possible staleness.
 - Hunting the filesystem for an artifact no trail record names → with no `.sdlc-skills/`, render the empty state; at a user-set path, follow its recorded pointer, else say unknown.
 - Starting an ad-hoc server (`python3 -m http.server`, a dev-server forward) to show the page → the key gate and self-terminating lifecycle are the contract; use `scripts/start-server.sh` or deliver the plain file path.
 - Linkifying a URL found in artifact text, or adding a script for interactivity → self-containment: no external requests, no JavaScript; navigation is pure CSS.

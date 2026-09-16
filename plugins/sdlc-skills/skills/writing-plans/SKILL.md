@@ -62,9 +62,10 @@ not the code.
    the exact carve-out.
 5. Include exact code only where precision is fragile: a tricky regex, a
    security check, a migration statement.
-6. Fill `Evaluator`: a command that returns a verdict, or the rubric,
-   evaluator, and deciding observations. UI task → copy `Applicable visual
-   references` and give every Reference ID a **Visual conformance gates** row.
+6. Fill `Evaluator`. The evaluator — the check this task must pass — is a
+   command that returns a verdict, or a rubric with its accountable judge and
+   deciding observations. UI task → copy `Applicable visual references` and
+   give every Reference ID a **Visual conformance gates** row.
 7. Fill `Evaluator identity/owner` so the gate lives outside what the task
    may mutate. A task that may edit its own gate → write the permitted scope
    and require RED or deliberate falsification before GREEN counts.
@@ -72,8 +73,8 @@ not the code.
    `dispatching-parallel-agents`, with the reason.
 9. Write `00-index.md` plus one file per task to
    `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`. No approval, execution
-   state, or evidence in these files. Every later normative change is a
-   successor file.
+   state, or evidence in these files. Every later change to what they specify
+   is a successor file.
 
 ## Step 3: Self-review against the inputs, by name
 
@@ -129,7 +130,8 @@ not the code.
 
    Offer delegated only if the harness has a subagent action.
    Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
-5. Append one row to the `External decision ledger`: `Identity` = the printed
+5. Append one row to the `External decision ledger`, a ledger (append-only,
+   outside the plan): `Identity` = the printed
    version, `Location` = the index path, `State` = approved, `Bound evidence` =
    the `Approval rule` owner and their answer, then `mode: inline` or
    `mode: delegated`. Write nothing about approval into the index.

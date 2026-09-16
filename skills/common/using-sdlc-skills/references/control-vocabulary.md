@@ -2,7 +2,9 @@
 
 The terms the skills use for evidence, authority, lifecycle, and risk — so the
 same concept is never two words, and one word is never two concepts. Load this
-when a skill uses a term below and the exact sense matters.
+when a term below appears in a template, a reference, or a review prompt and its
+exact sense matters. An always-loaded body defines its own terms where it uses
+them; none of them depends on this file.
 
 ## Identity
 
@@ -24,8 +26,8 @@ ID survives reassignment, and a retry gets a new attempt ID.
 - **Gate** — anything that must accept a result before it may advance. The
   umbrella term; every item below is a kind of gate.
 - **Evaluator** — the specific check a task or plan names as its gate: an
-  executable command or a controlled judgment rubric with explicit criteria,
-  an accountable evaluator, and recorded observations.
+  executable command, or a rubric with explicit criteria, an accountable judge,
+  and recorded observations. Never the judge itself.
 - **Oracle** — the thing that says what the *right* answer is, independent of the
   implementation under test. A characterization or differential baseline is an
   oracle; the implementation's current output is not.

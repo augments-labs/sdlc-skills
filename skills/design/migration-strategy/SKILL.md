@@ -55,8 +55,8 @@ the section it names.
    expansion decision, failure response. Commands and thresholds belong to
    the assurance matrix.
 3. Fill `Partitions and ownership`: a stable shard inventory and ownership
-   rules. Attempts, owners, heartbeats, transfers, and results go to an
-   append-only external ledger, never into the contract.
+   rules. Attempts, owners, heartbeats, transfers, and results go to a
+   ledger (append-only, outside the contract), never into the contract.
 
 ## Step 3: Control what moves underneath you
 

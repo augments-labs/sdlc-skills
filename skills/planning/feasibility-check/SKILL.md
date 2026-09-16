@@ -37,7 +37,7 @@ section.
 ## Step 2: Recommend and present
 
 1. Write go / no-go / go-if bound to the exact recommendation version. Per
-   go-if condition: stable ID, evaluator or evidence, owner, expiry, state
+   go-if condition: stable ID, gate or evidence, owner, expiry, state
    `pending / satisfied / failed`, abort response.
 2. Write the immutable `## Feasibility` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
@@ -48,7 +48,7 @@ section.
    Feasibility {{path}} — version {{identity (per template)}}
    Recommendation: {{go | no-go | go-if}}
    Top risks: {{list with confidence}}
-   Conditions: {{each with owner and evaluator}}
+   Conditions: {{each with owner and gate}}
 
    1. Go
    2. Go-if every named condition is met
@@ -60,7 +60,7 @@ section.
 
    Ask through the harness's user-input action when one exists, else print this block; end the turn; `interview-me` owns what closes it.
 4. Go-if → only the named evidence and owner move a condition's external
-   state. Expiry, or any change to a bound input, evaluator, evidence, owner,
+   state. Expiry, or any change to a bound input, gate, evidence, owner,
    or freshness → condition invalid, decision reopened.
 5. **REQUIRED SUB-SKILL:** on a direct go, or go-if with every condition
    `satisfied`, invoke `scope-it` when the boundary is next. Never impose a

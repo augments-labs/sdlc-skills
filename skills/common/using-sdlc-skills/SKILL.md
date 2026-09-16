@@ -73,8 +73,8 @@ Each is a signal to invoke, not to skip:
 | The thought | The reality |
 | --- | --- |
 | "Too simple" | Scan anyway; simple work hides skipped discipline. |
-| "Task done — check in before the next" | An approved plan authorizes every task in it; `done` is a ledger entry, not a decision point. Continue until the plan ends. |
-| "Hit an issue — stop and ask" | A clear task owns its obstacles: fix and continue. Only a material, destructive, or external decision waits for the user. |
+| "Task done — check in before the next" | An approved plan authorizes every task in it; `done` is an entry in the ledger (append-only, outside the plan), not a decision point. Continue until the plan ends. |
+| "Hit an issue — stop and ask" | A clear task owns its obstacles: fix and continue. Only a scope-changing, destructive, or external decision waits for the user. |
 | "Opening the PR is one command" | The command is cheap; the decision it executes is gated. `finishing-a-branch` owns it, after review. |
 | "Looks good + constraints = approval" | No accepted answer was selected; the decision is still pending. |
 

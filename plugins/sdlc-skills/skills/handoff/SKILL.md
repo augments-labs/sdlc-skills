@@ -60,8 +60,8 @@ says it may go.
 8. Before writing, remove every key, token, password, and piece of personal
    data.
 9. After writing a note to a file, record the first 7 characters of
-   `git hash-object` of that file in the ledger beside it (`.ledger.md` in
-   place of `.md`), never in the note.
+   `git hash-object` of that file in its ledger (append-only, outside the
+   note; `.ledger.md` in place of `.md`), never in the note.
 
 ## Gotchas
 
