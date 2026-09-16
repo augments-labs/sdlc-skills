@@ -37,7 +37,8 @@ external invalidation state, and revalidation/reconciliation gate}}
 current design-review identity that covers this ADR; deadline and
 timeout/cancel owner/action; the report uses the shipped ADR challenger prompt,
 and approval waits for its clear verdict; actual dispatch receipts stay in the
-External challenge ledger}}
+External challenge ledger. Reversible choice, or no dispatch action → the
+author's own counter-case against that same contract, labelled self-challenge}}
 
 **External challenge ledger:** {{reviewer-owned location; attempt lineage,
 cancellation-requested/quiescent state, quarantined partials, report, findings,
@@ -107,6 +108,8 @@ force; owner decision and absence gate required for retirement}}
   Failure/deadline enters cancellation-requested until worker, descendants, and
   effects are quiescent; quarantine partials. A retry is a linked successor and
   rejects predecessor late results/mutations. Missing or unresolved review blocks.
+  A self-challenge never issues `clear`, so approval rests on the decision
+  owner accepting the residual risk that label carries.
 - **Conformance/retirement contract** — defines evidence required to prove the
   accepted choice is implemented or no governed surface remains. Actual results
   stay in the external ledger.

@@ -26,7 +26,9 @@ Open `assets/goals-section.md` before starting; each step fills its section.
 2. Name who benefits, who operates or bears risk, what changes for each, who
    owns the outcome. Competing goals → separate metrics, never one average.
 3. Record one accountable decision owner, or the approvers, conflict
-   resolver, and decision rule.
+   resolver, and decision rule. Solo owner — the user is the only
+   stakeholder → they are the decision owner; leave the approver, conflict,
+   and decision-rule fields out.
 4. Per outcome: current baseline, target, time horizon, measurement source,
    accountable owner. No source or date → cannot be checked → not a goal.
 5. Write the guardrails (what must not degrade) and the failure criterion:

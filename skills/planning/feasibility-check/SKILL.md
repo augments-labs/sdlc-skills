@@ -12,7 +12,10 @@ put an evidence-bound recommendation to the accountable owner.
 
 - Before committing to a project or initiative (the go/no-go moment).
 - When feasibility is genuinely uncertain — new tech, hard constraints, unknown data.
-- **Skip** when the path is well-trodden and the risk is obviously low.
+- **Skip** only when an existing feasibility section already fills every
+  dimension row from evidence and no row is `unknown`.
+- **Solo owner** — the user is the only stakeholder: they own every dimension
+  row and every go-if condition, so Step 1.1's owner lookup is skipped.
 
 ## Step 1: Assess
 

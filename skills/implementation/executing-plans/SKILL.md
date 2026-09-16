@@ -28,19 +28,10 @@ never decides what happens to the branch.
    names the `Approval rule` owner's approval. The index cannot approve itself.
 2. No such row, or the script fails → stop and name the missing version or the
    script's error; never substitute a version read from the index.
-3. No mode in that row (`mode: inline` or `mode: delegated`): ask one question
-   and stop.
-
-   ```text
-   Plan {{version}} is approved. How should I run it?
-
-   1. Inline — every task in this session
-   2. Delegated — one fresh subagent per task, in sequence
-
-   Recommendation: {{option}} — {{one sentence}}.
-   ```
-
-   Offer `delegated` only if the harness has a subagent action.
+3. No mode in that row (`mode: inline` or `mode: delegated`) → ask the mode
+   question from `assets/mode-question.md` before any workspace action, and
+   stop. That file owns the block, the subagent-action condition, and how to
+   ask it.
 
 ## Step 2: Set up the workspace
 

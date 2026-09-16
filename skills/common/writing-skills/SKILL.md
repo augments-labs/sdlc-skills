@@ -93,6 +93,9 @@ debugging, and receiving review. For these only:
 - Keep the **rationalization table** (each tempting excuse → its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. You cannot lazy-load willpower. Keep only the rows an agent actually falls for.
 - They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test, not by sounding good; read `references/testing.md` before claiming one passed.
 - Everything else (capability, template, reference, meta) has no temptation to counter — keep it lean.
+- `containing-an-incident` is this library's exemplar of the form: read its
+  body when writing or editing one. Hard stops, a rationalization table, and
+  `## Gotchas` all sit in the always-loaded body, inside the limits above.
 
 ## Step 1: Decide it is a skill
 

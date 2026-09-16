@@ -33,7 +33,8 @@ Open `assets/scope-section.md` before starting; each step fills its section.
 5. Per assumption and dependency: validation action, owner, expiry or
    decision point. A hidden project inside "assumes X" is scope.
 6. Write the change rules: observations that abort this cut, changes that
-   reopen approval, who decides.
+   reopen approval, who decides. Solo owner — the user is the only
+   stakeholder → they decide, and no approver matrix is recorded.
 
 ## Step 2: Write and present
 

@@ -22,9 +22,11 @@ description: "Runs the checks and reads their output before any claim that work 
 1. List every item the request asked for, including any added
    mid-conversation, each with a disposition: delivered, pending, blocked, or
    declined with a reason.
-2. Open `assets/evidence-ledger.md` before the first gate runs, filling each
-   field as its step runs — a ledger (append-only, outside the candidate).
-   `Claim` names the transition under evaluation.
+2. Task-green claim with one required gate → a one-row inline ledger: claim,
+   gate, state identity, raw result. Integration, release, or more than one
+   gate → open `assets/evidence-ledger.md` before the first gate runs,
+   filling each field as its step runs (append-only, outside the candidate);
+   `Claim` names the transition.
 3. One `Results` row per gate the task, plan, or assurance cadence requires
    here; missing, planned, blocked, or unreasoned → claim pending before
    anything runs. A named human acceptor → read
@@ -111,4 +113,3 @@ description: "Runs the checks and reads their output before any claim that work 
 | "It should work" | Run the gate and make it a fact. |
 | "I ran it earlier" | Earlier state or evidence age may not support this transition. |
 | "The types pass" | Types, build, behavior, requirements, and release are distinct claims. |
-| "The suite is green, so the code is covered" | Read what it asserted. A green that could not have been red covers nothing. |

@@ -21,10 +21,11 @@ change. Watch it happen; keep the output.
 
 ## Step 1: Before the first test command
 
-1. Write down what the test command touches: environment and data, effects
-   outside the repository, time and resources, cleanup, and your authority
-   for each. Never aim a test at a shared or production surface not written
-   here.
+1. The test command reaches outside the repository — a shared service, a real
+   database, the network, a path outside the worktree → write down what it
+   touches: environment and data, effects, time and resources, cleanup, and
+   your authority for each. Never aim a test at a shared or production
+   surface not written here. Entirely inside the repository → no record.
 2. Pin the public interface and the behavior it promises from the task, spec,
    or approved design. Unresolved meaning → `clarifying-intent`. Never guess it
    into a test.
@@ -52,8 +53,9 @@ change. Watch it happen; keep the output.
    came from `debugging`.
 4. Keep the output.
 5. Record the test's identity, the identity of the evaluator — the check that
-   decides pass or fail — and the expected observable as of this RED. Any of the three changes later → the cycle is
-   invalid; restart and reach RED again.
+   decides pass or fail — and the expected observable as of this RED, under
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`. Any of the three changes
+   later → the cycle is invalid; restart and reach RED again.
 6. Write only the code that makes this test pass.
 7. Run the test, then the gate the project requires. Both green.
 8. Refactor under green. Rerun both. An intended behavior change is a new RED

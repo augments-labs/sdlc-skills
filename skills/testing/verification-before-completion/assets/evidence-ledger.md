@@ -1,5 +1,9 @@
 # Completion evidence ledger
 
+Open this file for an integration or release claim, or for any claim needing
+more than one gate. A task-green claim with one required gate stays in the
+one-row inline ledger Step 1.2 describes; this file would be ceremony there.
+
 Create one row per required gate or controlled action in a predeclared external
 user/project-approved location or return it directly. Never place mutable
 evidence in an immutable plan/review artifact or frozen candidate; a deliberate
