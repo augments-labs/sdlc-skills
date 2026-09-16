@@ -49,4 +49,4 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 
 ## Common mistakes
 
-- {{failure mode}} → {{what to do instead}}.
+- {{a failure mode the steps do not already forbid}} → {{what to do instead}}.

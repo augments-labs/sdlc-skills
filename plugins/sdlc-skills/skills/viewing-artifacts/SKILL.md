@@ -65,17 +65,14 @@ The page carries state, not documents.
 
 1. Open `assets/page-template.html` before filling anything. Follow its
    top-of-file and region comments: region order, repeats, omissions,
-   allowed values.
-2. Fill: current UTC as-of, tiles, sidebar groups in attention order, and per
-   topic the spine nodes, drift connector, ADR chain, embedded visuals, every
-   task row, the assurance matrix from `verification/`.
-3. Entity-encode every artifact-derived value before inserting: `&` first,
+   allowed values. Fill every region it marks.
+2. Entity-encode every artifact-derived value before inserting: `&` first,
    then `<`, `>`, `"`. Derived values go in as text, except two attribute
    values the template needs: a topic anchor `href`, `#topic-` plus an
    allowlisted slug; and an open-file `href` or visual `src`, the path of a
    file read in Step 1, relative to `views/index.html` and starting with `../`.
    Never write a URL or a scheme into `href` or `src`.
-4. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
+3. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
    inside a linked task worktree. Create `views/` if missing. No external
    URLs, no JavaScript, no scratch or backup files. Regeneration recomputes
    from the trail and rewrites in place; never merge a previous render.
@@ -115,10 +112,4 @@ The page carries state, not documents.
 
 ## Common mistakes
 
-- Treating `**Status:** proposed`, or an impressive document, as approval → approval lives only in a matching ledger row; otherwise the page says unknown.
-- Counting a `[x] done` checkbox, or `done with concerns`, as done → only a `done` ledger row for the plan's current identity counts; every other state counts separately.
-- Pasting artifact prose into nodes or tiles → the page carries state; prose stays behind open-file links.
-- Inferring drift from timestamps alone or a checkbox-only update → compare the consumed content itself; label time-only evidence as possible staleness.
-- Hunting the filesystem for an artifact no trail record names → with no `.sdlc-skills/`, render the empty state; at a user-set path, follow its recorded pointer, else say unknown.
 - Starting an ad-hoc server (`python3 -m http.server`, a dev-server forward) to show the page → the key gate and self-terminating lifecycle are the contract; use `scripts/start-server.sh` or deliver the plain file path.
-- Linkifying a URL found in artifact text, or adding a script for interactivity → self-containment: no external requests, no JavaScript; navigation is pure CSS.

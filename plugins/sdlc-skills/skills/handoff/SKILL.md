@@ -72,11 +72,5 @@ says it may go.
 
 ## Common mistakes
 
-- A summary of the conversation instead of the state to resume from.
-- Duplicating a plan or spec that already exists — link it.
-- Omitting the one concrete next step, leaving the next session to guess.
 - Treating the handoff as a durable project-lessons store; it transfers
   current state once.
-
-Read `assets/handoff-template.md` before the first handoff: it also carries a
-worked bad-versus-good example and what to leave out.
