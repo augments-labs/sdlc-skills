@@ -2,6 +2,12 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.2.0] — 2026-09-18
+
+OpenCode is the fourth supported harness: one plugin file registers the
+canonical skills and injects the entry skill through system context, surviving
+compaction, with `Task`-based dispatch bindings for its subagents.
+
 ## [10.1.6] — 2026-09-16
 
 The inline and delegated plan executors are peers: the mode answer from
