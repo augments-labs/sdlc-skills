@@ -22,7 +22,7 @@ usage() {
   cat <<'EOF'
 tests/run-plugin-smoke.sh — do the skills land where this harness looks? No model call.
 
-  --harness NAME    claude-code | codex | kimi-code   (required)
+  --harness NAME    claude-code | codex | kimi-code | opencode   (required)
   --help            this text
 
 Exit codes: 0 every skill on disk was discovered after install
@@ -42,7 +42,7 @@ while [ "$#" -gt 0 ]; do
     *) echo "unknown argument: $1" >&2; exit 2;;
   esac
 done
-[ -n "$harness" ] || { echo "needs --harness claude-code|codex|kimi-code" >&2; exit 2; }
+[ -n "$harness" ] || { echo "needs --harness claude-code|codex|kimi-code|opencode" >&2; exit 2; }
 [ -f "$harnessdir/$harness.sh" ] || { echo "no harness adapter: $harness" >&2; exit 2; }
 command -v jq >/dev/null 2>&1 || { echo "needs \`jq\`" >&2; exit 3; }
 . "$harnessdir/$harness.sh"
@@ -93,6 +93,8 @@ case "$harness" in
   # Codex installs only the flat plugin dir, and registers via the marketplace
   # rather than copying a manifest file we could look for.
   codex)       layout='*/skills/*/SKILL.md';   manifest='';;
+  # OpenCode loads the tree in place through the plugin file, like Claude Code.
+  opencode)    layout='*/skills/*/*/SKILL.md'; manifest='.opencode/plugins/sdlc-skills.js';;
 esac
 
 if declare -F adapter_component_inventory >/dev/null 2>&1; then

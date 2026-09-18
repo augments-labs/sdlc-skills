@@ -304,6 +304,9 @@ if ! bash scripts/sh/validate-codex-plugin.sh; then fail=1; fi
 echo "• Kimi adapter"
 if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
 
+echo "• OpenCode adapter"
+if ! bash scripts/sh/validate-opencode-plugin.sh; then fail=1; fi
+
 # Version sync: the release version is declared in three manifests and bumped
 # together in one release commit (see RELEASING.md). A half-done bump ships
 # disagreeing versions, so any disagreement fails.
