@@ -94,13 +94,14 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 
 The catalogue contains 37 skills across all seven phases and `common/`.
 
-Three harnesses have adapters:
+Four harnesses have adapters:
 
 | Harness | Adapter | Routing support |
 | --- | --- | --- |
 | Claude Code | `.claude-plugin/` | `SessionStart` router injection |
 | Codex CLI | `plugins/sdlc-skills/`, listed in `.agents/plugins/marketplace.json` | bundled `SessionStart` router |
 | Kimi Code | `.kimi-plugin/` | session-start router and tool bindings |
+| OpenCode | `.opencode/` | system-context router injection and tool bindings |
 
 `AGENTS.md` and `GEMINI.md` symlink to `CLAUDE.md`, so a harness that reads its
 own instructions file gets the same guidance from one source.
@@ -109,7 +110,7 @@ Because the skills are portable Markdown invoked by name, other harnesses can
 adopt them — each proven by its own tests when added; see
 [`docs/harness-support.md`](docs/harness-support.md).
 
-Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`.
+Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`. Install in OpenCode by adding `"plugin": ["/path/to/sdlc-skills/.opencode/plugins/sdlc-skills.js"]` to `opencode.json` (global or project), then restart — the plugin registers the canonical skills itself.
 
 ## Proactive skill use
 

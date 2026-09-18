@@ -12,6 +12,7 @@ tests/harnesses/
   claude-code.sh
   codex.sh
   kimi-code.sh
+  opencode.sh
 ```
 
 Required:

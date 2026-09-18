@@ -12,6 +12,7 @@ in this repository.
 ```text
 tests/
   run-session-start.sh    the injected router, per envelope       (offline)
+  run-opencode-plugin.sh  the OpenCode hooks: registration, injection, compaction (offline)
   run-plugin-smoke.sh     install / marketplace mechanics         (offline)
   run-serve-preview.sh    the localhost preview's safety contract (offline)
   harnesses/              ONLY what differs per CLI: how it installs and discovers skills
@@ -22,6 +23,7 @@ file covers only what the flags cannot say.
 
 ```bash
 tests/run-session-start.sh
+tests/run-opencode-plugin.sh
 tests/run-plugin-smoke.sh --harness codex
 tests/run-serve-preview.sh
 ```
