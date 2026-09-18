@@ -110,7 +110,7 @@ Because the skills are portable Markdown invoked by name, other harnesses can
 adopt them — each proven by its own tests when added; see
 [`docs/harness-support.md`](docs/harness-support.md).
 
-Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`. Install in OpenCode by adding `"plugin": ["/path/to/sdlc-skills/.opencode/plugins/sdlc-skills.js"]` to `opencode.json` (global or project), then restart — the plugin registers the canonical skills itself.
+Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`. Install in OpenCode by adding `"plugin": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` to `opencode.json` (global or project), then restart — the plugin installs through OpenCode's plugin manager and registers the canonical skills itself. A local checkout works too with its `.opencode/plugins/sdlc-skills.js` file path in place of the package spec.
 
 ## Proactive skill use
 

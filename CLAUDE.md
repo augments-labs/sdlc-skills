@@ -184,5 +184,5 @@ never invoked are not a working integration.
 - `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
 - `docs/` — repository-only rationale, markdown only: philosophy, activation, harness support, skill granularity, testing, and the conformance record. Never referenced from a shipped skill; the gate enforces that.
-- `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the four manifest versions agree).
+- `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the five manifest versions agree).
 - `.claude/` — local config and notes; gitignored, never shipped.

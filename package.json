@@ -1,0 +1,19 @@
+{
+  "name": "sdlc-skills",
+  "version": "10.2.1",
+  "description": "A cross-platform SDLC skills library for coding agents: planning, design, TDD, debugging, review, and delivery workflows.",
+  "type": "module",
+  "main": ".opencode/plugins/sdlc-skills.js",
+  "homepage": "https://github.com/augments-labs/sdlc-skills",
+  "repository": "https://github.com/augments-labs/sdlc-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "sdlc",
+    "planning",
+    "tdd",
+    "debugging",
+    "code-review",
+    "workflow"
+  ]
+}

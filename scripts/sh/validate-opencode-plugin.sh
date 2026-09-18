@@ -27,6 +27,7 @@ err() { printf '  FAIL: %s\n' "$1"; fail=1; }
 
 plugin=".opencode/plugins/sdlc-skills.js"
 tools_doc=".opencode/references/opencode-tools.md"
+pkg="package.json"
 
 echo "• $plugin"
 if [ ! -f "$plugin" ]; then
@@ -77,6 +78,26 @@ else
       err "$f: harness scanner trigger-word"
     fi
   done
+fi
+
+echo "• $pkg (npm-installable plugin package)"
+if [ ! -f "$pkg" ]; then
+  err "missing $pkg — a git package spec has nothing to install, so the plugin never loads"
+else
+  command -v jq >/dev/null || { echo "  FAIL: jq is required to validate $pkg"; exit 1; }
+  jq -e . "$pkg" >/dev/null 2>&1 || err "$pkg does not parse as JSON"
+  [ "$(jq -r '.name // ""' "$pkg")" = "sdlc-skills" ] || err "$pkg name is not sdlc-skills"
+  [ "$(jq -r '.type // ""' "$pkg")" = "module" ] || err "$pkg must set type module for the ESM plugin"
+  main="$(jq -r '.main // ""' "$pkg")"
+  [ -n "$main" ] || err "$pkg has no main entry — the installer would not know which file is the plugin"
+  [ -n "$main" ] && [ ! -f "$main" ] && err "$pkg main entry '$main' points nowhere"
+  for dep in dependencies devDependencies peerDependencies optionalDependencies; do
+    jq -e ".$dep | length > 0" "$pkg" >/dev/null 2>&1 && err "$pkg declares $dep — the adapter must stay dependency-free"
+  done
+  pkg_v="$(jq -r '.version // ""' "$pkg")"
+  claude_v="$(grep -m1 -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' .claude-plugin/plugin.json | sed -E 's/.*"([^"]+)"$/\1/')"
+  [ -n "$pkg_v" ] || err "$pkg has no version"
+  [ -n "$pkg_v" ] && [ -n "$claude_v" ] && [ "$pkg_v" != "$claude_v" ] && err "$pkg version $pkg_v != manifest version $claude_v"
 fi
 
 echo "• $tools_doc (tool binding)"

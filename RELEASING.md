@@ -21,7 +21,7 @@ Nobody bumps in a contribution PR. Versioning is decided once per release, by th
 ## Cutting a release
 
 1. Decide the tier (above) for everything on `dev` since the last tag.
-2. Bump the version in all four manifests: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.kimi-plugin/plugin.json`, and `plugins/sdlc-skills/.codex-plugin/plugin.json`. The gate fails if they disagree, so a half-done bump cannot ship.
+2. Bump the version in all five manifests: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.kimi-plugin/plugin.json`, `plugins/sdlc-skills/.codex-plugin/plugin.json`, and the root `package.json` (the npm-installable OpenCode plugin package). The gate fails if they disagree, so a half-done bump cannot ship.
 3. Add the `CHANGELOG.md` entry — terse, newest-first (*Writing the changelog*, below).
 4. Run the gate: `bash scripts/sh/validate-skills.sh`.
 5. Commit the bump on a release branch off `dev` as `chore(release): vX.Y.Z — <one-line theme>`, and merge its PR into `dev`.
