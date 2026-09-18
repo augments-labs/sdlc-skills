@@ -39,7 +39,10 @@ The OpenCode plugin resolves the router from its own location at runtime, so the
 same file serves a contributor working inside this checkout (auto-discovered
 from `.opencode/plugins/`) and a user elsewhere (named in `opencode.json` under
 `plugin`). Its `config` hook registers the canonical `skills/` directory, so no
-separate skill-path step is needed. `tests/run-opencode-plugin.sh` checks the
+separate skill-path step is needed. The dependency-free root `package.json`,
+version-synced with the manifests, is what makes the `sdlc-skills@git+...`
+package spec installable — without it the spec resolves to nothing.
+`tests/run-opencode-plugin.sh` checks the
 hook logic offline; `tests/run-plugin-smoke.sh --harness opencode` checks
 discovery through the installed CLI.
 
