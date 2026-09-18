@@ -2,6 +2,12 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.2.1] — 2026-09-18
+
+The OpenCode one-line install now works: a dependency-free root `package.json`
+gives the plugin manager the package to install and the entry file to load, so
+the git spec resolves the skills instead of silently loading nothing.
+
 ## [10.2.0] — 2026-09-18
 
 OpenCode is the fourth supported harness: one plugin file registers the
