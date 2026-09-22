@@ -14,5 +14,5 @@ fields bind this section too; copy the full matrix version from Inputs.
 | {{cell and attack}} | {{what you inspected or ran}} | {{evidence location}} | {{result, unrun, or inconclusive}} |
 
 - Findings: {{violated matrix cell, evidence, and shortest repair; or none}}
-- Limitations: {{unrun cells, unsupported promotion claims, and next action; or none}}
+- Limitations: {{unrun cells, unsupported promotion claims, and the next action with its owner; or none}}
 ```
