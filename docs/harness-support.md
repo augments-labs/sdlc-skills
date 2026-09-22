@@ -18,7 +18,7 @@ tools, and lifecycle events.
 | OpenCode 2.x | the checkout directory, entered through the root `index.js` | `setup`'s `session.hook("context")`, into the first user message | Inferred, not observed — the context hook runs on every request and the injection is deduped, so a transcript replaced without the block gets it again; no compaction was run against a 2.x build here |
 | Grok Build | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped — no separate manifest | none — see below | not applicable, there is no injection to re-apply |
 | Muse Code | `.muse-plugin/plugin.json` on a build with plugin support; otherwise the per-skill install `scripts/sh/install-muse-skills.sh` drives | the manifest's `SessionStart` hook — never on 1.3.0, which loads no plugin | Not exposed — no hook runs, so there is nothing to re-apply |
-| pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` hook, via `appendSystemPrompt` | Yes — `session_compact` re-appends the block into the saved compaction entry's own summary |
+| pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` hook, via `appendSystemPrompt` | In-process only — `session_compact` re-appends the block into the compaction entry pi hands the event, after pi has already persisted it; a resumed session relies on `before_agent_start` again |
 
 The Codex plugin manifest carries the skill catalogue but has no session-start
 field, so the entry skill arrives through hooks the plugin itself bundles
@@ -190,8 +190,13 @@ replacing `systemPrompt` — that field is a plain string, not a list, so the
 idempotency check is against the body itself rather than a count.
 `session_compact` exists for re-injection after compaction; text supplied at
 session start does not survive a transcript replaced by a summary, so the
-extension writes the same appended block into the saved compaction entry's
-own `summary` instead. No tool bindings file ships with this adapter: pi's
+extension writes the same appended block into the compaction entry's own
+`summary` field — but that entry has already been persisted by pi before the
+event fires, so the write reaches the in-memory copy for the rest of the run,
+not the saved one; a session resumed later gets the router again from
+`before_agent_start`, not from this. `tests/run-pi-extension.sh` proves the
+append happens and is idempotent, not that it survives a resume. No tool
+bindings file ships with this adapter: pi's
 tool names are unmeasured against a running session, so the Dispatch
 capability and role-binding tables below carry no pi row until they are.
 

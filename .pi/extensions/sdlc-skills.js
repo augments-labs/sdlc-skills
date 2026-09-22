@@ -58,8 +58,12 @@ export default function (pi) {
   });
 
   // Compaction replaces the transcript with a summary; nothing injected at
-  // session start survives it, so the router is carried into the saved
-  // compaction entry's own summary the same way.
+  // session start survives it, so the router is appended into the
+  // in-memory compaction entry this event hands the handler. By the time
+  // the event fires, the entry has already been written to the session
+  // file, so this edit reaches only the copy still in memory for the rest
+  // of the run — a session resumed later gets the router again from
+  // before_agent_start, not from this.
   pi.on("session_compact", (event) => {
     const entry = event && event.compactionEntry;
     if (!entry || typeof entry.summary !== "string") {
