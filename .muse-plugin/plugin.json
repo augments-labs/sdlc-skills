@@ -115,6 +115,10 @@
         "path": "skills/maintenance/debugging/SKILL.md"
       },
       {
+        "id": "diagnosing-a-session",
+        "path": "skills/maintenance/diagnosing-a-session/SKILL.md"
+      },
+      {
         "id": "post-mortem",
         "path": "skills/maintenance/post-mortem/SKILL.md"
       },

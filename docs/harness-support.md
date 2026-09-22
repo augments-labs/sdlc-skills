@@ -152,7 +152,7 @@ directory's `skills/`. `scripts/sh/install-muse-skills.sh` loops the canonical
 directories through it with `--force`, so a re-run overwrites rather than
 failing on "skill already installed", and `--remove` uninstalls the same set,
 treating the CLI's own `skill-not-installed` code as already gone so a second
-removal is a no-op rather than 37 errors.
+removal is a no-op rather than 38 errors.
 
 What that route buys is discovery and nothing else. No hook runs, so no router
 body reaches the prompt: `using-sdlc-skills` is listed like any other skill and
@@ -170,8 +170,8 @@ the network in a fresh home. The inventory step reads `muse skills list
 --source user --json`: the installed copies report `provenance: null`, so there
 is no source path to filter on, and the isolation is what makes the unfiltered
 list trustworthy — the home was empty before the install ran. Measured on
-1.3.0: 37 skills installed, 37 listed at user scope. `muse skills validate` is
-the per-skill check this build allows, and it returns valid for all 37.
+1.3.0: 38 skills installed, 38 listed at user scope. `muse skills validate` is
+the per-skill check this build allows, and it returns valid for all 38.
 
 The smoke test proves the install and the skill inventory. It runs no model
 turn, so whether `using-sdlc-skills` is actually invoked from a listed skill is
