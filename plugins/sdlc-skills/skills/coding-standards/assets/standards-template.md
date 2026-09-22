@@ -1,11 +1,8 @@
 # Coding-standards section template
 
-Copy this into the project's coding-standards section (see `../SKILL.md`) and
-fill every `{{placeholder}}`. Delete the guidance italics as you fill; what
-remains is the standard itself. Keep it short — a section nobody reads governs
-nothing.
-
-## The template
+Copy this into the project's coding-standards section and fill every
+`{{placeholder}}`. Delete the guidance italics as you fill; what remains is
+the standard itself. Keep it short — a section nobody reads governs nothing.
 
 ````markdown
 ## Coding standards
