@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Structural validator for SDLC skills.
-# Enforces the authoring rules in CLAUDE.md across every skill in skills/.
+# Enforces the authoring rules in AGENTS.md across every skill in skills/.
 # Flags and exit codes: --help.
 
 set -uo pipefail
@@ -35,7 +35,7 @@ fail=0
 note() { printf '  %s\n' "$1"; }
 err()  { printf '  FAIL: %s\n' "$1"; fail=1; }
 
-# Patterns that must never appear in shipped skills (see CLAUDE.md).
+# Patterns that must never appear in shipped skills (see AGENTS.md).
 EXT_REFS='superpowers|obra|mattpocock|pocock|ousterhout|github\.com|https?://|#[0-9]{2,}'
 VENDORS='\b(haiku|sonnet|opus|claude|gpt-?[0-9o]|gemini|flash|llama|mistral|openai|anthropic)\b'
 # Skill text is part of the harness's scan surface: a literal trigger-word in a
@@ -327,7 +327,7 @@ echo "• internal references (docs/ and tests/ paths resolve)"
 while IFS=: read -r src ref; do
   [ -f "$ref" ] || err "$src: internal reference '$ref' does not exist"
 done < <(grep -roE --include='*.md' --include='*.sh' \
-           '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md CLAUDE.md | sort -u)
+           '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md AGENTS.md | sort -u)
 
 # Conformance record freshness. docs/agent-skills-conformance.md
 # states how much headroom the library actually has against the standard's

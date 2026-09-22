@@ -103,8 +103,10 @@ Four harnesses have adapters:
 | Kimi Code | `.kimi-plugin/` | session-start router and tool bindings |
 | OpenCode | `.opencode/` | system-context router injection and tool bindings |
 
-`AGENTS.md` and `GEMINI.md` symlink to `CLAUDE.md`, so a harness that reads its
-own instructions file gets the same guidance from one source.
+`AGENTS.md` is the canonical contributor guide. `GEMINI.md` symlinks to it and
+`CLAUDE.md` is a short pointer to it, so a harness that reads its own
+instructions file gets the same guidance from one source, even one that
+refuses a symlinked instructions file.
 
 Because the skills are portable Markdown invoked by name, other harnesses can
 adopt them — each proven by its own tests when added; see
@@ -132,7 +134,7 @@ step that keeps the Codex mirror current are documented once in
 
 ## Contributing and testing
 
-Read [`CLAUDE.md`](CLAUDE.md) before changing the library. It defines the PR
+Read [`AGENTS.md`](AGENTS.md) before changing the library. It defines the PR
 requirements, authoring policy, and structural gate. For skill changes, use
 `writing-skills` and run the gates. See [`docs/testing.md`](docs/testing.md) for
 what each check establishes.
