@@ -51,7 +51,10 @@ node --input-type=module -e '
 import fs from "node:fs";
 const path = "./.opencode/plugins/sdlc-skills.js";
 const mod = await import(new URL("file://" + process.cwd() + "/" + path).href);
-const plugin = mod.default;
+// Export shape only: the module now serves both generations, so the 1.x hook
+// factory is the named export and `default` is the 2.x plugin object. Every
+// assertion below is unchanged.
+const plugin = mod.sdlcSkillsPlugin ?? mod.default;
 const report = (status, label, detail) => console.log((status ? "ok " : "bad ") + label + (detail ? " (" + detail + ")" : ""));
 try {
   const hooks = await plugin({}, undefined);
@@ -221,7 +224,7 @@ stray="$(mktemp -d)"
 cp "$PLUGIN" "$stray/stray-plugin.js"
 if node --input-type=module -e "
 import('file://$stray/stray-plugin.js').then(async (m) => {
-  const hooks = await m.default({}, undefined);
+  const hooks = await (m.sdlcSkillsPlugin ?? m.default)({}, undefined);
   await hooks['experimental.chat.system.transform']({}, { system: [] });
   console.log('injected without a router');
 }).catch((err) => { console.error('refused: ' + (err && err.message)); process.exit(1); }
