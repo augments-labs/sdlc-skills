@@ -37,5 +37,5 @@ assessments brief. A missing check belongs in Limitations, never a clean result.
 
 ## Next action
 
-{{shortest correction or required follow-up; or none}}
+{{shortest correction or required follow-up, and who owns it; or none}}
 ```

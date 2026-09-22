@@ -69,6 +69,11 @@ check per named risk.
 - **Breadth, not rabbit holes.** This is the broad pass. If one axis needs real
   depth—error paths, type invariants, test coverage, comment accuracy, or
   accidental complexity—request its specialist rather than half-running it.
+- A requirement or contract you can read two ways is not yours to settle: log
+  it under Declined to judge with the exact question and both readings, and
+  hold the verdict at `not_ready`; never guess.
+- Copy no secret into the report — no key, token, password, or credential.
+  Name where it lives instead.
 
 ## Output
 
