@@ -14,7 +14,7 @@ An ADR (Architecture Decision Record) captures *why*, not just *what*.
 
 ## Step 1: Draft the ADR
 
-Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
+Open `assets/adr-template.md` before Step 1's actions; it owns the fields. Read `references/adr-example.md` when the first draft is written and needs comparing against a filled example.
 
 1. State the question, the artifact or system scope, the forces, and one
    accountable decision owner or the approvers with a conflict rule.
