@@ -91,7 +91,7 @@ are not a universal prohibition on other valid organizations.
 | `verification-before-completion` | `state-identity.sh` | Captures source identity and environment for evidence binding |
 | `writing-skills` | `check-skill.sh` | Inspects skill files and executes bundled scripts with `--help` |
 | `writing-plans`, `executing-plans`, `subagent-driven-development` | `plan-version.sh`, one byte-identical copy each | Prints a plan's version from its normalized index and task files; read-only; the gate fails when the copies differ |
-| `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Opens and re-checks a plan's run ledger, renders one role brief and refuses a half-filled one, and assembles a task's diff for its reviewer |
+| `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Opens and re-checks a plan's run ledger, renders one role brief and refuses a half-filled one, inserts the role's report template, and assembles a task's diff for its reviewer |
 | `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`; never overwrites a file |
 | `viewing-artifacts` | `serve.py`, `start-server.sh`, `stop-server.sh` | Starts and stops an owned local preview, writes a log, and may open a browser |
 | `ui-ux-design` | The same preview scripts | Provides the governed comparison preview; the gate checks byte equality with the viewer copies |
