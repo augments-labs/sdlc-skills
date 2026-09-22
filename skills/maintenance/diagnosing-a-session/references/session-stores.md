@@ -7,9 +7,9 @@ order and stop at the first one that yields a file matching the intake.
 ## Family A — a per-project directory under a per-user state directory
 
 The most common shape. A state directory in the user's home holds one
-subdirectory per project, named after the project's absolute path with the
-path separators replaced by a single character, and often with a leading
-separator character kept as a leading marker. Inside it, one file per
+subdirectory per project, named after the project's absolute path with every
+non-alphanumeric character replaced by a single marker, and often with a
+leading marker kept from the leading separator. Inside it, one file per
 session, named by the session's identifier. A session that spawned
 subagents may also have a same-named subdirectory holding their records.
 
@@ -31,9 +31,9 @@ under the **main** checkout's path rather than the current directory, so
 try that encoding too before concluding anything:
 
 ```bash
-root=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
-proj=$(printf '%s' "$root" | sed 's|[^A-Za-z0-9]|-|g')
-ls -dt "$HOME"/.*/projects/*"$proj"*/ 2>/dev/null | head -20
+common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) &&
+  proj=$(dirname "$common" | sed 's|[^A-Za-z0-9]|-|g') &&
+  ls -dt "$HOME"/.*/projects/*"$proj"*/ 2>/dev/null | head -20
 ```
 
 **An empty result from a name glob is not evidence that no store exists.**
@@ -44,7 +44,7 @@ Family B does, before you report that there is no record:
 ```bash
 ls -dt "$HOME"/.*/projects/*/ 2>/dev/null | head -20        # every project
 cand={{the directory you are testing}}
-grep -lF "$PWD" $(ls -t "$cand"/* 2>/dev/null | head -5) 2>/dev/null
+grep -rlF "$PWD" "$cand" 2>/dev/null                        # every file in it
 ```
 
 Confirm by content with the current directory, the repository name, or a
