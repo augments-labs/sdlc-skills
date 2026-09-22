@@ -70,6 +70,13 @@ exposes no skill listing without a model call — `debug skill` is gone, and
 generation the test states the inventory as unavailable rather than counting
 the tree and calling it discovery.
 
+What holds the 1.x side is weaker than what holds the 2.x side, and the
+difference is worth stating: the 1.x load is asserted structurally by the
+offline checks — the named export exists, and every function the package entry
+exposes answers a 1.x-shaped call with a hook set — and is not observed on a
+1.x binary, because the adapter's entry shape is what this arrangement
+changed and no 1.x build has run it here.
+
 ## Lifecycle policy and evidence
 
 All adapters supply the full router through session-start mechanisms and
