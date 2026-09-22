@@ -34,7 +34,7 @@ never decides what happens to the branch.
 
 ## Step 1: Verify approval and mode
 
-1. Run `scripts/plan-version.sh` on the plan directory before reading the
+1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
    `External decision ledger`, a ledger (append-only). Read every row for this
    index whose `Identity` is the printed version, in ledger order. The last of
    them must be the row whose `Bound evidence` names the `Approval rule`
@@ -109,7 +109,7 @@ reapproval, end the turn.
    same kind of file, same act. Different shapes go separately, whatever their
    size.
 3. Fill `assets/implementer.md` when dispatching an implementer, rendering it
-   with `scripts/task-brief.sh`. Every input is a file path the worker opens for
+   with `bash scripts/task-brief.sh`. Every input is a file path the worker opens for
    itself; paste the task contract, and nothing else.
 4. Set the tier explicitly, from the Model selection table in
    `dispatching-parallel-agents`. A brief written as prose starts at the middle
@@ -126,7 +126,7 @@ reapproval, end the turn.
 
 ## Step 5: Review the diff, then fix
 
-1. Build the package with `scripts/review-package.sh`, then fill
+1. Build the package with `bash scripts/review-package.sh`, then fill
    `assets/task-reviewer.md` when the implementer reports.
 2. Findings open a fix round. Rounds 1 to 3 go back to the same implementer,
    which still holds the task. Rounds 4 and 5 go to a fresh implementer one tier
@@ -195,7 +195,7 @@ In the worktree from Step 2, in order:
 
 - Remaining work will not fit this session: finish the current ledger row,
   then invoke `handoff`.
-- On resume, rerun `scripts/plan-version.sh` and re-read the latest decision
+- On resume, rerun `bash scripts/plan-version.sh` and re-read the latest decision
   ledger row for the printed version before `--check` on the run ledger: the
   run ledger detects an amended plan, not a row that closed the version.
 

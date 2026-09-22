@@ -128,6 +128,30 @@ for skill in "${skills[@]}"; do
   done < <(find "$dir" -name '*.md')
 done
 
+# A bundled script run as a bare `scripts/x.sh` only executes if the harness
+# preserved the file's execute bit on install; `bash scripts/x.sh` always runs
+# regardless of mode bits. Outside a "## Available scripts" listing — where the
+# bare path just names the file, never instructs running it — every other
+# mention must go through the interpreter. This check scans only SKILL.md
+# bodies — the scope its task contract sets. A reference file can carry the
+# same risk; it is simply outside this check, not exempt from the risk.
+echo "• scripts are invoked through an interpreter"
+for skill in "${skills[@]}"; do
+  body=$(awk '
+    /^## Available scripts/{skip=1; next}
+    /^## / && skip {skip=0}
+    !skip
+  ' "$skill")
+  while IFS= read -r span; do
+    [ -n "$span" ] || continue
+    inner=${span#\`}; inner=${inner%\`}
+    case "$inner" in
+      bash\ scripts/*.sh|sh\ scripts/*.sh) continue ;;
+    esac
+    err "$skill: bare script invocation '$inner'; write bash $inner"
+  done < <(printf '%s\n' "$body" | grep -oE '`(bash |sh )?scripts/[A-Za-z0-9._/-]+\.sh`')
+done
+
 # Cross-skill routing lives in skill text: a precondition, boundary, or handoff
 # names its peer in backticks, in SKILL.md and in the references/ and assets/
 # files it loads. A rename or removal must not leave stale names behind — a

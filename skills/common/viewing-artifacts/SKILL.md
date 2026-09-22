@@ -19,8 +19,8 @@ The page carries state, not documents.
 
 ## Available scripts
 
-- **`scripts/start-server.sh` / `scripts/stop-server.sh`** — start and stop
-  the governed localhost preview (per-session key, owner watchdog, idle
+- **`scripts/start-server.sh`** and **`scripts/stop-server.sh`** — start and
+  stop the governed localhost preview (per-session key, owner watchdog, idle
   timeout). They wrap `scripts/serve.py`; never run another server.
 
 ## Step 1: Read the trail
@@ -103,7 +103,7 @@ The page carries state, not documents.
 
 ## Gotchas
 
-- Run without `--root`, `scripts/start-server.sh` exits 1 with
+- Run without `--root`, `bash scripts/start-server.sh` exits 1 with
   `needs --root DIR`, and the file-path fallback in Step 3.2 hides that no
   preview started.
 - A status request is not consent to a background listener: a preview started
