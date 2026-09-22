@@ -8,7 +8,7 @@ adapter_check() {
 
 # Isolated home, installed the way `grok plugin install <path> --trust`
 # installs it for a real user: offline and without login, since a local-path
-# source clones through git without touching the network.
+# source is copied on the filesystem without touching the network.
 #
 # HOME is overridden alongside GROK_HOME, not GROK_HOME alone: Grok cross-reads
 # a real `~/.claude/plugins/marketplaces/` for Claude-compatible plugins
@@ -17,7 +17,7 @@ adapter_check() {
 # answer for the tree under test — and would read the operator's real home,
 # which this adapter must not do.
 #
-# `grok plugin install` COPIES (git-clones) the source into a per-install
+# `grok plugin install` COPIES the source recursively into a per-install
 # directory under the throwaway home rather than loading the checkout in
 # place, so `plugin_dir` is recorded as the checkout for `cd` purposes only —
 # it is never where the installed skills end up on disk.

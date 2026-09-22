@@ -89,13 +89,13 @@ changed and no 1.x build has run it here.
 Grok Build 1.0.40 accepts a Claude-format plugin directory directly, so no
 dedicated Grok manifest is added — it reads `.claude-plugin/plugin.json` and
 `hooks/hooks.json` from the checkout as they already ship. `grok plugin
-install <path> --trust` clones the checkout into a per-install directory under
+install <path> --trust` copies the checkout into a per-install directory under
 `GROK_HOME`, offline and without login for a local-path source, and registers
 the plugin enabled at user scope. Listing the checkout under `config.toml`'s
 `[plugins] paths` plus `[plugins] enabled` also discovers it, but that route
 additionally requires the folder to be marked trusted in
 `trusted_folders.toml`; the install route needs no separate trust record, so
-`tests/harnesses/grok.sh` uses it. Because the install clones rather than
+`tests/harnesses/grok.sh` uses it. Because the install copies rather than
 loading the checkout in place, the copy's path is not knowable in advance —
 the adapter's inventory step reports skills by `source.plugin_name` from
 `grok inspect --json` instead of by path, matching the plugin id

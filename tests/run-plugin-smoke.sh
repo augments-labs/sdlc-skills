@@ -95,7 +95,7 @@ case "$harness" in
   codex)       layout='*/skills/*/SKILL.md';   manifest='';;
   # OpenCode loads the tree in place through the plugin file, like Claude Code.
   opencode)    layout='*/skills/*/*/SKILL.md'; manifest='.opencode/plugins/sdlc-skills.js';;
-  # Grok clones the install to an unpredictable path, so there is no manifest file to look for.
+  # Grok copies the install to an unpredictable path, so there is no manifest file to look for.
   grok)        layout='*/skills/*/*/SKILL.md'; manifest='';;
 esac
 
