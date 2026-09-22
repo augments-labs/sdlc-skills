@@ -46,8 +46,10 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    it fills in and emits — a document template — goes to `assets/`. A file it
    reads to decide or check — a rubric, a checklist, a reviewer brief, a worked
    example, a lookup table — goes to `references/`. Bundled executable code goes
-   to `scripts/`. Keep short questions or response examples inline when their
-   exact shape matters at that step.
+   to `scripts/`. A body invokes a bundled script as `bash scripts/{{name}}.sh`;
+   the bare path appears only in `## Available scripts` listings. Keep short
+   questions or response examples inline when their exact shape matters at that
+   step.
 4. **Scope and scale-down up top.** State applicability and any skip conditions.
    A mandatory gate may have no skip; define its smallest useful check instead.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
