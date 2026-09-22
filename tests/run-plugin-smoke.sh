@@ -97,6 +97,9 @@ case "$harness" in
   opencode)    layout='*/skills/*/*/SKILL.md'; manifest='.opencode/plugins/sdlc-skills.js';;
   # Grok copies the install to an unpredictable path, so there is no manifest file to look for.
   grok)        layout='*/skills/*/*/SKILL.md'; manifest='';;
+  # Muse installs skill by skill into its config dir, one flat directory per
+  # skill and no phase level; that route copies files and writes no manifest.
+  muse)        layout='*/muse/skills/*/SKILL.md'; manifest='';;
 esac
 
 if declare -F adapter_component_inventory >/dev/null 2>&1; then
