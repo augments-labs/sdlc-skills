@@ -76,8 +76,8 @@ Apply those principles through the library's authoring skill:
 
 | Directory | House use |
 | --- | --- |
-| `references/` | 21 skills; rubrics, checklists, worked examples, and lookup guidance |
-| `assets/` | 30 skills; every fill-in template and other static resources |
+| `references/` | 22 skills; rubrics, checklists, worked examples, and lookup guidance |
+| `assets/` | 31 skills; every fill-in template and other static resources |
 | `scripts/` | 9 skills — see below |
 
 The repository classifies a document by its use: a file filled and emitted is a
