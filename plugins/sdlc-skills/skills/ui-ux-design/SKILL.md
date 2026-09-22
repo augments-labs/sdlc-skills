@@ -15,8 +15,8 @@ Design the experience and decide its direction before implementation. In an exis
 
 ## Available scripts
 
-- **`scripts/start-server.sh` / `scripts/stop-server.sh`** — start and stop
-  the governed localhost preview (per-session key, owner watchdog, idle
+- **`scripts/start-server.sh`** and **`scripts/stop-server.sh`** — start and
+  stop the governed localhost preview (per-session key, owner watchdog, idle
   timeout) for a comparison surface. They wrap `scripts/serve.py`; read
   [visual-decisions.md](references/visual-decisions.md) before starting or
   stopping a preview; it owns the details.
@@ -117,7 +117,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
   neither, just an undocumented accident nobody decided. Filing an
   unrecognized pattern as deliberate by default is how an accident gets
   treated as a constraint instead of being flagged as unknown.
-- Run without `--root`, `scripts/start-server.sh` exits 1, and the file-path
+- Run without `--root`, `bash scripts/start-server.sh` exits 1, and the file-path
   fallback in Step 3.3 hides that no surface was served.
 - Run without `--entry`, the printed URL opens the visuals directory, which
   holds `{{decision-slug}}.html` pages and no `index.html`, so the link the

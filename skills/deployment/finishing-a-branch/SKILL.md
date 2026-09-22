@@ -107,7 +107,7 @@ mutation.
 Enter only on a direct request. Never offer discard because work looks
 unwanted.
 
-1. Rerun `scripts/branch-state.sh` before filling the block. `base.resolved`
+1. Rerun `bash scripts/branch-state.sh` before filling the block. `base.resolved`
    false → get the base from the user or project, rerun with
    `--base`, and fill nothing until it resolves. Then fill it from the output:
 

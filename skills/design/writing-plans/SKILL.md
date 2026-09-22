@@ -94,7 +94,7 @@ how that is judged, not the code.
 
 ## Step 4: Present, then stop
 
-1. Run `scripts/plan-version.sh` on the plan directory before presenting.
+1. Run `bash scripts/plan-version.sh` on the plan directory before presenting.
    Show the complete index and the printed version to the `Approval rule` owner:
 
    ```text
