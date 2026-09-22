@@ -14,7 +14,8 @@ tools, and lifecycle events.
 | Claude Code | `.claude-plugin/` and `hooks/hooks.json` | `SessionStart` hook | Yes — `compact` is in the matcher |
 | Codex | `plugins/sdlc-skills/` and `.agents/plugins/marketplace.json` | bundled `SessionStart` hook | Yes — the hook is unfiltered, so `source=compact` reaches the injector |
 | Kimi Code | `.kimi-plugin/plugin.json` | `sessionStart.skill` | Not exposed — the manifest declares no compaction event |
-| OpenCode | `.opencode/plugins/sdlc-skills.js` | `experimental.chat.system.transform` hook | Yes — the `experimental.session.compacting` hook carries it forward |
+| OpenCode 1.x | `.opencode/plugins/sdlc-skills.js` | `experimental.chat.system.transform` hook | Yes — the `experimental.session.compacting` hook carries it forward |
+| OpenCode 2.x | the checkout directory, entered through the root `index.js` | `setup`'s `session.hook("context")`, into the first user message | Yes — the context hook runs on every request, so a replaced transcript is re-injected |
 
 The Codex plugin manifest carries the skill catalogue but has no session-start
 field, so the entry skill arrives through hooks the plugin itself bundles
@@ -37,14 +38,37 @@ and the skill set exposed by all four adapters.
 
 The OpenCode plugin resolves the router from its own location at runtime, so the
 same file serves a contributor working inside this checkout (auto-discovered
-from `.opencode/plugins/`) and a user elsewhere (named in `opencode.json` under
-`plugin`). Its `config` hook registers the canonical `skills/` directory, so no
-separate skill-path step is needed. The dependency-free root `package.json`,
-version-synced with the manifests, is what makes the `sdlc-skills@git+...`
-package spec installable — without it the spec resolves to nothing.
-`tests/run-opencode-plugin.sh` checks the
-hook logic offline; `tests/run-plugin-smoke.sh --harness opencode` checks
-discovery through the installed CLI.
+from `.opencode/plugins/`) and a user elsewhere (named in `opencode.json`). One
+file carries both contracts, because the two generations share no entry point:
+1.x discovers a plugin by scanning the module's named exports for hook
+factories, and 2.x calls `default.setup(ctx)` and nothing else. The factory is
+therefore exported by name and as `default.server`, and `setup` sits beside it.
+
+On 1.x the `config` hook registers the canonical `skills/` directory, so no
+separate skill-path step is needed, and the router goes into the system
+context. 2.x models `skills` as an array with no paths under it, so that hook
+returns early there; `setup` registers each skill through `skill.transform` and
+puts the router into the first user message instead, once per top-level
+session. Child sessions are skipped — they inherit the work, not the routing —
+and every callback is wrapped, because a throw escaping one takes the plugin,
+and for the context hook the session running it, down with it.
+
+The install path differs too. 1.x accepts the plugin FILE; 2.x accepts only a
+DIRECTORY, and resolves `<dir>/server.js` then `<dir>/index.js` inside it, so
+the root `index.js` re-exports the adapter and an installed package reaches it
+through `main`. The dependency-free root `package.json`, version-synced with
+the manifests, is what makes the `sdlc-skills@git+...` package spec installable
+— without it the spec resolves to nothing.
+
+`tests/run-opencode-plugin.sh` checks both contracts' logic offline against
+stub hosts. `tests/run-plugin-smoke.sh --harness opencode` checks discovery
+through the installed CLI, and what it can prove depends on the generation: on
+1.x it reads back the harness's own skill listing, and on 2.x it reads back the
+harness's own "loading plugin" line naming the entry point it resolved. 2.x
+exposes no skill listing without a model call — `debug skill` is gone, and
+`opencode serve`, whose API does list skills, loads no plugins — so on that
+generation the test states the inventory as unavailable rather than counting
+the tree and calling it discovery.
 
 ## Lifecycle policy and evidence
 
@@ -82,16 +106,17 @@ each adapter binds it, and each harness decides whether it exists at all.
 | Claude Code | `Agent` tool | Yes — a subagent reaches skills unless its own definition withholds the action | One level for the read-only built-in types; a general subagent can dispatch again, which the packet prohibits unless it allocates sub-scope | Settable — the tier binds to the model parameter on the dispatch call |
 | Codex | `spawn_agent` / `wait_agent` / `list_agents` / `send_message` / `followup_task` / `interrupt_agent` | Only when the plugin is installed for the spawned agent, not for the session alone | Not declared by the build — treat a worker's own dispatch as prohibited | Settable — the spawn call carries the model the tier binds to |
 | Kimi Code | `Agent` tool | The brief names the file to read, because a subagent may not resolve plugin-relative paths | One level; a background run parallelises, it does not nest | Not settable — the tier is stated in the prompt and the harness binds it |
-| OpenCode | `Task` tool to the `general` / `explore` subagents | Session-wide, through the plugin's skills registration | Not declared by the build — treat a worker's own dispatch as prohibited | Settable through the agent's `model` — a subagent without one inherits the invoking agent's; the tier is stated in the prompt and the harness binds it |
+| OpenCode | 1.x: `Task` tool to the `general` / `explore` subagents. 2.x: `subagent` tool, with the same role names as its `agent` argument | Session-wide, through the plugin's skills registration | Not declared by the build — treat a worker's own dispatch as prohibited | Settable through the agent's `model` — a subagent without one inherits the invoking agent's; the tier is stated in the prompt and the harness binds it |
 
 The Codex tool names, their arguments, and the resume path live in
 `plugins/sdlc-skills/references/codex-tools.md`, inside that adapter, because a
 shipped skill never names a harness tool. The OpenCode names live in
 `.opencode/references/opencode-tools.md` for the same reason. What each row
 rests on: the Claude Code row was checked against the running harness's own
-tool surface; the OpenCode row was checked against the installed build's skill
-listing and its published tool and agent references; the other two are read
-from their adapter's declared binding, not from a live run.
+tool surface; the OpenCode 1.x row was checked against that build's skill
+listing and its published tool and agent references, and the 2.x row against
+the tool surface a running 2.x session reports; the other two are read from
+their adapter's declared binding, not from a live run.
 Availability, nesting, and agent names are properties of the installed build, so
 re-check a cell with the CLI before relying on it.
 
@@ -126,7 +151,7 @@ shipped skill.
 | Claude Code | the built-in general-purpose type, plus any agent defined under `.claude/agents/`, selected with the `Agent` tool's `subagent_type` | the general-purpose type carrying the role prompt |
 | Codex | the agent roles the installed build exposes to `spawn_agent` | a general agent carrying the role prompt |
 | Kimi Code | the `subagent_type` values bound in `.kimi-plugin/plugin.json` `skillInstructions` | the general-purpose type carrying the role prompt |
-| OpenCode | `general` for the implementer, `explore` for the reviewers, selected with the `Task` tool | the general-purpose subagent carrying the role prompt, which forbids every edit, commit, and push |
+| OpenCode | `general` for the implementer, `explore` for the reviewers, selected with the `Task` tool on 1.x and the `subagent` tool's `agent` argument on 2.x | the general-purpose subagent carrying the role prompt, which forbids every edit, commit, and push |
 
 The tier is a separate choice from the agent: the skill sets `small`, `medium`,
 or `large` explicitly per dispatch, and the adapter binds that tier to a model.
