@@ -1,10 +1,13 @@
-# Containment record — {{incident-short-name}}
+# Containment record template
 
-Written when the lever is pulled, not afterwards. Its job is to make the
-mitigation reversible by somebody who was not here. Write it to
-`.sdlc-skills/handoffs/{{YYYY-MM-DD}}-{{topic}}-containment.md` unless the user or
-the incident owner names another place. Commit it only under the handoff
-store's rule.
+`containing-an-incident` fills this when the lever is pulled, not afterwards —
+its job is to make the mitigation reversible by somebody who was not here.
+Write it to `.sdlc-skills/handoffs/{{YYYY-MM-DD}}-{{topic}}-containment.md`
+unless the user or the incident owner names another place, and commit it only
+under the handoff store's rule.
+
+```markdown
+# Containment record — {{incident-short-name}}
 
 ## Impact
 
@@ -50,3 +53,4 @@ containment could not wait" is a valid entry.}}
 
 - **Cause:** {{unknown / under investigation / known — hand to `debugging`}}
 - **Why it escaped:** {{hand to `post-mortem` once cause and containment are known}}
+```

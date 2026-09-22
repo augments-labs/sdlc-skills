@@ -1,10 +1,11 @@
 # Handoff template
 
-Fill-in template for `../SKILL.md`. Loaded on demand.
-
-## The template
-
-Copy this, fill every `{{placeholder}}`, delete nothing silently — a section you can't fill is a signal the handoff isn't ready. "Next step unknown" is honest; an omitted section is a trap.
+`handoff` fills this before writing, once Step 1 has settled where it goes.
+Copy it, fill every `{{placeholder}}`, and delete nothing silently — a section
+you can't fill is a signal the handoff isn't ready, and "next step unknown" is
+honest where an omitted section is a trap. Record the destination itself,
+along with who may access it and its cleanup owner, in `Storage controls`
+below.
 
 ```markdown
 # Handoff: {{work item name}}

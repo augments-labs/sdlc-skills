@@ -1,24 +1,16 @@
 # Post-mortem template
 
-Copy this structure and replace every placeholder. Keep it factual and
-blameless: people and roles may appear as owners or timeline actors, but causes
-describe conditions and controls rather than moral judgment.
+`post-mortem` copies this structure when starting the analysis, replacing
+every placeholder; keep it factual and blameless, since causes describe
+conditions and controls rather than moral judgment. Draft it, challenge it,
+then issue one immutable version; nothing after issue — action states, proof,
+rollout results, effectiveness verdicts — is ever written back here, and a
+`pending` cell means the ledger has not yet recorded that state. Write the
+issued copy to `.sdlc-skills/post-mortems/{{YYYY-MM-DD}}-{{topic}}.md` under
+current repository authority, or return it directly. Redact incident data
+before disclosure; only a trusted action contract grants access to it.
 
-Draft the analysis, challenge it, then issue one immutable version. Its
-identity is the first 7 characters of `git hash-object` on this file as issued;
-record it in the ledger row, never in this file. Everything that happens after
-issue — action states, proof and rollout results, effectiveness verdicts — goes
-in ledger rows, never into this file; its cells stay `pending` here.
-Any correction or normative action change creates a successor with predecessor,
-stable-ID delta, affected consumers, and new approval; it never edits the issued
-version. Keep mutable lifecycle evidence in an append-only external ledger.
-The default repository path is
-`.sdlc-skills/post-mortems/{{YYYY-MM-DD}}-{{topic}}.md`; write there only under
-current repository/storage authority, otherwise return the record directly.
-
-Redact incident data before disclosure. Only a trusted action contract grants
-tool, data, secret, network, mutation, publication, storage, or cleanup access.
-
+```markdown
 ## Control and evidence handling
 
 - **Identity:** recorded in the ledger row, never here: the first 7 characters of `git hash-object` over this file as issued
@@ -153,3 +145,4 @@ Close only when:
 - each effectiveness review is effective, or ineffective/inconclusive work was
   reopened/superseded or received direct residual-risk closure;
 - artifact access/retention/cleanup obligations and authorities are reconciled.
+```

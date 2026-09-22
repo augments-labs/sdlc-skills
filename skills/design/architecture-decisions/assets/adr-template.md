@@ -1,15 +1,11 @@
 # ADR template
 
-Copyable template behind `../SKILL.md`. Loaded on demand.
-
-## How to use this
-
-- Fill every section; an ADR with an empty section is worse than none — a reader can't tell "considered and rejected" from "never thought about it."
-- Write for the reader in six months who has none of today's context. They can see *what* the code does; only you can tell them *why*.
-- Prefer one screen, but never omit a decision input, risk, authority, or
-  recovery fact to hit a size target. Depth may link to the surrounding design.
-
-## The template
+`architecture-decisions` opens this before Step 1's actions; it owns the
+fields the steps below fill. Append the drafted, `proposed` ADR to
+`.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
+preserving what is already there. Fill every section — an ADR with an empty
+section reads as "never thought about it," not "considered and rejected" —
+and write for a reader in six months who has none of today's context.
 
 ```markdown
 ## ADR: {{decision-title}}

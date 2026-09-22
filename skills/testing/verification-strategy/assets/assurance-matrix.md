@@ -1,9 +1,11 @@
 # Project or initiative assurance matrix
 
-Write the completed artifact to
-`.sdlc-skills/verification/{{YYYY-MM-DD}}-{{topic}}.md` unless the user or project
-sets another durable location.
+`verification-strategy` instantiates this before writing any gate, filling
+`Risk inventory` and `Risk-to-gate matrix` first. Write the completed artifact
+to `.sdlc-skills/verification/{{YYYY-MM-DD}}-{{topic}}.md` unless the user or
+project sets another durable location.
 
+```markdown
 ## Control
 
 - **Scope:** `project | initiative {{name and exclusions}}`
@@ -160,3 +162,4 @@ status mirror is a new candidate to verify and review-classify.
 | Item | Consequence | Compensating gate | Owner | Expiry/revisit | Required acceptance owner and external decision ledger |
 | --- | --- | --- | --- | --- | --- |
 | `{{gap/deviation}}` | `{{impact}}` | `{{G-...}}` | `{{owner}}` | `{{condition/date}}` | `{{accepted decision shape and version-bound ledger location}}` |
+```

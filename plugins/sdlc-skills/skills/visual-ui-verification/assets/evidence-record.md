@@ -1,8 +1,11 @@
 # Visual evidence record
 
-Keep this record outside the candidate identity. Fill one run header and one row
-per required observation; use stable `{{double-curly}}` values.
+`visual-ui-verification` opens this before any capture and fills the `Run`
+header first. Keep it outside the candidate identity; record where the filled
+copy and its captures live in `Evidence controls` below, alongside one row per
+required observation using stable `{{double-curly}}` values.
 
+```markdown
 ## Run
 
 - **Run ID / time:** `{{stable attempt identity and UTC interval}}`
@@ -77,3 +80,4 @@ was needed. Do not infer coverage from a similar screenshot.
 - **Release handoff:** `{{source/working-tree acceptance evidence only, or exact
   immutable release artifact/set identity and fresh visual verdict}}`
 - **Gate wiring:** `{{verification matrix row, cadence, protected promotion}}`
+```
