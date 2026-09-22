@@ -2,7 +2,8 @@
 
 Read this before writing or editing any file under `assets/`. It states the
 shape every template takes and the content checklist a complete one carries,
-so a filled copy reads the same no matter which skill produced it.
+so a filled copy of one family reads the same no matter which skill produced
+it.
 
 ## Shape
 
@@ -19,15 +20,20 @@ One rule per line; each is checkable by eye.
    or a sibling report inserted under `## Report template`. Use
    ` ```markdown ` otherwise. Use ` ```text ` only for a question or a
    message printed verbatim.
-4. Inside the fence, give: an H1 with the subject slot; an identity header
-   as a bullet list (candidate or target, inputs, role or owner, verdict or
-   status); `## ` sections; a table for enumerable rows; a repeated `### `
-   block for findings, each with a `path:line` evidence line; and a closing
-   pair — `## Limitations` (or the family's own name for it, such as
-   `## Evidence not available` or `## Declined to judge`) then
-   `## Next action`. Give a prompt template `## Inputs`, its work sections,
-   `## Rules` or `## Boundary`, `## Output`, and `## Report template` when a
-   sibling report exists.
+4. Inside the fence, match the shape to the family; no line is shared across
+   families:
+   - Report or document: an H1 with the subject slot; an identity header as
+     a bullet list (candidate or target, inputs, role or owner, verdict or
+     status); `## ` sections; a table for enumerable rows; a repeated `### `
+     block for findings, each with a `path:line` evidence line; and a
+     closing pair — `## Limitations` (or the family's own name for it, such
+     as `## Evidence not available` or `## Declined to judge`) then
+     `## Next action`.
+   - Prompt: open with the role sentence, no H1 inside the fence; then
+     `## Inputs`, the work sections, `## Rules` or `## Boundary`,
+     `## Output`, and `## Report template` when a sibling report exists.
+   - Question: a `text` fence holding the question, its numbered options,
+     and a `Recommendation:` line.
 5. Spell every slot `{{double-curly}}`. Spell a slot a script fills exactly
    as that script's `--help` names it. Never name another asset from inside
    an asset.
