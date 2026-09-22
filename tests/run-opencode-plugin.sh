@@ -53,7 +53,9 @@ const path = "./.opencode/plugins/sdlc-skills.js";
 const mod = await import(new URL("file://" + process.cwd() + "/" + path).href);
 // Export shape only: the module now serves both generations, so the 1.x hook
 // factory is the named export and `default` is the 2.x plugin object. Every
-// assertion below is unchanged.
+// pre-existing 1.x assertion below is unchanged. One assertion below is new:
+// the array-shaped `skills` check, which covers the guard the dual-contract
+// module put in the `config` hook.
 const plugin = mod.sdlcSkillsPlugin ?? mod.default;
 const report = (status, label, detail) => console.log((status ? "ok " : "bad ") + label + (detail ? " (" + detail + ")" : ""));
 try {

@@ -15,7 +15,7 @@ tools, and lifecycle events.
 | Codex | `plugins/sdlc-skills/` and `.agents/plugins/marketplace.json` | bundled `SessionStart` hook | Yes — the hook is unfiltered, so `source=compact` reaches the injector |
 | Kimi Code | `.kimi-plugin/plugin.json` | `sessionStart.skill` | Not exposed — the manifest declares no compaction event |
 | OpenCode 1.x | `.opencode/plugins/sdlc-skills.js` | `experimental.chat.system.transform` hook | Yes — the `experimental.session.compacting` hook carries it forward |
-| OpenCode 2.x | the checkout directory, entered through the root `index.js` | `setup`'s `session.hook("context")`, into the first user message | Yes — the context hook runs on every request, so a replaced transcript is re-injected |
+| OpenCode 2.x | the checkout directory, entered through the root `index.js` | `setup`'s `session.hook("context")`, into the first user message | Inferred, not observed — the context hook runs on every request and the injection is deduped, so a transcript replaced without the block gets it again; no compaction was run against a 2.x build here |
 
 The Codex plugin manifest carries the skill catalogue but has no session-start
 field, so the entry skill arrives through hooks the plugin itself bundles
@@ -37,9 +37,14 @@ existing plugin cache. `scripts/sh/validate-skills.sh` checks mirror equality
 and the skill set exposed by all four adapters.
 
 The OpenCode plugin resolves the router from its own location at runtime, so the
-same file serves a contributor working inside this checkout (auto-discovered
-from `.opencode/plugins/`) and a user elsewhere (named in `opencode.json`). One
-file carries both contracts, because the two generations share no entry point:
+same file serves a contributor working inside this checkout and a user
+elsewhere. How each reaches it differs by generation. 1.x auto-discovers the
+plugin file from `.opencode/plugins/`; 2.x scans that same directory but keeps
+only entries that are directories, so it never picks the file up, and a
+contributor on 2.x names the checkout directory in `opencode.json` exactly as a
+user elsewhere does. Neither generation's passive discovery is exercised by the
+tests — the smoke adapter writes an explicit config entry for both. One file
+carries both contracts, because the two generations share no entry point:
 1.x discovers a plugin by scanning the module's named exports for hook
 factories, and 2.x calls `default.setup(ctx)` and nothing else. The factory is
 therefore exported by name and as `default.server`, and `setup` sits beside it.
@@ -48,8 +53,11 @@ On 1.x the `config` hook registers the canonical `skills/` directory, so no
 separate skill-path step is needed, and the router goes into the system
 context. 2.x models `skills` as an array with no paths under it, so that hook
 returns early there; `setup` registers each skill through `skill.transform` and
-puts the router into the first user message instead, once per top-level
-session. Child sessions are skipped — they inherit the work, not the routing —
+puts the router into the first user message instead. That hook runs on every
+request and the injection is deduped on the block's own opening, so in steady
+state the block lands once per top-level session, and lands again on any later
+request whose first user message no longer carries it. Child sessions are
+skipped — they inherit the work, not the routing —
 and every callback is wrapped, because a throw escaping one takes the plugin,
 and for the context hook the session running it, down with it.
 
