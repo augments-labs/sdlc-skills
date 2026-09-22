@@ -102,7 +102,7 @@ loading the checkout in place, the copy's path is not knowable in advance —
 the adapter's inventory step reports skills by `source.plugin_name` from
 `grok inspect --json` instead of by path, matching the plugin id
 (`sdlc-skills`) the manifest declares. Measured on 1.0.40: the install
-registers 37 skills and 1 hook. `grok inspect` also cross-reads a real
+registers every skill in the manifest (38 as of this branch) and 1 hook. `grok inspect` also cross-reads a real
 operator's `~/.claude/plugins/marketplaces/` regardless of `GROK_HOME` alone
 — on a machine that already has this plugin installed for Claude Code, that
 installed copy answers for the tree under test — so the adapter isolates
