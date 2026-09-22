@@ -76,7 +76,7 @@ Apply those principles through the library's authoring skill:
 
 | Directory | House use |
 | --- | --- |
-| `references/` | 22 skills; rubrics, checklists, worked examples, and lookup guidance |
+| `references/` | 25 skills; rubrics, checklists, worked examples, and lookup guidance |
 | `assets/` | 31 skills; every fill-in template and other static resources |
 | `scripts/` | 9 skills — see below |
 
