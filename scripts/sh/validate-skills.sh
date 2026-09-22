@@ -327,7 +327,7 @@ echo "• internal references (docs/ and tests/ paths resolve)"
 while IFS=: read -r src ref; do
   [ -f "$ref" ] || err "$src: internal reference '$ref' does not exist"
 done < <(grep -roE --include='*.md' --include='*.sh' \
-           '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md CLAUDE.md | sort -u)
+           '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md AGENTS.md | sort -u)
 
 # Conformance record freshness. docs/agent-skills-conformance.md
 # states how much headroom the library actually has against the standard's

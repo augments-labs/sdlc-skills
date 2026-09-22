@@ -1,5 +1,5 @@
 <!--
-Read every word before filling this in, and read CLAUDE.md → "If you are an
+Read every word before filling this in, and read AGENTS.md → "If you are an
 AI agent" first. Every section needs a specific, true answer. A PR that leaves
 a section blank, keeps placeholder text, bundles unrelated changes, or shows
 no evidence of a human reading the diff is closed without review.
@@ -49,7 +49,7 @@ If the edits look separable but depend on each other, name the dependency. -->
 
 ## Does it belong in core?
 
-<!-- Core is general-purpose SDLC guidance (CLAUDE.md → "What belongs here").
+<!-- Core is general-purpose SDLC guidance (AGENTS.md → "What belongs here").
 Would this help someone on a completely different kind of project? Is it
 specific to one domain, team, tool, or workflow? Does it integrate or promote
 a third-party service? A yes to either of the last two means it belongs in
@@ -81,7 +81,7 @@ measured here. -->
 ## Rigor
 
 - [ ] For a skill change: I invoked `writing-skills`, and `skills/common/writing-skills/scripts/check-skill.sh` passes on every skill touched.
-- [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without explaining why the new wording holds the same line (CLAUDE.md → "Editing a skill").
+- [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without explaining why the new wording holds the same line (AGENTS.md → "Editing a skill").
 - [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model.
 
 ## New harness support (required only if this PR adds a harness)

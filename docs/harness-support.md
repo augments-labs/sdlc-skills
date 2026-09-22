@@ -134,9 +134,10 @@ An agent name never implies a tier.
 
 ## Repository instruction files
 
-`AGENTS.md` and `GEMINI.md` are symlinks to `CLAUDE.md`. A harness that reads
-its conventional repository instructions therefore receives the same contributor
-rules from one source.
+`AGENTS.md` is the canonical contributor guide. `GEMINI.md` is a symlink to it
+and `CLAUDE.md` is a short pointer to it. A harness that reads its conventional
+repository instructions therefore receives the same contributor rules from one
+source, even one that refuses a symlinked instructions file.
 
 ## Using SDLC skills elsewhere
 
@@ -165,7 +166,7 @@ Different claims need different evidence:
   or hook branches. Keep the script small enough that its test does not become a
   second implementation.
 - **Discovery and activation:** a new harness shows a skill activating through
-  its own CLI once, when it is added (see `CLAUDE.md`, *New harness support*).
+  its own CLI once, when it is added (see `AGENTS.md`, *New harness support*).
 
 Each harness is bound in one place: the offline contract — how the plugin
 installs and what the CLI resolves — documented in
