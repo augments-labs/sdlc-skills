@@ -296,31 +296,42 @@ for retired_script in \
 done
 
 # Manifest sync: a harness discovers skills only through its manifest, so every
-# leaf skill dir must be listed explicitly in the plugin's "skills" array — a
+# leaf skill dir must be listed explicitly in the plugin's skill list — a
 # skill missing from it silently fails to load; a dead entry points nowhere.
+#
+# Two manifests state that list in their own shape, so each supplies the jq
+# that normalises it back to the canonical "./skills/<phase>/<name>": Claude
+# Code's "skills" array holds the directory paths as written, and Muse's
+# native `capabilities.skills` holds {id, path} objects naming the SKILL.md
+# inside each directory. Normalising is what lets one check judge both.
 actual=$(printf '%s\n' "${skills[@]}" | sed 's|/SKILL.md$||; s|^|./|' | sort -u)
-manifest=.claude-plugin/plugin.json
-echo "• $manifest (skills array sync)"
-if [ ! -f "$manifest" ]; then
-  err "missing $manifest"
-elif ! command -v jq >/dev/null 2>&1; then
-  err "jq is required to read $manifest (the adapter checks below need it too)"
-elif ! jq -e . "$manifest" >/dev/null 2>&1; then
-  err "$manifest does not parse as JSON — a harness loads no skill from it"
-else
-  # Read the array itself: a grep over the whole file also matches paths under
-  # a renamed or absent "skills" key, so the gate passed manifests no harness
-  # can load.
-  declared=$(jq -r '.skills[]? // empty' "$manifest" | sort -u)
-  if [ -z "$declared" ]; then
-    err "$manifest has no non-empty \"skills\" array — no skill would load"
+check_manifest_skills() {  # <manifest> <jq program emitting one ./skills/<phase>/<name> per line>
+  local manifest="$1" program="$2" declared missing dead
+  echo "• $manifest (skills array sync)"
+  if [ ! -f "$manifest" ]; then
+    err "missing $manifest"
+  elif ! command -v jq >/dev/null 2>&1; then
+    err "jq is required to read $manifest (the adapter checks below need it too)"
+  elif ! jq -e . "$manifest" >/dev/null 2>&1; then
+    err "$manifest does not parse as JSON — a harness loads no skill from it"
   else
-    missing=$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
-    dead=$(comm -13 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
-    [ -n "$missing" ] && while IFS= read -r m; do err "skill not in $manifest 'skills' (won't load): $m"; done <<< "$missing"
-    [ -n "$dead" ]    && while IFS= read -r d; do err "$manifest 'skills' entry has no SKILL.md: $d"; done <<< "$dead"
+    # Read the list itself: a grep over the whole file also matches paths under
+    # a renamed or absent key, so the gate passed manifests no harness
+    # can load.
+    declared=$(jq -r "$program" "$manifest" | sort -u)
+    if [ -z "$declared" ]; then
+      err "$manifest declares no skill — no skill would load"
+    else
+      missing=$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
+      dead=$(comm -13 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
+      [ -n "$missing" ] && while IFS= read -r m; do err "skill not in $manifest (won't load): $m"; done <<< "$missing"
+      [ -n "$dead" ]    && while IFS= read -r d; do err "$manifest entry has no SKILL.md: $d"; done <<< "$dead"
+    fi
   fi
-fi
+}
+check_manifest_skills .claude-plugin/plugin.json '.skills[]? // empty'
+check_manifest_skills .muse-plugin/plugin.json \
+  '.capabilities.skills[]? | .path // empty | "./" + sub("/SKILL\\.md$"; "")'
 
 echo "• Codex adapter"
 if ! bash scripts/sh/validate-codex-plugin.sh; then fail=1; fi
@@ -331,12 +342,12 @@ if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
 echo "• OpenCode adapter"
 if ! bash scripts/sh/validate-opencode-plugin.sh; then fail=1; fi
 
-# Version sync: the release version is declared in three manifests and bumped
+# Version sync: the release version is declared in several manifests and bumped
 # together in one release commit (see RELEASING.md). A half-done bump ships
 # disagreeing versions, so any disagreement fails.
 echo "• manifest versions agree"
 versions=""
-for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json; do
+for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json .muse-plugin/plugin.json; do
   if [ ! -f "$manifest" ]; then err "missing $manifest"; continue; fi
   v=$(grep -m1 -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' "$manifest" | sed -E 's/.*"([^"]+)"$/\1/')
   if [ -z "$v" ]; then err "$manifest: no \"version\" field"; continue; fi

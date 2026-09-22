@@ -17,6 +17,7 @@ tools, and lifecycle events.
 | OpenCode 1.x | `.opencode/plugins/sdlc-skills.js` | `experimental.chat.system.transform` hook | Yes — the `experimental.session.compacting` hook carries it forward |
 | OpenCode 2.x | the checkout directory, entered through the root `index.js` | `setup`'s `session.hook("context")`, into the first user message | Inferred, not observed — the context hook runs on every request and the injection is deduped, so a transcript replaced without the block gets it again; no compaction was run against a 2.x build here |
 | Grok Build | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped — no separate manifest | none — see below | not applicable, there is no injection to re-apply |
+| Muse Code | `.muse-plugin/plugin.json` on a build with plugin support; otherwise the per-skill install `scripts/sh/install-muse-skills.sh` drives | the manifest's `SessionStart` hook — never on 1.3.0, which loads no plugin | Not exposed — no hook runs, so there is nothing to re-apply |
 
 The Codex plugin manifest carries the skill catalogue but has no session-start
 field, so the entry skill arrives through hooks the plugin itself bundles
@@ -128,6 +129,53 @@ honest ceiling of what the router channel can do on this harness.
 inventory only; it does not read back Project Instructions or run a model
 turn, so whether `using-sdlc-skills` is actually invoked from the nudge is a
 live check, not a smoke one.
+
+Muse Code takes two routes, and which one a user gets is decided by their
+build, not by this repository. `.muse-plugin/plugin.json` is the native
+manifest: `schemaVersion` 1, one `{id, path}` under `capabilities.skills` for
+each canonical skill, and a `SessionStart` hook running the shared
+`scripts/sh/session-start.sh` injector. That is the full binding — discovery
+and the router in one file — and on a build that ships plugin support it needs
+no further step.
+
+Measured on 1.3.0: that build ships no plugin loader at all. `muse plugins`
+answers "plugins are not available in this build", so the manifest can be
+neither installed nor validated there, and its hook never runs. The manifest
+still ships, carrying the current release version like every other manifest, so
+the version gate covers it and a build that gains plugin support finds it
+already correct rather than a release behind.
+
+The route that build does offer is `muse skills install <dir> --scope user`,
+which takes exactly ONE skill directory — pointed at a tree it fails with
+"skill package must contain SKILL.md" — and copies it under the config
+directory's `skills/`. `scripts/sh/install-muse-skills.sh` loops the canonical
+directories through it with `--force`, so a re-run overwrites rather than
+failing on "skill already installed", and `--remove` uninstalls the same set,
+treating the CLI's own `skill-not-installed` code as already gone so a second
+removal is a no-op rather than 38 errors.
+
+What that route buys is discovery and nothing else. No hook runs, so no router
+body reaches the prompt: `using-sdlc-skills` is listed like any other skill and
+has to be invoked. That is weaker than every other adapter's session-start
+injection and weaker than the native manifest this same repository ships — the
+honest ceiling on a build without a plugin loader. The README says so at the
+install step rather than letting a user infer routing from a skill list.
+
+`tests/harnesses/muse.sh` drives the install script into a throwaway home with
+both `HOME` and `XDG_CONFIG_HOME` overridden: Muse resolves its config
+directory from `XDG_CONFIG_HOME` when set and from `HOME` otherwise, so
+overriding one alone would let an operator's real `~/.config/muse/skills/`
+answer for the tree under test. `MUSE_NO_AUTO_UPDATE=1` keeps the launcher off
+the network in a fresh home. The inventory step reads `muse skills list
+--source user --json`: the installed copies report `provenance: null`, so there
+is no source path to filter on, and the isolation is what makes the unfiltered
+list trustworthy — the home was empty before the install ran. Measured on
+1.3.0: 38 skills installed, 38 listed at user scope. `muse skills validate` is
+the per-skill check this build allows, and it returns valid for all 38.
+
+The smoke test proves the install and the skill inventory. It runs no model
+turn, so whether `using-sdlc-skills` is actually invoked from a listed skill is
+a live check, not a smoke one.
 
 ## Lifecycle policy and evidence
 
