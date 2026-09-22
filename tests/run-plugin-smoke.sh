@@ -100,6 +100,9 @@ case "$harness" in
   # Muse installs skill by skill into its config dir, one flat directory per
   # skill and no phase level; that route copies files and writes no manifest.
   muse)        layout='*/muse/skills/*/SKILL.md'; manifest='';;
+  # pi installs a local-path source by reference, not a copy, so the tree
+  # stays at the checkout the `pi` key in package.json names.
+  pi)          layout='*/skills/*/*/SKILL.md'; manifest='.pi/extensions/sdlc-skills.js';;
 esac
 
 if declare -F adapter_component_inventory >/dev/null 2>&1; then
