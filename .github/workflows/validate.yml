@@ -1,6 +1,6 @@
 name: validate-skills
 
-# The deterministic gate for this library's authoring rules (see CLAUDE.md):
+# The deterministic gate for this library's authoring rules (see AGENTS.md):
 # no external references, no vendor model names, line budgets, frontmatter
 # shape, and plugin-manifest sync. The rules live in scripts/sh/validate-skills.sh;
 # this workflow is what makes them *enforced* rather than merely documented.
