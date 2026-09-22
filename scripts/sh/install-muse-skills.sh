@@ -74,10 +74,15 @@ for dir in "${dirs[@]}"; do
       printf '%s\n' "$out" | sed 's/^/        /' >&2
       fail=1
     fi
-  elif muse skills install "$dir" --scope user --force --json >/dev/null 2>&1; then
-    done_count=$((done_count + 1))
   else
-    echo "  FAIL  muse skills install $dir" >&2; fail=1
+    out="$(muse skills install "$dir" --scope user --force --json 2>&1)"
+    if [ $? -eq 0 ]; then
+      done_count=$((done_count + 1))
+    else
+      echo "  FAIL  muse skills install $dir" >&2
+      printf '%s\n' "$out" | sed 's/^/        /' >&2
+      fail=1
+    fi
   fi
 done
 
