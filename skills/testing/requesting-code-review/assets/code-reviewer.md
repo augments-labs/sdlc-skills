@@ -35,6 +35,9 @@ check per named risk.
 - Flag anything built beyond the requirement (unrequested scope). If requested
   behavior may use avoidable enduring surface, request the YAGNI specialist
   instead of turning this breadth pass into a simplification audit.
+- Where the requirement is silent, judge against what a reasonable user of
+  this feature expects. A crash, data loss, or silent wrong result on an
+  input the feature obviously receives is never Minor.
 
 ## Rules
 
@@ -79,6 +82,9 @@ separately, including supported strengths. Repeat this finding block:
 - Disposition: {{blocking | advisory}}
 - Evidence: {{file:line, observed failure, and what you read or ran}}
 - Correction: {{concrete fix}}
+
+List under `## Declined to judge` any obligation you read but will not rate,
+each with the reason.
 
 Missing, failed, or inconclusive required verification prevents readiness.
 A conditional verdict remains non-ready until a new verified and reviewed
