@@ -60,10 +60,13 @@ nothing.
    - Several plausible files → list them for the user with their times and
      first user prompt, and ask which one. Never diagnose a file you are
      guessing at.
-3. No store, no readable file, or no candidate matches → say so and stop.
+3. A name-based lookup that returned nothing means that encoding did not
+   match, never that no store exists → run the reference's content-confirmed
+   fallback before you say anything about an absent record.
+4. No store, no readable file, or no candidate matches → say so and stop.
    Name what you looked for and where. An absent record is a finding, not a
    licence to reconstruct one.
-4. Record the transcript's absolute path and its line count. Every citation
+5. Record the transcript's absolute path and its line count. Every citation
    in the report is `path:line` against that file.
 
 ## Step 3: Read by slices, never whole

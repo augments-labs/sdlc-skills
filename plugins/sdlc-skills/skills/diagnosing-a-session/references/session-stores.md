@@ -16,16 +16,41 @@ subagents may also have a same-named subdirectory holding their records.
 Find the state directory by looking for a home-level directory belonging to
 the running agent tool that contains a `projects`-like subdirectory, then
 the project subdirectory whose name is this project's absolute path with
-separators substituted:
+its punctuation substituted. Encode **every** non-alphanumeric character,
+not just the separator: a path segment beginning with a dot encodes to two
+markers in a row, and a recipe that replaces only the separator produces a
+name that matches nothing.
 
 ```bash
-proj=$(pwd | sed 's|/|-|g')            # the usual encoding of the path
-ls -lt "$HOME"/.*/projects/*"$proj"*/ 2>/dev/null | head -20
+proj=$(pwd | sed 's|[^A-Za-z0-9]|-|g')          # every non-alphanumeric
+ls -dt "$HOME"/.*/projects/*"$proj"*/ 2>/dev/null | head -20
 ```
 
-Newest modification time first is the ordering you want; the current
-session is the file whose size grows between two listings a few seconds
-apart.
+A session running in a secondary checkout of one repository is often keyed
+under the **main** checkout's path rather than the current directory, so
+try that encoding too before concluding anything:
+
+```bash
+root=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
+proj=$(printf '%s' "$root" | sed 's|[^A-Za-z0-9]|-|g')
+ls -dt "$HOME"/.*/projects/*"$proj"*/ 2>/dev/null | head -20
+```
+
+**An empty result from a name glob is not evidence that no store exists.**
+It is evidence that this encoding did not match. Fall back to listing the
+whole store newest-first and confirming a candidate by content, the way
+Family B does, before you report that there is no record:
+
+```bash
+ls -dt "$HOME"/.*/projects/*/ 2>/dev/null | head -20        # every project
+cand={{the directory you are testing}}
+grep -lF "$PWD" $(ls -t "$cand"/* 2>/dev/null | head -5) 2>/dev/null
+```
+
+Confirm by content with the current directory, the repository name, or a
+distinctive phrase from the intake. Newest modification time first is the
+ordering you want throughout; the current session is the file whose size
+grows between two listings a few seconds apart.
 
 ## Family B — a flat session directory keyed by identifier
 
