@@ -45,6 +45,7 @@
     "./skills/maintenance/complexity-audit",
     "./skills/maintenance/containing-an-incident",
     "./skills/maintenance/debugging",
+    "./skills/maintenance/diagnosing-a-session",
     "./skills/maintenance/post-mortem",
     "./skills/maintenance/refactor-architecture",
     "./skills/planning/define-goals",

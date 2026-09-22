@@ -87,12 +87,13 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | maintenance | `containing-an-incident` | Stop live user impact with the narrowest reversible lever, prove it stopped from the outside signal, and record the mitigation as reversible debt before diagnosing |
 | maintenance | `debugging` | Establish causal root cause through deterministic or quantified probabilistic evidence before changing behavior |
 | maintenance | `post-mortem` | Reconstruct the escape path and carry owned corrective controls through falsification, enforcement, rollout, and effectiveness review |
+| maintenance | `diagnosing-a-session` | Reconstruct from a session's own transcript what the run actually did, read-only, and report where it went wrong with a transcript line behind every claim |
 | maintenance | `complexity-audit` | Audit a bounded existing module or codebase for accidental complexity through read-only, evidence-bound keep, simplify, remove, decision, and investigate findings |
 | maintenance | `refactor-architecture` | Improve measured structural friction under a falsified preservation gate and reversible, reviewable slices |
 
 ## Installation and support
 
-The catalogue contains 37 skills across all seven phases and `common/`.
+The catalogue contains 38 skills across all seven phases and `common/`.
 
 Five harnesses have adapters:
 
