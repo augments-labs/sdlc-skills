@@ -9,6 +9,13 @@ const bindingsDoc = resolve(pluginRoot, ".opencode/references/opencode-tools.md"
 
 const ROUTER_SENTINEL = "# SDLC skills";
 const BINDINGS_SENTINEL = "# SDLC skills tool bindings (OpenCode)";
+// On 1.x the sentinel is matched against `output.system`, which only the
+// harness and its plugins write. On 2.x the same match would run against user
+// prose, where `# SDLC skills` is an ordinary thing to type — a contributor
+// asking about this repository's README heading would cancel the router for
+// the whole session, silently. The 2.x dedupe therefore keys on the injected
+// block's own opening.
+const INJECTED_OPENING = "<EXTREMELY_IMPORTANT>\n" + ROUTER_SENTINEL;
 
 function loadRouter() {
   let raw;
@@ -96,8 +103,10 @@ export const sdlcSkillsPlugin = async () => {
       if (!existsSync(routerPath)) {
         throw new Error("sdlc-skills: router not found at " + routerPath);
       }
-      // 2.x models `skills` as an array and has no `paths` under it. Touching
-      // it there would corrupt the config, so leave that shape alone.
+      // Defensive, not a live path: 2.0.13 calls `setup` and never this
+      // factory. But `skills` is an array there, with no `paths` under it, so
+      // a host that did call the factory with a 2.x-shaped config would have
+      // it corrupted. Leave that shape alone.
       if (Array.isArray(cfg.skills)) return;
       cfg.skills = cfg.skills ?? {};
       cfg.skills.paths = cfg.skills.paths ?? [];
@@ -128,7 +137,10 @@ function findSkillFiles(dir) {
   let entries;
   try {
     entries = readdirSync(dir, { withFileTypes: true });
-  } catch {
+  } catch (err) {
+    // An empty catalogue looks exactly like a correct one from the harness
+    // side, so the directory that could not be read is named.
+    console.error("sdlc-skills: cannot read " + dir + " (" + (err && err.message) + ")");
     return [];
   }
   const found = [];
@@ -144,14 +156,18 @@ function findSkillFiles(dir) {
 // line, so a full YAML parser would buy nothing a dependency-free adapter can
 // spend. A file that does not match is skipped rather than guessed at.
 function readSkill(path) {
+  const skip = (why) => {
+    console.error("sdlc-skills: skipped " + path + " (" + why + ")");
+    return undefined;
+  };
   let raw;
   try {
     raw = readFileSync(path, "utf8");
-  } catch {
-    return undefined;
+  } catch (err) {
+    return skip(err && err.message);
   }
   const front = raw.match(/^---\n([\s\S]*?)\n---\n/);
-  if (!front) return undefined;
+  if (!front) return skip("no frontmatter block");
   const field = (key) => {
     const hit = front[1].match(new RegExp("^" + key + ":\\s*(.+?)\\s*$", "m"));
     if (!hit) return undefined;
@@ -161,7 +177,9 @@ function readSkill(path) {
   const name = field("name");
   const description = field("description");
   const content = raw.slice(front[0].length);
-  if (!name || !description || !content.trim()) return undefined;
+  if (!name) return skip("frontmatter has no name");
+  if (!description) return skip("frontmatter has no description");
+  if (!content.trim()) return skip("body is empty");
   return { id: name, name, description, path, content };
 }
 
@@ -177,8 +195,11 @@ async function isChildSession(ctx, sessionID) {
   try {
     const record = await ctx.session.get({ sessionID });
     child = !!(record && record.parentID);
-  } catch {
-    // Fail open: a lookup that cannot answer must not silence the router.
+  } catch (err) {
+    // Fail open: a lookup that cannot answer must not silence the router. It
+    // must not pass in silence either — this is the branch that would inject
+    // the router into every child session.
+    console.error("sdlc-skills: session lookup failed for " + sessionID + " (" + (err && err.message) + ")");
     child = false;
   }
   if (childSessions.size >= SESSION_CACHE_LIMIT) {
@@ -198,20 +219,25 @@ function injectIntoMessages(messages, text) {
     return;
   }
   if (typeof first.content === "string") {
-    if (first.content.includes(ROUTER_SENTINEL)) return;
+    if (first.content.includes(INJECTED_OPENING)) return;
     first.content = text + "\n\n" + first.content;
     return;
   }
-  if (!Array.isArray(first.content)) return;
-  if (first.content.some((p) => p && typeof p.text === "string" && p.text.includes(ROUTER_SENTINEL))) return;
+  if (!Array.isArray(first.content)) {
+    console.error("sdlc-skills: first user message content is " + typeof first.content + ", not text — router not injected");
+    return;
+  }
+  if (first.content.some((p) => p && typeof p.text === "string" && p.text.includes(INJECTED_OPENING))) return;
   first.content.unshift({ type: "text", text });
 }
 
 // Every callback below is wrapped: a throw escaping one of these takes the
 // whole plugin — and, for the context hook, the session running it — down.
 export const setup = async (ctx) => {
-  // 1.x calls `setup` too, with a context that carries none of this surface.
-  if (typeof ctx?.skill?.transform !== "function" || typeof ctx?.session?.hook !== "function") return;
+  // 1.x calls `setup` too, with a context that carries none of this surface —
+  // and a 1.x named-export scan calls it as a hook factory, so the empty hook
+  // set it gets back has to be iterable rather than `undefined`.
+  if (typeof ctx?.skill?.transform !== "function" || typeof ctx?.session?.hook !== "function") return {};
 
   const skills = findSkillFiles(skillsDir)
     .map(readSkill)
