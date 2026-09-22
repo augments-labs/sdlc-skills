@@ -34,7 +34,8 @@ pkg="package.json"
 # <dir>/server.js or <dir>/index.js, so the package entry is this root file.
 entry="index.js"
 tmpout="$(mktemp)"
-trap 'rm -f "$tmpout"' EXIT
+tmperr="$(mktemp)"
+trap 'rm -f "$tmpout" "$tmperr"' EXIT
 
 echo "• $plugin"
 if [ ! -f "$plugin" ]; then
@@ -79,8 +80,15 @@ else
       if (typeof d.setup !== "function") fail("default export has no setup — OpenCode 2.x calls setup(ctx) and nothing else");
       if (d.server !== m.sdlcSkillsPlugin) fail("default.server is not the named hook factory");
     }
-  ' > "$tmpout" 2>&1 || true
+  ' > "$tmpout" 2>"$tmperr"
+  probe_rc=$?
+  # Only the probe's own stdout names a contract violation. A runtime that
+  # prints an ExperimentalWarning or a deprecation notice on stderr is not a
+  # violation, so stderr is surfaced only when the probe actually failed.
   while IFS= read -r line; do [ -n "$line" ] && err "$line"; done < "$tmpout"
+  if [ "$probe_rc" -ne 0 ] && [ ! -s "$tmpout" ]; then
+    err "the export-shape probe exited $probe_rc: $(head -c 300 "$tmperr")"
+  fi
 
   echo "• OpenCode session-start-only activation"
   for hook in '"experimental.chat.system.transform"' '"experimental.session.compacting"'; do
@@ -142,11 +150,24 @@ else
   done
   [ "${seen_1-}" = 1 ] || err "$tools_doc has no OpenCode 1.x heading — one table cannot bind both generations"
   [ "${seen_2-}" = 1 ] || err "$tools_doc has no OpenCode 2.x heading — one table cannot bind both generations"
-  for token in Task question todowrite skill; do
-    grep -q "$token" "$tools_doc" || err "$tools_doc does not bind $token (OpenCode 1.x)"
-  done
-  for token in subagent shell skill question; do
-    grep -q "$token" "$tools_doc" || err "$tools_doc does not bind $token (OpenCode 2.x)"
+  # Scoped to the generation's own section, and matched in table-cell form.
+  # A bare word check passes on prose and on the *other* table — `subagent`
+  # appears in the 1.x dispatch row — so deleting every row of a table would
+  # leave the gate green while the adapter bound nothing.
+  section() { # $1 heading
+    awk -v h="$1" '$0 == h { inside = 1; next } inside && /^#/ { exit } inside' "$tools_doc"
+  }
+  for gen in '1.x:Task question todowrite skill' '2.x:subagent shell skill question'; do
+    heading="### OpenCode ${gen%%:*}"
+    section "$heading" > "$tmpout"
+    if [ ! -s "$tmpout" ]; then
+      err "$tools_doc has no rows under '$heading' — that generation binds nothing"
+      continue
+    fi
+    for token in ${gen#*:}; do
+      grep -qF "| \`$token\`" "$tmpout" \
+        || err "$tools_doc has no \`$token\` row under '$heading' (OpenCode ${gen%%:*})"
+    done
   done
   grep -q 'no todo tool' "$tools_doc" \
     || err "$tools_doc does not state that OpenCode 2.x exposes no todo tool"
