@@ -25,8 +25,11 @@ function loadRouterBody() {
   let raw;
   try {
     raw = readFileSync(routerPath, "utf8");
-  } catch {
-    throw new Error("sdlc-skills: router not found at " + routerPath);
+  } catch (err) {
+    throw new Error(
+      "sdlc-skills: could not read router at " + routerPath + ": " + err.message,
+      { cause: err }
+    );
   }
   const body = raw.replace(/^---\n[\s\S]*?\n---\n/, "");
   if (!body.trim()) {
@@ -59,7 +62,11 @@ export default function (pi) {
   // compaction entry's own summary the same way.
   pi.on("session_compact", (event) => {
     const entry = event && event.compactionEntry;
-    if (!entry || typeof entry.summary !== "string") return;
+    if (!entry || typeof entry.summary !== "string") {
+      throw new Error(
+        "sdlc-skills: session_compact carried no summary string; router not re-injected"
+      );
+    }
     entry.summary = appendRouterOnce(entry.summary);
   });
 }

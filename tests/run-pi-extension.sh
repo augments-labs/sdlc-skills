@@ -92,6 +92,15 @@ try {
   await handlers["session_compact"][0](compactEvent, {});
   const compactOccurrences = compactEvent.compactionEntry.summary.split(canonical).length - 1;
   report(compactOccurrences === 1, "a second session_compact call is idempotent", String(compactOccurrences));
+
+  let malformedThrew = false, malformedMessage = "";
+  try {
+    await handlers["session_compact"][0]({ type: "session_compact", compactionEntry: {} }, {});
+  } catch (err) {
+    malformedThrew = true;
+    malformedMessage = (err && err.message) || "";
+  }
+  report(malformedThrew && malformedMessage.startsWith("sdlc-skills:"), "session_compact throws on a malformed entry instead of returning silently", malformedMessage);
 } catch (err) {
   console.log("bad handlers threw instead of registering/injecting (" + (err && err.message) + ")");
 }
@@ -123,6 +132,32 @@ else
   ok "throws when the router file cannot be found"
 fi
 rm -rf "$stray"
+
+echo "--- distinguishes a read failure from a missing router"
+direrr="$(mktemp -d)"
+mkdir -p "$direrr/nested/extdir" "$direrr/skills/common/using-sdlc-skills/SKILL.md"
+cp "$EXTENSION" "$direrr/nested/extdir/stray-extension.js"
+direrr_err="$(mktemp)"
+if node --input-type=module -e "
+import('file://$direrr/nested/extdir/stray-extension.js').then(async (m) => {
+  const handlers = {};
+  const stub = { on: (event, handler) => { (handlers[event] ??= []).push(handler); } };
+  await m.default(stub);
+  await handlers['before_agent_start'][0]({ type: 'before_agent_start', systemPromptOptions: { appendSystemPrompt: '' } }, {});
+  console.log('injected despite an unreadable router');
+}).catch((err) => { console.error(err && err.message); process.exit(1); });
+" >/dev/null 2>"$direrr_err"; then
+  bad "injects router text when the router path is a directory, not a file"
+else
+  direrr_msg="$(cat "$direrr_err")"
+  case "$direrr_msg" in
+    *"sdlc-skills: could not read router"*EISDIR*)
+      ok "distinguishes a read failure from a missing router ($direrr_msg)";;
+    *)
+      bad "error message loses the underlying read failure ($direrr_msg)";;
+  esac
+fi
+rm -rf "$direrr" "$direrr_err"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "pi extension offline tests: PASS"; exit 0; }
