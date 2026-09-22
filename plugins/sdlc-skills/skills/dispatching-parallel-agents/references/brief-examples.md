@@ -45,18 +45,33 @@ Why it fails: the agent touches both — that was one agent doing two tasks seri
 
 **Strong:**
 
-```text
-TASK: Make the failing test 'rejects an expired token' pass in tests/auth/expiry_test.go.
-TIER: medium
-BASE: {{immutable revision shared by all writers}}
-OWNS: tests/auth/expiry_test.go, src/auth/expiry.go
-DO NOT TOUCH: anything under tests/billing/ or src/billing/ — another agent owns it.
-START FROM: failing assertion, verbatim:
+```markdown
+## Task
+
+- **Task:** Make the failing test 'rejects an expired token' pass in tests/auth/expiry_test.go.
+- **Tier:** medium
+- **Base:** {{immutable revision shared by all writers}}
+
+## Boundary
+
+- **Owns:** tests/auth/expiry_test.go, src/auth/expiry.go
+- **Do not touch:** anything under tests/billing/ or src/billing/ — another agent owns it.
+
+## Inputs
+
+- **Start from:** failing assertion, verbatim:
   expected status 401, got 200 for a token expired 1 minute ago
-READ: {{path to the token-lifetime docs}} — skim only if expiry.go isn't self-explanatory.
-DONE WHEN: `go test ./tests/auth/ -run TestExpiredToken` exits 0. Run the command; read the output.
-REPORT: base/result revisions and diff; root cause; files changed; exact command
-  and raw verdict; authorized checkpoint commits or none; scope exceptions.
+- **Read:** {{path to the token-lifetime docs}} — skim only if expiry.go isn't self-explanatory.
+
+## Done when
+
+- **Done when:** `go test ./tests/auth/ -run TestExpiredToken` exits 0. Run the command; read the output.
+
+## Output
+
+- **Report:** base/result revisions and diff; root cause; files changed; exact
+  command and raw verdict; authorized checkpoint commits or none; scope
+  exceptions.
 ```
 
 Dispatch the billing test as a second, symmetric brief. Note what the strong one carries that the weak one doesn't: the failing assertion pasted (the agent never runs a red suite to discover it), the exact verification command, and a boundary that keeps the two agents apart.
@@ -75,19 +90,33 @@ Why it fails: session history is not context — it carries your dead ends and m
 
 **Strong (export crash):**
 
-```text
-TASK: Find and fix the crash when exporting a project with zero images.
-TIER: medium
-BASE: {{immutable revision shared by all writers}}
-OWNS: src/export/
-DO NOT TOUCH: src/settings/ or anything UI-facing — another agent owns a separate fix there.
-START FROM: reproduce: 1) new project, 2) delete all images, 3) Export → crash with
+```markdown
+## Task
+
+- **Task:** Find and fix the crash when exporting a project with zero images.
+- **Tier:** medium
+- **Base:** {{immutable revision shared by all writers}}
+
+## Boundary
+
+- **Owns:** src/export/
+- **Do not touch:** src/settings/ or anything UI-facing — another agent owns a separate fix there.
+
+## Inputs
+
+- **Start from:** reproduce: 1) new project, 2) delete all images, 3) Export → crash with
   "TypeError: cannot read 'width' of undefined" at export/render.ts:88
-READ: src/export/render.ts, src/export/pipeline.ts
-DONE WHEN: the reproduce steps complete and produce a valid export file; `npm test -- export` exits 0.
-REPORT: base/result revisions and diff; root cause; fix location; raw command
-  verdicts; authorized checkpoint commits or none; checked edge cases; scope
-  exceptions.
+- **Read:** src/export/render.ts, src/export/pipeline.ts
+
+## Done when
+
+- **Done when:** the reproduce steps complete and produce a valid export file; `npm test -- export` exits 0.
+
+## Output
+
+- **Report:** base/result revisions and diff; root cause; fix location; raw
+  command verdicts; authorized checkpoint commits or none; checked edge
+  cases; scope exceptions.
 ```
 
 The typo gets its own brief at the small tier. Note the reproduce steps pasted
@@ -110,15 +139,33 @@ Why it fails: "best" undefined — each agent optimises a different axis; no cri
 
 **Strong:**
 
-```text
-TASK: Evaluate {{approach}} as the cache for the product-list endpoint.
-TIER: small
-BASE: {{immutable repository revision}}
-OWNS: nothing — read-only. Do not modify files.
-READ: src/api/product_list.ts (the endpoint), src/api/README.md (current load profile).
-JUDGE AGAINST, in order: 1) correctness under concurrent writes, 2) p95 read latency at the load in README, 3) operational cost (new infra? new failure modes?), 4) lines-of-code cost to adopt.
-DONE WHEN: you can answer all four criteria from evidence you actually read — a file, a measurement, or the approach's documented semantics. No "it should be fine."
-REPORT, exactly this shape:
+```markdown
+## Task
+
+- **Task:** Evaluate {{approach}} as the cache for the product-list endpoint.
+- **Tier:** small
+- **Base:** {{immutable repository revision}}
+
+## Boundary
+
+- **Owns:** nothing — read-only. Do not modify files.
+
+## Inputs
+
+- **Read:** src/api/product_list.ts (the endpoint), src/api/README.md (current load profile).
+
+## Done when
+
+- **Judge against, in order:** 1) correctness under concurrent writes, 2) p95
+  read latency at the load in README, 3) operational cost (new infra? new
+  failure modes?), 4) lines-of-code cost to adopt.
+- **Done when:** you can answer all four criteria from evidence you actually
+  read — a file, a measurement, or the approach's documented semantics. No
+  "it should be fine."
+
+## Output
+
+- **Report, exactly this shape:**
   - Approach: {{approach}}
   - Per criterion: verdict (good/bad/risky) + one line of evidence + where you read it
   - Deal-breaker if any, else "none"
