@@ -55,6 +55,24 @@ specific to one domain, team, tool, or workflow? Does it integrate or promote
 a third-party service? A yes to either of the last two means it belongs in
 your own skill library, not here. -->
 
+## New skill (required)
+
+<!-- When the PR adds no skill, write `not applicable` on the first line below
+and leave the rest of this section blank. A blank section is placeholder text
+and the PR is closed without review.
+
+An added skill must be general-purpose SDLC guidance: it belongs to a phase of
+the software development lifecycle in the canonical order `README.md` lists
+(or to `common/`), and would help someone on a completely different kind of
+project. Name that phase and the failure the skill answers.
+
+A PR that adds a skill outside the SDLC is closed without review, whatever its
+quality. -->
+
+- Adds a skill: <!-- yes or not applicable -->
+- Phase folder: <!-- one of: planning, analysis, design, implementation, testing, deployment, maintenance, common, or n/a -->
+- Why this is SDLC guidance, not domain, tool, or workflow content: <!-- or n/a -->
+
 ## Prior PRs and issues
 
 - [ ] I searched open **and** closed PRs and issues for this problem or area.
@@ -128,5 +146,7 @@ A PR is closed without review when it:
 - names another repository, project, author, issue, or vendor model in
   shipped files;
 - submits domain-, tool-, or workflow-specific content as core;
-- changes behaviour-shaping content without naming the failure it answers.
+- changes behaviour-shaping content without naming the failure it answers;
+- adds a skill that is not SDLC guidance (a phase of the lifecycle, useful on
+  any kind of project).
 -->
