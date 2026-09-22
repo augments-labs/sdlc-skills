@@ -94,7 +94,7 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 
 The catalogue contains 37 skills across all seven phases and `common/`.
 
-Four harnesses have adapters:
+Five harnesses have adapters:
 
 | Harness | Adapter | Routing support |
 | --- | --- | --- |
@@ -102,6 +102,7 @@ Four harnesses have adapters:
 | Codex CLI | `plugins/sdlc-skills/`, listed in `.agents/plugins/marketplace.json` | bundled `SessionStart` router |
 | Kimi Code | `.kimi-plugin/` | session-start router and tool bindings |
 | OpenCode | `.opencode/`, entered through the root `index.js` | 1.x: system-context router injection and tool bindings. 2.x: skill registration plus router injection into the first user message. The install test proves a listed skill inventory on 1.x and a loaded plugin on 2.x |
+| Grok Build | reads `.claude-plugin/plugin.json` and `hooks/hooks.json` as installed — no separate manifest | no session-start hook on 1.0.40 reaches the prompt; a `$GROK_HOME/rules/` file nudges `using-sdlc-skills` first as a global rule instead of an injected router body |
 
 `AGENTS.md` is the canonical contributor guide. `GEMINI.md` symlinks to it and
 `CLAUDE.md` is a short pointer to it, so a harness that reads its own
@@ -112,7 +113,7 @@ Because the skills are portable Markdown invoked by name, other harnesses can
 adopt them — each proven by its own tests when added; see
 [`docs/harness-support.md`](docs/harness-support.md).
 
-Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`. Install in OpenCode with the same git package spec in `opencode.json` (global or project), then restart — the plugin installs through OpenCode's plugin manager and registers the canonical skills itself. The key differs by generation: `"plugin": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` on 1.x, `"plugins": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` on 2.x. A local checkout works too in place of the package spec: name its `.opencode/plugins/sdlc-skills.js` file on 1.x, and the checkout directory itself on 2.x, which refuses a file path and resolves `index.js` inside the directory. If the skills do not show up, run `opencode run --print-logs` on 1.x or `opencode run --standalone --print-logs` on 2.x and look for the line naming the plugin and the entry point it resolved.
+Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`. Install in OpenCode with the same git package spec in `opencode.json` (global or project), then restart — the plugin installs through OpenCode's plugin manager and registers the canonical skills itself. The key differs by generation: `"plugin": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` on 1.x, `"plugins": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` on 2.x. A local checkout works too in place of the package spec: name its `.opencode/plugins/sdlc-skills.js` file on 1.x, and the checkout directory itself on 2.x, which refuses a file path and resolves `index.js` inside the directory. If the skills do not show up, run `opencode run --print-logs` on 1.x or `opencode run --standalone --print-logs` on 2.x and look for the line naming the plugin and the entry point it resolved. Install in Grok Build with `grok plugin install /path/to/sdlc-skills --trust` — Grok reads the Claude plugin manifest directly, so nothing extra is added to the checkout. Then add a rules file so the router gets a nudge: create `$GROK_HOME/rules/using-sdlc-skills.md` (default `~/.grok/rules/`) containing one line telling Grok to invoke `using-sdlc-skills` before acting. Grok has no session-start hook that reaches the system prompt on 1.0.40, so this is a standing rule, not an injected router body; `grok inspect` lists the file under Project Instructions once it is in place, which is the confirmation that the nudge is loaded.
 
 ## Proactive skill use
 

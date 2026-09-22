@@ -16,6 +16,7 @@ tools, and lifecycle events.
 | Kimi Code | `.kimi-plugin/plugin.json` | `sessionStart.skill` | Not exposed — the manifest declares no compaction event |
 | OpenCode 1.x | `.opencode/plugins/sdlc-skills.js` | `experimental.chat.system.transform` hook | Yes — the `experimental.session.compacting` hook carries it forward |
 | OpenCode 2.x | the checkout directory, entered through the root `index.js` | `setup`'s `session.hook("context")`, into the first user message | Inferred, not observed — the context hook runs on every request and the injection is deduped, so a transcript replaced without the block gets it again; no compaction was run against a 2.x build here |
+| Grok Build | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped — no separate manifest | none — see below | not applicable, there is no injection to re-apply |
 
 The Codex plugin manifest carries the skill catalogue but has no session-start
 field, so the entry skill arrives through hooks the plugin itself bundles
@@ -84,6 +85,49 @@ offline checks — the named export exists, and every function the package entry
 exposes answers a 1.x-shaped call with a hook set — and is not observed on a
 1.x binary, because the adapter's entry shape is what this arrangement
 changed and no 1.x build has run it here.
+
+Grok Build 1.0.40 accepts a Claude-format plugin directory directly, so no
+dedicated Grok manifest is added — it reads `.claude-plugin/plugin.json` and
+`hooks/hooks.json` from the checkout as they already ship. `grok plugin
+install <path> --trust` copies the checkout into a per-install directory under
+`GROK_HOME`, offline and without login for a local-path source, and registers
+the plugin enabled at user scope. Listing the checkout under `config.toml`'s
+`[plugins] paths` plus `[plugins] enabled` also discovers it, but that route
+additionally requires the folder to be marked trusted in
+`trusted_folders.toml`; the install route needs no separate trust record, so
+`tests/harnesses/grok.sh` uses it. Because the install copies rather than
+loading the checkout in place, the copy's path is not knowable in advance —
+the adapter's inventory step reports skills by `source.plugin_name` from
+`grok inspect --json` instead of by path, matching the plugin id
+(`sdlc-skills`) the manifest declares. Measured on 1.0.40: the install
+registers 37 skills and 1 hook. `grok inspect` also cross-reads a real
+operator's `~/.claude/plugins/marketplaces/` regardless of `GROK_HOME` alone
+— on a machine that already has this plugin installed for Claude Code, that
+installed copy answers for the tree under test — so the adapter isolates
+`HOME` alongside `GROK_HOME` to keep the check offline and free of the
+operator's own installs.
+
+No hook reaches the system prompt on 1.0.40: for `SessionStart`, stdout is
+discarded; `additionalContext` exists only on tool events (`PreToolUse`,
+`PostToolUse`, `PostToolUseFailure`) and `Stop`; and `--rules` (alias
+`--append-system-prompt`) appends to the system prompt for one invoked
+session only, not at install time. The one channel this binding uses instead
+is a rules file: a one-line nudge naming `using-sdlc-skills` first, placed
+under `$GROK_HOME/rules/`. Grok scans that directory for every project
+regardless of folder trust and reports it under `grok inspect`'s Project
+Instructions — measured: a file placed there is read back with `scope:
+global` and listed by both `grok inspect --json`'s `projectInstructions`
+array and the plain-text `Project Instructions` section, with no `--trust`
+or config change needed. This is a nudge sitting in the rules, not an
+injected router body, and it is weaker than the other adapters' session-start
+injection: it is one more file the model may or may not act on, and it is
+never re-verified here beyond `grok inspect` listing the file — until Grok
+exposes a hook that appends to the prompt at session start, this is the
+honest ceiling of what the router channel can do on this harness.
+`tests/run-plugin-smoke.sh --harness grok` checks the install and the skill
+inventory only; it does not read back Project Instructions or run a model
+turn, so whether `using-sdlc-skills` is actually invoked from the nudge is a
+live check, not a smoke one.
 
 ## Lifecycle policy and evidence
 
