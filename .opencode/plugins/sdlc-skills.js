@@ -61,8 +61,9 @@ function loadBindings(generation) {
       "This generation exposes no todo tool, so multi-step work is tracked in the\n" +
       "task's own written artifact — a plan or report file — not in harness state.\n" +
       "Delegated implementation, review, exploration, or planning goes through the\n" +
-      "`subagent` tool: `agent: \"general\"` carries implementation, `agent: \"explore\"`\n" +
-      "carries read-only review and exploration and cannot write. Shell commands run\n" +
+      "`subagent` tool, where `agent: \"general\"` carries implementation and\n" +
+      "`agent: \"explore\"` carries read-only review and exploration and cannot\n" +
+      "write. Shell commands run\n" +
       "through the `shell` tool. The filled brief is the specification; a review role\n" +
       "that lands on an agent able to write forbids every edit, commit, and push in\n" +
       "the brief, and the coordinator inspects the workspace before accepting the\n" +
