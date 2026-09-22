@@ -26,6 +26,7 @@ Exit codes:
   0  package written; its directory is on stdout
   1  the range is empty — there is nothing to review
   2  bad arguments, not a git repository, or --out cannot be written
+  3  base is not an ancestor of head
 EOF
 }
 
@@ -56,6 +57,9 @@ for rev in "$base" "$head_rev"; do
   rc=$?
   [ "$rc" -eq 0 ] || { echo "not a commit in $repo: $rev" >&2; exit 2; }
 done
+
+git -C "$repo" merge-base --is-ancestor "$base" "$head_rev" || {
+  echo "review-package: $base is not an ancestor of $head_rev" >&2; exit 3; }
 
 names="$(git -C "$repo" diff --name-only "$base" "$head_rev")"
 rc=$?

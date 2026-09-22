@@ -191,6 +191,22 @@ check "an empty range is reported, not packaged (exit 1)" "$rc" "1"
 bash "$D/review-package.sh" --repo "$tmp" --base "$base" --head "$head" --out "$tmp/pkg3" >/dev/null 2>&1
 rc=$?
 check "outside a repository is a usage error (exit 2)" "$rc" "2"
+# base is not an ancestor of head (divergent branches)
+divergent_base="$(git -C "$repo" rev-parse HEAD)"
+git -C "$repo" checkout -q --detach "$base"
+printf 'divergent\n' > "$repo/c.txt"
+git -C "$repo" add c.txt
+git -C "$repo" commit -qm divergent
+divergent_head="$(git -C "$repo" rev-parse HEAD)"
+git -C "$repo" checkout -q -
+bash "$D/review-package.sh" --repo "$repo" --base "$divergent_base" --head "$divergent_head" --out "$tmp/pkg4" >"$tmp/pkg4.out" 2>&1
+rc=$?
+check "base not an ancestor of head is a usage error (exit 3)" "$rc" "3"
+if grep -q "review-package: $divergent_base is not an ancestor of $divergent_head" "$tmp/pkg4.out"; then
+  ok "error message names the revisions"
+else
+  bad "error message missing or incorrect"
+fi
 
 echo "--- the shipped role templates render through the same path"
 if [ -d "$A" ]; then
