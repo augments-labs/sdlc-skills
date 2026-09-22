@@ -47,6 +47,7 @@ under a stricter house rule is not automatically a standard violation.
 | Support-file depth | `reference-depth` warning: a support file names another support file |
 | Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
 | Fill-in templates | Put them in `assets/`; keep explanatory guidance in `references/` |
+| Template shape | `validate-skills.sh`'s "every assets/ template has the house shape" check: each `assets/*.md` file matches `writing-skills`' `template-format.md` `## Shape` rules 1-5 (rule 6 and the content checklist stay human-judged) |
 
 `check-skill.sh` estimates tokens as words × 1.3. The CI drift gate,
 `scripts/sh/token-budget.sh`, uses characters ÷ 4 over full `SKILL.md` files and its configured maximum. These are approximate text budgets, not interchangeable token counts
