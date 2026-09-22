@@ -33,4 +33,9 @@ block for each candidate.
 ## Limitations
 
 {{missing evidence, excluded or unexamined items, and uncertainty; or none}}
+
+## Next action
+
+{{the single shortest next step across all findings, and who owns it; or
+none}}
 ```
