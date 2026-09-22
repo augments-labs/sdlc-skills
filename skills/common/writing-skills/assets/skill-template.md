@@ -1,3 +1,14 @@
+# Skill template
+
+Copy this template when starting a new skill's body file. The author fills
+every `{{double-curly}}` slot from the skill's real procedure and deletes no
+required section; the filled copy is written to
+`skills/<phase>/<name>/SKILL.md`. Marketing language, vendor or model names,
+and a section that only restates its own heading never go in. A step or
+slot that cannot yet be filled means the skill is not ready to ship —
+resolve it before publishing, never leave a placeholder in the shipped body.
+
+````markdown
 ---
 name: {{skill-name-kebab}}
 description: "{{What the skill does}}. Use when {{situations in the user's words, with the keywords a task would contain}}. {{Optional near-miss exclusion, only when a real one exists.}}"
@@ -50,3 +61,4 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 ## Common mistakes
 
 - {{a failure mode the steps do not already forbid}} → {{what to do instead}}.
+````
