@@ -41,7 +41,7 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    Record a caller only when it has a step awaiting this verdict. A skill
    whose work ended at this handoff is not a pending return step.
 5. Compare its result identity with the verification evidence. Different →
-   back to step 1. Review challenges the evidence; it never replaces it.
+   back to step 1.
 
 ## Step 2: Choose depth and roles
 
@@ -86,7 +86,6 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    caller, return it with the verdict and name its suggested owner as the next
    skill. When the recorded caller owns that activity, add any brief it
    supplied to the Step 3.2 dispatch and return the result to its pending step.
-   A generic review never substitutes for the owner's verdict.
 5. Pick each reviewer's tier with the **Model selection** section of
    `dispatching-parallel-agents`. Depth sets coverage and independence, not
    the largest tier for every role.
@@ -109,21 +108,23 @@ wait on one, until the dispatch action has returned a non-empty receipt.
    frozen request. Missing, unreadable, conflicting, or mismatched fields →
    pending. Check the complete inventory and every human-authored change;
    reject unrelated traversal.
-6. Block readiness while required current verification or role coverage is
+6. Decide each Declined to judge entry yourself and record it in the ledger;
+   an undecided entry keeps review pending.
+7. Block readiness while required current verification or role coverage is
    missing, failed, inconclusive, or conditional, or a blocking finding or
    attempt's effects remain unresolved. Retain every failed attempt; an accepted
    linked successor can satisfy its current role once effects are reconciled.
    Reconcile advisory dispositions without adding acceptance criteria.
-7. Record each report's location and disposition in the external review ledger.
+8. Record each report's location and disposition in the external review ledger.
    A report is the reviewer's assessment; keep the tool-issued dispatch ID as
    the evidence that the reviewer was actually dispatched.
-8. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
+9. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
    before responding to it, including a `not ready` that asks for no edit.
-9. Before another round, apply `receiving-code-review`'s convergence check.
-   Retry permitted and candidate or bound inputs changed → restart at Step 1
-   with fresh identities and receipt. Carry prior coverage and dispositions;
-   focus successor review on fixes, affected paths, and regressions.
-10. **REQUIRED — continue a `ready` verdict through the recorded owner:**
+10. Before another round, apply `receiving-code-review`'s convergence check.
+    Retry permitted and candidate or bound inputs changed → restart at Step 1
+    with fresh identities and receipt. Carry prior coverage and dispositions;
+    focus successor review on fixes, affected paths, and regressions.
+11. **REQUIRED — continue a `ready` verdict through the recorded owner:**
     - caller awaiting this review → return to its pending step; never invoke
       the caller recursively
     - task or plan owned by `executing-plans` or `subagent-driven-development`
