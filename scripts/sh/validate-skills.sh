@@ -132,8 +132,9 @@ done
 # preserved the file's execute bit on install; `bash scripts/x.sh` always runs
 # regardless of mode bits. Outside a "## Available scripts" listing — where the
 # bare path just names the file, never instructs running it — every other
-# mention must go through the interpreter. Reference files are not scanned:
-# only the always-loaded SKILL.md body is at risk from a stripped bit.
+# mention must go through the interpreter. This check scans only SKILL.md
+# bodies — the scope its task contract sets. A reference file can carry the
+# same risk; it is simply outside this check, not exempt from the risk.
 echo "• scripts are invoked through an interpreter"
 for skill in "${skills[@]}"; do
   body=$(awk '
