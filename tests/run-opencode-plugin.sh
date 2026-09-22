@@ -107,6 +107,115 @@ while IFS= read -r line; do
 done <"$probe/report"
 [ "$lines" -eq 0 ] && bad "node probe produced no results: $(head -c 300 "$probe/err")"
 
+# --- OpenCode 2.x contract -------------------------------------------------
+# 2.x loads a plugin directory and calls `default.setup(ctx)`; the 1.x hook
+# factory is never invoked (measured on 2.0.13). The stub `ctx` below mirrors
+# the real 2.x surface: `skill.transform(cb)` hands the callback a draft with
+# `add`, and `session.hook("context", h)` hands `h` an event carrying
+# `sessionID`, `messages`, `system`, and `tools`. A throw escaping either
+# callback takes the session down on the real harness, so the checks assert
+# the plugin swallows a rejected payload rather than propagating it.
+echo "--- OpenCode 2.x setup contract"
+node --input-type=module -e '
+import fs from "node:fs";
+const mod = await import(new URL("file://" + process.cwd() + "/.opencode/plugins/sdlc-skills.js").href);
+const report = (status, label, detail) => console.log((status ? "ok " : "bad ") + label + (detail ? " (" + detail + ")" : ""));
+
+// The count is measured from the tree, never hard-coded: adding a skill must
+// not break this check.
+const countSkills = (dir) => fs.readdirSync(dir, { withFileTypes: true }).reduce(
+  (n, e) => n + (e.isDirectory() ? countSkills(dir + "/" + e.name) : (e.name === "SKILL.md" ? 1 : 0)), 0);
+const expected = countSkills("skills");
+
+report(typeof mod.sdlcSkillsPlugin === "function", "exports the 1.x hook factory as a named export");
+const def = mod.default;
+report(!!def && typeof def === "object" && !Array.isArray(def), "default export is the 2.x plugin object", typeof def);
+report(!!def && def.id === "sdlc-skills", "2.x plugin declares its id", def && String(def.id));
+report(!!def && typeof def.setup === "function", "2.x plugin exposes setup");
+report(typeof mod.sdlcSkillsPlugin === "function" && !!def && def.server === mod.sdlcSkillsPlugin, "default.server is the same hook factory");
+
+const makeCtx = (opts = {}) => {
+  const added = [];
+  const hooks = {};
+  return {
+    added, hooks,
+    ctx: {
+      skill: { transform: async (cb) => { cb({ add: (s) => { if (opts.reject && opts.reject(s)) throw new Error("rejected payload"); added.push(s); }, list: () => added.slice() }); return { dispose: async () => {} }; } },
+      session: {
+        hook: async (name, handler) => { hooks[name] = handler; return { dispose: async () => {} }; },
+        get: async ({ sessionID }) => (opts.records || {})[sessionID] ?? { id: sessionID },
+      },
+    },
+  };
+};
+
+try {
+  const { added, hooks, ctx } = makeCtx({ records: { top: { id: "top" }, child: { id: "child", parentID: "top" } } });
+  await def.setup(ctx);
+  report(added.length === expected, "registers every skill on disk through draft.add", added.length + " of " + expected);
+  const complete = added.filter((s) => s && ["id", "name", "description", "path", "content"].every((k) => typeof s[k] === "string" && s[k].length > 0));
+  report(complete.length === added.length && added.length > 0, "every draft.add payload sets id, name, description, path and content", (added.length - complete.length) + " incomplete");
+  const router = added.find((s) => s.id === "using-sdlc-skills");
+  report(!!router && router.content.includes("Catch one and stop"), "the registered router carries the canonical body");
+  report(!!router && !router.content.startsWith("---"), "registered skill content has its frontmatter stripped");
+  report(added.every((s) => fs.existsSync(s.path)), "every registered skill path exists on disk");
+
+  report(typeof hooks.context === "function", "registers a session context hook", Object.keys(hooks).join(","));
+  const raw = fs.readFileSync("skills/common/using-sdlc-skills/SKILL.md", "utf8");
+  const canonical = raw.replace(/^---\n[\s\S]*?\n---\n/, "");
+
+  const topEvent = { sessionID: "top", system: [], messages: [{ role: "user", content: [{ type: "text", text: "hello" }] }], tools: {} };
+  await hooks.context(topEvent);
+  const userText = JSON.stringify(topEvent.messages.filter((m) => m.role === "user"));
+  report(userText.includes(JSON.stringify(canonical).slice(1, -1)), "injects the canonical router into the first user message");
+  report(topEvent.system.length === 0, "injects nothing as a system message on 2.x", String(topEvent.system.length));
+  for (const token of ["subagent", "shell", "skill"]) {
+    report(userText.includes(token), "binds the 2.x " + token + " action");
+  }
+  await hooks.context(topEvent);
+  const occurrences = userText === JSON.stringify(topEvent.messages.filter((m) => m.role === "user")) ? 1 : 2;
+  report(occurrences === 1, "context injection is idempotent within a session");
+
+  const childEvent = { sessionID: "child", system: [], messages: [{ role: "user", content: [{ type: "text", text: "hello" }] }], tools: {} };
+  await hooks.context(childEvent);
+  report(!JSON.stringify(childEvent.messages).includes("EXTREMELY_IMPORTANT"), "does not inject into a child session");
+
+  const empty = { sessionID: "top2", system: [], messages: [], tools: {} };
+  await hooks.context(empty);
+  report(empty.messages.some((m) => m.role === "user" && JSON.stringify(m).includes("EXTREMELY_IMPORTANT")), "appends a user message when the session has none");
+} catch (err) {
+  console.log("bad 2.x setup threw instead of registering (" + (err && err.message) + ")");
+}
+
+// A rejected payload must skip that one skill, not disable the plugin.
+try {
+  const { added, ctx } = makeCtx({ reject: (s) => s.id === "yagni" });
+  await def.setup(ctx);
+  report(added.length > 0 && !added.some((s) => s.id === "yagni"), "a rejected draft.add payload skips one skill without throwing", String(added.length));
+} catch (err) {
+  console.log("bad a rejected draft.add payload escaped the callback (" + (err && err.message) + ")");
+}
+
+// 1.x also calls setup, with a context that has none of the 2.x surface.
+for (const [label, ctx] of [["empty", {}], ["1.x-shaped", { client: {}, $: () => {}, directory: ".", worktree: "." }]]) {
+  try {
+    await def.setup(ctx);
+    report(true, "setup returns without throwing on a " + label + " ctx");
+  } catch (err) {
+    report(false, "setup returns without throwing on a " + label + " ctx", err && err.message);
+  }
+}
+' >"$probe/report2" 2>"$probe/err2" || { bad "2.x node probe crashed: $(head -c 300 "$probe/err2")"; }
+
+lines2=0
+while IFS= read -r line; do
+  case "$line" in
+    ok\ *) ok "${line#ok }" ; lines2=$((lines2+1)) ;;
+    bad\ *) bad "${line#bad }"; lines2=$((lines2+1)) ;;
+  esac
+done <"$probe/report2"
+[ "$lines2" -eq 0 ] && bad "2.x node probe produced no results: $(head -c 300 "$probe/err2")"
+
 echo "--- fails loudly rather than injecting nothing"
 stray="$(mktemp -d)"
 cp "$PLUGIN" "$stray/stray-plugin.js"
