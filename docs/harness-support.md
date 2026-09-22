@@ -18,6 +18,7 @@ tools, and lifecycle events.
 | OpenCode 2.x | the checkout directory, entered through the root `index.js` | `setup`'s `session.hook("context")`, into the first user message | Inferred, not observed — the context hook runs on every request and the injection is deduped, so a transcript replaced without the block gets it again; no compaction was run against a 2.x build here |
 | Grok Build | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped — no separate manifest | none — see below | not applicable, there is no injection to re-apply |
 | Muse Code | `.muse-plugin/plugin.json` on a build with plugin support; otherwise the per-skill install `scripts/sh/install-muse-skills.sh` drives | the manifest's `SessionStart` hook — never on 1.3.0, which loads no plugin | Not exposed — no hook runs, so there is nothing to re-apply |
+| pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` hook, via `appendSystemPrompt` | Yes — `session_compact` re-appends the block into the saved compaction entry's own summary |
 
 The Codex plugin manifest carries the skill catalogue but has no session-start
 field, so the entry skill arrives through hooks the plugin itself bundles
@@ -176,6 +177,38 @@ the per-skill check this build allows, and it returns valid for all 38.
 The smoke test proves the install and the skill inventory. It runs no model
 turn, so whether `using-sdlc-skills` is actually invoked from a listed skill is
 a live check, not a smoke one.
+
+pi 0.86.1 reads the `pi` key in `package.json` —
+`{"extensions": ["./.pi/extensions/sdlc-skills.js"], "skills": ["./skills"]}` —
+once a checkout is installed with `pi install <path>` (or `-l` against a
+project). Skills under a listed directory are discovered recursively, so the
+phase-nested tree needs no flattening. The extension's entry point is
+`export default function (pi)`; it registers `skillPaths: [<checkout>/skills]`
+on `resources_discover`, and on `before_agent_start` appends the router body
+once through `event.systemPromptOptions.appendSystemPrompt`, preferred over
+replacing `systemPrompt` — that field is a plain string, not a list, so the
+idempotency check is against the body itself rather than a count.
+`session_compact` exists for re-injection after compaction; text supplied at
+session start does not survive a transcript replaced by a summary, so the
+extension writes the same appended block into the saved compaction entry's
+own `summary` instead. No tool bindings file ships with this adapter: pi's
+tool names are unmeasured against a running session, so the Dispatch
+capability and role-binding tables below carry no pi row until they are.
+
+Measured on 0.86.1: `pi install <path>` for a local-path source registers by
+reference in `<HOME>/.pi/agent/settings.json` and copies nothing — a
+throwaway `HOME` after install holds only that one settings file, and the
+checkout itself is untouched, so no `.gitignore` entry is needed. `pi list`
+prints the registered package line back; there is no non-interactive skill
+dump, and `pi -p` runs a model turn, so the offline evidence stops at
+registration. `tests/run-pi-extension.sh` drives the extension's own handlers
+against stub inputs: the registered event set, `resources_discover`'s path,
+and `before_agent_start`/`session_compact`'s verbatim, idempotent append.
+`tests/harnesses/pi.sh` installs into a throwaway `HOME`, offline, and reports
+the `pi list` package line and the inventory limit; `tests/run-plugin-smoke.sh
+--harness pi` additionally counts `SKILL.md` files under the checkout — the
+install references it in place rather than copying it — and checks that
+`.pi/extensions/sdlc-skills.js` is present there.
 
 ## Lifecycle policy and evidence
 
