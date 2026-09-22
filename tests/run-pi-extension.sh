@@ -115,21 +115,41 @@ while IFS= read -r line; do
 done <"$probe/report"
 [ "$lines" -eq 0 ] && bad "node probe produced no results: $(head -c 300 "$probe/err")"
 
+# A thrown exception mid-probe is caught by the node script's own outer
+# try/catch and reported as one generic "bad" line, which silently hides
+# which of the real checks after it never ran. Count the report call
+# sites in the probe's own source and compare to how many result lines
+# actually came back. The pattern below is built from two concatenated
+# fragments so this very line does not count itself.
+expected="$(grep -c 'report''(' "$0")"
+[ "$lines" -eq "$expected" ] || bad "probe produced $lines of $expected checks"
+
 echo "--- fails loudly rather than injecting nothing"
 stray="$(mktemp -d)"
-cp "$EXTENSION" "$stray/stray-extension.js"
-if node --input-type=module -e "
+if cp "$EXTENSION" "$stray/stray-extension.js"; then
+  stray_err="$probe/stray-err"
+  if node --input-type=module -e "
 import('file://$stray/stray-extension.js').then(async (m) => {
   const handlers = {};
   const stub = { on: (event, handler) => { (handlers[event] ??= []).push(handler); } };
   await m.default(stub);
   await handlers['before_agent_start'][0]({ type: 'before_agent_start', systemPromptOptions: { appendSystemPrompt: '' } }, {});
   console.log('injected without a router');
-}).catch((err) => { console.error('refused: ' + (err && err.message)); process.exit(1); }
-" >/dev/null 2>&1; then
-  bad "injects router text with no skills tree beside the extension"
+}).catch((err) => { console.error('refused: ' + (err && err.message)); process.exit(1); });
+" >/dev/null 2>"$stray_err"; then
+    bad "injects router text with no skills tree beside the extension"
+  else
+    # A non-zero exit alone is not proof of the extension's own guard — a
+    # syntax error or any other crash also exits non-zero. Only count this
+    # as the guard firing when the extension's own message is on stderr.
+    if grep -q 'sdlc-skills:' "$stray_err"; then
+      ok "throws when the router file cannot be found ($(head -1 "$stray_err"))"
+    else
+      bad "did not throw the extension's own guard: $(head -1 "$stray_err")"
+    fi
+  fi
 else
-  ok "throws when the router file cannot be found"
+  bad "could not stage the stray copy"
 fi
 rm -rf "$stray"
 
