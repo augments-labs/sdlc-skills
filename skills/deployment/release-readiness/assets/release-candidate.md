@@ -1,4 +1,4 @@
-# Release-candidate evidence
+# Release candidate template
 
 `release-readiness` opens this before Step 1's actions and fills each section
 as its step runs: draft an immutable release-input descriptor, issue its

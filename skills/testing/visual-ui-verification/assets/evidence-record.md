@@ -1,4 +1,4 @@
-# Visual evidence record
+# Visual evidence record template
 
 `visual-ui-verification` opens this before any capture and fills the `Run`
 header first. Keep it outside the candidate identity; record where the filled

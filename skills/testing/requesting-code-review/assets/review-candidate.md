@@ -1,4 +1,4 @@
-# Review candidate descriptor
+# Review candidate template
 
 `requesting-code-review` opens this after the evidence is bound and fills every
 field: mode, identities, complete inventory, artifact controls, terminal

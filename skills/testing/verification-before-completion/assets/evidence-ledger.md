@@ -1,4 +1,4 @@
-# Completion evidence ledger
+# Evidence ledger template
 
 Open this file for an integration or release claim, or for any claim needing
 more than one gate. A task-green claim with one required gate stays in the

@@ -1,4 +1,4 @@
-# Migration contract
+# Migration contract template
 
 `migration-strategy` opens this before its steps below; each step fills the
 section it names. Use this template for

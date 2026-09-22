@@ -1,4 +1,4 @@
-# Project or initiative assurance matrix
+# Assurance matrix template
 
 `verification-strategy` instantiates this before writing any gate, filling
 `Risk inventory` and `Risk-to-gate matrix` first. Write the completed artifact
