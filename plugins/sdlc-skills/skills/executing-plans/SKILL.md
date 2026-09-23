@@ -11,13 +11,12 @@ This skill never decides what happens to the branch.
 
 ## When to use
 
-- The user asks to execute, continue, or resume a plan directory written by
-  `writing-plans`, or answers its execution-mode question with inline.
+- The user asks to execute, continue, or resume a plan directory, or answers
+  its execution-mode question with inline.
 - **Skip** a single task with no plan directory: use `test-driven-development`
   and `yagni` directly.
 - **Skip** a plan whose approval row records `mode: delegated`:
-  `subagent-driven-development` owns it, and it is the preferred mode wherever
-  the harness has a subagent action.
+  `subagent-driven-development` owns it.
 
 ## Available scripts
 
@@ -30,8 +29,7 @@ This skill never decides what happens to the branch.
    index whose `Identity` is the printed version, in ledger order. The last of
    them must be the row whose `Bound evidence` names the `Approval rule`
    owner's approval: a later row that rejects, cancels, or supersedes this
-   version closes it, and an append-only ledger keeps the approval visible
-   above it. The index cannot approve itself.
+   version closes it. The index cannot approve itself.
 2. No such row, a later row closed the version, or the script fails → stop and
    name the missing version, the row that closed it, or the script's error;
    never substitute a version read from the index.
@@ -41,6 +39,11 @@ This skill never decides what happens to the branch.
    `subagent-driven-development`; this skill ends here and runs nothing.
 
 ## Step 2: Set up the workspace
+
+Every task's `Files` lies outside any git-tracked project, or the index says
+the deliverable is not a repository change → record `workspace: not applicable`
+in the ledger and skip item 2. One task inside a repository → the
+bookends apply to the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -59,18 +62,17 @@ For every task, confirm:
   falsification; undeclared or weakened criteria block execution
 - `Implementation disciplines` is filled
 - UI task: `Applicable visual references` match the index's `Selected visual
-  references` field for field; run each freshness evaluator now
+  references`; run each freshness evaluator now
 
-Record the checked input/output mappings and evaluator ownership in the existing
-execution ledger before the first edit. Any failure: report the field and task;
-do not start it under an invalid contract.
+Record the checked input/output mappings and evaluator ownership in the
+execution ledger before the first edit. Any failure: report the field and
+task; do not start it.
 
 - Phases or shards in the index: read `references/phase-queues.md` before the first
   task and follow it.
 - High-risk task: blocked until its migration and assurance contracts are
   approved and their entry gates passed. Report it; do not start it.
-- Read `Integration cadence`: `plan end` (default) or `per task`. It decides
-  loop step 8.
+- Read `Integration cadence`: `plan end` (default) or `per task`.
 
 ## Step 4: The task loop
 
@@ -126,7 +128,8 @@ In the task workspace recorded in Step 2, in order:
    not evidence for this state.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision.
    Reading the diff yourself is not this step.
-3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
+3. `workspace: not applicable` → hand the result to the user. Otherwise,
+   **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
 
@@ -156,8 +159,6 @@ In the task workspace recorded in Step 2, in order:
 - Three attempts in one class without convergence: write `blocked` with the
   class and the attempts; end the turn. Never patch shard failures one at a
   time.
-- Cancelled or superseded task: needs the approved plan decision in the
-  ledger. Neither is `done`.
 
 ## Stopping and resuming
 
