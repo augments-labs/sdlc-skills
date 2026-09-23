@@ -326,6 +326,23 @@ else
   bad "error does not name the two-fence problem"
 fi
 
+echo "--- task-brief.sh: a fence opened but never closed is refused"
+roles7="$tmp/roles7"
+mkdir -p "$roles7"
+cat > "$roles7/implementer.md" <<'TPL'
+````markdown
+Unterminated body: {{task-file}}
+TPL
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles7" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/openfence.out" 2>"$tmp/openfence.err"
+rc=$?
+check "an unclosed fence is refused (exit 2)" "$rc" "2"
+if grep -qF "template's fenced brief has no closing fence" "$tmp/openfence.err"; then
+  ok "error names the unclosed-fence problem"
+else
+  bad "error does not name the unclosed-fence problem"
+fi
+
 echo "--- review-package.sh: the reviewer gets the diff itself"
 repo="$tmp/repo"
 mkdir -p "$repo"
