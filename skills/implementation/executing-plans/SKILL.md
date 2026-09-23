@@ -11,13 +11,12 @@ This skill never decides what happens to the branch.
 
 ## When to use
 
-- The user asks to execute, continue, or resume a plan directory written by
-  `writing-plans`, or answers its execution-mode question with inline.
+- The user asks to execute, continue, or resume a plan directory, or answers
+  its execution-mode question with inline.
 - **Skip** a single task with no plan directory: use `test-driven-development`
   and `yagni` directly.
 - **Skip** a plan whose approval row records `mode: delegated`:
-  `subagent-driven-development` owns it, and it is the preferred mode wherever
-  the harness has a subagent action.
+  `subagent-driven-development` owns it.
 
 ## Available scripts
 
@@ -30,8 +29,7 @@ This skill never decides what happens to the branch.
    index whose `Identity` is the printed version, in ledger order. The last of
    them must be the row whose `Bound evidence` names the `Approval rule`
    owner's approval: a later row that rejects, cancels, or supersedes this
-   version closes it, and an append-only ledger keeps the approval visible
-   above it. The index cannot approve itself.
+   version closes it. The index cannot approve itself.
 2. No such row, a later row closed the version, or the script fails → stop and
    name the missing version, the row that closed it, or the script's error;
    never substitute a version read from the index.
@@ -41,6 +39,11 @@ This skill never decides what happens to the branch.
    `subagent-driven-development`; this skill ends here and runs nothing.
 
 ## Step 2: Set up the workspace
+
+Every task's `Files` lies outside any git-tracked project, or the index says
+the deliverable is not a repository change → record `workspace: not applicable`
+in the ledger and skip 2.2. One task inside a repository → Step 2.2 and
+Step 5.3 apply to the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -61,16 +64,15 @@ For every task, confirm:
 - UI task: `Applicable visual references` match the index's `Selected visual
   references` field for field; run each freshness evaluator now
 
-Record the checked input/output mappings and evaluator ownership in the existing
-execution ledger before the first edit. Any failure: report the field and task;
-do not start it under an invalid contract.
+Record the checked input/output mappings and evaluator ownership in the
+execution ledger before the first edit. Any failure: report the field and
+task; do not start it.
 
 - Phases or shards in the index: read `references/phase-queues.md` before the first
   task and follow it.
 - High-risk task: blocked until its migration and assurance contracts are
   approved and their entry gates passed. Report it; do not start it.
-- Read `Integration cadence`: `plan end` (default) or `per task`. It decides
-  loop step 8.
+- Read `Integration cadence`: `plan end` (default) or `per task`.
 
 ## Step 4: The task loop
 
@@ -84,7 +86,9 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - Approved parallel work: invoke `dispatching-parallel-agents`.
+   - Approved parallel work: `waves: yes` on the approval row and the ready
+     set that passes the independence test of `dispatching-parallel-agents`
+     Step 1 → invoke it for that set; otherwise one task at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
    raw diff, result revision, and evaluator output, never its summary.
@@ -122,21 +126,22 @@ In the task workspace recorded in Step 2, in order:
 
 1. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`: the index's
    `Acceptance` check plus every done task's evaluator, on the HEAD that combines
-   every task (`per task`: the base after the last integration). Task ledgers are
-   not evidence for this state.
-2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision.
-   Reading the diff yourself is not this step.
-3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
+   every task (`per task`: the base after the last integration), or, when
+   `workspace: not applicable`, on the deliverable files identified by
+   content digest. Task ledgers are not evidence for this state.
+2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision, or
+   on that digest in working-tree mode. Reading the diff yourself is not this
+   step.
+3. `workspace: not applicable` → hand the result to the user. Otherwise,
+   **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
 
 | Thought | Reality |
 | --- | --- |
 | "All tasks are done, so the plan is done" | Tasks are done inside the plan. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
-| "The user said not to ask per action, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision and asks its own question. |
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
-| "Task done — I'll check in before the next" | `done` is a ledger entry, not a decision point. Take the next task. |
 | "Subagents are available, but inline is what I'm already in" | The row's mode decides, and the user chose it. A delegated row here is a redirect, not a loop to run. |
 
 ## Gotchas
@@ -156,8 +161,6 @@ In the task workspace recorded in Step 2, in order:
 - Three attempts in one class without convergence: write `blocked` with the
   class and the attempts; end the turn. Never patch shard failures one at a
   time.
-- Cancelled or superseded task: needs the approved plan decision in the
-  ledger. Neither is `done`.
 
 ## Stopping and resuming
 
