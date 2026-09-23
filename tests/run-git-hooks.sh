@@ -6,8 +6,11 @@
 # out only when CI fails on the PR. install-git-hooks.sh plus
 # scripts/git-hooks/pre-commit close that gap with no third-party tool. This
 # test proves the hook actually runs the real validators against a real
-# (fixture) copy of this tree — not a stub — and that it stays out of paths
-# that cannot affect them.
+# (fixture) copy of this tree — not a stub — that it stays out of paths that
+# cannot affect them, and that it judges the staged INDEX rather than the
+# working tree: a partial stage (some hunks staged, one more unstaged edit on
+# top — the ordinary `git add -p` shape) must be judged as it will actually
+# be committed, in both directions.
 #
 # Deterministic on purpose: file in, file out, exit code out. No model runs,
 # no network, and the only git repositories touched are temporary ones this
@@ -24,8 +27,9 @@ tests/run-git-hooks.sh — offline checks for the local git hook installer.
 Takes no arguments; builds temporary fixture git repositories under mktemp -d
 (full copies of this working tree) and exercises
 scripts/sh/install-git-hooks.sh and scripts/git-hooks/pre-commit against them,
-including a plain clone and a linked worktree of one. Never touches this
-checkout's own git config.
+including a plain clone, a linked worktree of one, and a partial stage in
+both directions (defect staged/tree reverted, and the reverse). Never touches
+this checkout's own git config.
 
   --help    this text
 
@@ -72,6 +76,22 @@ fixture() {  # <dest dir>
 break_a_skill() {  # <fixture dir>
   printf '\nNote: never mention Claude or Sonnet by name in skill text.\n' \
     >> "$1/skills/common/yagni/SKILL.md"
+}
+
+# For the F-6 "index clean, working tree broken" direction: stages a clean
+# edit (kept in sync with its plugins/ mirror in the INDEX, so no incidental
+# mirror-drift failure) to a skill that is not a member of any chain in
+# chains.toml (so a few extra words cannot trip a chain budget sitting at its
+# limit — scripts/sh/data/chains.toml's [bug-fix] chain has zero slack at
+# 5898/5898 words), then breaks only the unstaged working-tree copy on top,
+# without re-staging.
+stage_clean_then_break_tree() {  # <fixture dir>
+  local dest="$1"
+  printf '\nA harmless clean note.\n' >> "$dest/skills/common/handoff/SKILL.md"
+  printf '\nA harmless clean note.\n' >> "$dest/plugins/sdlc-skills/skills/handoff/SKILL.md"
+  git -C "$dest" add skills/common/handoff/SKILL.md plugins/sdlc-skills/skills/handoff/SKILL.md
+  printf '\nNote: never mention Claude or Sonnet by name in skill text.\n' \
+    >> "$dest/skills/common/handoff/SKILL.md"
 }
 
 echo "--- both scripts exist, are executable, and answer --help with documented exit codes"
@@ -142,6 +162,21 @@ rc=$?
 check "--remove exits 0" "$rc" "0"
 restored="$(git -C "$fx2" config --get core.hooksPath 2>/dev/null || true)"
 check "core.hooksPath is restored to the prior custom value" "$restored" ".githooks-custom"
+
+echo "--- install-git-hooks.sh: saves a prior ABSOLUTE value and --remove restores it"
+fx7="$tmp/fx7"
+fixture "$fx7"
+git -C "$fx7" config core.hooksPath /abs/path/to/hooks
+( cd "$fx7" && bash "$INSTALLER" >"$tmp/install7.out" 2>&1 )
+rc=$?
+check "install over an existing absolute hooksPath exits 0" "$rc" "0"
+hp7="$(git -C "$fx7" config --get core.hooksPath 2>/dev/null || true)"
+check "core.hooksPath now points at scripts/git-hooks" "$hp7" "scripts/git-hooks"
+( cd "$fx7" && bash "$INSTALLER" --remove >"$tmp/remove7.out" 2>&1 )
+rc=$?
+check "--remove exits 0" "$rc" "0"
+restored7="$(git -C "$fx7" config --get core.hooksPath 2>/dev/null || true)"
+check "core.hooksPath is restored to the prior absolute value" "$restored7" "/abs/path/to/hooks"
 
 echo "--- install-git-hooks.sh --remove: a foreign core.hooksPath with no prior install is left untouched"
 fx6="$tmp/fx6"
@@ -269,6 +304,53 @@ if [ "$elapsed" -ge 2 ]; then
 else
   bad "a plugins/-only change looked skipped (${elapsed}s) — plugins/ must still trigger the gate"
 fi
+
+echo "--- pre-commit: a partial stage (defect staged, working-tree copy reverted) still fails the commit"
+# The ordinary `git add -p` shape: stage a defect, then revert only the
+# working-tree file without re-staging (MM status — the index still carries
+# the defect, the tree does not). The hook must judge the index it exported,
+# not the tree, so the commit is still refused.
+fx8="$tmp/fx8"
+fixture "$fx8"
+( cd "$fx8" && bash "$INSTALLER" >"$tmp/install8.out" 2>&1 )
+break_a_skill "$fx8"
+git -C "$fx8" add skills/common/yagni/SKILL.md
+git -C "$fx8" show HEAD:skills/common/yagni/SKILL.md > "$fx8/skills/common/yagni/SKILL.md"
+git -C "$fx8" status --porcelain skills/common/yagni/SKILL.md | grep -q '^MM' \
+  && ok "fixture is a genuine partial stage (MM: index defective, tree clean)" \
+  || bad "fixture setup did not produce MM status: $(git -C "$fx8" status --porcelain skills/common/yagni/SKILL.md)"
+git -C "$fx8" commit -qm "partial stage" >"$tmp/partial-defect.out" 2>&1
+rc=$?
+if [ "$rc" -ne 0 ]; then
+  ok "the commit is refused even though the working tree looks clean (exit $rc)"
+else
+  bad "the commit succeeded — the hook validated the reverted working tree, not the staged defect"
+fi
+if grep -q 'validate-skills.sh' "$tmp/partial-defect.out"; then
+  ok "the hook's output names the failing validator (validate-skills.sh)"
+else
+  bad "the hook's output does not name the failing validator: $(tail -5 "$tmp/partial-defect.out")"
+fi
+
+echo "--- pre-commit: a clean stage with only the unstaged working-tree copy broken still commits"
+# The inverse partial stage: the index is clean (and mirror-synced), only an
+# unstaged edit on top of the working-tree file is broken. The hook must
+# still judge the index, so the commit succeeds and carries the clean text.
+fx9="$tmp/fx9"
+fixture "$fx9"
+( cd "$fx9" && bash "$INSTALLER" >"$tmp/install9.out" 2>&1 )
+stage_clean_then_break_tree "$fx9"
+git -C "$fx9" status --porcelain skills/common/handoff/SKILL.md | grep -q '^MM' \
+  && ok "fixture is a genuine partial stage (MM: index clean, tree defective)" \
+  || bad "fixture setup did not produce MM status: $(git -C "$fx9" status --porcelain skills/common/handoff/SKILL.md)"
+git -C "$fx9" commit -qm "clean index, broken tree" >"$tmp/partial-clean.out" 2>&1
+rc=$?
+check "the commit succeeds — only the index is judged (exit 0)" "$rc" "0"
+committed="$(git -C "$fx9" show HEAD:skills/common/handoff/SKILL.md)"
+case "$committed" in
+  *Claude*|*Sonnet*) bad "the committed content carries the unstaged defect — the hook validated the working tree" ;;
+  *)                 ok "the committed content is exactly the clean staged version, not the broken working tree" ;;
+esac
 
 echo "--- this checkout's own git config is untouched"
 after_hookspath="$(git config --get core.hooksPath 2>/dev/null || true)"
