@@ -32,8 +32,7 @@ how that is judged, not the code.
 ## Step 1: Write the index
 
 1. Open `assets/index-template.md` when starting the index. Fill the header
-   first: exact identity of every approved input, the rule that makes each
-   stale, the `Approval rule`, the `Integration cadence`.
+   first.
 2. Leave `Integration cadence` at `plan end`. Write `per task` only when the
    user directly asked for per-task integration, and quote the instruction.
 3. Approved UI design with **Selected visual references** → copy the complete
@@ -89,11 +88,12 @@ how that is judged, not the code.
    conformance evaluator.
 6. Confirm independent tasks have disjoint files, data, effects, evaluators,
    and external state; every overlap has a dependency and one owner.
-7. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
-   high-risk; resolve every blocker it returns; offer it for other plans.
-8. Fill **Review focus** with up to five spec-implied inputs or failure modes
+7. Fill **Review focus** with up to five spec-implied inputs or failure modes
    no task Evaluator exercises, or mark it `none`; give every `none yet` row
    a check or name it in the PR.
+8. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
+   high-risk; resolve every blocker it returns; for any other plan, ask the
+   offer question `reviewing-plans` states.
 
 ## Step 4: Present, then stop
 
@@ -102,7 +102,7 @@ how that is judged, not the code.
 
    ```text
    Plan {{path}} — version {{printed version}}
-   {{goal, architecture, constraints, acceptance, trace, task list}}
+   {{goal, architecture, constraints, acceptance, trace, task list, review findings}}
 
    1. Approve, then choose an execution mode
    2. Request changes
