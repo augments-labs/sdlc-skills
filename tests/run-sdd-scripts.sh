@@ -107,6 +107,19 @@ bash "$D/sdd-workspace.sh" --plan "$tmp/nope" >/dev/null 2>&1
 rc=$?
 check "a missing plan index is a usage error" "$rc" "2"
 
+echo "--- sdd-workspace.sh: a plan plan-version.sh rejects is reported, not silently accepted"
+badplan="$tmp/badplan"
+mkdir -p "$badplan"
+printf '# Plan\n\nNo tasks section here.\n' > "$badplan/00-index.md"
+bash "$D/sdd-workspace.sh" --plan "$badplan" >"$tmp/badplan.out" 2>"$tmp/badplan.err"
+rc=$?
+check "a plan-version.sh rejection is a usage error (exit 2)" "$rc" "2"
+if grep -qF 'could not compute the identity of' "$tmp/badplan.err"; then
+  ok "stderr names the identity failure"
+else
+  bad "stderr does not name the identity failure"
+fi
+
 echo "--- task-brief.sh: renders a role brief, and refuses an unfilled one"
 roles="$tmp/roles"
 mkdir -p "$roles"

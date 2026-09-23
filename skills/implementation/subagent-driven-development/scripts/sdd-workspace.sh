@@ -30,7 +30,8 @@ a run never truncates what an earlier session recorded.
 Exit codes:
   0  the ledger is present and bound to this plan
   1  the ledger is missing, or its identity is not the plan's (drift)
-  2  bad arguments, no plan index, or the ledger cannot be written
+  2  bad arguments, no plan index, a plan plan-version.sh rejects, or the ledger
+     cannot be written
 EOF
 }
 
