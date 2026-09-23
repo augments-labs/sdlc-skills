@@ -59,18 +59,16 @@ how that is judged, not the code.
    producer tasks for inputs that already exist.
 4. Fill `Implementation disciplines`: `test-driven-development` + `yagni`, or
    the exact carve-out.
-5. Include exact code only where precision is fragile: a tricky regex, a
-   security check, a migration statement.
-6. Fill `Evaluator`. The evaluator — the check this task must pass — is a
-   command that returns a verdict, or a rubric with its accountable judge and
-   deciding observations. UI task → copy `Applicable visual references` and
-   give every Reference ID a **Visual conformance gates** row.
-7. Fill `Evaluator identity/owner` so the gate lives outside what the task
+5. Fill `Evaluator`: a command that returns a verdict, or a rubric with its
+   accountable judge and deciding observations. UI task → copy `Applicable
+   visual references` and give every Reference ID a **Visual conformance
+   gates** row.
+6. Fill `Evaluator identity/owner` so the gate lives outside what the task
    may mutate. A task that may edit its own gate → write the permitted scope
    and require RED or deliberate falsification before GREEN counts.
-8. Fill `Suggested tier` with the **Model selection** section of
+7. Fill `Suggested tier` with the **Model selection** section of
    `dispatching-parallel-agents`, with the reason.
-9. Write `00-index.md` plus one file per task to
+8. Write `00-index.md` plus one file per task to
    `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`. No approval, execution
    state, or evidence in these files. Every later change to what they specify
    is a successor file.
@@ -79,8 +77,10 @@ how that is judged, not the code.
 
 1. Trace each requirement and accepted risk gate to a task or phase. Fix
    uncovered requirements; cut tasks tracing to nothing.
-2. Replace every `TBD`, `handle edge cases`, `similar to task N` with the
-   task it hides.
+2. Replace every `TBD`, `handle edge cases`, or `similar to task N` with the
+   task it hides; replace an `Expected:` value not produced by running the
+   command on the current tree with the value the command printed, or a
+   rubric when the command cannot run yet.
 3. Confirm every task has an executable Evaluator or controlled rubric, and
    the index has one top-level **Acceptance** check.
 4. Resolve every Consumes to a Produces under the same name and type. Check
@@ -98,7 +98,7 @@ how that is judged, not the code.
 ## Step 4: Present, then stop
 
 1. Run `bash scripts/plan-version.sh` on the plan directory before presenting.
-   Show the complete index and the printed version to the `Approval rule` owner:
+   Show the index and the printed version to the `Approval rule` owner:
 
    ```text
    Plan {{path}} — version {{printed version}}
