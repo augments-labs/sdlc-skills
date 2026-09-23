@@ -43,7 +43,8 @@ Policy checks (`warn` by default, `fail` with --strict):
                             exact candidate, material intent, owning phase
                             skill, normative
   reference-depth           a file under references/ or assets/ names another
-                            support file (always `warn`: keep them one level deep)
+                            support file SKILL.md does not also name (always
+                            `warn`: keep them one level deep)
 
 Output (tsv):
   One row per finding: LEVEL <tab> CHECK <tab> DETAIL
