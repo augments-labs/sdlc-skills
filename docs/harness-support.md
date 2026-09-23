@@ -86,7 +86,13 @@ difference is worth stating: the 1.x load is asserted structurally by the
 offline checks — the named export exists, and every function the package entry
 exposes answers a 1.x-shaped call with a hook set — and is not observed on a
 1.x binary, because the adapter's entry shape is what this arrangement
-changed and no 1.x build has run it here.
+changed and no 1.x build has run it here; passive discovery — a session
+started inside the checkout with no `plugin`/`plugins` entry naming it — is
+measured only for the installed generation: on 2.0.14 it loads
+`.opencode/plugins/sdlc-skills.js` directly, without the explicit `plugins`
+entry or its `index.js` resolution; whether 1.x's file-scanning
+auto-discovery does the same is Inferred, not observed, since no 1.x build
+has run it here.
 
 Grok Build 1.0.40 accepts a Claude-format plugin directory directly, so no
 dedicated Grok manifest is added — it reads `.claude-plugin/plugin.json` and
