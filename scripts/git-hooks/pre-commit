@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Local pre-commit hook: runs the CI validators only when a staged path can
+# affect them, in the same order CI runs them, and exits with the first
+# failure. Otherwise it prints a skip line and exits fast. Installed via
+# scripts/sh/install-git-hooks.sh; depends on nothing beyond git and bash.
+
+set -uo pipefail
+
+case "${1-}" in
+  -h|--help)
+    cat <<'EOF'
+scripts/git-hooks/pre-commit — runs the CI validators on a relevant staged change.
+
+Reads `git diff --cached --name-only`. When any staged path starts with
+skills/, scripts/, tests/, hooks/, .claude-plugin/, .kimi-plugin/,
+.muse-plugin/, .opencode/, .pi/, plugins/, docs/, or is AGENTS.md or
+README.md, it runs the same four validators as CI, in the same order, and
+exits with the first one that fails. Otherwise it prints a skip line and
+exits 0. plugins/ is included even though it is a generated mirror: that is
+where drift between a skill and its mirror is caught.
+
+  --help    this text
+
+Exit codes: 0 pass, or skipped · 1 a validator failed · 2 environment (git
+            unavailable, or not run inside a git working tree)
+EOF
+    exit 0;;
+esac
+
+command -v git >/dev/null 2>&1 || { echo "pre-commit: git is required" >&2; exit 2; }
+
+# Git already runs hooks with cwd at the working tree's root; re-resolving it
+# keeps this hook correct when invoked directly (as --help is, above) too.
+root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+  echo "pre-commit: not run from inside a git working tree" >&2
+  exit 2
+}
+cd "$root" || exit 2
+
+mapfile -t staged < <(git diff --cached --name-only)
+
+relevant=0
+for f in "${staged[@]}"; do
+  case "$f" in
+    skills/*|scripts/*|tests/*|hooks/*|.claude-plugin/*|.kimi-plugin/*|.muse-plugin/*|.opencode/*|.pi/*|plugins/*|docs/*|AGENTS.md|README.md)
+      relevant=1
+      break
+      ;;
+  esac
+done
+
+if [ "$relevant" -eq 0 ]; then
+  echo "pre-commit: skip — no staged path affects the validators"
+  exit 0
+fi
+
+run() {  # <command...>  (bash + the script path + its flags)
+  echo "pre-commit: running $*"
+  if ! "$@"; then
+    echo "pre-commit: FAILED — $*" >&2
+    return 1
+  fi
+}
+
+fail=0
+
+run bash scripts/sh/validate-skills.sh --strict || fail=1
+
+if [ "$fail" -eq 0 ]; then
+  run bash scripts/sh/token-budget.sh --max 5000 || fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  chains=$(sed -n 's/^\[\([a-z0-9-]*\)\]$/\1/p' scripts/sh/data/chains.toml)
+  if [ -z "$chains" ]; then
+    echo "pre-commit: FAILED — no chains in scripts/sh/data/chains.toml" >&2
+    fail=1
+  else
+    for chain in $chains; do
+      run bash scripts/sh/token-budget.sh --chain "$chain" || { fail=1; break; }
+    done
+  fi
+fi
+
+if [ "$fail" -eq 0 ]; then
+  run bash scripts/sh/validate-trigger-collisions.sh --strict || fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  run bash scripts/sh/validate-skill-graph.sh --strict || fail=1
+fi
+
+[ "$fail" -eq 0 ] && exit 0
+exit 1
