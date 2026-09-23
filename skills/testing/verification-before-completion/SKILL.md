@@ -15,7 +15,7 @@ description: "Runs the checks and reads their output before any claim that work 
 ## Available scripts
 
 - **`scripts/state-identity.sh`** — the capture and re-check of Steps 1.4 and
-  2.5; `--help` documents its exit codes.
+  2.5.
 
 ## Step 1: Bind the claim
 
@@ -25,7 +25,7 @@ description: "Runs the checks and reads their output before any claim that work 
 2. Task-green claim with one required gate → a one-row inline ledger: claim,
    gate, state identity, raw result. Integration, release, or more than one
    gate → open `assets/evidence-ledger.md` before the first gate runs,
-   filling each field as its step runs (append-only, outside the candidate);
+   filling each field (append-only, outside the candidate);
    `Claim` names the transition.
 3. One `Results` row per gate the task, plan, or assurance cadence requires
    here; missing, planned, blocked, or unreasoned → claim pending before
@@ -42,11 +42,13 @@ description: "Runs the checks and reads their output before any claim that work 
 ## Step 2: Run the gates
 
 1. Reuse a row only while the ledger's `Invalidation` list leaves it valid
-   here, and record why. Run the rest fresh. Shared effects → in sequence;
-   disjoint → in parallel.
-2. Timeout or mid-run failure: wait until its processes and effects stop,
-   record the result, reject late output. Repeated failure under unchanged
-   conditions → diagnose or return pending, never rerun until a sample passes.
+   here, and record why. Run the rest fresh.
+2. Timeout, mid-run failure, or a backgrounded gate: wait or poll its exact
+   process or task ID until it exits and its effects stop, record the
+   result at a path naming this attempt, bind the row to it, reject late
+   output and any log from before this attempt or another run. Repeated
+   failure under unchanged conditions → diagnose or return pending, never
+   rerun until a sample passes.
 3. Unwanted mutation: restore and rerun, or record it as pending.
 4. Read the raw output, not the exit code, and record the run in its row;
    redact only the copy shown to the user. An assertion that could not have
@@ -112,4 +114,3 @@ description: "Runs the checks and reads their output before any claim that work 
 | --- | --- |
 | "It should work" | Run the gate and make it a fact. |
 | "I ran it earlier" | Earlier state or evidence age may not support this transition. |
-| "The types pass" | Types, build, behavior, requirements, and release are distinct claims. |
