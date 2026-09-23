@@ -2,6 +2,17 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.3.0] — 2026-09-23
+
+Grok Build, Muse Code and pi are now supported harnesses, and OpenCode serves
+both its 1.x and 2.x plugin contracts. The new `diagnosing-a-session` skill
+reconstructs what an agent session did from its transcript and cites the line
+behind every claim.
+
+Every skill asset now follows one template format that `validate-skills.sh`
+gates, and the delegated-execution scripts no longer rewrite a task's own text
+or pass a brief with an unfilled slot.
+
 ## [10.2.1] — 2026-09-18
 
 The OpenCode one-line install now works: a dependency-free root `package.json`
