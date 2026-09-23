@@ -48,7 +48,8 @@ Every ledger is one markdown table with this header:
   pending, changes requested, approved, rejected, cancelled, superseded.
 - `Bound evidence` names who decided and holds the receipt or evidence the
   state rests on. A plan's approval row also records its execution mode there:
-  `mode: inline` or `mode: delegated`.
+  `mode: inline` or `mode: delegated`, and `waves: yes` when the wave answer
+  was chosen.
 - `Updated` is the date the row was appended.
 
 A ledger kept anywhere else, or returned instead of written, is recorded in the
