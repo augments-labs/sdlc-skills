@@ -42,8 +42,8 @@ This skill never decides what happens to the branch.
 
 Every task's `Files` lies outside any git-tracked project, or the index says
 the deliverable is not a repository change → record `workspace: not applicable`
-in the ledger and skip item 2. One task inside a repository → the
-bookends apply to the whole plan.
+in the ledger and skip 2.2. One task inside a repository → Step 2.2 and
+Step 5.3 apply to the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -62,7 +62,7 @@ For every task, confirm:
   falsification; undeclared or weakened criteria block execution
 - `Implementation disciplines` is filled
 - UI task: `Applicable visual references` match the index's `Selected visual
-  references`; run each freshness evaluator now
+  references` field for field; run each freshness evaluator now
 
 Record the checked input/output mappings and evaluator ownership in the
 execution ledger before the first edit. Any failure: report the field and
@@ -139,7 +139,6 @@ In the task workspace recorded in Step 2, in order:
 | "The user said not to ask per action, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision and asks its own question. |
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
-| "Task done — I'll check in before the next" | `done` is a ledger entry, not a decision point. Take the next task. |
 | "Subagents are available, but inline is what I'm already in" | The row's mode decides, and the user chose it. A delegated row here is a redirect, not a loop to run. |
 
 ## Gotchas
