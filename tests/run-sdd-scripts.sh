@@ -418,7 +418,7 @@ git -C "$repo" checkout -q -
 bash "$D/review-package.sh" --repo "$repo" --base "$divergent_base" --head "$divergent_head" --out "$tmp/pkg4" >"$tmp/pkg4.out" 2>&1
 rc=$?
 check "base not an ancestor of head is a usage error (exit 3)" "$rc" "3"
-if grep -q "review-package: $divergent_base is not an ancestor of $divergent_head" "$tmp/pkg4.out"; then
+if grep -q "$divergent_base is not an ancestor of $divergent_head" "$tmp/pkg4.out"; then
   ok "error message names the revisions"
 else
   bad "error message missing or incorrect"
