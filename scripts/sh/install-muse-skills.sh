@@ -12,7 +12,9 @@
 #
 # This buys DISCOVERY, not routing. No hook runs, so nothing injects the
 # `using-sdlc-skills` body at session start; the router is listed like any
-# other skill and has to be invoked. A build that ships plugin support would install the native manifest and its hook instead; none has been observed, so that route is inferred, not measured.
+# other skill and has to be invoked. A build that ships plugin support would
+# install the native manifest and its hook instead; none has been observed, so
+# that route is inferred, not measured.
 #
 # Flags and exit codes: --help.
 
