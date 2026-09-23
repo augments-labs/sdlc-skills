@@ -70,7 +70,7 @@ A PR that adds a skill outside the SDLC is closed without review, whatever its
 quality. -->
 
 - Adds a skill: <!-- yes or not applicable -->
-- Phase folder: <!-- one of: planning, analysis, design, implementation, testing, deployment, maintenance, common, or n/a -->
+- Phase folder: <!-- a phase from the README catalogue table's phase column, common, or n/a -->
 - Why this is SDLC guidance, not domain, tool, or workflow content: <!-- or n/a -->
 
 ## Prior PRs and issues
