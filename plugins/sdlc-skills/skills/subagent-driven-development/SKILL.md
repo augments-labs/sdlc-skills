@@ -28,7 +28,7 @@ never decides what happens to the branch.
   that it still binds to the plan. Run it before the first dispatch, and again
   after every compaction.
 - **`scripts/task-brief.sh`** — renders a role brief from a task file, and
-  refuses one with a placeholder still in it. Run it for every dispatch.
+  refuses one with a script slot left unfilled. Run it for every dispatch.
 - **`scripts/review-package.sh`** — assembles one task's diff and file list for
   a reviewer. Run it when an implementer reports.
 

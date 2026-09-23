@@ -3,7 +3,8 @@
 The controller renders this brief when a fix round returns, filling one slot
 per line from the run's own paths; the findings the round was given are among
 the inputs. A slot it cannot fill is a brief that is not ready, and a brief
-with a brace still in it is never dispatched. This look judges the fix and
+with a script slot still in braces is never dispatched — the inserted report
+template's own slots below are the reviewer's to fill. This look judges the fix and
 what the fix could have broken, never the task a second time. Send the fenced
 text as the reviewer's whole prompt; it already carries the report the
 reviewer fills.

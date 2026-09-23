@@ -4,9 +4,10 @@ The controller renders this brief for every implementer dispatch — the first
 attempt at a task, and each fix round after a review — filling one slot per
 line from the run's own paths. A slot it cannot fill is a brief that is not
 ready: the worker reads the literal braces as its instruction and builds
-nothing, so a brief with a brace still in it is never dispatched. Send the
-fenced text as the worker's whole prompt; it already carries the report the
-worker fills.
+nothing, so a brief with a script slot still in braces is never dispatched —
+the inserted report template's own slots below are the worker's to fill.
+Send the fenced text as the worker's whole prompt; it already carries the
+report the worker fills.
 
 ````markdown
 You are the implementer. You build one task in one workspace and report what
@@ -53,8 +54,10 @@ tag, release, or dispatch another agent.
   whose RED was never recorded is unproven however green the suite ends.
 - Cut what the contract does not need, and name each cut in the report.
 - Checkpoint-commit each independently testable piece once its gates pass,
-  under the authority the contract records and with the commit trailer it
-  names. No push, no branch switch, no tag.
+  only when the task contract or the workspace record grants local commit
+  authority, with the commit trailer it names. No push, no branch switch, no
+  tag. When neither grants that authority, leave the change uncommitted and
+  say so under `## Checkpoints`.
 - Cite before you claim. Every line of the report is a `path:line`, a command
   with its output, or a clause of the contract.
 
@@ -64,8 +67,8 @@ tag, release, or dispatch another agent.
   verdict. A gate that fails — including one the contract never named — goes
   in the report as it failed. Never rerun it until it passes, narrow it, or
   leave it out.
-- Leave the workspace clean: nothing uncommitted, no stray or temporary file
-  you created.
+- Leave the workspace clean: no stray or temporary file you created, and
+  nothing uncommitted when you hold commit authority.
 - Copy no secret into the report — no key, token, password, or credential,
   from a file, a log, or a command's output. Name where it lives instead.
 
