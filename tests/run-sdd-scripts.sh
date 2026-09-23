@@ -40,7 +40,7 @@ trap 'rm -rf "$tmp"' EXIT
 # A plan directory is the input all three scripts start from.
 plan="$tmp/plan"
 mkdir -p "$plan"
-printf '# Plan\n\n- **Normative version:** r1\n' > "$plan/00-index.md"
+printf '# Plan\n\n## Tasks\n\n- [ ] `T-1` — Task one · `01-task.md` · `todo`\n' > "$plan/00-index.md"
 printf '# Task 01\n\n**Task ID:** `T-1`\n**Files:** src/a.txt\n' > "$plan/01-task.md"
 
 echo "--- every script answers --help and documents its exit codes"
@@ -71,8 +71,8 @@ if [ -f "$led" ]; then
 else
   bad "no ledger at $led"
 fi
-# The identity is the plan index's, computed the way the library computes one.
-want="$(git hash-object "$plan/00-index.md" | cut -c1-7)"
+# The identity is the plan's version, computed the way plan-version.sh computes one.
+want="$(bash "$D/plan-version.sh" "$plan")"
 line1="$(head -1 "$led" 2>/dev/null)"
 case "$line1" in
   *"$want"*) ok "line 1 carries the plan identity ($want)" ;;
@@ -93,6 +93,12 @@ echo "--- sdd-workspace.sh --check: a ledger bound to a superseded plan is drift
 bash "$D/sdd-workspace.sh" --plan "$plan" --check >/dev/null 2>&1
 rc=$?
 check "--check passes while the plan is unchanged" "$rc" "0"
+# Mirroring a task checkbox into the index is not an amendment: plan-version.sh
+# normalizes every checkbox and state label, so the identity is unchanged.
+printf '# Plan\n\n## Tasks\n\n- [x] `T-1` — Task one · `01-task.md` · `done`\n' > "$plan/00-index.md"
+bash "$D/sdd-workspace.sh" --plan "$plan" --check >/dev/null 2>&1
+rc=$?
+check "--check still passes after the checkbox flip (identity unchanged)" "$rc" "0"
 printf '\n- amended\n' >> "$plan/00-index.md"
 bash "$D/sdd-workspace.sh" --plan "$plan" --check >/dev/null 2>&1
 rc=$?

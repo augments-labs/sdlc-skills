@@ -13,10 +13,10 @@ Usage: bash scripts/sdd-workspace.sh --plan DIR [OPTIONS]
 Open the ledger a subagent-driven run records its dispatches, rulings, and task
 states in, or check that it still binds to the plan it was opened against.
 
-Line 1 carries the identity of the plan index. That line is what a session
-resuming after a compaction reads first: if the identity no longer matches, the
-run has been following a plan that was amended underneath it, and the rows below
-describe a plan that no longer exists.
+Line 1 carries the plan's identity, the version plan-version.sh computes for it.
+That line is what a session resuming after a compaction reads first: if the
+identity no longer matches, the run has been following a plan that was amended
+underneath it, and the rows below describe a plan that no longer exists.
 
 Options:
   --plan DIR     the plan directory; its index is DIR/00-index.md
@@ -49,10 +49,20 @@ done
 index="$plan/00-index.md"
 [ -f "$index" ] || { echo "no plan index at $index" >&2; exit 2; }
 
-# The identity is the plan index's content, hashed the way this library hashes an
-# issued artifact. --stdin keeps it working on a plan outside the current repo.
-identity="$(git hash-object --stdin < "$index" 2>/dev/null | cut -c1-7)"
-[ -n "$identity" ] || { echo "could not compute the identity of $index" >&2; exit 2; }
+# The identity is the plan's version: plan-version.sh's hash of the index with
+# every checkbox and state label normalized, followed by every task file it
+# lists. Mirroring a task's checkbox into the index leaves it unchanged.
+pv="$(dirname "$0")/plan-version.sh"
+pv_err="$(mktemp)" || { echo "cannot create a temp file" >&2; exit 2; }
+identity="$("$pv" "$plan" 2>"$pv_err")"
+rc=$?
+if [ "$rc" -ne 0 ]; then
+  cat "$pv_err" >&2
+  rm -f "$pv_err"
+  echo "could not compute the identity of $plan" >&2
+  exit 2
+fi
+rm -f "$pv_err"
 
 [ -n "$ledger" ] || ledger="$plan/sdd-ledger.md"
 
