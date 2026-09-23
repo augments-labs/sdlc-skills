@@ -107,7 +107,9 @@ opencode_prove_loaded() { # $1 plugin source
 # Either outcome is a measurement, not a failure: the explicit route this
 # adapter writes above is the documented install, so finding no passive load
 # is exactly as informative as finding one. What fails is a probe that could
-# not run at all — no boot log to read back.
+# not run at all — no boot log to read back — or one that ran and hit a
+# plugin boot error, the same `sdlc-skills:` signature opencode_prove_loaded
+# checks for.
 opencode_prove_passive_2x() { # $1 plugin source (the checkout)
   local passive_home; passive_home="$(mktemp -d)"
   mkdir -p "$passive_home/xdg/opencode"
@@ -137,6 +139,13 @@ opencode_prove_passive_2x() { # $1 plugin source (the checkout)
     return 1
   fi
 
+  if grep -a -q -F "sdlc-skills:" "$log"; then
+    echo "the plugin reported errors during the 2.x passive probe:" >>"$errlog"
+    grep -a -F "sdlc-skills:" "$log" | sed 's/^/  /' >>"$errlog"
+    rm -rf "$passive_home"
+    return 1
+  fi
+
   if grep -a -q -F "$needle" "$log"; then
     echo "  ok    2.x passive discovery loaded .opencode/plugins from the checkout"
   else
@@ -155,6 +164,11 @@ opencode_prove_passive_2x() { # $1 plugin source (the checkout)
 #
 # Unexercised on this machine — no 1.x `opencode` binary is on PATH here — so
 # this arm has not produced a measurement; it runs the moment one is.
+#
+# What fails is a probe that could not run at all — no `debug skill` output
+# to read back — or output that parsed but was not the array shape this
+# listing is documented to return, which is as much a boot error here as the
+# 2.x probe's `sdlc-skills:` log line.
 opencode_prove_passive_1x() { # $1 plugin source (the checkout)
   local passive_home; passive_home="$(mktemp -d)"
   mkdir -p "$passive_home/xdg/opencode"
@@ -172,6 +186,12 @@ opencode_prove_passive_1x() { # $1 plugin source (the checkout)
 
   if [ ! -s "$out" ]; then
     echo "opencode produced no \`debug skill\` output for the 1.x passive probe" >>"$errlog"
+    rm -rf "$passive_home"
+    return 1
+  fi
+
+  if ! jq -e 'type == "array"' "$out" >/dev/null 2>>"$errlog"; then
+    echo "1.x passive probe's \`debug skill\` output was not a JSON array (see $errlog)" >>"$errlog"
     rm -rf "$passive_home"
     return 1
   fi
