@@ -102,7 +102,7 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
 
    ```bash
    path="$root/$dir/${BRANCH//\//-}"
-   git worktree add "$path" -b "$BRANCH" "$BASE"
+   git worktree add "$path" -b "$BRANCH" --no-track "$BASE"
    cd "$path" && git status --short --branch   # expect: ## $BRANCH, clean
    ```
 
@@ -127,7 +127,6 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
 | "The harness made a detached checkout, so I'll add my own worktree" | First determine whether the host already owns isolation and cleanup. |
 | "I'll make the branch after the first edit" | After the edit, you may already have mixed unrelated state. |
 | "It looks like a plain checkout" | Looking is not detecting. `git-dir` against `common-dir`, plus the superproject check, is the inspection. |
-| "The harness has a worktree tool, but plain git is simpler" | The native tool owns the path, the ignore rule, and cleanup. A hand-made worktree beside it is a second thing to clean up. |
 
 ## Step 5: Checkpoint while you work
 
@@ -162,3 +161,6 @@ authority.
   commit: the unit, and what `git commit` does not grant.
 - A gate written during planning lands on whatever branch the shared checkout
   is on.
+- A branch a harness-native command cuts from a remote ref can still track it;
+  `git status --short --branch` printing `...origin/{{base}}` on the new
+  branch is the tell. Unset the upstream before the first checkpoint.

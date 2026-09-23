@@ -16,14 +16,14 @@ latest prompt need not repeat those for them to bind.
 - Code, files, flags, or dependencies are being removed as unused, dead, or
   legacy.
 - Scope drifts toward a speculative addition or an incomplete delivery — "we
-  might need this later", "let's make it configurable".
+  might need this later".
 - A proposal needs a strict pre-edit challenge.
 - A skill that hands off here invokes it directly, and its own trigger governs:
   the router, `debugging`, and `receiving-code-review` send a change that
   affects behavior through `test-driven-development` and this skill before the
   first edit.
 - **Skip** a throwaway spike answering one question, and non-behavioral config
-  or content: nothing there has task behavior to scope.
+  or content.
 
 ## Step 1: Before the first edit
 
@@ -70,8 +70,11 @@ latest prompt need not repeat those for them to bind.
    - *Unfinished:* removes behavior or an inherited commitment, or leaves a
      stub, TODO, unhandled path, untested logic, unreadable code.
 3. Delete only what you proved unused: no static, runtime, reflection, config,
-   generated, or external consumer, or a completed deprecation. Unknown →
-   stays, or goes to migration or refactor ownership.
+   generated, or external consumer, or a completed deprecation. A search
+   proves unused only when its scope is known: a tool skipping ignored,
+   binary, generated, or vendored paths yields "not searched", not proof;
+   state the scope or rerun without the skips. Unknown → stays, or goes to
+   migration or refactor ownership.
 4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` before the claim
    leaves this skill.
 
@@ -87,7 +90,6 @@ latest prompt need not repeat those for them to bind.
 | "Deleted that code, it looked unused" | Removing needed behaviour to shrink the diff is under-delivery. |
 | "Ship the quick version, clean it up later" | Later never comes; every future change pays the re-reading cost. Readable now is the cheaper path. |
 | "Clear names and comments are gold-plating" | Gold-plating is unneeded *features*. Clarity is maintenance cost — the thing this skill exists to protect. |
-| "My usual style beats this file's conventions" | A codebase in one voice is cheaper to change than your personal best practice. Match it. |
 
 ## Hard stops
 
