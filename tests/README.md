@@ -19,6 +19,7 @@ tests/
   run-sdd-scripts.sh         offline unit checks for the SDD scripts. (offline)
   run-serve-preview.sh       offline unit check for the serve.py preview. (offline)
   run-session-start.sh       offline unit check for the session-start injection. (offline)
+  run-state-identity.sh      offline unit check for state-identity.sh, including its non-repository mode. (offline)
   run-validate-skills.sh     offline check for the "every assets/ template has the house shape" gate in scripts/sh/validate-skills.sh. (offline)
   harnesses/                 ONLY what differs per CLI: how it installs and discovers skills
 ```
@@ -35,6 +36,7 @@ tests/run-sdd-scripts.sh
 tests/run-serve-preview.sh
 tests/run-check-skill.sh
 tests/run-git-hooks.sh
+tests/run-state-identity.sh
 ```
 
 ## What they catch

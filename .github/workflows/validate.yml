@@ -27,6 +27,8 @@ jobs:
         run: bash tests/run-serve-preview.sh
       - name: Local git hook installer (scripts/sh/install-git-hooks.sh)
         run: bash tests/run-git-hooks.sh
+      - name: State identity (in-repository and non-repository modes)
+        run: bash tests/run-state-identity.sh
       - name: Token budget (always-loaded surface)
         run: bash scripts/sh/token-budget.sh --max 5000
       - name: Handoff cycles
