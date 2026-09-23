@@ -371,6 +371,27 @@ else
   bad "error does not name the mistyped placeholder"
 fi
 
+echo "--- task-brief.sh: a mistyped placeholder outside letters-and-hyphens (an underscore) is caught too"
+roles9u="$tmp/roles9u"
+mkdir -p "$roles9u"
+cat > "$roles9u/implementer.md" <<'TPL'
+ROLE: implementer
+TASK FILE: {{task_file}}
+WORKSPACE: {{workspace}}
+BASE: {{base}}
+TIER: {{tier}}
+REPORT: {{report}}
+TPL
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles9u" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/typo_u.out" 2>"$tmp/typo_u.err"
+rc=$?
+check "an underscore-mistyped placeholder fails the render (exit 1)" "$rc" "1"
+if grep -qF 'unfilled placeholder: {{task_file}}' "$tmp/typo_u.err"; then
+  ok "error names the underscore-mistyped placeholder"
+else
+  bad "error does not name the underscore-mistyped placeholder"
+fi
+
 echo "--- task-brief.sh: a role template's brief inside one fence renders the fenced body only"
 roles5="$tmp/roles5"
 mkdir -p "$roles5"
