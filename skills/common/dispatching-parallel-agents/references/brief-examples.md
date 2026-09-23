@@ -122,8 +122,7 @@ Why it fails: session history is not context — it carries your dead ends and m
 The typo gets its own brief at the small tier. Note the reproduce steps pasted
 verbatim—that is the defining snapshot. The worker still observes the named RED
 under TDD; it need not run a broad suite merely to discover which failure owns
-the task. The isolation line prevents the classic collision: two agents both
-binding port 3000 and each debugging the other's failure.
+the task.
 
 ## Pair 3 — parallel research
 
