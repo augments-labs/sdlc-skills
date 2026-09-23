@@ -13,7 +13,7 @@ how that is judged, not the code.
 ## When to use
 
 - Detailed requirements are approved, or a precise task spans ≥3 steps or multiple files.
-- **Skip** for single-step or trivial changes — planning them costs more than doing them.
+- **Skip** for single-step or trivial changes.
 - Intent still ambiguous: invoke `clarifying-intent` first. Verifiable behavior
   still missing: invoke `writing-specs` first. A precise task needs neither.
 - Fill the classification block. High-risk means any answer is off the
@@ -89,8 +89,8 @@ how that is judged, not the code.
    conformance evaluator.
 6. Confirm independent tasks have disjoint files, data, effects, evaluators,
    and external state; every overlap has a dependency and one owner.
-7. Run `assets/plan-review.md` when the recorded answers are high-risk;
-   resolve every blocker.
+7. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
+   high-risk; resolve every blocker it returns; offer it for other plans.
 8. Fill **Review focus** with up to five spec-implied inputs or failure modes
    no task Evaluator exercises, or mark it `none`; give every `none yet` row
    a check or name it in the PR.
