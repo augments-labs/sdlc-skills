@@ -2,6 +2,21 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.4.0] — 2026-09-24
+
+`reviewing-plans` puts one exact plan version in front of an independent
+reviewer before approval, required for high-risk plans and offered for the
+rest, and an approved plan can run its independent tasks as one wave when the
+approval row says so. A plan whose deliverable is not a repository change now
+has a runnable identity and review path instead of a fabricated repository.
+
+Five discipline gaps are closed: a task branch cut from a remote ref no longer
+inherits its tracking, a plan's expected values must be produced by running the
+command, a backgrounded gate is bound to its own run, an empty search with a
+skipping tool is not proof of unused, and a plan review request no longer
+routes to the code reviewer. A zero-dependency pre-commit hook runs the CI
+validators on the staged index.
+
 ## [10.3.0] — 2026-09-23
 
 Grok Build, Muse Code and pi are now supported harnesses, and OpenCode serves
