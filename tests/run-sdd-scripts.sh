@@ -133,6 +133,25 @@ else
   bad "stderr does not name the identity failure"
 fi
 
+echo "--- sdd-workspace.sh: does not depend on plan-version.sh's execute bit"
+noexec="$tmp/noexec-scripts"
+mkdir -p "$noexec"
+cp "$D"/*.sh "$noexec/"
+chmod -x "$noexec"/*.sh
+noexec_plan="$tmp/noexec-plan"
+mkdir -p "$noexec_plan"
+printf '# Plan\n\n## Tasks\n\n- [ ] `T-1` — Task one · `01-task.md` · `todo`\n' > "$noexec_plan/00-index.md"
+printf '# Task 01\n\n**Task ID:** `T-1`\n' > "$noexec_plan/01-task.md"
+bash "$noexec/sdd-workspace.sh" --plan "$noexec_plan" >"$tmp/noexec.out" 2>"$tmp/noexec.err"
+rc=$?
+check "runs with every execute bit cleared (exit 0)" "$rc" "0"
+want_noexec="$(bash "$noexec/plan-version.sh" "$noexec_plan")"
+line1_noexec="$(head -1 "$noexec_plan/sdd-ledger.md" 2>/dev/null)"
+case "$line1_noexec" in
+  *"$want_noexec"*) ok "ledger line 1 carries the identity bash plan-version.sh computes ($want_noexec)" ;;
+  *)                 bad "ledger line 1 does not match bash plan-version.sh's identity $want_noexec (got: ${line1_noexec:-<empty>})" ;;
+esac
+
 echo "--- task-brief.sh: renders a role brief, and refuses an unfilled one"
 roles="$tmp/roles"
 mkdir -p "$roles"

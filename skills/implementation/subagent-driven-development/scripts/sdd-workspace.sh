@@ -55,9 +55,12 @@ index="$plan/00-index.md"
 # lists. Mirroring a task's checkbox into the index leaves it unchanged.
 pv="$(dirname "$0")/plan-version.sh"
 pv_err="$(mktemp)" || { echo "cannot create a temp file" >&2; exit 2; }
-identity="$("$pv" "$plan" 2>"$pv_err")"
+identity="$(bash "$pv" "$plan" 2>"$pv_err")"
 rc=$?
-if [ "$rc" -ne 0 ]; then
+# An exit 0 with empty output is also a failure, not a plan with no identity:
+# a later `case *"$identity"*` glob against an empty string would match
+# anything, silently treating any ledger as bound to this plan.
+if [ "$rc" -ne 0 ] || [ -z "$identity" ]; then
   cat "$pv_err" >&2
   rm -f "$pv_err"
   echo "could not compute the identity of $plan" >&2
