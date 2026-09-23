@@ -99,6 +99,9 @@ never secret value. Capture the exact inventory and digest, disable writers unti
 review ends, and invalidate every verdict on later drift.
 Do not use this mode merely because a tree digest can be computed: a clean
 committed candidate belongs in checkpoint-range mode.
+Outside a repository, the candidate value is the `state-identity.sh` digest of
+the deliverable directory, with HEAD and the staged/unstaged lists recorded as
+`none`.
 
 ### Checkpoint-range mode
 

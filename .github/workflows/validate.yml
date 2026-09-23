@@ -25,6 +25,8 @@ jobs:
         run: bash tests/run-session-start.sh
       - name: Governed localhost preview (serve.py + wrappers)
         run: bash tests/run-serve-preview.sh
+      - name: State identity (in-repository and non-repository modes)
+        run: bash tests/run-state-identity.sh
       - name: Token budget (always-loaded surface)
         run: bash scripts/sh/token-budget.sh --max 5000
       - name: Handoff cycles
