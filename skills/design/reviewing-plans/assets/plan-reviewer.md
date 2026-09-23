@@ -65,6 +65,9 @@ Open the report with these lines:
 - Approved inputs: {{identities as supplied}}
 - Reviewer role: {{role ID}}
 - Verdict: {{blockers | no blockers}}
+- Dispatch receipt: {{the caller fills this}}
+- Report path: {{report location}}
+- Dispositions: {{the caller fills this: finding title — disposition — who decided — date}}
 
 Then a coverage table with one row per review lens: lens, the task IDs and
 sections read, and `clear` or the finding titles. Then repeat this block for
@@ -78,8 +81,9 @@ each finding:
 - Evidence: {{what you read or ran}}
 - Required correction: {{the smallest change to the plan}}
 
-Leave dispositions out: the caller records each finding as accepted,
-rejected with evidence, or a decision for the plan's approval owner. Close
+Leave the receipt and disposition lines to the caller, who records each
+finding as accepted, rejected with evidence, a decision for the plan's
+approval owner, or not a finding when it is uncited. Close
 with `## Not examined` (what you did not read, and why, or `none`) and
 `## Next action` (one action and its owner).
 
