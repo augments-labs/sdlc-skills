@@ -73,6 +73,7 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | design | `architecture-decisions` | Record significant, hard-to-reverse choices as ADRs — options weighed, decision, why the alternatives were rejected |
 | design | `migration-strategy` | Define preservation, translation, partition, convergence, cutover, abort, and rollback contracts for high-risk transformations |
 | design | `writing-plans` | Convert approved inputs into independently loadable contracts; high-risk plans may build missing gates first but cannot start target phases before entry |
+| design | `reviewing-plans` | Put one exact plan version in front of an independent reviewer before approval — required for high-risk plans — and return every blocker to the plan's author as a successor |
 | implementation | `test-driven-development` | Let a failing behavior gate lead new behavior and a deliberately falsified independent green oracle lead preservation work |
 | implementation | `executing-plans` | Advance a directly approved plan through evaluator-backed task, shard, phase, and integrated state transitions |
 | implementation | `subagent-driven-development` | Run an approved plan's tasks through a cold implementer, an independent task reviewer, and a re-reviewer, each carrying only its filled brief |
