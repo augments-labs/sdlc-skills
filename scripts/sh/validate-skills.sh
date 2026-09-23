@@ -264,14 +264,17 @@ while IFS= read -r ref; do
   esac
 done < <(find skills -path '*/references/*.md' -type f | sort)
 
-# House shape: every assets/ template matches template-format.md's mechanical
-# shape (the "## Shape" rules 1-5; rule 6, the post-fence sentence, and the
-# content checklist stay human-judged). This is what keeps a filled copy of
-# one family reading the same no matter which skill produced it. Angle
-# brackets inside an inline code span (`skills/<phase>/<name>/SKILL.md`) do
-# not render as HTML, which is the reason rule 5 exists, so those spans are
-# stripped before the placeholder scan; a bare <tag> in prose or a table cell
-# still fails.
+# House shape: every assets/ template matches the mechanical part of
+# template-format.md's "## Shape" rules 1, 2, 3 and 5 — an H1 on line 1, a
+# preamble line before the fence, exactly one outer markdown/text fence of
+# three or four backticks holding at least one {{slot}}, and no bare <angle>
+# placeholder outside an inline code span. Rule 4 (matching the shape to the
+# family), rule 6, sentence counts, and the content checklist stay
+# human-judged. This is what keeps a filled copy of one family reading the
+# same no matter which skill produced it. Angle brackets inside an inline
+# code span (`skills/<phase>/<name>/SKILL.md`) do not render as HTML, which
+# is the reason rule 5 exists, so those spans are stripped before the
+# placeholder scan; a bare <tag> in prose or a table cell still fails.
 echo "• every assets/ template has the house shape"
 while IFS= read -r ref; do
   while IFS= read -r violation; do
