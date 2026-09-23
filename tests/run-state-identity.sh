@@ -172,6 +172,57 @@ if printf '%s\n' "$help_out" | grep -qF '"repository": "none"'; then
 else
   bad "--help does not document the repository: none output"
 fi
+if printf '%s\n' "$help_out" | grep -qi 'embedded git repository below'; then
+  ok "--help documents the non-repo embedded-repository rule"
+else
+  bad "--help does not document the non-repo embedded-repository rule"
+fi
+
+echo "--- non-repo digest resists path-based delimiter injection (F-1)"
+# The reviewer's collision: a manifest that joins hash<TAB>path<NEWLINE> records
+# lets a single crafted filename (embedding a real record's hash and a tab)
+# reproduce the exact byte string two ordinary files would produce. b.txt="Y\n"
+# and z.txt="X\n" hash to Hb/Hz; a lone file named "b.txt<NEWLINE>Hz<TAB>z.txt"
+# with body "Y\n" must no longer collide with the two-file directory.
+collideA="$tmp/collideA"
+collideB="$tmp/collideB"
+mkdir -p "$collideA" "$collideB"
+printf 'Y\n' > "$collideA/b.txt"
+printf 'X\n' > "$collideA/z.txt"
+Hz="$(printf 'X\n' | git hash-object --stdin)"
+collide_name="b.txt"$'\n'"$Hz"$'\t'"z.txt"
+printf 'Y\n' > "$collideB/$collide_name"
+
+digA="$(bash "$S_ABS" --path "$collideA" --quiet)"
+digB="$(bash "$S_ABS" --path "$collideB" --quiet)"
+if [ "$digA" != "$digB" ]; then
+  ok "non-repo digest does not collide across a newline/tab-crafted filename"
+else
+  bad "non-repo digest collides: a crafted filename (embedding a newline and a tab) reproduces another directory's digest ($digA)"
+fi
+
+echo "--- non-repo mode refuses an embedded git repository (F-2)"
+embedded_parent="$tmp/embedded"
+embedded_sub="$embedded_parent/sub"
+mkdir -p "$embedded_sub"
+git -C "$embedded_sub" init -q
+git -C "$embedded_sub" config user.email t@example.invalid
+git -C "$embedded_sub" config user.name tester
+printf 'inner\n' > "$embedded_sub/inner.txt"
+git -C "$embedded_sub" add inner.txt
+git -C "$embedded_sub" commit -qm inner
+printf 'outer\n' > "$embedded_parent/outer.txt"
+
+bash "$S_ABS" --path "$embedded_parent" >"$tmp/embedded.out" 2>"$tmp/embedded.err"
+rc=$?
+check "non-repo mode exits 4 on an embedded git repository" "$rc" "4"
+if grep -qi 'embedded' "$tmp/embedded.err" && grep -qF 'sub' "$tmp/embedded.err"; then
+  ok "non-repo embedded-repository error names the path"
+else
+  bad "non-repo embedded-repository error does not name the path"
+fi
+# A plain directory with no embedded repository is unaffected.
+check "non-repo mode without an embedded repository still exits 0" "$(bash "$S_ABS" --path "$plain" >/dev/null 2>&1; echo $?)" "0"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "state-identity.sh tests: PASS"; exit 0; }

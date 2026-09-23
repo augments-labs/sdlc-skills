@@ -59,10 +59,15 @@ Output:
   that is not): source.digest covers every regular file under it instead —
   sorted relative paths and content, each hashed with `git hash-object
   --stdin`, which needs no repository — again leaving out
-  .sdlc-skills/evidence/. The JSON carries "repository": "none" and no HEAD
-  fields (no head, branch, clean, or uncommitted counts: there is no index to
-  read them from). --compare works the same way; --committed always exits 5,
-  since no commit can ever hold a state with no repository behind it.
+  .sdlc-skills/evidence/. Records are NUL-delimited before hashing, so no
+  path can forge a record boundary and collide two different directory
+  states. The JSON carries "repository": "none" and no HEAD fields (no head,
+  branch, clean, or uncommitted counts: there is no index to read them
+  from). --compare works the same way; --committed always exits 5, since no
+  commit can ever hold a state with no repository behind it. A nested
+  embedded git repository below this directory (a `.git` directory or file
+  under a subdirectory) is refused instead of hashed: exit 4, naming each
+  path, the same outcome the in-repository mode gives an embedded repository.
 
 Exit codes:
   0  state captured, or --compare matched
@@ -128,11 +133,32 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
     exit 5
   fi
 
+  # A directory that is itself a git work tree, nested below this one, is an
+  # embedded repository: its .git/ internals are not this directory's content,
+  # and hashing them as plain files would fold another repository's private
+  # state into the digest. The in-repository path refuses these too
+  # (hidden_paths(), below); match that outcome here instead of silently
+  # reading inside it. Left out of consideration: anything under
+  # .sdlc-skills/evidence/, and the root's own .git (unreachable here, since
+  # git would already have taken the in-repository path above).
+  nr_embedded="$(find . -path './.sdlc-skills/evidence' -prune -o -name '.git' \( -type d -o -type f \) -print 2>/dev/null |
+    LC_ALL=C grep -v '^\./\.git$' | LC_ALL=C sort)"
+  if [ -n "$nr_embedded" ]; then
+    echo "Error: an embedded git repository exists below this directory, so its content cannot be digested as plain files:" >&2
+    printf '%s\n' "$nr_embedded" | sed 's#^\./##' | while IFS= read -r nr_p; do printf '  embedded repository: %s\n' "$nr_p" >&2; done
+    exit 4
+  fi
+
+  # Each record is NUL-delimited (hash, then path, each NUL-terminated)
+  # before hashing: a path can hold any byte except NUL and '/', so a
+  # tab/newline-delimited manifest lets a crafted filename reproduce the
+  # exact bytes two real, differently-shaped directories would produce —
+  # NUL cannot appear in a path, so no field can forge a record boundary.
   nr_manifest="$(mktemp)" || { echo "Error: could not create a temporary file." >&2; exit 4; }
   nr_fail=0
   while IFS= read -r -d '' nr_f; do
     nr_h="$(git hash-object --stdin < "$nr_f" 2>/dev/null)" && [ -n "$nr_h" ] || { nr_fail=1; break; }
-    printf '%s\t%s\n' "$nr_h" "${nr_f#./}" >>"$nr_manifest"
+    printf '%s\0%s\0' "$nr_h" "${nr_f#./}" >>"$nr_manifest"
   done < <(find . -type d -path './.sdlc-skills/evidence' -prune -o -type f -print0 2>/dev/null | LC_ALL=C sort -z)
   if [ "$nr_fail" = 1 ]; then
     rm -f "$nr_manifest"
