@@ -378,7 +378,7 @@ else
 fi
 rm -rf "$stray"
 
-echo "--- error message includes system error code"
+echo "--- error message includes system error code and path"
 stray_err="$(mktemp -d)"
 cp "$PLUGIN" "$stray_err/stray-plugin.js"
 error_output=$(node --input-type=module -e "
@@ -387,10 +387,18 @@ import('file://$stray_err/stray-plugin.js').then(async (m) => {
   await hooks['experimental.chat.system.transform']({}, { system: [] });
 }).catch((err) => { console.error(err && err.message); process.exit(1); });
 " 2>&1)
+has_error_code=false
+has_path=false
 if echo "$error_output" | grep -q 'ENOENT'; then
-  ok "error message contains ENOENT system error code"
+  has_error_code=true
+fi
+if echo "$error_output" | grep -q 'cannot read router at'; then
+  has_path=true
+fi
+if [ "$has_error_code" = true ] && [ "$has_path" = true ]; then
+  ok "error message contains both path and system error code"
 else
-  bad "error message does not contain ENOENT: $error_output"
+  bad "error message missing content — has_error_code=$has_error_code has_path=$has_path: $error_output"
 fi
 rm -rf "$stray_err"
 
