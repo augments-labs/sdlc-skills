@@ -393,7 +393,7 @@ if echo "$error_output" | grep -q 'ENOENT'; then
   has_error_code=true
 fi
 # Verify the message contains "cannot read router at" followed by a filesystem path
-# (starting with / or a drive letter) before the colon that separates path from error reason
+# (starting with /) before the colon that separates path from error reason
 if echo "$error_output" | grep -qE 'cannot read router at /[^:]*:'; then
   has_actual_path=true
 fi
