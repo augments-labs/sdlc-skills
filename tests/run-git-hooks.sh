@@ -143,6 +143,16 @@ check "--remove exits 0" "$rc" "0"
 restored="$(git -C "$fx2" config --get core.hooksPath 2>/dev/null || true)"
 check "core.hooksPath is restored to the prior custom value" "$restored" ".githooks-custom"
 
+echo "--- install-git-hooks.sh --remove: a foreign core.hooksPath with no prior install is left untouched"
+fx6="$tmp/fx6"
+fixture "$fx6"
+git -C "$fx6" config core.hooksPath some/other/hooks
+( cd "$fx6" && bash "$INSTALLER" --remove >"$tmp/remove6.out" 2>&1 )
+rc=$?
+check "--remove exits 0 even though sdlc-skills was never installed here" "$rc" "0"
+foreign="$(git -C "$fx6" config --get core.hooksPath 2>/dev/null || true)"
+check "the pre-existing foreign core.hooksPath is untouched" "$foreign" "some/other/hooks"
+
 echo "--- pre-commit: a staged edit to CHANGELOG.md alone commits fast, without the validators"
 fx3="$tmp/fx3"
 fixture "$fx3"
@@ -194,6 +204,17 @@ if grep -q 'validate-skills.sh' "$tmp/wtdefect.out"; then
 else
   bad "the hook's output does not name the failing validator: $(tail -5 "$tmp/wtdefect.out")"
 fi
+
+echo "--- install-git-hooks.sh --remove: run from inside the linked worktree restores core.hooksPath"
+( cd "$wt" && bash "$INSTALLER" --remove >"$tmp/wtremove.out" 2>&1 )
+rc=$?
+check "--remove from the worktree exits 0" "$rc" "0"
+after_wt_parent="$(git -C "$fx3" config --get core.hooksPath 2>/dev/null || true)"
+[ -z "$after_wt_parent" ] && ok "core.hooksPath is unset again, read from the parent clone" \
+  || bad "core.hooksPath still set to '$after_wt_parent', read from the parent clone"
+after_wt_self="$(git -C "$wt" config --get core.hooksPath 2>/dev/null || true)"
+[ -z "$after_wt_self" ] && ok "core.hooksPath is unset again, read from the worktree itself" \
+  || bad "core.hooksPath still set to '$after_wt_self', read from the worktree itself"
 
 echo "--- pre-commit: a staged skill defect in a plain clone fails the commit and names the validator"
 fx4="$tmp/fx4"

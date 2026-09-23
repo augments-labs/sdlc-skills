@@ -37,17 +37,18 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
 }
 cd "$root" || exit 2
 
-mapfile -t staged < <(git diff --cached --name-only)
-
+# A plain read loop, not `mapfile`/`readarray` (bash 4.0+ only) — this hook
+# runs unconditionally on every commit, so it must work on bash 3.2 too. The
+# loop and `case` both tolerate an empty `git diff` under `set -u`.
 relevant=0
-for f in "${staged[@]}"; do
+while IFS= read -r f; do
   case "$f" in
     skills/*|scripts/*|tests/*|hooks/*|.claude-plugin/*|.kimi-plugin/*|.muse-plugin/*|.opencode/*|.pi/*|plugins/*|docs/*|AGENTS.md|README.md)
       relevant=1
       break
       ;;
   esac
-done
+done < <(git diff --cached --name-only)
 
 if [ "$relevant" -eq 0 ]; then
   echo "pre-commit: skip — no staged path affects the validators"
@@ -62,12 +63,19 @@ run() {  # <command...>  (bash + the script path + its flags)
   fi
 }
 
+# Same four validators, same order as the "validate" job in
+# .github/workflows/validate.yml: Structural validation, Token budget, Handoff
+# cycles, Chain budgets, then Trigger collisions.
 fail=0
 
 run bash scripts/sh/validate-skills.sh --strict || fail=1
 
 if [ "$fail" -eq 0 ]; then
   run bash scripts/sh/token-budget.sh --max 5000 || fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  run bash scripts/sh/validate-skill-graph.sh --strict || fail=1
 fi
 
 if [ "$fail" -eq 0 ]; then
@@ -84,10 +92,6 @@ fi
 
 if [ "$fail" -eq 0 ]; then
   run bash scripts/sh/validate-trigger-collisions.sh --strict || fail=1
-fi
-
-if [ "$fail" -eq 0 ]; then
-  run bash scripts/sh/validate-skill-graph.sh --strict || fail=1
 fi
 
 [ "$fail" -eq 0 ] && exit 0
