@@ -86,10 +86,9 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - Approved parallel work is `waves: yes` on the approval row plus the
-     exact set of ready tasks passing the independence test of
-     `dispatching-parallel-agents` Step 1 → invoke it for that set. Without
-     both, run one task at a time.
+   - Approved parallel work: `waves: yes` on the approval row and the ready
+     set that passes `dispatching-parallel-agents` Step 1 → invoke it for that
+     set; otherwise one task at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
    raw diff, result revision, and evaluator output, never its summary.
@@ -141,7 +140,6 @@ In the task workspace recorded in Step 2, in order:
 | Thought | Reality |
 | --- | --- |
 | "All tasks are done, so the plan is done" | Tasks are done inside the plan. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
-| "The user said not to ask per action, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision and asks its own question. |
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate gates with their own owners. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
 | "Subagents are available, but inline is what I'm already in" | The row's mode decides, and the user chose it. A delegated row here is a redirect, not a loop to run. |
@@ -157,6 +155,9 @@ In the task workspace recorded in Step 2, in order:
 
 - Failed attempt: append it with its raw evidence and a stable failure-class
   ID; start a new attempt that links to it.
+- Worker past its deadline: write `cancellation requested`, wait until it and
+  everything it started have stopped, quarantine its output, reject its late
+  results.
 - Three attempts in one class without convergence: write `blocked` with the
   class and the attempts; end the turn. Never patch shard failures one at a
   time.
@@ -169,4 +170,5 @@ In the task workspace recorded in Step 2, in order:
   latest decision ledger row for the printed version, the workspace's base,
   HEAD, and dirty state through `using-git-worktrees`, the execution ledger,
   and whether each `done` row still matches the current revision.
-- Reality contradicts the plan: runtime facts → execution ledger only.
+- Reality contradicts the plan: a change to what was approved → proposed
+  successor and direct reapproval; runtime facts → execution ledger only.
