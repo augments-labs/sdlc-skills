@@ -163,7 +163,7 @@ while IFS= read -r name; do
       echo "unfilled placeholder: {{$name}}" >&2
       leftover=1;;
   esac
-done < <(printf '%s' "$text" | grep -oE '\{\{[a-zA-Z-]+\}\}' | sed -e 's/^{{//' -e 's/}}$//' | sort -u)
+done < <(printf '%s' "$text" | grep -oE '\{\{[^{}]+\}\}' | sed -e 's/^{{//' -e 's/}}$//' | sort -u)
 [ -z "$leftover" ] || exit 1
 
 case "$text" in
