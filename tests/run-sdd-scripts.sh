@@ -17,8 +17,8 @@ case "${1-}" in
     cat <<'EOF'
 tests/run-sdd-scripts.sh — offline unit checks for the SDD scripts.
 
-Takes no arguments; exercises sdd-workspace.sh, task-brief.sh, and
-review-package.sh against temporary fixtures it creates and removes.
+Takes no arguments; exercises sdd-workspace.sh, task-brief.sh,
+review-package.sh, and plan-version.sh against temporary fixtures it creates and removes.
 
   --help    this text
 
@@ -59,6 +59,19 @@ for s in sdd-workspace task-brief review-package; do
   else
     bad "$s.sh: --help does not document its exit codes"
   fi
+done
+
+echo "--- every literal exit code in each script is documented in its --help"
+for s in sdd-workspace task-brief review-package plan-version; do
+  bash "$D/$s.sh" --help 2>&1 | sed -n '/Exit codes/,$p' >"$tmp/codes.out"
+  miss=0
+  for n in $(grep -oE '\bexit [0-9]+' "$D/$s.sh" | awk '{print $2}' | sort -u); do
+    if ! grep -qE "(^|[^0-9])$n([^0-9]|$)" "$tmp/codes.out"; then
+      bad "$s.sh: exit $n is not documented in --help"
+      miss=1
+    fi
+  done
+  [ "$miss" -eq 0 ] && ok "$s.sh: every literal exit code is in its --help"
 done
 
 echo "--- sdd-workspace.sh: the ledger binds to the plan, and says so on line 1"
