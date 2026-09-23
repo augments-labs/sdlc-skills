@@ -1,6 +1,6 @@
 ---
 name: subagent-driven-development
-description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, when the user asks for subagents or workers to do the building, or when the user replies choosing delegated mode. Skip a lone task with no plan directory, and independent tasks that want concurrent fan-out."
+description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, when the user asks for subagents or workers to do the building, or when the user replies choosing delegated mode. Skip a lone task with no plan directory."
 ---
 
 # Subagent-Driven Development
@@ -15,8 +15,7 @@ never decides what happens to the branch.
   here: the user asked for workers, or answered the execution-mode question
   with delegated. Prefer this mode wherever the harness has a subagent action.
 - **Skip** building the tasks in this session — `executing-plans` owns that
-  — a lone task with no plan directory, and independent tasks that should run
-  at the same time — that fan-out belongs to `dispatching-parallel-agents`.
+  — and a lone task with no plan directory.
 - **Skip** a plan whose index holds phases or shards: its queues, leases, and
   capacity envelope run inline through `executing-plans`, never through a
   slim brief. Its row says delegated → Step 1.5 first.
@@ -25,12 +24,11 @@ never decides what happens to the branch.
 
 - **`scripts/plan-version.sh`** — prints the plan's version.
 - **`scripts/sdd-workspace.sh`** — opens the plan-scoped ledger and re-checks
-  that it still binds to the plan. Run it before the first dispatch, and again
-  after every compaction.
+  that it still binds to the plan.
 - **`scripts/task-brief.sh`** — renders a role brief from a task file, and
   refuses one with a script slot left unfilled. Run it for every dispatch.
 - **`scripts/review-package.sh`** — assembles one task's diff and file list for
-  a reviewer. Run it when an implementer reports.
+  a reviewer.
 
 ## Step 1: Verify approval and mode
 
@@ -105,6 +103,11 @@ reapproval, end the turn.
 ## Step 4: Dispatch one task
 
 1. Take the next task whose dependencies are done.
+   `waves: yes` on the approval row → take every ready task instead, run the
+   independence test of `dispatching-parallel-agents` Step 1 on that set, and
+   dispatch the passing tasks together through its Step 2, one dispatch row
+   each. A failing pair is sequenced; write that ruling in the ledger. Each
+   returned diff gets its own review package through Step 5.
 2. Batch tasks into one dispatch only when they are small and the same shape —
    same kind of file, same act. Different shapes go separately, whatever their
    size.
@@ -118,8 +121,7 @@ reapproval, end the turn.
    apply.
 5. Bind the role to a runtime: where the harness exposes a named agent whose
    contract covers the role, dispatch that agent with the role brief; otherwise
-   dispatch a general subagent with the role prompt. Name mappings belong in
-   the adapters, never here.
+   dispatch a general subagent with the role prompt.
 6. Write the dispatch row before dispatching: task ID, attempt, base
    revision, evaluator identity, tier. Then dispatch per
    `dispatching-parallel-agents` Step 2 — it owns the receipt, the
@@ -145,10 +147,11 @@ reapproval, end the turn.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision: the task's
    `Evaluator`, every `VCONF` row, `visual-ui-verification` for an integrated
-   UI. Then record its state: done, done with concerns, blocked, or needs
-   context. Mirror only the task row's checkbox and adjacent label. **Do not
-   change the index's `Status` header or normalize it out of the plan's
-   identity.**
+   UI. A wave task: run this on the merged state once every wave diff is
+   reviewed, before any of them is `done`. Then record its state: done, done
+   with concerns, blocked, or needs context. Mirror only the task row's
+   checkbox and adjacent label. **Do not change the index's `Status` header or
+   normalize it out of the plan's identity.**
 6. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then `finishing-a-branch`.
    Return after it records its decision.
@@ -188,10 +191,6 @@ In the worktree from Step 2, in order:
 - Resuming from the conversation after a compaction re-runs finished tasks and
   loses every ruling, because by then neither is in the conversation. Line 1 of
   the ledger exists for exactly that moment.
-- A fresh implementer in round 4 has read nothing. "Fix the findings" names a
-  file it does not have; give it the findings path and the task path.
-- A worker that dispatches its own workers returns a diff nobody reconciled and
-  receipts you never held. Every brief here prohibits subdispatch; keep it.
 - The controller never edits, so `test-driven-development` and `yagni` load in
   the implementer, where the brief requires them; loading them here proves
   nothing about the worker's session.
