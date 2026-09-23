@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "name": "sdlc-skills",
   "displayName": "SDLC Skills",
-  "version": "10.3.0",
+  "version": "10.4.0",
   "description": "A cross-platform SDLC skills library for coding agents: planning, design, TDD, debugging, review, and delivery workflows.",
   "compat": {
     "source": "native",
