@@ -84,12 +84,19 @@ This skill never edits the plan, approves it, or starts an executor.
    attempt named; a late result from the failed attempt, or a file at its
    path, is rejected. A second failure → return the pending review and both
    receipts to the caller.
+6. The reviewer returned `NEEDS_CONTEXT` → it is not a failure and does not
+   use the one retry; Step 3.1 routes it.
 
 ## Step 3: Receive, disposition, return
 
 1. Read the report at the current attempt's location, opening the file when
    only its location came back. Its `Plan version` differs from the bound
    version, or it is missing or unreadable → the review stays pending.
+   The reviewer returned `NEEDS_CONTEXT` with a question → the review stays
+   pending; return that exact question to the plan's author, at the caller's
+   pending `writing-plans` step, as a `decision` item. A high-risk plan is not
+   presented until the question is answered and the review is run again on
+   the answered version.
 2. Print the plan's version again. It changed during the review → the review
    is void; report the edit to the caller and keep the review pending.
 3. Give every finding one disposition:
