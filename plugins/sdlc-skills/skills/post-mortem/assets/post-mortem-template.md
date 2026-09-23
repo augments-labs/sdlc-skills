@@ -8,7 +8,11 @@ rollout results, effectiveness verdicts — is ever written back here, and a
 `pending` cell means the ledger has not yet recorded that state. Write the
 issued copy to `.sdlc-skills/post-mortems/{{YYYY-MM-DD}}-{{topic}}.md` under
 current repository authority, or return it directly. Redact incident data
-before disclosure; only a trusted action contract grants access to it.
+before disclosure; only a trusted action contract grants tool, data, secret,
+network, mutation, publication, storage, or cleanup access. Any correction or
+normative action change creates a successor with predecessor, stable-ID
+delta, affected consumers, and new approval; it never edits the issued
+version. Keep mutable lifecycle evidence in an append-only external ledger.
 
 ```markdown
 ## Control and evidence handling
