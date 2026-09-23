@@ -126,10 +126,11 @@ injection: it is one more file the model may or may not act on, and it is
 never re-verified here beyond `grok inspect` listing the file — until Grok
 exposes a hook that appends to the prompt at session start, this is the
 honest ceiling of what the router channel can do on this harness.
-`tests/run-plugin-smoke.sh --harness grok` checks the install and the skill
-inventory only; it does not read back Project Instructions or run a model
-turn, so whether `using-sdlc-skills` is actually invoked from the nudge is a
-live check, not a smoke one.
+`tests/run-plugin-smoke.sh --harness grok` proves the install, the skill
+inventory, and that `grok inspect` lists the rules-file nudge under
+`projectInstructions` in this same isolated home. It runs no model turn, so
+whether `using-sdlc-skills` is actually invoked from the nudge remains a live
+check, not a smoke one.
 
 Muse Code takes two routes, and which one a user gets is decided by their
 build, not by this repository. `.muse-plugin/plugin.json` is the native
