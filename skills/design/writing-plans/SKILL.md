@@ -50,9 +50,8 @@ how that is judged, not the code.
    gate boundary. High-risk target work → read
    `references/scalable-transformation.md` before slicing; copy transition
    policy from the migration contract.
-2. Open `assets/task-template.md` before writing each task. Fill `Task ID`
-   (stable, non-positional), `Depends on`, `Files`, `Exclusive
-   ownership/effects`, `Context` as paths.
+2. Open `assets/task-template.md` before writing each task. Fill `Task ID`,
+   `Depends on`, `Files`, `Exclusive ownership/effects`, `Context` as paths.
 3. Fill **Consumes** from earlier tasks' exact **Produces** names and types.
    Put existing code and external input artifacts in **Context**; do not invent
    producer tasks for inputs that already exist.
@@ -66,7 +65,7 @@ how that is judged, not the code.
    may mutate. A task that may edit its own gate → write the permitted scope
    and require RED or deliberate falsification before GREEN counts.
 7. Fill `Suggested tier` with the **Model selection** section of
-   `dispatching-parallel-agents`, with the reason.
+   `dispatching-parallel-agents`.
 8. Write `00-index.md` plus one file per task to
    `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`. No approval, execution
    state, or evidence in these files. Every later change to what they specify
@@ -123,9 +122,9 @@ how that is judged, not the code.
    `mode:`. That file owns the block, the subagent-action condition, and how
    to ask it.
 5. Append one row to the `External decision ledger`, a ledger (append-only,
-   outside the plan): `Identity` = the printed
-   version, `Location` = the index path, `State` = approved, `Bound evidence` =
-   the `Approval rule` owner and their answer, then `mode: inline` or
+   outside the plan): `Identity` = the printed version, `Location` = the
+   index path, `State` = approved, `Bound evidence` = the `Approval rule`
+   owner and their answer, any review report path, then `mode: inline` or
    `mode: delegated`. Write nothing about approval into the index.
 6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke the executor that
    mode names against the approved version before any workspace or

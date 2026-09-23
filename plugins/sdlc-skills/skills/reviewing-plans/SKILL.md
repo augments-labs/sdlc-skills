@@ -24,8 +24,10 @@ This skill never edits the plan, approves it, or starts an executor.
 
 ## Step 0: The offer, for a plan that is not high-risk
 
-1. `writing-plans` asks this after its self-review, when the route is not
-   high-risk, with the version `plan-version.sh` prints:
+1. The caller is `writing-plans` presenting a plan whose route is not
+   high-risk → ask the offer question below. The user asked for the review
+   directly, or the route is high-risk → skip Step 0 and go to Step 1.
+2. Ask it with the version `plan-version.sh` prints:
 
    ```text
    Plan {{version}} is not high-risk.
@@ -38,7 +40,7 @@ This skill never edits the plan, approves it, or starts an executor.
 
    Ask through the harness's user-input action when one exists, else print
    this block; end the turn; `clarifying-intent` owns what closes it.
-2. Option 1 → Step 1. Option 2 → return to the caller, which presents the
+3. Option 1 → Step 1. Option 2 → return to the caller, which presents the
    plan without a review.
 
 ## Step 1: Bind the version, the inputs, and the reviewer
