@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: "Gets an independent review of one frozen state before it is called done, pushed, or merged. Use when a change reaches a done or integration boundary, when an independent review of a frozen state is explicitly requested, or when the user says review this, is this ready to merge, or take a look before I push. Skip an unfinished reversible checkpoint unless review was explicitly requested, and skip an explicit keep, discard, close, or reopen transition."
+description: "Gets an independent review of one frozen state before it is called done, pushed, or merged. Use when a change reaches a done or integration boundary, when an independent review of a frozen state is explicitly requested, or when the user says review this, is this ready to merge, or take a look before I push. Skip an unfinished reversible checkpoint unless review was explicitly requested, and skip an explicit keep, discard, close, or reopen transition, and skip a plan document, which `reviewing-plans` reviews."
 ---
 
 # Requesting Code Review
@@ -18,6 +18,7 @@ wait on one, until the dispatch action has returned a non-empty receipt.
 - **Skip** here, and go through `finishing-a-branch` directly, for keep,
   discard, and PR-only close or reopen: those need its identity and authority
   gates, not a readiness review.
+- **Skip** a plan document → `reviewing-plans`.
 - Read `references/high-risk-review.md` first when the change is a high-risk
   transformation; it owns the role separation, and one review of an aggregate
   diff nobody can read does not satisfy it.
