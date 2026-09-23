@@ -79,6 +79,10 @@
         "path": "skills/design/migration-strategy/SKILL.md"
       },
       {
+        "id": "reviewing-plans",
+        "path": "skills/design/reviewing-plans/SKILL.md"
+      },
+      {
         "id": "system-architecture",
         "path": "skills/design/system-architecture/SKILL.md"
       },

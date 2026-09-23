@@ -7,7 +7,7 @@ CI, so nothing here measures what an agent does with a skill.
 | Where | What a result establishes | Runner |
 | --- | --- | --- |
 | `scripts/sh/`, CI | The structural and policy predicates each gate checks | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
-| `tests/`, offline | The checked packaging or script predicate | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-state-identity.sh` |
+| `tests/`, offline | The checked packaging or script predicate | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh` |
 | `tests/harnesses/` | Per-CLI install bindings the smoke test drives | One adapter per supported CLI |
 
 ## Choose the relevant check

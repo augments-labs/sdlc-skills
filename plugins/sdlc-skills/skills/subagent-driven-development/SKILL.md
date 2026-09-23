@@ -1,22 +1,21 @@
 ---
 name: subagent-driven-development
-description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, when the user asks for subagents or workers to do the building, or when the user replies choosing delegated mode. Skip a lone task with no plan directory, and independent tasks that want concurrent fan-out."
+description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, when the user asks for subagents or workers to do the building, or when the user replies choosing delegated mode. Skip a lone task with no plan directory."
 ---
 
 # Subagent-Driven Development
 
-You are the controller. Fresh workers build and review one task at a time; you
-hold the plan, the ledger, and every decision they may not take. This skill
-never decides what happens to the branch.
+You are the controller. Fresh workers build and review one task, or one
+approved wave, at a time; you hold the plan, the ledger, and every decision
+they may not take. This skill never decides what happens to the branch.
 
 ## When to use
 
 - An approved plan is about to be built by dispatched workers rather than
   here: the user asked for workers, or answered the execution-mode question
-  with delegated. Prefer this mode wherever the harness has a subagent action.
+  with delegated.
 - **Skip** building the tasks in this session — `executing-plans` owns that
-  — a lone task with no plan directory, and independent tasks that should run
-  at the same time — that fan-out belongs to `dispatching-parallel-agents`.
+  — and a lone task with no plan directory.
 - **Skip** a plan whose index holds phases or shards: its queues, leases, and
   capacity envelope run inline through `executing-plans`, never through a
   slim brief. Its row says delegated → Step 1.5 first.
@@ -59,8 +58,9 @@ never decides what happens to the branch.
 1. Record the approved plan directory by absolute path; read the plan only
    there.
 2. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. One worktree holds the
-   whole plan and every worker writes inside it. Never hand a worker the shared
-   checkout.
+   whole plan; a worker writes inside it, or inside the wave worktree the
+   controller cut for it from that worktree's HEAD. Never hand a worker the
+   shared checkout.
 3. Open the ledger:
 
    ```bash
@@ -104,18 +104,21 @@ reapproval, end the turn.
 
 ## Step 4: Dispatch one task
 
-1. Take the next task whose dependencies are done.
+1. Take the next task whose dependencies are done. `waves: yes` on the
+   approval row → take every ready task that passes the independence test of
+   `dispatching-parallel-agents` Step 1. Before each dispatch row, cut that
+   task a branch and worktree from the plan worktree's HEAD yourself under
+   the plan worktree's commit authority; `using-git-worktrees` run by the
+   worker would reuse yours. Dispatch them together through its Step 2;
+   sequence a failing pair.
 2. Batch tasks into one dispatch only when they are small and the same shape —
-   same kind of file, same act. Different shapes go separately, whatever their
-   size.
+   same kind of file, same act.
 3. Fill `assets/implementer.md` when dispatching an implementer — every input a
    file path the worker opens for itself, the task contract pasted and nothing
    else — rendering it with `bash scripts/task-brief.sh`, which inserts
    `assets/implementer-report.md` before dispatch.
 4. Set the tier explicitly, from the Model selection table in
-   `dispatching-parallel-agents`. A brief written as prose starts at the middle
-   tier; use the small tier only when the brief carries the literal code to
-   apply.
+   `dispatching-parallel-agents`.
 5. Bind the role to a runtime: where the harness exposes a named agent whose
    contract covers the role, dispatch that agent with the role brief; otherwise
    dispatch a general subagent with the role prompt. Name mappings belong in
@@ -145,10 +148,15 @@ reapproval, end the turn.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision: the task's
    `Evaluator`, every `VCONF` row, `visual-ui-verification` for an integrated
-   UI. Then record its state: done, done with concerns, blocked, or needs
-   context. Mirror only the task row's checkbox and adjacent label. **Do not
-   change the index's `Status` header or normalize it out of the plan's
-   identity.**
+   UI. A wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
+   those branches into the plan worktree (a blocked task's stays out) and run
+   this on the merged HEAD before any wave task is `done`; a red merged gate
+   opens a fix round in the plan worktree on the task it names, then merge and
+   gate again; the wave worktrees and branches are task-owned resources in the
+   workspace record for `finishing-a-branch`. Then record its state: done,
+   done with concerns, blocked, or needs context. Mirror only the task row's
+   checkbox and adjacent label. **Do not change the index's `Status` header or
+   normalize it out of the plan's identity.**
 6. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then `finishing-a-branch`.
    Return after it records its decision.
@@ -171,23 +179,18 @@ In the worktree from Step 2, in order:
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
-4. Close with "Rulings I made": every ruling in the ledger, one line each, so
-   the person reading the result sees the decisions taken on their behalf.
+4. Close with "Rulings I made": every ruling in the ledger, one line each.
 
 | Thought | Reality |
 | --- | --- |
 | "Every worker returned DONE, so the plan is done" | DONE is a claim per task. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "The reviewer subagent passed it, so review is covered" | That reviewed one task's diff against its contract. The branch review is a separate gate on the integrated state. |
-| "The user said not to ask, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision. |
 
 ## Gotchas
 
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
   yourself; that is what Step 5.5 is for.
-- Resuming from the conversation after a compaction re-runs finished tasks and
-  loses every ruling, because by then neither is in the conversation. Line 1 of
-  the ledger exists for exactly that moment.
 - A fresh implementer in round 4 has read nothing. "Fix the findings" names a
   file it does not have; give it the findings path and the task path.
 - A worker that dispatches its own workers returns a diff nobody reconciled and
@@ -203,8 +206,3 @@ In the worktree from Step 2, in order:
 - On resume, rerun `bash scripts/plan-version.sh` and re-read the latest decision
   ledger row for the printed version before `--check` on the run ledger: the
   run ledger detects an amended plan, not a row that closed the version.
-
-## Common mistakes
-
-- Editing a worker's diff yourself instead of opening a fix round — now nobody
-  has reviewed the state that ships.

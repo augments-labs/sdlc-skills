@@ -78,7 +78,7 @@ pre-change RED or deliberate falsification evidence}}
 {{command}}
 ```
 
-Expected: {{exit 0 / named tests pass / HTTP 200 body X / query returns Y}}
+Expected: {{the value the command printed when run on the current tree, or a rubric when the command cannot run yet}}
 
 {{If the spec shipped a failing test for this requirement, that test IS the
 Evaluator—run it by name; don't write a second one beside it. If the spec

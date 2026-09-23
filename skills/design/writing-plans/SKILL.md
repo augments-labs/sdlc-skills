@@ -13,7 +13,7 @@ how that is judged, not the code.
 ## When to use
 
 - Detailed requirements are approved, or a precise task spans ≥3 steps or multiple files.
-- **Skip** for single-step or trivial changes — planning them costs more than doing them.
+- **Skip** for single-step or trivial changes.
 - Intent still ambiguous: invoke `clarifying-intent` first. Verifiable behavior
   still missing: invoke `writing-specs` first. A precise task needs neither.
 - Fill the classification block. High-risk means any answer is off the
@@ -32,8 +32,7 @@ how that is judged, not the code.
 ## Step 1: Write the index
 
 1. Open `assets/index-template.md` when starting the index. Fill the header
-   first: exact identity of every approved input, the rule that makes each
-   stale, the `Approval rule`, the `Integration cadence`.
+   first.
 2. Leave `Integration cadence` at `plan end`. Write `per task` only when the
    user directly asked for per-task integration, and quote the instruction.
 3. Approved UI design with **Selected visual references** → copy the complete
@@ -51,26 +50,23 @@ how that is judged, not the code.
    gate boundary. High-risk target work → read
    `references/scalable-transformation.md` before slicing; copy transition
    policy from the migration contract.
-2. Open `assets/task-template.md` before writing each task. Fill `Task ID`
-   (stable, non-positional), `Depends on`, `Files`, `Exclusive
-   ownership/effects`, `Context` as paths.
+2. Open `assets/task-template.md` before writing each task. Fill `Task ID`,
+   `Depends on`, `Files`, `Exclusive ownership/effects`, `Context` as paths.
 3. Fill **Consumes** from earlier tasks' exact **Produces** names and types.
    Put existing code and external input artifacts in **Context**; do not invent
    producer tasks for inputs that already exist.
 4. Fill `Implementation disciplines`: `test-driven-development` + `yagni`, or
    the exact carve-out.
-5. Include exact code only where precision is fragile: a tricky regex, a
-   security check, a migration statement.
-6. Fill `Evaluator`. The evaluator — the check this task must pass — is a
-   command that returns a verdict, or a rubric with its accountable judge and
-   deciding observations. UI task → copy `Applicable visual references` and
-   give every Reference ID a **Visual conformance gates** row.
-7. Fill `Evaluator identity/owner` so the gate lives outside what the task
+5. Fill `Evaluator`: a command that returns a verdict, or a rubric with its
+   accountable judge and deciding observations. UI task → copy `Applicable
+   visual references` and give every Reference ID a **Visual conformance
+   gates** row.
+6. Fill `Evaluator identity/owner` so the gate lives outside what the task
    may mutate. A task that may edit its own gate → write the permitted scope
    and require RED or deliberate falsification before GREEN counts.
-8. Fill `Suggested tier` with the **Model selection** section of
-   `dispatching-parallel-agents`, with the reason.
-9. Write `00-index.md` plus one file per task to
+7. Fill `Suggested tier` with the **Model selection** section of
+   `dispatching-parallel-agents`.
+8. Write `00-index.md` plus one file per task to
    `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`. No approval, execution
    state, or evidence in these files. Every later change to what they specify
    is a successor file.
@@ -80,7 +76,9 @@ how that is judged, not the code.
 1. Trace each requirement and accepted risk gate to a task or phase. Fix
    uncovered requirements; cut tasks tracing to nothing.
 2. Replace every `TBD`, `handle edge cases`, `similar to task N` with the
-   task it hides.
+   task it hides; replace an `Expected:` value not produced by running the
+   command on the current tree with the value the command printed, or a
+   rubric when the command cannot run yet.
 3. Confirm every task has an executable Evaluator or controlled rubric, and
    the index has one top-level **Acceptance** check.
 4. Resolve every Consumes to a Produces under the same name and type. Check
@@ -89,11 +87,12 @@ how that is judged, not the code.
    conformance evaluator.
 6. Confirm independent tasks have disjoint files, data, effects, evaluators,
    and external state; every overlap has a dependency and one owner.
-7. Run `assets/plan-review.md` when the recorded answers are high-risk;
-   resolve every blocker.
-8. Fill **Review focus** with up to five spec-implied inputs or failure modes
+7. Fill **Review focus** with up to five spec-implied inputs or failure modes
    no task Evaluator exercises, or mark it `none`; give every `none yet` row
    a check or name it in the PR.
+8. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
+   high-risk; resolve every blocker it returns; for any other plan, ask the
+   offer question `reviewing-plans` states.
 
 ## Step 4: Present, then stop
 
@@ -102,7 +101,7 @@ how that is judged, not the code.
 
    ```text
    Plan {{path}} — version {{printed version}}
-   {{goal, architecture, constraints, acceptance, trace, task list}}
+   {{goal, architecture, constraints, acceptance, trace, task list, review findings}}
 
    1. Approve, then choose an execution mode
    2. Request changes
@@ -123,9 +122,9 @@ how that is judged, not the code.
    `mode:`. That file owns the block, the subagent-action condition, and how
    to ask it.
 5. Append one row to the `External decision ledger`, a ledger (append-only,
-   outside the plan): `Identity` = the printed
-   version, `Location` = the index path, `State` = approved, `Bound evidence` =
-   the `Approval rule` owner and their answer, then `mode: inline` or
+   outside the plan): `Identity` = the printed version, `Location` = the
+   index path, `State` = approved, `Bound evidence` = the `Approval rule`
+   owner and their answer, any review report path, then `mode: inline` or
    `mode: delegated`. Write nothing about approval into the index.
 6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke the executor that
    mode names against the approved version before any workspace or
