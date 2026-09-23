@@ -36,8 +36,8 @@ The injector reads the router shipped in that installation; it does not embed a
 second handwritten body. After canonical skill edits, run
 `scripts/sh/sync-codex-plugin-skills.sh` to rebuild the Codex mirror. Then install
 or update the package being exercised. Editing this checkout does not update an
-existing plugin cache. `scripts/sh/validate-skills.sh` checks mirror equality
-and the skill set exposed by all four adapters.
+existing plugin cache. `scripts/sh/validate-skills.sh` checks mirror equality,
+the skills arrays of every manifest, and each adapter validator's own checks.
 
 The OpenCode plugin resolves the router from its own location at runtime, so the
 same file serves a contributor working inside this checkout and a user

@@ -95,7 +95,7 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 
 The catalogue contains every canonical skill across all seven phases and `common/`.
 
-Seven harnesses have adapters:
+Each supported harness has an adapter:
 
 | Harness | Adapter | Routing support |
 | --- | --- | --- |
