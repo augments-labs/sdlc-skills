@@ -107,9 +107,10 @@ reapproval, end the turn.
 1. Take the next task whose dependencies are done. `waves: yes` on the
    approval row → take every ready task that passes the independence test of
    `dispatching-parallel-agents` Step 1. Before each dispatch row, cut that
-   task a branch and worktree from the plan worktree's HEAD yourself;
-   `using-git-worktrees` run by the worker would reuse yours. Dispatch them
-   together through its Step 2; sequence a failing pair.
+   task a branch and worktree from the plan worktree's HEAD yourself under
+   the plan worktree's commit authority; `using-git-worktrees` run by the
+   worker would reuse yours. Dispatch them together through its Step 2;
+   sequence a failing pair.
 2. Batch tasks into one dispatch only when they are small and the same shape —
    same kind of file, same act.
 3. Fill `assets/implementer.md` when dispatching an implementer — every input a
@@ -147,14 +148,15 @@ reapproval, end the turn.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision: the task's
    `Evaluator`, every `VCONF` row, `visual-ui-verification` for an integrated
-   UI. A wave: only after every wave diff has passed 5.1 to 5.4, merge each
-   reviewed branch into the plan worktree (a blocked task's branch stays out)
-   and run this on that merged HEAD before any wave task is `done`; a red
-   merged gate opens a fix round on the task it names; the wave worktrees are
-   task-owned resources in the workspace record for `finishing-a-branch`. Then
-   record its state: done, done with concerns, blocked, or needs context.
-   Mirror only the task row's checkbox and adjacent label. **Do not change the
-   index's `Status` header or normalize it out of the plan's identity.**
+   UI. A wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
+   those branches into the plan worktree (a blocked task's stays out) and run
+   this on the merged HEAD before any wave task is `done`; a red merged gate
+   opens a fix round in the plan worktree on the task it names, then merge and
+   gate again; the wave worktrees and branches are task-owned resources in the
+   workspace record for `finishing-a-branch`. Then record its state: done,
+   done with concerns, blocked, or needs context. Mirror only the task row's
+   checkbox and adjacent label. **Do not change the index's `Status` header or
+   normalize it out of the plan's identity.**
 6. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then `finishing-a-branch`.
    Return after it records its decision.
@@ -177,8 +179,7 @@ In the worktree from Step 2, in order:
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
-4. Close with "Rulings I made": every ruling in the ledger, one line each, so
-   the person reading the result sees the decisions taken on their behalf.
+4. Close with "Rulings I made": every ruling in the ledger, one line each.
 
 | Thought | Reality |
 | --- | --- |

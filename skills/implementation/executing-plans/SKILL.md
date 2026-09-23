@@ -87,8 +87,8 @@ mode; switching needs the user's direct answer.
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
    - Approved parallel work: `waves: yes` on the approval row and the ready
-     set that passes `dispatching-parallel-agents` Step 1 → invoke it for that
-     set; otherwise one task at a time.
+     set that passes the independence test of `dispatching-parallel-agents`
+     Step 1 → invoke it for that set; otherwise one task at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
    raw diff, result revision, and evaluator output, never its summary.
