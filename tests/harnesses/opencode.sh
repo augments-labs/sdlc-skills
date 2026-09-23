@@ -110,6 +110,12 @@ opencode_prove_loaded() { # $1 plugin source
 # not run at all — no boot log to read back — or one that ran and hit a
 # plugin boot error, the same `sdlc-skills:` signature opencode_prove_loaded
 # checks for.
+#
+# opencode_prove_loaded's comment above says the run "is killed the moment
+# the line appears" — true here too, but only on the positive outcome. When
+# the line never appears (the "does not load passively" outcome this probe
+# also treats as a pass), nothing breaks the wait loop early: the run
+# continues on its own until it exits or the 60s bound passes.
 opencode_prove_passive_2x() { # $1 plugin source (the checkout)
   local passive_home; passive_home="$(mktemp -d)"
   mkdir -p "$passive_home/xdg/opencode"
