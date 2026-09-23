@@ -64,7 +64,7 @@ action.
 
 ## Available scripts
 
-`scripts/artifact-layout.sh` creates `.sdlc-skills/`; read `references/artifact-layout.md` when writing or reading it.
+`bash scripts/artifact-layout.sh` creates `.sdlc-skills/`; read `references/artifact-layout.md` when writing or reading it.
 
 ## Red flags
 

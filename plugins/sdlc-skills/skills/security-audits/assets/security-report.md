@@ -34,7 +34,11 @@ candidate workspace — or return the report directly. Include no secret values.
 - Fix: {{smallest correction}}
 - Re-audit: {{affected gates and independent review scope}}
 
-## Limitations and next action
+## Limitations
 
-{{missing evidence, open blockers, and shortest next action; or none}}
+{{missing evidence and open blockers; or none}}
+
+## Next action
+
+{{shortest next action, and who owns it; or none}}
 ```

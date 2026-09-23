@@ -25,7 +25,7 @@ This skill never decides what happens to the branch.
 
 ## Step 1: Verify approval and mode
 
-1. Run `scripts/plan-version.sh` on the plan directory before reading the
+1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
    `External decision ledger`, a ledger (append-only). Read every row for this
    index whose `Identity` is the printed version, in ledger order. The last of
    them must be the row whose `Bound evidence` names the `Approval rule`
@@ -163,7 +163,7 @@ In the task workspace recorded in Step 2, in order:
 
 - Remaining work will not fit this session: finish the current ledger row,
   then invoke `handoff`.
-- On resume, rerun `scripts/plan-version.sh`, then re-read before trusting: the
+- On resume, rerun `bash scripts/plan-version.sh`, then re-read before trusting: the
   latest decision ledger row for the printed version, the workspace's base,
   HEAD, and dirty state through `using-git-worktrees`, the execution ledger,
   and whether each `done` row still matches the current revision.

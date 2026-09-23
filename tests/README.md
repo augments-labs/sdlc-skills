@@ -11,11 +11,15 @@ in this repository.
 
 ```text
 tests/
-  run-session-start.sh    the injected router, per envelope       (offline)
-  run-opencode-plugin.sh  the OpenCode hooks: registration, injection, compaction (offline)
-  run-plugin-smoke.sh     install / marketplace mechanics         (offline)
-  run-serve-preview.sh    the localhost preview's safety contract (offline)
-  harnesses/              ONLY what differs per CLI: how it installs and discovers skills
+  run-check-skill.sh         offline check for check-skill.sh's reference-depth rule. (offline)
+  run-opencode-plugin.sh     offline unit check for the OpenCode adapter. (offline)
+  run-pi-extension.sh        offline unit check for the pi adapter. (offline)
+  run-plugin-smoke.sh        do the skills land where this harness looks? No model call.
+  run-sdd-scripts.sh         offline unit checks for the SDD scripts. (offline)
+  run-serve-preview.sh       offline unit check for the serve.py preview. (offline)
+  run-session-start.sh       offline unit check for the session-start injection. (offline)
+  run-validate-skills.sh     offline check for the "every assets/ template has the house shape" gate in scripts/sh/validate-skills.sh. (offline)
+  harnesses/                 ONLY what differs per CLI: how it installs and discovers skills
 ```
 
 Every runner answers `--help` with its own flags, defaults, and exit codes; this
@@ -24,8 +28,11 @@ file covers only what the flags cannot say.
 ```bash
 tests/run-session-start.sh
 tests/run-opencode-plugin.sh
+tests/run-pi-extension.sh
 tests/run-plugin-smoke.sh --harness codex
+tests/run-sdd-scripts.sh
 tests/run-serve-preview.sh
+tests/run-check-skill.sh
 ```
 
 ## What they catch

@@ -43,7 +43,8 @@ Policy checks (`warn` by default, `fail` with --strict):
                             exact candidate, material intent, owning phase
                             skill, normative
   reference-depth           a file under references/ or assets/ names another
-                            support file (always `warn`: keep them one level deep)
+                            support file SKILL.md does not also name (always
+                            `warn`: keep them one level deep)
 
 Output (tsv):
   One row per finding: LEVEL <tab> CHECK <tab> DETAIL
@@ -311,13 +312,17 @@ fi
 
 # --- support-file depth ---------------------------------------------------------
 # A chain SKILL.md -> support file -> support file gets read partially, so the
-# third file is missed. Always a warning: the chain may be deliberate.
+# third file is missed *unless SKILL.md names it too* — then the agent sees it
+# there and the chain is not hidden. Files SKILL.md already names, matched with
+# the same support_path pattern used against the support file.
+skill_names="$(grep -oE -- "$support_path" "$skill" 2>/dev/null | sort -u)"
 while IFS= read -r sf; do
   [ -n "$sf" ] || continue
   # In a single-byte locale [[:cntrl:]] misses UTF-8 C1 controls; strip their bytes too.
   srel="${sf#"$dir"/}"; srel="${srel//[[:cntrl:]]/ }"; srel="${srel//$'\xc2'[$'\x80'-$'\x9f']/ }"
   while IFS= read -r m; do
     [ -n "$m" ] && [ "$m" != "$srel" ] && [ -e "$dir/$m" ] || continue
+    grep -qxF -- "$m" <<<"$skill_names" && continue
     finding warn reference-depth "$srel names $m; keep support files one level deep from SKILL.md"
   done <<NAMES
 $(grep -oE -- "$support_path" "$sf" 2>/dev/null | sort -u)

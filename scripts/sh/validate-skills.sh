@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Structural validator for SDLC skills.
-# Enforces the authoring rules in CLAUDE.md across every skill in skills/.
+# Enforces the authoring rules in AGENTS.md across every skill in skills/.
 # Flags and exit codes: --help.
 
 set -uo pipefail
@@ -35,7 +35,7 @@ fail=0
 note() { printf '  %s\n' "$1"; }
 err()  { printf '  FAIL: %s\n' "$1"; fail=1; }
 
-# Patterns that must never appear in shipped skills (see CLAUDE.md).
+# Patterns that must never appear in shipped skills (see AGENTS.md).
 EXT_REFS='superpowers|obra|mattpocock|pocock|ousterhout|github\.com|https?://|#[0-9]{2,}'
 VENDORS='\b(haiku|sonnet|opus|claude|gpt-?[0-9o]|gemini|flash|llama|mistral|openai|anthropic)\b'
 # Skill text is part of the harness's scan surface: a literal trigger-word in a
@@ -126,6 +126,30 @@ for skill in "${skills[@]}"; do
     # never an optional "default" — keep the convention from drifting back.
     grep -nE '\.sdlc-skills/' "$f" | grep -qi 'default' && err "$(basename "$f"): frames an .sdlc-skills/ path as a 'default' — that location is mandatory (overridable only by the user), not a default"
   done < <(find "$dir" -name '*.md')
+done
+
+# A bundled script run as a bare `scripts/x.sh` only executes if the harness
+# preserved the file's execute bit on install; `bash scripts/x.sh` always runs
+# regardless of mode bits. Outside a "## Available scripts" listing — where the
+# bare path just names the file, never instructs running it — every other
+# mention must go through the interpreter. This check scans only SKILL.md
+# bodies — the scope its task contract sets. A reference file can carry the
+# same risk; it is simply outside this check, not exempt from the risk.
+echo "• scripts are invoked through an interpreter"
+for skill in "${skills[@]}"; do
+  body=$(awk '
+    /^## Available scripts/{skip=1; next}
+    /^## / && skip {skip=0}
+    !skip
+  ' "$skill")
+  while IFS= read -r span; do
+    [ -n "$span" ] || continue
+    inner=${span#\`}; inner=${inner%\`}
+    case "$inner" in
+      bash\ scripts/*.sh|sh\ scripts/*.sh) continue ;;
+    esac
+    err "$skill: bare script invocation '$inner'; write bash $inner"
+  done < <(printf '%s\n' "$body" | grep -oE '`(bash |sh )?scripts/[A-Za-z0-9._/-]+\.sh`')
 done
 
 # Cross-skill routing lives in skill text: a precondition, boundary, or handoff
@@ -240,6 +264,83 @@ while IFS= read -r ref; do
   esac
 done < <(find skills -path '*/references/*.md' -type f | sort)
 
+# House shape: every assets/ template matches the mechanical part of
+# template-format.md's "## Shape" rules 1, 2, 3 and 5 — an H1 on line 1, a
+# preamble line before the fence, exactly one outer markdown/text fence of
+# three or four backticks holding at least one {{slot}}, and no bare <angle>
+# placeholder outside an inline code span. Rule 4 (matching the shape to the
+# family), rule 6, sentence counts, and the content checklist stay
+# human-judged. This is what keeps a filled copy of one family reading the
+# same no matter which skill produced it. Angle brackets inside an inline
+# code span (`skills/<phase>/<name>/SKILL.md`) do not render as HTML, which
+# is the reason rule 5 exists, so those spans are stripped before the
+# placeholder scan; a bare <tag> in prose or a table cell still fails.
+echo "• every assets/ template has the house shape"
+while IFS= read -r ref; do
+  while IFS= read -r violation; do
+    [ -n "$violation" ] && err "$ref: $violation"
+  done < <(awk '
+    { lines[NR] = $0 }
+    END {
+      n = NR
+      if (n == 0) { print "empty file"; exit }
+      if (lines[1] !~ /^# /) print "line 1 is not an H1 (\"# ...\")"
+
+      fence_line = 0
+      for (i = 2; i <= n; i++) {
+        if (lines[i] ~ /^```+/) { fence_line = i; break }
+      }
+      if (fence_line == 0) {
+        print "no fenced block found"
+      } else {
+        preamble_ok = 0
+        for (i = 2; i < fence_line; i++) {
+          line = lines[i]
+          if (line ~ /^[ \t]*$/) continue
+          if (line ~ /^#/) continue
+          preamble_ok = 1
+          break
+        }
+        if (!preamble_ok) print "no non-empty, non-heading line before the first fence"
+
+        match(lines[fence_line], /^`+/)
+        backticks = substr(lines[fence_line], RSTART, RLENGTH)
+        N = length(backticks)
+        lang = substr(lines[fence_line], RLENGTH + 1)
+        if (N < 3 || N > 4) print "opening fence is not 3 or 4 backticks: " backticks
+        if (lang != "markdown" && lang != "text") print "opening fence language is not markdown or text: " lang
+
+        openpat = "^" backticks "(markdown|text)$"
+        closepat = "^" backticks "$"
+        opens = 0; closes = 0; close_line = 0
+        for (i = fence_line; i <= n; i++) {
+          if (lines[i] ~ openpat) opens++
+          if (lines[i] ~ closepat) { closes++; if (close_line == 0) close_line = i }
+        }
+        if (opens != 1 || closes != 1) print "not exactly one outer fence pair (opens=" opens ", closes=" closes ")"
+
+        if (close_line == 0) close_line = n + 1
+        has_slot = 0
+        for (i = fence_line + 1; i < close_line; i++) {
+          if (index(lines[i], "{{") > 0) { has_slot = 1; break }
+        }
+        if (!has_slot) print "no {{slot}} found inside the fence"
+      }
+
+      for (i = 1; i <= n; i++) {
+        line = lines[i]
+        stripped = line
+        while (match(stripped, /`[^`]*`/)) {
+          stripped = substr(stripped, 1, RSTART - 1) substr(stripped, RSTART + RLENGTH)
+        }
+        if (match(stripped, /<[a-z-]+>/)) {
+          print "line " i ": bare <angle> placeholder outside a code span: " substr(stripped, RSTART, RLENGTH)
+        }
+      }
+    }
+  ' "$ref")
+done < <(find skills -path '*/assets/*.md' -type f | sort)
+
 # The session-start text ships too, and is injected into every session, so a
 # scanner trigger-word there fires constantly, not just when one skill loads.
 # Both copies are read raw. The router body they wrap is scanned with its skill.
@@ -272,31 +373,42 @@ for retired_script in \
 done
 
 # Manifest sync: a harness discovers skills only through its manifest, so every
-# leaf skill dir must be listed explicitly in the plugin's "skills" array — a
+# leaf skill dir must be listed explicitly in the plugin's skill list — a
 # skill missing from it silently fails to load; a dead entry points nowhere.
+#
+# Two manifests state that list in their own shape, so each supplies the jq
+# that normalises it back to the canonical "./skills/<phase>/<name>": Claude
+# Code's "skills" array holds the directory paths as written, and Muse's
+# native `capabilities.skills` holds {id, path} objects naming the SKILL.md
+# inside each directory. Normalising is what lets one check judge both.
 actual=$(printf '%s\n' "${skills[@]}" | sed 's|/SKILL.md$||; s|^|./|' | sort -u)
-manifest=.claude-plugin/plugin.json
-echo "• $manifest (skills array sync)"
-if [ ! -f "$manifest" ]; then
-  err "missing $manifest"
-elif ! command -v jq >/dev/null 2>&1; then
-  err "jq is required to read $manifest (the adapter checks below need it too)"
-elif ! jq -e . "$manifest" >/dev/null 2>&1; then
-  err "$manifest does not parse as JSON — a harness loads no skill from it"
-else
-  # Read the array itself: a grep over the whole file also matches paths under
-  # a renamed or absent "skills" key, so the gate passed manifests no harness
-  # can load.
-  declared=$(jq -r '.skills[]? // empty' "$manifest" | sort -u)
-  if [ -z "$declared" ]; then
-    err "$manifest has no non-empty \"skills\" array — no skill would load"
+check_manifest_skills() {  # <manifest> <jq program emitting one ./skills/<phase>/<name> per line>
+  local manifest="$1" program="$2" declared missing dead
+  echo "• $manifest (skills array sync)"
+  if [ ! -f "$manifest" ]; then
+    err "missing $manifest"
+  elif ! command -v jq >/dev/null 2>&1; then
+    err "jq is required to read $manifest (the adapter checks below need it too)"
+  elif ! jq -e . "$manifest" >/dev/null 2>&1; then
+    err "$manifest does not parse as JSON — a harness loads no skill from it"
   else
-    missing=$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
-    dead=$(comm -13 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
-    [ -n "$missing" ] && while IFS= read -r m; do err "skill not in $manifest 'skills' (won't load): $m"; done <<< "$missing"
-    [ -n "$dead" ]    && while IFS= read -r d; do err "$manifest 'skills' entry has no SKILL.md: $d"; done <<< "$dead"
+    # Read the list itself: a grep over the whole file also matches paths under
+    # a renamed or absent key, so the gate passed manifests no harness
+    # can load.
+    declared=$(jq -r "$program" "$manifest" | sort -u)
+    if [ -z "$declared" ]; then
+      err "$manifest declares no skill — no skill would load"
+    else
+      missing=$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
+      dead=$(comm -13 <(printf '%s\n' "$actual") <(printf '%s\n' "$declared"))
+      [ -n "$missing" ] && while IFS= read -r m; do err "skill not in $manifest (won't load): $m"; done <<< "$missing"
+      [ -n "$dead" ]    && while IFS= read -r d; do err "$manifest entry has no SKILL.md: $d"; done <<< "$dead"
+    fi
   fi
-fi
+}
+check_manifest_skills .claude-plugin/plugin.json '.skills[]? // empty'
+check_manifest_skills .muse-plugin/plugin.json \
+  '.capabilities.skills[]? | .path // empty | "./" + sub("/SKILL\\.md$"; "")'
 
 echo "• Codex adapter"
 if ! bash scripts/sh/validate-codex-plugin.sh; then fail=1; fi
@@ -307,12 +419,12 @@ if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
 echo "• OpenCode adapter"
 if ! bash scripts/sh/validate-opencode-plugin.sh; then fail=1; fi
 
-# Version sync: the release version is declared in three manifests and bumped
+# Version sync: the release version is declared in several manifests and bumped
 # together in one release commit (see RELEASING.md). A half-done bump ships
 # disagreeing versions, so any disagreement fails.
 echo "• manifest versions agree"
 versions=""
-for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json; do
+for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json .muse-plugin/plugin.json; do
   if [ ! -f "$manifest" ]; then err "missing $manifest"; continue; fi
   v=$(grep -m1 -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' "$manifest" | sed -E 's/.*"([^"]+)"$/\1/')
   if [ -z "$v" ]; then err "$manifest: no \"version\" field"; continue; fi
@@ -327,7 +439,7 @@ echo "• internal references (docs/ and tests/ paths resolve)"
 while IFS=: read -r src ref; do
   [ -f "$ref" ] || err "$src: internal reference '$ref' does not exist"
 done < <(grep -roE --include='*.md' --include='*.sh' \
-           '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md CLAUDE.md | sort -u)
+           '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md AGENTS.md | sort -u)
 
 # Conformance record freshness. docs/agent-skills-conformance.md
 # states how much headroom the library actually has against the standard's

@@ -1,3 +1,5 @@
+# Architecture section template
+
 Copy this section into the design document, replacing every `{{placeholder}}`.
 Preserve the sections already approved around it; this one is immutable once its
 identity is issued.

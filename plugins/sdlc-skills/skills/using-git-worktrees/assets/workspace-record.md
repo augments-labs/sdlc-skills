@@ -1,9 +1,13 @@
-# Workspace record — {{task-name}}
+# Workspace record template
 
-Fill this as you work through the procedure, and hand it to whatever finishes
-the branch. Every field below is something a later step needs and cannot
-re-derive: which resources may be cleaned up, which base the work is relative
-to, and what the suite looked like before you touched anything.
+`using-git-worktrees` opens this before the first command and fills each
+section as its step runs, then hands it to whatever finishes the branch.
+Every field below is something a later step needs and cannot re-derive: which
+resources may be cleaned up, which base the work is relative to, and what the
+suite looked like before you touched anything.
+
+```markdown
+# Workspace record — {{task-name}}
 
 ## Identity
 
@@ -78,3 +82,4 @@ Resources this task created and may remove once an owning transition permits it.
 Nothing else appears here.
 
 - {{resource}}
+```

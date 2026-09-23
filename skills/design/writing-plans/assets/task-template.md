@@ -1,3 +1,13 @@
+# Task template
+
+`writing-plans` opens this before writing each task, after the index's header
+is filled. Write the filled copy to `NN-{{slug}}.md` beside the plan's
+00-index.md, one file per task, keeping Task IDs stable and never
+renumbered or recycled. Approval, execution state, and evidence never go in
+this file; they live in the plan's external ledger. A slot with no answer yet
+stays a placeholder rather than a guess.
+
+````markdown
 # Task NN: {{name}}
 
 **Task ID:** `{{stable non-positional ID; never renumber or recycle}}`
@@ -77,3 +87,4 @@ record.}}
 
 {{No deterministic check possible? Replace the command with a rubric pass-list:
 explicit criteria, named evaluator, and recorded observations.}}
+````

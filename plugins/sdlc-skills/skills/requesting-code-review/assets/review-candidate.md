@@ -1,11 +1,15 @@
-# Review candidate descriptor
+# Review candidate template
 
-Create a mutable pre-identity draft, then issue this immutable descriptor before
-dispatch and freeze the candidate while reviewers work. Store it and reports
-under `.sdlc-skills/evidence/`, which the content digest leaves out, or
-outside the workspace. Any later field change creates a successor descriptor
-and new invocation. Never copy this template anywhere else in the workspace.
+`requesting-code-review` opens this after the evidence is bound and fills every
+field: mode, identities, complete inventory, artifact controls, terminal
+contract, continuation, review history. Create a mutable pre-identity draft,
+then issue this immutable descriptor before dispatch and freeze the candidate
+while reviewers work. Store it and reports under `.sdlc-skills/evidence/`,
+which the content digest leaves out, or outside the workspace. Any later field
+change creates a successor descriptor and new invocation, and this template is
+never copied anywhere else in the workspace.
 
+```markdown
 ## Identity
 
 - **Repository/workspace:** `{{absolute or unambiguous identity}}`
@@ -59,7 +63,7 @@ identities recorded unaltered in the external ledger. Never poll empty targets.
 Unavailable/refused/empty dispatch leaves review pending. Poll the exact receipt;
 never wait indefinitely. Failure/deadline remains cancellation-requested until
 worker, descendants, and effects are quiescent; quarantine partial evidence.
-A retry links its predecessor and rejects late results/mutations. “Returned”
+A retry links its predecessor and rejects late results/mutations. "Returned"
 requires one current revision-bound report.
 
 Every dispatch copies the result and review-input identities exactly as written
@@ -150,8 +154,9 @@ new acceptance criteria. A new identity does not erase the repair budget.
 Reviewers account for the complete candidate inventory and read all
 human-authored changes. Here that includes every direct source change typed by a
 human or coding agent. Only output mechanically reproducible from an inspectable
-generator/source contract is “generated”; agent authorship alone never makes a
+generator/source contract is "generated"; agent authorship alone never makes a
 reviewable source file exempt. Truly unreviewable ranges use source-to-target
 mapping, structural gates, and risk-based samples under the high-risk contract.
 Reviewers may follow evidence-relevant callers, consumers, history, contracts,
 generators, tests, and platform/build cells, recording each expansion.
+```

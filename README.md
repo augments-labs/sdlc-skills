@@ -87,30 +87,44 @@ A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder hold
 | maintenance | `containing-an-incident` | Stop live user impact with the narrowest reversible lever, prove it stopped from the outside signal, and record the mitigation as reversible debt before diagnosing |
 | maintenance | `debugging` | Establish causal root cause through deterministic or quantified probabilistic evidence before changing behavior |
 | maintenance | `post-mortem` | Reconstruct the escape path and carry owned corrective controls through falsification, enforcement, rollout, and effectiveness review |
+| maintenance | `diagnosing-a-session` | Reconstruct from a session's own transcript what the run actually did, read-only, and report where it went wrong with a transcript line behind every claim |
 | maintenance | `complexity-audit` | Audit a bounded existing module or codebase for accidental complexity through read-only, evidence-bound keep, simplify, remove, decision, and investigate findings |
 | maintenance | `refactor-architecture` | Improve measured structural friction under a falsified preservation gate and reversible, reviewable slices |
 
 ## Installation and support
 
-The catalogue contains 37 skills across all seven phases and `common/`.
+The catalogue contains every canonical skill across all seven phases and `common/`.
 
-Four harnesses have adapters:
+Each supported harness has an adapter:
 
 | Harness | Adapter | Routing support |
 | --- | --- | --- |
 | Claude Code | `.claude-plugin/` | `SessionStart` router injection |
 | Codex CLI | `plugins/sdlc-skills/`, listed in `.agents/plugins/marketplace.json` | bundled `SessionStart` router |
 | Kimi Code | `.kimi-plugin/` | session-start router and tool bindings |
-| OpenCode | `.opencode/` | system-context router injection and tool bindings |
+| OpenCode | `.opencode/`, entered through the root `index.js` | 1.x: system-context router injection and tool bindings. 2.x: skill registration plus router injection into the first user message. The install test proves a listed skill inventory on 1.x and a loaded plugin on 2.x |
+| Grok Build | reads `.claude-plugin/plugin.json` and `hooks/hooks.json` as installed — no separate manifest | no session-start hook on 1.0.40 reaches the prompt; a `$GROK_HOME/rules/` file nudges `using-sdlc-skills` first as a global rule instead of an injected router body |
+| Muse Code | `.muse-plugin/` for a build with plugin support; `scripts/sh/install-muse-skills.sh` installs skill by skill on a build without it | the manifest declares a `SessionStart` hook, but 1.3.0 loads no plugin, so the per-skill route gives discovery only — the router skill is listed and has to be invoked |
+| pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` router injection via `appendSystemPrompt`; `session_compact` re-appends it into the in-memory compaction entry, after pi has already persisted the entry — a resumed session relies on `before_agent_start` again. The offline test proves the extension's own registration and injection; the harness test proves the package is installed and loaded, since 0.86.1 has no non-interactive skill dump |
 
-`AGENTS.md` and `GEMINI.md` symlink to `CLAUDE.md`, so a harness that reads its
-own instructions file gets the same guidance from one source.
+`AGENTS.md` is the canonical contributor guide. `GEMINI.md` symlinks to it and
+`CLAUDE.md` is a short pointer to it, so a harness that reads its own
+instructions file gets the same guidance from one source, even one that
+refuses a symlinked instructions file.
 
 Because the skills are portable Markdown invoked by name, other harnesses can
 adopt them — each proven by its own tests when added; see
 [`docs/harness-support.md`](docs/harness-support.md).
 
-Install in Claude Code with `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs`. For local Codex development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev`. Install in Kimi Code with `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload`. Install in OpenCode by adding `"plugin": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` to `opencode.json` (global or project), then restart — the plugin installs through OpenCode's plugin manager and registers the canonical skills itself. A local checkout works too with its `.opencode/plugins/sdlc-skills.js` file path in place of the package spec.
+- **Claude Code**: `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs` — installs the plugin and its `SessionStart` router injection.
+- **Codex CLI**: for local development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev` — the bundled `SessionStart` hook carries the router.
+- **Kimi Code**: `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload` — installs the plugin and its session-start router.
+- **OpenCode**: add the same git package spec to `opencode.json` (global or project), then restart — `"plugin": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` on 1.x, `"plugins": [...]` (same spec) on 2.x; a local checkout works too, named as `.opencode/plugins/sdlc-skills.js` on 1.x or the checkout directory itself on 2.x. If skills don't show up, run `opencode run --print-logs` (1.x) or `opencode run --standalone --print-logs` (2.x) and look for the line naming the resolved entry point.
+- **Grok Build**: `grok plugin install /path/to/sdlc-skills --trust`, then create `$GROK_HOME/rules/using-sdlc-skills.md` (default `~/.grok/rules/`) with one line telling Grok to invoke `using-sdlc-skills` before acting — Grok reads the Claude plugin manifest directly but has no session-start hook that reaches the prompt, so this rules file is what nudges the router.
+- **Muse Code**: run `bash scripts/sh/install-muse-skills.sh` from a checkout (`bash scripts/sh/install-muse-skills.sh --remove` to undo) — on 1.3.0, which answers `plugins are not available in this build`, this gives discovery only, so invoke `using-sdlc-skills` yourself at the start of a session. A build that does ship plugin support instead installs `.muse-plugin/plugin.json`, whose manifest declares the same `SessionStart` hook — inferred, not observed.
+- **pi**: `pi install /path/to/sdlc-skills` (or `-l` to register it project-locally) — registers the checkout by reference and injects the router through `before_agent_start`, re-applied into the in-memory compaction entry on `session_compact`.
+
+See [`docs/harness-support.md`](docs/harness-support.md) for everything measured about each adapter's lifecycle and limits.
 
 ## Proactive skill use
 
@@ -132,7 +146,7 @@ step that keeps the Codex mirror current are documented once in
 
 ## Contributing and testing
 
-Read [`CLAUDE.md`](CLAUDE.md) before changing the library. It defines the PR
+Read [`AGENTS.md`](AGENTS.md) before changing the library. It defines the PR
 requirements, authoring policy, and structural gate. For skill changes, use
 `writing-skills` and run the gates. See [`docs/testing.md`](docs/testing.md) for
 what each check establishes.

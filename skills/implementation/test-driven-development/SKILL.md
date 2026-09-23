@@ -57,7 +57,9 @@ change. Watch it happen; keep the output.
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`. Any of the three changes
    later → the cycle is invalid; restart and reach RED again.
 6. Write only the code that makes this test pass.
-7. Run the test, then the gate the project requires. Both green.
+7. Run the new test, then the project's whole test command. Both green.
+   Report every failing test by name, including unrelated ones; stop, don't
+   filter.
 8. Refactor under green. Rerun both. An intended behavior change is a new RED
    cycle under the approval that owns it.
 

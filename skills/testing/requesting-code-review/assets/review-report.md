@@ -27,11 +27,15 @@ assessments brief. A missing check belongs in Limitations, never a clean result.
 
 {{repeat the finding block supplied in the role prompt, each with a `Suggested owner:` line naming `security-audits`, `complexity-audit`, or `verification-strategy` when that skill owns the resolution, else `none`; write none when there are no findings}}
 
+## Declined to judge
+
+{{obligation inside the review scope and the reason; or none}}
+
 ## Limitations
 
 {{unexamined scope, missing/failed checks, uncertainty, and effect on the verdict; or none}}
 
 ## Next action
 
-{{shortest correction or required follow-up; or none}}
+{{shortest correction or required follow-up, and who owns it; or none}}
 ```

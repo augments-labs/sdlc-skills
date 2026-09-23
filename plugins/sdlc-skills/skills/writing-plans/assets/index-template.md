@@ -1,3 +1,13 @@
+# Plan index template
+
+`writing-plans` opens this when starting the index and fills the header first:
+exact identity of every approved input, the rule that makes each stale, the
+`Approval rule`, and the `Integration cadence`. Write the filled copy to
+00-index.md in `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`, alongside one
+file per task. No approval, execution state, or evidence goes in this file;
+every later change to what it specifies is a successor file.
+
+```markdown
 # Plan: {{topic}}
 
 - **Status:** `draft | proposed` (decision and execution state stay external)
@@ -103,6 +113,16 @@ conformance. Link the approved source instead of paraphrasing away its details.
 | --- | --- | --- |
 | {{ID and source}} | {{task/phase}} | {{command, rubric, or assurance gate ID}} |
 
+## Review focus
+
+Up to five spec-implied inputs or failure modes no task Evaluator exercises.
+Each names the task that owns it and the check that pins it; a row with no
+check is a gap the reviewer starts from.
+
+| Implied input or failure mode | Owning task | Pinning check |
+| --- | --- | --- |
+| {{what the spec implies}} | {{T-00N}} | {{command, test name, or `none yet`}} |
+
 ## Tasks
 
 - [ ] `T-001` — {{task name}}   ·   `01-{{slug}}.md`   ·   `todo`
@@ -133,3 +153,4 @@ durable and cannot count toward a gate until classified as non-blocking evidence
 or accepted by an exact owning deviation/exclusion with compensating gate.
 Blocked/needs-context retains blocker, owner, and next gate. Cancellation
 or supersession requires the approved plan change/decision that removed the task.
+```

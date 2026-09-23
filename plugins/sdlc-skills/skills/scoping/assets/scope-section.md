@@ -1,3 +1,5 @@
+# Scope section template
+
 Copy this section into the brief, replacing every `{{placeholder}}`. It is one
 `##` section of a shared brief — leave the other approved sections untouched.
 

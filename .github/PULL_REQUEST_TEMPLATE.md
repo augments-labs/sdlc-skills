@@ -1,5 +1,5 @@
 <!--
-Read every word before filling this in, and read CLAUDE.md → "If you are an
+Read every word before filling this in, and read AGENTS.md → "If you are an
 AI agent" first. Every section needs a specific, true answer. A PR that leaves
 a section blank, keeps placeholder text, bundles unrelated changes, or shows
 no evidence of a human reading the diff is closed without review.
@@ -49,11 +49,29 @@ If the edits look separable but depend on each other, name the dependency. -->
 
 ## Does it belong in core?
 
-<!-- Core is general-purpose SDLC guidance (CLAUDE.md → "What belongs here").
+<!-- Core is general-purpose SDLC guidance (AGENTS.md → "What belongs here").
 Would this help someone on a completely different kind of project? Is it
 specific to one domain, team, tool, or workflow? Does it integrate or promote
 a third-party service? A yes to either of the last two means it belongs in
 your own skill library, not here. -->
+
+## New skill (required)
+
+<!-- When the PR adds no skill, write `not applicable` on the first line below
+and leave the rest of this section blank. A blank section is placeholder text
+and the PR is closed without review.
+
+An added skill must be general-purpose SDLC guidance: it belongs to a phase of
+the software development lifecycle in the canonical order `README.md` lists
+(or to `common/`), and would help someone on a completely different kind of
+project. Name that phase and the failure the skill answers.
+
+A PR that adds a skill outside the SDLC is closed without review, whatever its
+quality. -->
+
+- Adds a skill: <!-- yes or not applicable -->
+- Phase folder: <!-- a phase from the README catalogue table's phase column, common, or n/a -->
+- Why this is SDLC guidance, not domain, tool, or workflow content: <!-- or n/a -->
 
 ## Prior PRs and issues
 
@@ -81,7 +99,7 @@ measured here. -->
 ## Rigor
 
 - [ ] For a skill change: I invoked `writing-skills`, and `skills/common/writing-skills/scripts/check-skill.sh` passes on every skill touched.
-- [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without explaining why the new wording holds the same line (CLAUDE.md → "Editing a skill").
+- [ ] I did not reword tuned discipline content (red-flag lists, rationalization tables, hard stops) without explaining why the new wording holds the same line (AGENTS.md → "Editing a skill").
 - [ ] Nothing shipped under `skills/` or `docs/` names another repository, project, article, author, issue, or vendor model.
 
 ## New harness support (required only if this PR adds a harness)
@@ -128,5 +146,7 @@ A PR is closed without review when it:
 - names another repository, project, author, issue, or vendor model in
   shipped files;
 - submits domain-, tool-, or workflow-specific content as core;
-- changes behaviour-shaping content without naming the failure it answers.
+- changes behaviour-shaping content without naming the failure it answers;
+- adds a skill that is not SDLC guidance (a phase of the lifecycle, useful on
+  any kind of project).
 -->

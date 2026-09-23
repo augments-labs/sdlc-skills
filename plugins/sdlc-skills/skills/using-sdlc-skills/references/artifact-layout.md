@@ -6,7 +6,7 @@ artifact's ledger pointer so the next reader finds it.
 ## Directories
 
 Every path sits under `.sdlc-skills/` at the project root. Run
-`scripts/artifact-layout.sh` from the root to create them; a second run changes
+`bash scripts/artifact-layout.sh` from the root to create them; a second run changes
 nothing.
 
 | Directory | Holds | Committed |

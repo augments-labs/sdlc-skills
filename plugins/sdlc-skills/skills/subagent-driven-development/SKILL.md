@@ -28,13 +28,13 @@ never decides what happens to the branch.
   that it still binds to the plan. Run it before the first dispatch, and again
   after every compaction.
 - **`scripts/task-brief.sh`** — renders a role brief from a task file, and
-  refuses one with a placeholder still in it. Run it for every dispatch.
+  refuses one with a script slot left unfilled. Run it for every dispatch.
 - **`scripts/review-package.sh`** — assembles one task's diff and file list for
   a reviewer. Run it when an implementer reports.
 
 ## Step 1: Verify approval and mode
 
-1. Run `scripts/plan-version.sh` on the plan directory before reading the
+1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
    `External decision ledger`, a ledger (append-only). Read every row for this
    index whose `Identity` is the printed version, in ledger order. The last of
    them must be the row whose `Bound evidence` names the `Approval rule`
@@ -108,9 +108,10 @@ reapproval, end the turn.
 2. Batch tasks into one dispatch only when they are small and the same shape —
    same kind of file, same act. Different shapes go separately, whatever their
    size.
-3. Fill `assets/implementer.md` when dispatching an implementer, rendering it
-   with `scripts/task-brief.sh`. Every input is a file path the worker opens for
-   itself; paste the task contract, and nothing else.
+3. Fill `assets/implementer.md` when dispatching an implementer — every input a
+   file path the worker opens for itself, the task contract pasted and nothing
+   else — rendering it with `bash scripts/task-brief.sh`, which inserts
+   `assets/implementer-report.md` before dispatch.
 4. Set the tier explicitly, from the Model selection table in
    `dispatching-parallel-agents`. A brief written as prose starts at the middle
    tier; use the small tier only when the brief carries the literal code to
@@ -126,13 +127,17 @@ reapproval, end the turn.
 
 ## Step 5: Review the diff, then fix
 
-1. Build the package with `scripts/review-package.sh`, then fill
-   `assets/task-reviewer.md` when the implementer reports.
+1. Build the package with `bash scripts/review-package.sh`, then fill
+   `assets/task-reviewer.md` when the implementer reports, rendering it with
+   `bash scripts/task-brief.sh`, which inserts
+   `assets/task-reviewer-report.md` before dispatch.
 2. Findings open a fix round. Rounds 1 to 3 go back to the same implementer,
    which still holds the task. Rounds 4 and 5 go to a fresh implementer one tier
    up, briefed from the findings file — it has read nothing.
 3. Fill `assets/re-reviewer.md` when a fix round returns, so the second look
-   judges the fix and its blast radius rather than the task again.
+   judges the fix and its blast radius rather than the task again, rendering it
+   with `bash scripts/task-brief.sh`, which inserts
+   `assets/re-reviewer-report.md` before dispatch.
 4. Five rounds without convergence trips the breaker. Stop dispatching, write
    the adjudication in the ledger — the finding, what each round changed, why it
    did not converge — and then either decide it yourself under Step 3 or hand
@@ -195,7 +200,7 @@ In the worktree from Step 2, in order:
 
 - Remaining work will not fit this session: finish the current ledger row,
   then invoke `handoff`.
-- On resume, rerun `scripts/plan-version.sh` and re-read the latest decision
+- On resume, rerun `bash scripts/plan-version.sh` and re-read the latest decision
   ledger row for the printed version before `--check` on the run ledger: the
   run ledger detects an amended plan, not a row that closed the version.
 

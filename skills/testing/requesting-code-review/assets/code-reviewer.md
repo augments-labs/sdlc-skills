@@ -35,9 +35,13 @@ check per named risk.
 - Flag anything built beyond the requirement (unrequested scope). If requested
   behavior may use avoidable enduring surface, request the YAGNI specialist
   instead of turning this breadth pass into a simplification audit.
+- Where the requirement is silent, judge against what a reasonable user of
+  this feature expects. A crash, data loss, or silent wrong result on an
+  input the feature obviously receives is never Minor.
 
 ## Rules
 
+- **Boundary:** Run no model turn, no network call, and no harness session against a real home; a check that needs one is a Limitation, not something you run.
 - **Read-only candidate.** Never edit product files, switch branches, check out
   commits, or mutate candidate git state. Write only to the assigned review
   artifact location, under `.sdlc-skills/evidence/` or outside the candidate
@@ -66,6 +70,11 @@ check per named risk.
 - **Breadth, not rabbit holes.** This is the broad pass. If one axis needs real
   depth—error paths, type invariants, test coverage, comment accuracy, or
   accidental complexity—request its specialist rather than half-running it.
+- A requirement or contract you can read two ways is not yours to settle: log
+  it under Declined to judge with the exact question and both readings, and
+  hold the verdict at `not_ready`; never guess.
+- Copy no secret into the report — no key, token, password, or credential.
+  Name where it lives instead.
 
 ## Output
 
@@ -79,6 +88,8 @@ separately, including supported strengths. Repeat this finding block:
 - Disposition: {{blocking | advisory}}
 - Evidence: {{file:line, observed failure, and what you read or ran}}
 - Correction: {{concrete fix}}
+
+List under `## Declined to judge` only an obligation inside the review scope that you read but will not rate, with the reason. An item the descriptor already excludes is not declined; leave it out.
 
 Missing, failed, or inconclusive required verification prevents readiness.
 A conditional verdict remains non-ready until a new verified and reviewed

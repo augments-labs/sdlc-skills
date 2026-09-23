@@ -11,8 +11,11 @@ none of them decides anything — judging an observation belongs to the runner.
 tests/harnesses/
   claude-code.sh
   codex.sh
+  grok.sh
   kimi-code.sh
+  muse.sh
   opencode.sh
+  pi.sh
 ```
 
 Required:

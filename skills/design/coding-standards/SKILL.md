@@ -14,8 +14,7 @@ Set the conventions once so every contributor — human or agent — writes code
 
 ## Step 1: Fix the vocabulary and the patterns
 
-Open `assets/standards-template.md` before starting; each step fills its
-section.
+Open `assets/standards-template.md` before starting; each step fills its section. Read `references/standards-example.md` when the first draft is written and needs comparing against a filled example.
 
 1. Approved `data-model` or domain contract exists → take its concepts and
    terms. Decide only representation, casing, abbreviations, drift

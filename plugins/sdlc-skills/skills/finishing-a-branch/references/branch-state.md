@@ -77,7 +77,7 @@ remote, PR, or integration mutation. Rejection never permits bypass.
 
 Create only the commit set included in the direct transition choice—never amend,
 squash, rebase, or mix cleanup implicitly. The created commit set holds the
-reviewed state only when a rerun of `scripts/branch-state.sh` reports
+reviewed state only when a rerun of `bash scripts/branch-state.sh` reports
 `dirty.clean: true` and either `dirty.digest` equals the reviewed digest or
 `head.sha` equals the reviewed revision. Otherwise preserve the working tree
 and stop.
@@ -184,7 +184,7 @@ branch/HEAD and workspace path so work remains findable.
 ## Owned cleanup
 
 Reconfirm integration and resource ownership. Before removing a worktree, rerun
-`scripts/branch-state.sh --full` inside it. A non-zero exit, or a non-empty
+`bash scripts/branch-state.sh --full` inside it. A non-zero exit, or a non-empty
 `dirty.ignored` the cleanup choice does not name, preserves the worktree; report
 it. Capture paths before changing directory; remove an owned worktree from
 outside it, then use safe branch deletion. Do not prune, force-delete, remove

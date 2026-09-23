@@ -91,10 +91,13 @@ how that is judged, not the code.
    and external state; every overlap has a dependency and one owner.
 7. Run `assets/plan-review.md` when the recorded answers are high-risk;
    resolve every blocker.
+8. Fill **Review focus** with up to five spec-implied inputs or failure modes
+   no task Evaluator exercises, or mark it `none`; give every `none yet` row
+   a check or name it in the PR.
 
 ## Step 4: Present, then stop
 
-1. Run `scripts/plan-version.sh` on the plan directory before presenting.
+1. Run `bash scripts/plan-version.sh` on the plan directory before presenting.
    Show the complete index and the printed version to the `Approval rule` owner:
 
    ```text

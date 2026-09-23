@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "name": "sdlc-skills",
+  "displayName": "SDLC Skills",
+  "version": "10.3.0",
+  "description": "A cross-platform SDLC skills library for coding agents: planning, design, TDD, debugging, review, and delivery workflows.",
+  "compat": {
+    "source": "native",
+    "manifestDir": ".muse-plugin"
+  },
+  "capabilities": {
+    "skills": [
+      {
+        "id": "writing-specs",
+        "path": "skills/analysis/writing-specs/SKILL.md"
+      },
+      {
+        "id": "dispatching-parallel-agents",
+        "path": "skills/common/dispatching-parallel-agents/SKILL.md"
+      },
+      {
+        "id": "handoff",
+        "path": "skills/common/handoff/SKILL.md"
+      },
+      {
+        "id": "clarifying-intent",
+        "path": "skills/common/clarifying-intent/SKILL.md"
+      },
+      {
+        "id": "prototyping",
+        "path": "skills/common/prototyping/SKILL.md"
+      },
+      {
+        "id": "using-sdlc-skills",
+        "path": "skills/common/using-sdlc-skills/SKILL.md"
+      },
+      {
+        "id": "using-git-worktrees",
+        "path": "skills/common/using-git-worktrees/SKILL.md"
+      },
+      {
+        "id": "viewing-artifacts",
+        "path": "skills/common/viewing-artifacts/SKILL.md"
+      },
+      {
+        "id": "writing-skills",
+        "path": "skills/common/writing-skills/SKILL.md"
+      },
+      {
+        "id": "yagni",
+        "path": "skills/common/yagni/SKILL.md"
+      },
+      {
+        "id": "mapping-the-codebase",
+        "path": "skills/common/mapping-the-codebase/SKILL.md"
+      },
+      {
+        "id": "finishing-a-branch",
+        "path": "skills/deployment/finishing-a-branch/SKILL.md"
+      },
+      {
+        "id": "release-readiness",
+        "path": "skills/deployment/release-readiness/SKILL.md"
+      },
+      {
+        "id": "architecture-decisions",
+        "path": "skills/design/architecture-decisions/SKILL.md"
+      },
+      {
+        "id": "coding-standards",
+        "path": "skills/design/coding-standards/SKILL.md"
+      },
+      {
+        "id": "data-model",
+        "path": "skills/design/data-model/SKILL.md"
+      },
+      {
+        "id": "migration-strategy",
+        "path": "skills/design/migration-strategy/SKILL.md"
+      },
+      {
+        "id": "system-architecture",
+        "path": "skills/design/system-architecture/SKILL.md"
+      },
+      {
+        "id": "ui-ux-design",
+        "path": "skills/design/ui-ux-design/SKILL.md"
+      },
+      {
+        "id": "writing-plans",
+        "path": "skills/design/writing-plans/SKILL.md"
+      },
+      {
+        "id": "executing-plans",
+        "path": "skills/implementation/executing-plans/SKILL.md"
+      },
+      {
+        "id": "subagent-driven-development",
+        "path": "skills/implementation/subagent-driven-development/SKILL.md"
+      },
+      {
+        "id": "test-driven-development",
+        "path": "skills/implementation/test-driven-development/SKILL.md"
+      },
+      {
+        "id": "complexity-audit",
+        "path": "skills/maintenance/complexity-audit/SKILL.md"
+      },
+      {
+        "id": "containing-an-incident",
+        "path": "skills/maintenance/containing-an-incident/SKILL.md"
+      },
+      {
+        "id": "debugging",
+        "path": "skills/maintenance/debugging/SKILL.md"
+      },
+      {
+        "id": "diagnosing-a-session",
+        "path": "skills/maintenance/diagnosing-a-session/SKILL.md"
+      },
+      {
+        "id": "post-mortem",
+        "path": "skills/maintenance/post-mortem/SKILL.md"
+      },
+      {
+        "id": "refactor-architecture",
+        "path": "skills/maintenance/refactor-architecture/SKILL.md"
+      },
+      {
+        "id": "define-goals",
+        "path": "skills/planning/define-goals/SKILL.md"
+      },
+      {
+        "id": "feasibility-check",
+        "path": "skills/planning/feasibility-check/SKILL.md"
+      },
+      {
+        "id": "scoping",
+        "path": "skills/planning/scoping/SKILL.md"
+      },
+      {
+        "id": "receiving-code-review",
+        "path": "skills/testing/receiving-code-review/SKILL.md"
+      },
+      {
+        "id": "requesting-code-review",
+        "path": "skills/testing/requesting-code-review/SKILL.md"
+      },
+      {
+        "id": "security-audits",
+        "path": "skills/testing/security-audits/SKILL.md"
+      },
+      {
+        "id": "verification-strategy",
+        "path": "skills/testing/verification-strategy/SKILL.md"
+      },
+      {
+        "id": "visual-ui-verification",
+        "path": "skills/testing/visual-ui-verification/SKILL.md"
+      },
+      {
+        "id": "verification-before-completion",
+        "path": "skills/testing/verification-before-completion/SKILL.md"
+      }
+    ],
+    "commands": [],
+    "hooks": [
+      {
+        "id": "session-start",
+        "event": "SessionStart",
+        "command": [
+          "bash",
+          "scripts/sh/session-start.sh"
+        ],
+        "statusMessage": "Loading the SDLC skills router"
+      }
+    ],
+    "mcpServers": [],
+    "reminders": []
+  }
+}

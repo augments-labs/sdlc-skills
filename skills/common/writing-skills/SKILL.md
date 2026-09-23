@@ -39,15 +39,16 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    Aim under the target by **removing content**, never by compressing prose.
    Dropping articles and verbs until a sentence reads as a noun stack — `Bind
    exact source/contracts/external inputs and a stable-ID surface` — buys line
-   count and costs comprehension: an agent that must decompress an instruction
-   before acting is likelier to act on the wrong reading. If a body needs 140
-   clear lines, take them.
+   count and costs comprehension. If a body needs 140 clear lines, take them.
 3. **Progressive disclosure**, split by what the agent does with the file. A file
    it fills in and emits — a document template — goes to `assets/`. A file it
    reads to decide or check — a rubric, a checklist, a reviewer brief, a worked
    example, a lookup table — goes to `references/`. Bundled executable code goes
-   to `scripts/`. Keep short questions or response examples inline when their
-   exact shape matters at that step.
+   to `scripts/`. A body invokes a bundled script as `bash scripts/{{name}}.sh`;
+   the bare path appears only in `## Available scripts` listings. Keep short
+   questions or response examples inline when their exact shape matters at that
+   step. Read references/template-format.md before writing or editing a file
+   under assets/.
 4. **Scope and scale-down up top.** State applicability and any skip conditions.
    A mandatory gate may have no skip; define its smallest useful check instead.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
@@ -90,7 +91,7 @@ pressure—for example routing, TDD, YAGNI, verifying completion, systematic
 debugging, and receiving review. For these only:
 
 - Keep the **rationalization table** (each tempting excuse → its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. You cannot lazy-load willpower. Keep only the rows an agent actually falls for.
-- They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test, not by sounding good; read `references/testing.md` before claiming one passed.
+- They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test; read `references/testing.md` before claiming one passed.
 - Everything else (capability, template, reference, meta) has no temptation to counter — keep it lean.
 - `containing-an-incident` is this library's exemplar of the form: read its
   body when writing or editing one. Hard stops, a rationalization table, and
@@ -112,8 +113,8 @@ debugging, and receiving review. For these only:
 ## Step 2: Write it
 
 1. Choose the phase folder (`planning`…`maintenance`) or `common/`. Create
-   `skills/<phase>/<name>/`, copying `assets/skill-template.md` when you start
-   the file.
+   `skills/<phase>/<name>/`, copying the fenced block of
+   `assets/skill-template.md` when you start the file.
 2. Write `description` as a trigger. Test it: does it say **when**, not
    **how**? Lists steps → rewrite.
 3. Write the body: **When to use** (incl. Skip), `## Step N:` sections of
