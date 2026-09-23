@@ -13,7 +13,7 @@ they may not take. This skill never decides what happens to the branch.
 
 - An approved plan is about to be built by dispatched workers rather than
   here: the user asked for workers, or answered the execution-mode question
-  with delegated. Prefer this mode wherever the harness has a subagent action.
+  with delegated.
 - **Skip** building the tasks in this session — `executing-plans` owns that
   — and a lone task with no plan directory.
 - **Skip** a plan whose index holds phases or shards: its queues, leases, and
@@ -58,8 +58,9 @@ they may not take. This skill never decides what happens to the branch.
 1. Record the approved plan directory by absolute path; read the plan only
    there.
 2. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. One worktree holds the
-   whole plan and every worker writes inside it. Never hand a worker the shared
-   checkout.
+   whole plan; a worker writes inside it, or inside the wave worktree the
+   controller cut for it from that worktree's HEAD. Never hand a worker the
+   shared checkout.
 3. Open the ledger:
 
    ```bash
@@ -104,21 +105,19 @@ reapproval, end the turn.
 ## Step 4: Dispatch one task
 
 1. Take the next task whose dependencies are done. `waves: yes` on the
-   approval row → take every ready task that passes
-   `dispatching-parallel-agents` Step 1; dispatch them together through its
-   Step 2, one dispatch row and one worktree cut from the plan worktree's HEAD
-   (`using-git-worktrees`) each; sequence a failing pair and ledger the ruling.
+   approval row → take every ready task that passes the independence test of
+   `dispatching-parallel-agents` Step 1. Before each dispatch row, cut that
+   task a branch and worktree from the plan worktree's HEAD yourself;
+   `using-git-worktrees` run by the worker would reuse yours. Dispatch them
+   together through its Step 2; sequence a failing pair.
 2. Batch tasks into one dispatch only when they are small and the same shape —
-   same kind of file, same act. Different shapes go separately, whatever their
-   size.
+   same kind of file, same act.
 3. Fill `assets/implementer.md` when dispatching an implementer — every input a
    file path the worker opens for itself, the task contract pasted and nothing
    else — rendering it with `bash scripts/task-brief.sh`, which inserts
    `assets/implementer-report.md` before dispatch.
 4. Set the tier explicitly, from the Model selection table in
-   `dispatching-parallel-agents`. A brief written as prose starts at the middle
-   tier; use the small tier only when the brief carries the literal code to
-   apply.
+   `dispatching-parallel-agents`.
 5. Bind the role to a runtime: where the harness exposes a named agent whose
    contract covers the role, dispatch that agent with the role brief; otherwise
    dispatch a general subagent with the role prompt. Name mappings belong in
@@ -148,11 +147,14 @@ reapproval, end the turn.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision: the task's
    `Evaluator`, every `VCONF` row, `visual-ui-verification` for an integrated
-   UI. A wave: merge each worker's branch into the plan worktree, and run
-   this on that merged HEAD before any wave task is `done`. Then record its
-   state: done, done with concerns, blocked, or needs context. Mirror only the
-   task row's checkbox and adjacent label. **Do not change the index's
-   `Status` header or normalize it out of the plan's identity.**
+   UI. A wave: only after every wave diff has passed 5.1 to 5.4, merge each
+   reviewed branch into the plan worktree (a blocked task's branch stays out)
+   and run this on that merged HEAD before any wave task is `done`; a red
+   merged gate opens a fix round on the task it names; the wave worktrees are
+   task-owned resources in the workspace record for `finishing-a-branch`. Then
+   record its state: done, done with concerns, blocked, or needs context.
+   Mirror only the task row's checkbox and adjacent label. **Do not change the
+   index's `Status` header or normalize it out of the plan's identity.**
 6. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then `finishing-a-branch`.
    Return after it records its decision.
@@ -182,7 +184,6 @@ In the worktree from Step 2, in order:
 | --- | --- |
 | "Every worker returned DONE, so the plan is done" | DONE is a claim per task. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "The reviewer subagent passed it, so review is covered" | That reviewed one task's diff against its contract. The branch review is a separate gate on the integrated state. |
-| "The user said not to ask, so I'll open the PR" | Standing authorization covers the plan's tasks. Integration was never a task; `finishing-a-branch` owns that decision. |
 
 ## Gotchas
 
