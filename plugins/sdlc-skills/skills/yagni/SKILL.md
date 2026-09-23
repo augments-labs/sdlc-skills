@@ -18,19 +18,20 @@ latest prompt need not repeat those for them to bind.
 - Scope drifts toward a speculative addition or an incomplete delivery — "we
   might need this later".
 - A proposal needs a strict pre-edit challenge.
-- The router, `debugging`, and `receiving-code-review` route a change through
-  `test-driven-development` and this skill before the first edit, under their
-  own trigger.
+- A skill that hands off here invokes it directly, and its own trigger governs:
+  the router, `debugging`, and `receiving-code-review` send a change that
+  affects behavior through `test-driven-development` and this skill before the
+  first edit.
 - **Skip** a throwaway spike answering one question, and non-behavioral config
-  or content: nothing there has task behavior to scope.
+  or content.
 
 ## Step 1: Before the first edit
 
 1. Write the completion checklist from the accepted task, the commitments
    above, and the project's `coding-standards` exemplar. No exemplar → the
-   nearest file in the codebase doing the same. List names, structure,
-   idioms, and non-obvious why.
-2. Trace the real flow. Change the behavior's owner, not the first path
+   nearest file in the codebase that does the same kind of thing. List names,
+   structure, idioms, where a non-obvious why is explained.
+2. Trace the real flow. Change the owner of the behavior, not the first path
    that shows the symptom. Unknown cause → invoke `debugging` first.
 3. For each piece of the change, walk the ladder and stop at the first rung
    that holds:
@@ -61,8 +62,8 @@ latest prompt need not repeat those for them to bind.
 ## Step 2: Before calling it ready
 
 1. Read every changed line against the Step 1 checklist. A green test waives
-   no visible convention. A neighbour already drifted → report it; don't
-   migrate it.
+   no convention visible in the file. A neighbour already drifted → report it;
+   do not migrate it.
 2. Sort every candidate cut into two lists. Cut only from the first.
    - *Minimal:* removes abstractions, files, dependencies, or lines while
      every guarantee holds.
@@ -71,9 +72,9 @@ latest prompt need not repeat those for them to bind.
 3. Delete only what you proved unused: no static, runtime, reflection, config,
    generated, or external consumer, or a completed deprecation. A search
    proves unused only when its scope is known: a tool skipping ignored,
-   binary, generated, or vendored paths yields "not searched," not proof —
-   state the scope, or rerun without those skips. Unknown → stays, or goes
-   to migration or refactor ownership.
+   binary, generated, or vendored paths yields "not searched", not proof;
+   state the scope or rerun without the skips. Unknown → stays, or goes to
+   migration or refactor ownership.
 4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` before the claim
    leaves this skill.
 
@@ -89,7 +90,6 @@ latest prompt need not repeat those for them to bind.
 | "Deleted that code, it looked unused" | Removing needed behaviour to shrink the diff is under-delivery. |
 | "Ship the quick version, clean it up later" | Later never comes; every future change pays the re-reading cost. Readable now is the cheaper path. |
 | "Clear names and comments are gold-plating" | Gold-plating is unneeded *features*. Clarity is maintenance cost — the thing this skill exists to protect. |
-| "My usual style beats this file's conventions" | A codebase in one voice is cheaper to change than your personal best practice. Match it. |
 
 ## Hard stops
 
@@ -112,7 +112,7 @@ latest prompt need not repeat those for them to bind.
 
 ## Gotchas
 
-- Only a requested strict challenge with no dispatch goes to
-  `dispatching-parallel-agents` Step 2's question. Self-answering `inconclusive`
-  blocks a surface the user asked for.
+- Only a requested strict challenge with no dispatch action goes to
+  `dispatching-parallel-agents` Step 2's question. Answering `inconclusive`
+  yourself blocks a surface the user explicitly asked for.
 
