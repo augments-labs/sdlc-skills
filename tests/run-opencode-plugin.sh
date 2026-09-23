@@ -378,6 +378,22 @@ else
 fi
 rm -rf "$stray"
 
+echo "--- error message includes system error code"
+stray_err="$(mktemp -d)"
+cp "$PLUGIN" "$stray_err/stray-plugin.js"
+error_output=$(node --input-type=module -e "
+import('file://$stray_err/stray-plugin.js').then(async (m) => {
+  const hooks = await (m.sdlcSkillsPlugin ?? m.default)({}, undefined);
+  await hooks['experimental.chat.system.transform']({}, { system: [] });
+}).catch((err) => { console.error(err && err.message); process.exit(1); });
+" 2>&1)
+if echo "$error_output" | grep -q 'ENOENT'; then
+  ok "error message contains ENOENT system error code"
+else
+  bad "error message does not contain ENOENT: $error_output"
+fi
+rm -rf "$stray_err"
+
 echo "---"
 [ "$fails" -eq 0 ] && { echo "opencode plugin offline tests: PASS"; exit 0; }
 echo "opencode plugin offline tests: FAIL"; exit 1

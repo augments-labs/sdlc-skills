@@ -21,8 +21,8 @@ function loadRouter() {
   let raw;
   try {
     raw = readFileSync(routerPath, "utf8");
-  } catch {
-    throw new Error("sdlc-skills: router not found at " + routerPath);
+  } catch (err) {
+    throw new Error("sdlc-skills: cannot read router at " + routerPath + ": " + err.message);
   }
   const body = raw.replace(/^---\n[\s\S]*?\n---\n/, "");
   if (!body.trim()) {
