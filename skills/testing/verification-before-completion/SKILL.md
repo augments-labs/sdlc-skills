@@ -10,12 +10,11 @@ description: "Runs the checks and reads their output before any claim that work 
 - **Never skip**, including before the next task of a plan. The gate set comes
   from Step 1.3, not the size of the change: a one-line fix still runs the
   smallest gate that can fail.
-- An integrated UI adds `visual-ui-verification` to that set.
 
 ## Available scripts
 
 - **`scripts/state-identity.sh`** — the capture and re-check of Steps 1.4 and
-  2.5; `--help` documents its exit codes.
+  2.5.
 
 ## Step 1: Bind the claim
 
@@ -25,8 +24,7 @@ description: "Runs the checks and reads their output before any claim that work 
 2. Task-green claim with one required gate → a one-row inline ledger: claim,
    gate, state identity, raw result. Integration, release, or more than one
    gate → open `assets/evidence-ledger.md` before the first gate runs,
-   filling each field as its step runs (append-only, outside the candidate);
-   `Claim` names the transition.
+   filling each field; `Claim` names the transition.
 3. One `Results` row per gate the task, plan, or assurance cadence requires
    here; missing, planned, blocked, or unreasoned → claim pending before
    anything runs. A named human acceptor → read
@@ -47,11 +45,14 @@ description: "Runs the checks and reads their output before any claim that work 
 2. Timeout or mid-run failure: wait until its processes and effects stop,
    record the result, reject late output. Repeated failure under unchanged
    conditions → diagnose or return pending, never rerun until a sample passes.
+   A gate the harness detaches or backgrounds is still this run: poll its
+   exact process or task ID to exit, write its output to a path naming
+   this attempt, bind the row to it. A log predating this attempt, or
+   written by another task's run, is not evidence for this row.
 3. Unwanted mutation: restore and rerun, or record it as pending.
 4. Read the raw output, not the exit code, and record the run in its row;
    redact only the copy shown to the user. An assertion that could not have
    failed for this code: say so, and do not cite the green.
-   Repairing such a gate belongs to `verification-strategy`.
 5. Re-check with the flags used at capture:
 
    ```bash
@@ -73,8 +74,7 @@ description: "Runs the checks and reads their output before any claim that work 
    state identity, what is pending. A required row failed or unrun → not
    complete.
 4. A checkpoint commit reuses content-check rows only when
-   `--compare "$before" --committed` exits 0. Commit, CI, and review gates
-   bind to their own revision.
+   `--compare "$before" --committed` exits 0.
 5. **REQUIRED — return the ledger; this skill routes nowhere.** Every unmet
    gate goes back with it, to the pending step of whatever asked; never invoke
    that caller recursively. `using-sdlc-skills`' done rule routes what follows;
@@ -83,9 +83,8 @@ description: "Runs the checks and reads their output before any claim that work 
 
 ## Gotchas
 
-- A reused row binds to the state it ran on: a partial commit leaves reviewed
-  files uncommitted while the digest still matches, and only `--committed`
-  proves otherwise.
+- A reused row binds to the state it ran on: only `--committed` proves
+  otherwise.
 
 ## Hard stops
 
