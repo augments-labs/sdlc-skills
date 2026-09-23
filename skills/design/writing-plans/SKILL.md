@@ -77,7 +77,7 @@ how that is judged, not the code.
 
 1. Trace each requirement and accepted risk gate to a task or phase. Fix
    uncovered requirements; cut tasks tracing to nothing.
-2. Replace every `TBD`, `handle edge cases`, or `similar to task N` with the
+2. Replace every `TBD`, `handle edge cases`, `similar to task N` with the
    task it hides; replace an `Expected:` value not produced by running the
    command on the current tree with the value the command printed, or a
    rubric when the command cannot run yet.
@@ -98,7 +98,7 @@ how that is judged, not the code.
 ## Step 4: Present, then stop
 
 1. Run `bash scripts/plan-version.sh` on the plan directory before presenting.
-   Show the index and the printed version to the `Approval rule` owner:
+   Show the complete index and the printed version to the `Approval rule` owner:
 
    ```text
    Plan {{path}} — version {{printed version}}
