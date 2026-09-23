@@ -220,6 +220,112 @@ else
   ok "(c) error does not name {{report-template}}"
 fi
 
+echo "--- task-brief.sh: an & in the task's own body survives literally"
+roles4="$tmp/roles4"
+mkdir -p "$roles4"
+cat > "$roles4/implementer.md" <<'TPL'
+ROLE: implementer
+TASK FILE: {{task-file}}
+BODY:
+{{task-body}}
+WORKSPACE: {{workspace}}
+BASE: {{base}}
+TIER: {{tier}}
+REPORT: {{report}}
+TPL
+amp_task="$tmp/amp-task.md"
+printf '# Task\n\nFormula: a & b\n' > "$amp_task"
+bash "$D/task-brief.sh" --task "$amp_task" --role implementer --roles "$roles4" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/amp.out" 2>"$tmp/amp.err"
+rc=$?
+check "renders with the task body inserted (exit 0)" "$rc" "0"
+if grep -qF 'Formula: a & b' "$tmp/amp.out"; then
+  ok "& in the task body survives literally"
+else
+  bad "& in the task body was expanded (patsub_replacement) or dropped"
+fi
+
+echo "--- task-brief.sh: a literal {{...}} in the task's own content passes through"
+lit_task="$tmp/lit-task.md"
+printf '# Task\n\nExample placeholder: {{example}}\n' > "$lit_task"
+bash "$D/task-brief.sh" --task "$lit_task" --role implementer --roles "$roles4" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/lit.out" 2>"$tmp/lit.err"
+rc=$?
+check "renders despite the task's own {{example}} (exit 0)" "$rc" "0"
+if grep -qF '{{example}}' "$tmp/lit.out"; then
+  ok "the task's own {{example}} passes through unfilled"
+else
+  bad "the task's own {{example}} was stripped or rejected"
+fi
+# A real, script-owned placeholder left unfilled must still fail — the fix for
+# the task's own {{example}} must not widen into ignoring every {{...}}.
+bash "$D/task-brief.sh" --task "$lit_task" --role implementer --roles "$roles4" \
+  --workspace /w --base abc1234 --report "$tmp/r.md" >"$tmp/lit2.out" 2>"$tmp/lit2.err"
+rc=$?
+check "an unfilled script placeholder still fails (exit 1)" "$rc" "1"
+
+echo "--- task-brief.sh: a role template's brief inside one fence renders the fenced body only"
+roles5="$tmp/roles5"
+mkdir -p "$roles5"
+cat > "$roles5/implementer.md" <<'TPL'
+# Preamble
+
+Some text that must never appear in the rendered brief.
+
+````markdown
+BODY START
+TASK FILE: {{task-file}}
+WORKSPACE: {{workspace}}
+BASE: {{base}}
+TIER: {{tier}}
+REPORT: {{report}}
+BODY END
+````
+
+Trailing text that must also never appear.
+TPL
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles5" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/fence.out" 2>"$tmp/fence.err"
+rc=$?
+check "renders the fenced body (exit 0)" "$rc" "0"
+if grep -qF 'Preamble' "$tmp/fence.out" || grep -qF 'Trailing text' "$tmp/fence.out"; then
+  bad "output still carries text from outside the fence"
+else
+  ok "no text from outside the fence survives"
+fi
+if grep -qxF '````markdown' "$tmp/fence.out" || grep -qxF '````' "$tmp/fence.out"; then
+  bad "output still carries a fence marker line"
+else
+  ok "no fence marker line survives in the output"
+fi
+if grep -qF 'BODY START' "$tmp/fence.out" && grep -qF 'BODY END' "$tmp/fence.out"; then
+  ok "the fenced body itself is present"
+else
+  bad "the fenced body content is missing"
+fi
+
+echo "--- task-brief.sh: a template with two fenced briefs is refused"
+roles6="$tmp/roles6"
+mkdir -p "$roles6"
+cat > "$roles6/implementer.md" <<'TPL'
+````markdown
+First body: {{task-file}}
+````
+
+````markdown
+Second body: {{workspace}}
+````
+TPL
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles6" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/twofence.out" 2>"$tmp/twofence.err"
+rc=$?
+check "two fenced briefs is refused (exit 2)" "$rc" "2"
+if grep -qF 'template carries more than one fenced brief' "$tmp/twofence.err"; then
+  ok "error names the two-fence problem"
+else
+  bad "error does not name the two-fence problem"
+fi
+
 echo "--- review-package.sh: the reviewer gets the diff itself"
 repo="$tmp/repo"
 mkdir -p "$repo"
