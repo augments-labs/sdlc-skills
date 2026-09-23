@@ -44,7 +44,7 @@ under a stricter house rule is not automatically a standard violation.
 | Gotchas | `gotchas-present` policy check: the body has a `## Gotchas` section |
 | Support-file load conditions | `reference-load-condition` policy check: a named `references/` or `assets/` file carries when, if, before, or after |
 | Description wording | `description-rules` policy check: no `Fires on` list and none of four internal terms |
-| Support-file depth | `reference-depth` warning: a support file names another support file |
+| Support-file depth | `reference-depth` warning: a support file names a support file that `SKILL.md` itself does not also name |
 | Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
 | Fill-in templates | Put them in `assets/`; keep explanatory guidance in `references/` |
 | Template shape | `validate-skills.sh`'s "every assets/ template has the house shape" check: each `assets/*.md` file matches the mechanical part of `writing-skills`' `template-format.md` `## Shape` rules 1, 2, 3 and 5 (an H1 on line 1, a preamble line before the fence, exactly one outer markdown/text fence of three or four backticks holding at least one `{{slot}}`, no bare `<angle>` placeholder outside an inline code span); rule 4 (the family shape), rule 6, sentence counts, and the content checklist stay human-judged |
