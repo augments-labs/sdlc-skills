@@ -296,6 +296,62 @@ bash "$D/task-brief.sh" --task "$lit_task" --role implementer --roles "$roles4" 
 rc=$?
 check "an unfilled script placeholder still fails (exit 1)" "$rc" "1"
 
+echo "--- task-brief.sh: the task's own body may quote this script's placeholder names and keep them literal"
+roles8="$tmp/roles8"
+mkdir -p "$roles8"
+cat > "$roles8/implementer.md" <<'TPL'
+ROLE: implementer
+TASK FILE: {{task-file}}
+BODY:
+{{task-body}}
+WORKSPACE: {{workspace}}
+BASE: {{base}}
+TIER: {{tier}}
+REPORT: {{report}}
+
+## Report template
+{{report-template}}
+TPL
+cat > "$roles8/implementer-report.md" <<'TPL'
+REPORT-MARKER-8
+TPL
+quote_task="$tmp/quote-task.md"
+printf '# Task\n\nUsage: --workspace {{workspace}}\nSee {{task-file}} and {{report-template}}.\n' > "$quote_task"
+bash "$D/task-brief.sh" --task "$quote_task" --role implementer --roles "$roles8" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/quote.out" 2>"$tmp/quote.err"
+rc=$?
+check "renders despite the body quoting script placeholder names (exit 0)" "$rc" "0"
+for probe in '{{workspace}}' '{{task-file}}' '{{report-template}}'; do
+  if grep -qF -- "$probe" "$tmp/quote.out"; then
+    ok "the body's literal $probe survives"
+  else
+    bad "the body's literal $probe was filled, rewritten, or dropped"
+  fi
+done
+count="$(grep -c 'REPORT-MARKER-8' "$tmp/quote.out")"
+check "the role's report template is inserted exactly once" "$count" "1"
+
+echo "--- task-brief.sh: a mistyped role-template placeholder is caught, not silently passed through"
+roles9="$tmp/roles9"
+mkdir -p "$roles9"
+cat > "$roles9/implementer.md" <<'TPL'
+ROLE: implementer
+TASK FILE: {{task-file}}
+WORKSPACE: {{worksapce}}
+BASE: {{base}}
+TIER: {{tier}}
+REPORT: {{report}}
+TPL
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles9" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/typo.out" 2>"$tmp/typo.err"
+rc=$?
+check "a mistyped placeholder fails the render (exit 1)" "$rc" "1"
+if grep -qF 'unfilled placeholder: {{worksapce}}' "$tmp/typo.err"; then
+  ok "error names the mistyped placeholder"
+else
+  bad "error does not name the mistyped placeholder"
+fi
+
 echo "--- task-brief.sh: a role template's brief inside one fence renders the fenced body only"
 roles5="$tmp/roles5"
 mkdir -p "$roles5"

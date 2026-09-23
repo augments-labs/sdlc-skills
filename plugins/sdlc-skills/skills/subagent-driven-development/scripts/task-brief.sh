@@ -23,24 +23,35 @@ Options:
   --input PATH      another file the worker must read; repeatable, may be omitted
   --help            show this message
 
-Placeholders filled: {{task-file}}, {{task-body}}, {{workspace}}, {{base}},
-{{tier}}, {{report}}, {{inputs}}, {{report-template}}. Every value is inserted
-literally: an & in a task file, a report, or any other value is never expanded
-to the matched slot text.
+Placeholders filled: {{task-file}}, {{workspace}}, {{base}}, {{tier}},
+{{report}}, {{inputs}}, {{report-template}}, {{task-body}}. Every value is
+inserted literally: an & in a task file, a report, or any other value is
+never expanded to the matched slot text.
 
-A brief that still holds one of this script's own placeholders is never
-printed as if it were ready: a worker reads the literal braces as its
-instruction and implements nothing. That is exit 1, and it is the check this
-script exists for. The check looks only for this script's own placeholder
-names — a `{{...}}` that belongs to the task's own content (an example, a
-quoted snippet) is not this script's placeholder and passes through unfilled.
+{{task-file}}, {{workspace}}, {{base}}, {{tier}}, {{report}}, and {{inputs}}
+are filled first, on the template shell alone — the task's own content is not
+yet in it. A brief that still holds one of those, or any other unrecognized
+{{...}}, is never printed as if it were ready: a worker reads the literal
+braces as its instruction and implements nothing. That is exit 1, and it is
+the check this script exists for. The check looks for whatever {{...}} is
+still in the shell at that point, not a fixed name list, so a mistyped or
+renamed slot in a role template is caught the same as a known one left
+unfilled. {{report-template}} and {{task-body}} are exempt from that check:
+both are intentionally still open here and are filled next, in order.
 
-{{report-template}} is filled last, after every other placeholder is checked
-for leftovers, from ROLE-report.md beside ROLE.md in --roles (implementer.md's
-slot reads implementer-report.md). A role template without the slot renders
-exactly as before. When the slot is present, its report file missing or
-unreadable is exit 2, not exit 1: a role template without a report template to
-insert is a setup defect, not a half-filled brief.
+{{report-template}} is filled next, from ROLE-report.md beside ROLE.md in
+--roles (implementer.md's slot reads implementer-report.md). A role template
+without the slot renders exactly as before. When the slot is present, its
+report file missing or unreadable is exit 2, not exit 1: a role template
+without a report template to insert is a setup defect, not a half-filled
+brief.
+
+{{task-body}} is filled last, once every other slot is filled and checked and
+the report template is in place. Nothing in the task's own content is ever
+matched against this script's placeholder names, filled, rewritten, or
+refused: a task body that quotes `{{workspace}}` or `{{report-template}}`
+reaches the worker exactly as written. An empty task body still leaves
+{{task-body}} standing, which is still exit 1.
 
 A role template may carry its whole brief inside one fenced block: a line
 that is exactly ````markdown, and a later line that is exactly ````. When it
@@ -126,28 +137,33 @@ fill() {
   [ -n "$2" ] || return 0
   text="${text//\{\{$1\}\}/"$2"}"
 }
+# task-body is deliberately not filled here: it is the task's own content, and
+# nothing in it may be matched against this script's placeholder names,
+# filled, rewritten, or refused as unfilled. It is inserted last, below, once
+# every other slot on the template shell alone is filled and checked.
 fill task-file "$task"
-fill task-body "$body"
 fill workspace "$workspace"
 fill base "$base"
 fill tier "$tier"
 fill report "$report"
 fill inputs "$inputs"
 
-# The leftover check is scoped to this script's own placeholder names, never
-# to any '{{' — a task's own content may legitimately carry a literal
-# {{something}} (an example, a template snippet quoted in the task body) and
-# that must reach the worker unchanged, not be mistaken for a half-filled
-# brief. {{report-template}} is not in this list: it is optional and, when
-# present, is filled separately below, never subject to this failure.
+# The leftover check runs on the template shell alone — task-body is not yet
+# inserted, so nothing in the task's own content can be mistaken for a
+# half-filled brief. It looks for whatever {{...}} is still standing, not a
+# fixed name list, so a mistyped or renamed slot in a role template
+# ({{worksapce}}, a future {{input-list}}) is caught the same as a known one
+# left unfilled. {{task-body}} and {{report-template}} are excluded: both are
+# intentionally still open at this point and are filled separately, below.
 leftover=""
-for name in task-file task-body workspace base tier report inputs; do
-  case "$text" in
-    *"{{$name}}"*)
+while IFS= read -r name; do
+  case "$name" in
+    task-body|report-template) ;;
+    *)
       echo "unfilled placeholder: {{$name}}" >&2
       leftover=1;;
   esac
-done
+done < <(printf '%s' "$text" | grep -oE '\{\{[a-zA-Z-]+\}\}' | sed -e 's/^{{//' -e 's/}}$//' | sort -u)
 [ -z "$leftover" ] || exit 1
 
 case "$text" in
@@ -162,6 +178,17 @@ case "$text" in
     # matched slot text — the report's own content goes in exactly as read.
     text="${text//\{\{report-template\}\}/"$report_text"}"
     ;;
+esac
+
+# The task's own content is inserted last, after every other slot is filled,
+# checked, and the report template is in place — so nothing in it is ever
+# filled, rewritten, or refused as this script's own placeholder. An empty
+# task body leaves {{task-body}} standing, which is still a half-filled brief.
+fill task-body "$body"
+case "$text" in
+  *'{{task-body}}'*)
+    echo "unfilled placeholder: {{task-body}}" >&2
+    exit 1;;
 esac
 
 printf '%s\n' "$text"
