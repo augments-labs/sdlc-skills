@@ -1,3 +1,5 @@
+# Spec template
+
 Copy this file to the spec path, replacing every `{{placeholder}}`. Delete a
 section only by saying why it is empty — an absent risks section reads as "none
 found", which is a claim.

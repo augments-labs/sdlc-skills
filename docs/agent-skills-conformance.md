@@ -36,8 +36,8 @@ under a stricter house rule is not automatically a standard violation.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 201 (40% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~2282 |
+| Body lines | At most 500; longest is 206 (41% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker; largest is ~2316 |
 | Typical body size | Aim near 80–120 lines; longer discipline bodies need relevant behavioral evidence |
 | Presentation | The checker warns on long undifferentiated prose; keep readable sentences |
 | Supporting paths | Resolve inside the installed skill and keep direct references shallow |
@@ -47,6 +47,7 @@ under a stricter house rule is not automatically a standard violation.
 | Support-file depth | `reference-depth` warning: a support file names another support file |
 | Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
 | Fill-in templates | Put them in `assets/`; keep explanatory guidance in `references/` |
+| Template shape | `validate-skills.sh`'s "every assets/ template has the house shape" check: each `assets/*.md` file matches the mechanical part of `writing-skills`' `template-format.md` `## Shape` rules 1, 2, 3 and 5 (an H1 on line 1, a preamble line before the fence, exactly one outer markdown/text fence of three or four backticks holding at least one `{{slot}}`, no bare `<angle>` placeholder outside an inline code span); rule 4 (the family shape), rule 6, sentence counts, and the content checklist stay human-judged |
 
 `check-skill.sh` estimates tokens as words × 1.3. The CI drift gate,
 `scripts/sh/token-budget.sh`, uses characters ÷ 4 over full `SKILL.md` files and its configured maximum. These are approximate text budgets, not interchangeable token counts
@@ -76,7 +77,7 @@ Apply those principles through the library's authoring skill:
 
 | Directory | House use |
 | --- | --- |
-| `references/` | 22 skills; rubrics, checklists, worked examples, and lookup guidance |
+| `references/` | 25 skills; rubrics, checklists, worked examples, and lookup guidance |
 | `assets/` | 31 skills; every fill-in template and other static resources |
 | `scripts/` | 9 skills — see below |
 
@@ -91,7 +92,7 @@ are not a universal prohibition on other valid organizations.
 | `verification-before-completion` | `state-identity.sh` | Captures source identity and environment for evidence binding |
 | `writing-skills` | `check-skill.sh` | Inspects skill files and executes bundled scripts with `--help` |
 | `writing-plans`, `executing-plans`, `subagent-driven-development` | `plan-version.sh`, one byte-identical copy each | Prints a plan's version from its normalized index and task files; read-only; the gate fails when the copies differ |
-| `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Opens and re-checks a plan's run ledger, renders one role brief and refuses a half-filled one, and assembles a task's diff for its reviewer |
+| `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Opens and re-checks a plan's run ledger, renders one role brief and refuses a half-filled one, inserts the role's report template, and assembles a task's diff for its reviewer |
 | `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`; never overwrites a file |
 | `viewing-artifacts` | `serve.py`, `start-server.sh`, `stop-server.sh` | Starts and stops an owned local preview, writes a log, and may open a browser |
 | `ui-ux-design` | The same preview scripts | Provides the governed comparison preview; the gate checks byte equality with the viewer copies |

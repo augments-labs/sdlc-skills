@@ -1,9 +1,11 @@
-# Migration contract
+# Migration contract template
 
-Use this template for
-`.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`. Replace every
+`migration-strategy` opens this before its steps below; each step fills the
+section it names. Use this template for
+`.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`, replacing every
 placeholder; remove an inapplicable row only with a recorded rationale.
 
+```markdown
 ## Normative control
 
 - **Status:** `draft | proposed` (review, decision, and execution state stay external)
@@ -229,3 +231,4 @@ evidence and recovery artifacts after old runtime or data is removed.
   ledger identities; it owns tasks, not migration policy or runtime state.
 - Review consumes source, target, and equivalence mappings; release readiness
   consumes the identity plus exact current ledger identities.
+```

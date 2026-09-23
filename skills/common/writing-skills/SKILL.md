@@ -47,7 +47,8 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    to `scripts/`. A body invokes a bundled script as `bash scripts/{{name}}.sh`;
    the bare path appears only in `## Available scripts` listings. Keep short
    questions or response examples inline when their exact shape matters at that
-   step.
+   step. Read references/template-format.md before writing or editing a file
+   under assets/.
 4. **Scope and scale-down up top.** State applicability and any skip conditions.
    A mandatory gate may have no skip; define its smallest useful check instead.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
@@ -112,8 +113,8 @@ debugging, and receiving review. For these only:
 ## Step 2: Write it
 
 1. Choose the phase folder (`planning`…`maintenance`) or `common/`. Create
-   `skills/<phase>/<name>/`, copying `assets/skill-template.md` when you start
-   the file.
+   `skills/<phase>/<name>/`, copying the fenced block of
+   `assets/skill-template.md` when you start the file.
 2. Write `description` as a trigger. Test it: does it say **when**, not
    **how**? Lists steps → rewrite.
 3. Write the body: **When to use** (incl. Skip), `## Step N:` sections of

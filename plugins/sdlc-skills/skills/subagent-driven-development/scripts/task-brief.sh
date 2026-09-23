@@ -24,11 +24,18 @@ Options:
   --help            show this message
 
 Placeholders filled: {{task-file}}, {{task-body}}, {{workspace}}, {{base}},
-{{tier}}, {{report}}, {{inputs}}.
+{{tier}}, {{report}}, {{inputs}}, {{report-template}}.
 
 A brief that still holds a placeholder is never printed as if it were ready: a
 worker reads the literal braces as its instruction and implements nothing. That
 is exit 1, and it is the check this script exists for.
+
+{{report-template}} is filled last, after every other placeholder is checked
+for leftovers, from ROLE-report.md beside ROLE.md in --roles (implementer.md's
+slot reads implementer-report.md). A role template without the slot renders
+exactly as before. When the slot is present, its report file missing or
+unreadable is exit 2, not exit 1: a role template without a report template to
+insert is a setup defect, not a half-filled brief.
 
 Exit codes:
   0  the brief is complete and on stdout
@@ -85,12 +92,32 @@ fill tier "$tier"
 fill report "$report"
 fill inputs "$inputs"
 
-case "$text" in
+# {{report-template}} is checked for leftovers as if already filled: it is
+# filled last, below, from a file this brief's own worker never supplies, so
+# it never belongs on the same "half-filled brief" failure as the seven
+# placeholders above. Checking a copy — never mutating $text here — keeps the
+# literal slot in place for the substitution that follows.
+checked="${text//\{\{report-template\}\}/}"
+case "$checked" in
   *'{{'*)
-    printf '%s\n' "$text" | grep -o '{{[^}]*}}' | sort -u | while IFS= read -r p; do
+    printf '%s\n' "$checked" | grep -o '{{[^}]*}}' | sort -u | while IFS= read -r p; do
       echo "unfilled placeholder: $p" >&2
     done
     exit 1;;
+esac
+
+case "$text" in
+  *'{{report-template}}'*)
+    report_template="$roles/$role-report.md"
+    # Read and check readability in one step: a missing file and an
+    # unreadable one both fail `cat`, and the contract treats them alike.
+    report_text="$(cat "$report_template" 2>/dev/null)" \
+      || { echo "no report template at $report_template" >&2; exit 2; }
+    # The replacement is quoted so bash's patsub_replacement (on by default,
+    # bash 5.2+) never reinterprets an unquoted & in $report_text as the
+    # matched slot text — the report's own content goes in exactly as read.
+    text="${text//\{\{report-template\}\}/"$report_text"}"
+    ;;
 esac
 
 printf '%s\n' "$text"

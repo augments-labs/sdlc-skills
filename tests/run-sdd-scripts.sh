@@ -146,6 +146,80 @@ bash "$D/task-brief.sh" --task "$plan/01-task.md" --role nonesuch --roles "$role
 rc=$?
 check "an unknown role is a usage error (exit 2)" "$rc" "2"
 
+echo "--- task-brief.sh: fills {{report-template}} last, from ROLE-report.md"
+roles2="$tmp/roles2"
+mkdir -p "$roles2"
+cat > "$roles2/implementer.md" <<'TPL'
+ROLE: implementer
+TASK FILE: {{task-file}}
+WORKSPACE: {{workspace}}
+BASE: {{base}}
+TIER: {{tier}}
+REPORT: {{report}}
+
+## Report template
+{{report-template}}
+TPL
+# The fixture report holds the worker's own {{finding}} placeholder and a
+# literal & — bash's patsub_replacement (on by default, bash 5.2+) expands an
+# unquoted & in a substitution's replacement to the matched text, so a naive
+# insertion would corrupt this line into the matched slot text instead.
+cat > "$roles2/implementer-report.md" <<'TPL'
+REPORT-BODY-START
+Finding: {{finding}}
+Formula: A & B
+TPL
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles2" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/slot-a.out" 2>"$tmp/slot-a.err"
+rc=$?
+check "(a) renders with the report inserted (exit 0)" "$rc" "0"
+if grep -qF 'Finding: {{finding}}' "$tmp/slot-a.out"; then
+  ok "(a) report text carries the worker's own {{finding}} verbatim"
+else
+  bad "(a) report text is missing {{finding}} verbatim"
+fi
+if grep -qF 'Formula: A & B' "$tmp/slot-a.out"; then
+  ok "(a) report text carries & verbatim, not expanded to the matched text"
+else
+  bad "(a) & was expanded or dropped instead of inserted verbatim"
+fi
+out_a="$(cat "$tmp/slot-a.out")"
+prefix_a="${out_a%%REPORT-BODY-START*}"
+case "$prefix_a" in
+  *'{{'*) bad "(a) text before the inserted report still holds a placeholder";;
+  *)      ok "(a) nothing before the inserted report holds a placeholder";;
+esac
+
+echo "--- task-brief.sh: {{report-template}} with no report file is exit 2"
+roles3="$tmp/roles3"
+mkdir -p "$roles3"
+cp "$roles2/implementer.md" "$roles3/implementer.md"
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles3" \
+  --workspace /w --base abc1234 --tier medium --report "$tmp/r.md" >"$tmp/slot-b.out" 2>"$tmp/slot-b.err"
+rc=$?
+check "(b) missing report template fails the render (exit 2)" "$rc" "2"
+if grep -qF "no report template at $roles3/implementer-report.md" "$tmp/slot-b.err"; then
+  ok "(b) error names the missing report template path"
+else
+  bad "(b) error does not name the missing report template path"
+fi
+
+echo "--- task-brief.sh: an unfilled ordinary placeholder still wins over the report slot"
+bash "$D/task-brief.sh" --task "$plan/01-task.md" --role implementer --roles "$roles2" \
+  --workspace /w --base abc1234 --report "$tmp/r.md" >"$tmp/slot-c.out" 2>"$tmp/slot-c.err"
+rc=$?
+check "(c) missing --tier fails the render (exit 1)" "$rc" "1"
+if grep -qF 'unfilled placeholder: {{tier}}' "$tmp/slot-c.err"; then
+  ok "(c) error names {{tier}}"
+else
+  bad "(c) error does not name {{tier}}"
+fi
+if grep -qF '{{report-template}}' "$tmp/slot-c.err"; then
+  bad "(c) error wrongly names {{report-template}}"
+else
+  ok "(c) error does not name {{report-template}}"
+fi
+
 echo "--- review-package.sh: the reviewer gets the diff itself"
 repo="$tmp/repo"
 mkdir -p "$repo"
@@ -216,7 +290,17 @@ if [ -d "$A" ]; then
     rc=$?
     if [ "$rc" -ne 0 ]; then
       bad "shipped $role.md does not render (exit $rc)"
-    elif grep -q '{{' "$tmp/$role.out"; then
+      continue
+    fi
+    # A brief's own report is inserted after the "## Report template" line, so
+    # only the text up to that line is checked here; a brief without that line
+    # (none ship one yet) is checked whole, as before.
+    if grep -q '^## Report template$' "$tmp/$role.out"; then
+      shipped_check="$(sed -n '1,/^## Report template$/p' "$tmp/$role.out")"
+    else
+      shipped_check="$(cat "$tmp/$role.out")"
+    fi
+    if printf '%s' "$shipped_check" | grep -q '{{'; then
       bad "shipped $role.md leaves a placeholder after rendering"
     else
       ok "shipped $role.md renders complete"

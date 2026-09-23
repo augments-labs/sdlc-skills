@@ -1,3 +1,12 @@
+# Alignment brief template
+
+`clarifying-intent` fills this once Step 2.4's stop condition holds. Write it
+to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path, or
+inline beside its decision record when the brief is tiny. Lifecycle state —
+approval, changes requested, supersession — never mutates this file; it lives
+in the external ledger the fields below name.
+
+```markdown
 # Alignment Brief: {{topic}}
 
 - **Status:** {{draft | proposed; lifecycle stays external}}
@@ -33,3 +42,4 @@ is not approval. Lifecycle state never mutates this normative brief. Material
 invalidity marks it blocked/changes-requested externally; only an approved
 replacement supersedes it. If this grows, hand approved intent onward instead of
 hiding a spec here.*
+```

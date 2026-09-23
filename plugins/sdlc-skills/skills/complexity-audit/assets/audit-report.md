@@ -1,3 +1,5 @@
+# Complexity audit report template
+
 Fill this in as the audit runs, and write the completed file to
 `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`. The coordinator alone writes
 it; dispatched auditors return partition reports that get reconciled into it.
@@ -66,4 +68,13 @@ Decisions, not a deletion score. Line count is not authority.
 Nothing here has been applied, and nothing here is approved. Accepted structural
 changes route to `refactor-architecture`; behavior changes follow their own
 feature or bug route and produce a new, separately verified candidate.
+
+## Limitations
+
+{{what this audit did not examine, why, and what confidence that leaves; or
+none}}
+
+## Next action
+
+{{the single shortest next step, and who owns it; or none}}
 ```

@@ -264,6 +264,83 @@ while IFS= read -r ref; do
   esac
 done < <(find skills -path '*/references/*.md' -type f | sort)
 
+# House shape: every assets/ template matches the mechanical part of
+# template-format.md's "## Shape" rules 1, 2, 3 and 5 — an H1 on line 1, a
+# preamble line before the fence, exactly one outer markdown/text fence of
+# three or four backticks holding at least one {{slot}}, and no bare <angle>
+# placeholder outside an inline code span. Rule 4 (matching the shape to the
+# family), rule 6, sentence counts, and the content checklist stay
+# human-judged. This is what keeps a filled copy of one family reading the
+# same no matter which skill produced it. Angle brackets inside an inline
+# code span (`skills/<phase>/<name>/SKILL.md`) do not render as HTML, which
+# is the reason rule 5 exists, so those spans are stripped before the
+# placeholder scan; a bare <tag> in prose or a table cell still fails.
+echo "• every assets/ template has the house shape"
+while IFS= read -r ref; do
+  while IFS= read -r violation; do
+    [ -n "$violation" ] && err "$ref: $violation"
+  done < <(awk '
+    { lines[NR] = $0 }
+    END {
+      n = NR
+      if (n == 0) { print "empty file"; exit }
+      if (lines[1] !~ /^# /) print "line 1 is not an H1 (\"# ...\")"
+
+      fence_line = 0
+      for (i = 2; i <= n; i++) {
+        if (lines[i] ~ /^```+/) { fence_line = i; break }
+      }
+      if (fence_line == 0) {
+        print "no fenced block found"
+      } else {
+        preamble_ok = 0
+        for (i = 2; i < fence_line; i++) {
+          line = lines[i]
+          if (line ~ /^[ \t]*$/) continue
+          if (line ~ /^#/) continue
+          preamble_ok = 1
+          break
+        }
+        if (!preamble_ok) print "no non-empty, non-heading line before the first fence"
+
+        match(lines[fence_line], /^`+/)
+        backticks = substr(lines[fence_line], RSTART, RLENGTH)
+        N = length(backticks)
+        lang = substr(lines[fence_line], RLENGTH + 1)
+        if (N < 3 || N > 4) print "opening fence is not 3 or 4 backticks: " backticks
+        if (lang != "markdown" && lang != "text") print "opening fence language is not markdown or text: " lang
+
+        openpat = "^" backticks "(markdown|text)$"
+        closepat = "^" backticks "$"
+        opens = 0; closes = 0; close_line = 0
+        for (i = fence_line; i <= n; i++) {
+          if (lines[i] ~ openpat) opens++
+          if (lines[i] ~ closepat) { closes++; if (close_line == 0) close_line = i }
+        }
+        if (opens != 1 || closes != 1) print "not exactly one outer fence pair (opens=" opens ", closes=" closes ")"
+
+        if (close_line == 0) close_line = n + 1
+        has_slot = 0
+        for (i = fence_line + 1; i < close_line; i++) {
+          if (index(lines[i], "{{") > 0) { has_slot = 1; break }
+        }
+        if (!has_slot) print "no {{slot}} found inside the fence"
+      }
+
+      for (i = 1; i <= n; i++) {
+        line = lines[i]
+        stripped = line
+        while (match(stripped, /`[^`]*`/)) {
+          stripped = substr(stripped, 1, RSTART - 1) substr(stripped, RSTART + RLENGTH)
+        }
+        if (match(stripped, /<[a-z-]+>/)) {
+          print "line " i ": bare <angle> placeholder outside a code span: " substr(stripped, RSTART, RLENGTH)
+        }
+      }
+    }
+  ' "$ref")
+done < <(find skills -path '*/assets/*.md' -type f | sort)
+
 # The session-start text ships too, and is injected into every session, so a
 # scanner trigger-word there fires constantly, not just when one skill loads.
 # Both copies are read raw. The router body they wrap is scanned with its skill.

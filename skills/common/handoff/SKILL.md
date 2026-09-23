@@ -40,6 +40,8 @@ says it may go.
 
 ## Step 2: Fill `assets/handoff-template.md` before writing
 
+Read `references/handoff-example.md` when the first draft is written and needs comparing against a filled example.
+
 1. Fill every section: identity, goal, state identity, decisions and
    authority, evidence, gotchas and permissions, resume first action,
    suggested skills, references.

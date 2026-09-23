@@ -1,11 +1,14 @@
-# Release-candidate evidence
+# Release candidate template
 
-Draft an immutable release-input descriptor, issue its identity, then keep
-build/gate attempts, raw evidence, approvals, and the verdict in an append-only
-external ledger. Return both directly or use a durable release-evidence store
-outside the frozen source/artifacts. A repository record is a separate candidate
-to verify and review. A later promotion gets a new descriptor and ledger.
+`release-readiness` opens this before Step 1's actions and fills each section
+as its step runs: draft an immutable release-input descriptor, issue its
+identity, then keep build/gate attempts, raw evidence, approvals, and the
+verdict in an append-only external ledger. Return both directly or use a
+durable release-evidence store outside the frozen source/artifacts. A
+repository record is a separate candidate to verify and review. A later
+promotion gets a new descriptor and ledger.
 
+```markdown
 ## Immutable release-input descriptor
 
 Compute its identity over the canonical fields below, excluding its own identity
@@ -99,3 +102,4 @@ artifact-set identity and invalidates all evidence bound to the old set.
   any later release decision/action}}`
 - **Decision:** `{{direct answer from the required approver set bound to this
   verdict identity, separate from deploy/publish action; refresh after any drift}}`
+```

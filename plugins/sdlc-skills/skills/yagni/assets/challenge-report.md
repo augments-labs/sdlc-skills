@@ -25,4 +25,8 @@ Repeat the surface block for every assigned surface.
 ## Limitations
 
 {{unexamined surface, missing evidence, or uncertainty; or none}}
+
+## Next action
+
+{{the single shortest next step across all surfaces, and who owns it; or none}}
 ```
