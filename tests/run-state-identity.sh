@@ -177,6 +177,11 @@ if printf '%s\n' "$help_out" | grep -qi 'embedded git repository below'; then
 else
   bad "--help does not document the non-repo embedded-repository rule"
 fi
+if printf '%s\n' "$help_out" | grep -qi 'symbolic link'; then
+  ok "--help documents symbolic-link handling"
+else
+  bad "--help does not document symbolic-link handling"
+fi
 
 echo "--- non-repo digest resists path-based delimiter injection (F-1)"
 # The reviewer's collision: a manifest that joins hash<TAB>path<NEWLINE> records
@@ -223,6 +228,66 @@ else
 fi
 # A plain directory with no embedded repository is unaffected.
 check "non-repo mode without an embedded repository still exits 0" "$(bash "$S_ABS" --path "$plain" >/dev/null 2>&1; echo $?)" "0"
+
+echo "--- non-repo digest sees symbolic links (breadth review finding 1)"
+# Case 1: adding a symlink changes the digest — find -type f alone never sees it.
+symAdd="$tmp/symAdd"
+mkdir -p "$symAdd"
+printf 'hello\n' > "$symAdd/a.txt"
+symAdd_before="$(bash "$S_ABS" --path "$symAdd" --quiet)"
+ln -s a.txt "$symAdd/link"
+symAdd_after="$(bash "$S_ABS" --path "$symAdd" --quiet)"
+[ "$symAdd_after" != "$symAdd_before" ] && ok "non-repo digest changes when a symlink is added" \
+  || bad "non-repo digest did not change when a symlink was added"
+
+# Case 2: retargeting a symlink changes the digest — the target text is hashed,
+# so pointing the same link at a different name moves the digest.
+symRetarget="$tmp/symRetarget"
+mkdir -p "$symRetarget"
+printf 'hello\n' > "$symRetarget/a.txt"
+printf 'world\n' > "$symRetarget/b.txt"
+ln -s a.txt "$symRetarget/link"
+symRetarget_before="$(bash "$S_ABS" --path "$symRetarget" --quiet)"
+ln -sf b.txt "$symRetarget/link"
+symRetarget_after="$(bash "$S_ABS" --path "$symRetarget" --quiet)"
+[ "$symRetarget_after" != "$symRetarget_before" ] && ok "non-repo digest changes when a symlink is retargeted" \
+  || bad "non-repo digest did not change when a symlink was retargeted"
+
+# Case 3: a regular file replaced by a symlink to identical content changes the
+# digest — a symlink is hashed by its target text ("a.txt"), never by the
+# content that text resolves to ("hello\n"), so the record kind alone moves it.
+symSwap="$tmp/symSwap"
+mkdir -p "$symSwap"
+printf 'hello\n' > "$symSwap/a.txt"
+printf 'hello\n' > "$symSwap/real.txt"
+symSwap_file="$(bash "$S_ABS" --path "$symSwap" --quiet)"
+rm -f "$symSwap/real.txt"
+ln -s a.txt "$symSwap/real.txt"
+symSwap_link="$(bash "$S_ABS" --path "$symSwap" --quiet)"
+[ "$symSwap_link" != "$symSwap_file" ] && ok "non-repo digest changes when a same-content file is replaced by a symlink" \
+  || bad "non-repo digest did not change when a same-content file was replaced by a symlink"
+
+# Case 4: a dangling link is recorded (by its target text) and does not fail
+# the run, and its presence still moves the digest versus not having it.
+symDangling="$tmp/symDangling"
+mkdir -p "$symDangling"
+printf 'hello\n' > "$symDangling/a.txt"
+ln -s does-not-exist.txt "$symDangling/dangling"
+bash "$S_ABS" --path "$symDangling" --quiet >"$tmp/dangling.out" 2>"$tmp/dangling.err"
+rc=$?
+check "non-repo mode does not fail on a dangling symlink (exit 0)" "$rc" "0"
+if [ -s "$tmp/dangling.out" ]; then
+  ok "non-repo mode still prints a digest with a dangling symlink present"
+else
+  bad "non-repo mode printed no digest with a dangling symlink present"
+fi
+symDanglingBase="$tmp/symDanglingBase"
+mkdir -p "$symDanglingBase"
+printf 'hello\n' > "$symDanglingBase/a.txt"
+base_no_dangling="$(bash "$S_ABS" --path "$symDanglingBase" --quiet)"
+dangling_digest="$(cat "$tmp/dangling.out")"
+[ "$dangling_digest" != "$base_no_dangling" ] && ok "non-repo digest with a dangling symlink differs from the same directory without it" \
+  || bad "non-repo digest with a dangling symlink equals the same directory without it (link ignored)"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "state-identity.sh tests: PASS"; exit 0; }

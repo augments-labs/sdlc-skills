@@ -56,15 +56,17 @@ Output:
   path on stderr.
 
   Outside any git repository (the current directory, or --path DIR, names one
-  that is not): source.digest covers every regular file under it instead —
-  sorted relative paths and content, each hashed with `git hash-object
-  --stdin`, which needs no repository — again leaving out
+  that is not): source.digest covers every regular file and symbolic link
+  under it instead — sorted relative paths and content, each hashed with
+  `git hash-object --stdin`, which needs no repository — again leaving out
   .sdlc-skills/evidence/. Records are NUL-delimited before hashing, so no
   path can forge a record boundary and collide two different directory
-  states. The JSON carries "repository": "none" and no HEAD fields (no head,
-  branch, clean, or uncommitted counts: there is no index to read them
-  from). --compare works the same way; --committed always exits 5, since no
-  commit can ever hold a state with no repository behind it. A nested
+  states. A symbolic link counts by its own target text, not by what it
+  points at, and is never followed; a dangling link is still recorded. The
+  JSON carries "repository": "none" and no HEAD fields (no head, branch,
+  clean, or uncommitted counts: there is no index to read them from).
+  --compare works the same way; --committed always exits 5, since no commit
+  can ever hold a state with no repository behind it. A nested
   embedded git repository below this directory (a `.git` directory or file
   under a subdirectory) is refused instead of hashed: exit 4, naming each
   path, the same outcome the in-repository mode gives an embedded repository.
@@ -149,20 +151,31 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
     exit 4
   fi
 
-  # Each record is NUL-delimited (hash, then path, each NUL-terminated)
-  # before hashing: a path can hold any byte except NUL and '/', so a
-  # tab/newline-delimited manifest lets a crafted filename reproduce the
-  # exact bytes two real, differently-shaped directories would produce —
-  # NUL cannot appear in a path, so no field can forge a record boundary.
+  # Each record is type, hash, then path — three NUL-terminated fields — so a
+  # path can hold any byte except NUL and '/', and no field can forge a
+  # record boundary the way a tab/newline-delimited manifest could (F-1). A
+  # regular file ('f') is hashed by its content; a symbolic link ('l') is
+  # hashed by its own target text (`readlink`, never the file it resolves
+  # to), so a file and a same-content symlink at the same path differ, and
+  # retargeting or a dangling target still moves the digest. Links are never
+  # followed (no -L): find treats a symlink to a directory as a leaf, the
+  # same as any other symlink, not something to descend into.
   nr_manifest="$(mktemp)" || { echo "Error: could not create a temporary file." >&2; exit 4; }
   nr_fail=0
   while IFS= read -r -d '' nr_f; do
-    nr_h="$(git hash-object --stdin < "$nr_f" 2>/dev/null)" && [ -n "$nr_h" ] || { nr_fail=1; break; }
-    printf '%s\0%s\0' "$nr_h" "${nr_f#./}" >>"$nr_manifest"
-  done < <(find . -type d -path './.sdlc-skills/evidence' -prune -o -type f -print0 2>/dev/null | LC_ALL=C sort -z)
+    if [ -L "$nr_f" ]; then
+      nr_type=l
+      nr_target="$(readlink "$nr_f" 2>/dev/null)" && [ -n "$nr_target" ] || { nr_fail=1; break; }
+      nr_h="$(printf '%s' "$nr_target" | git hash-object --stdin 2>/dev/null)" && [ -n "$nr_h" ] || { nr_fail=1; break; }
+    else
+      nr_type=f
+      nr_h="$(git hash-object --stdin < "$nr_f" 2>/dev/null)" && [ -n "$nr_h" ] || { nr_fail=1; break; }
+    fi
+    printf '%s\0%s\0%s\0' "$nr_type" "$nr_h" "${nr_f#./}" >>"$nr_manifest"
+  done < <(find . -type d -path './.sdlc-skills/evidence' -prune -o \( -type f -o -type l \) -print0 2>/dev/null | LC_ALL=C sort -z)
   if [ "$nr_fail" = 1 ]; then
     rm -f "$nr_manifest"
-    echo "Error: git could not hash a file under $PWD; there is no digest to bind evidence to." >&2
+    echo "Error: git could not hash a file or symbolic link under $PWD; there is no digest to bind evidence to." >&2
     exit 4
   fi
   digest="$(sha <"$nr_manifest")"
