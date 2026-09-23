@@ -41,6 +41,7 @@ check per named risk.
 
 ## Rules
 
+- **Boundary:** Run no model turn, no network call, and no harness session against a real home; a check that needs one is a Limitation, not something you run.
 - **Read-only candidate.** Never edit product files, switch branches, check out
   commits, or mutate candidate git state. Write only to the assigned review
   artifact location, under `.sdlc-skills/evidence/` or outside the candidate
@@ -88,8 +89,7 @@ separately, including supported strengths. Repeat this finding block:
 - Evidence: {{file:line, observed failure, and what you read or ran}}
 - Correction: {{concrete fix}}
 
-List under `## Declined to judge` any obligation you read but will not rate,
-each with the reason.
+List under `## Declined to judge` only an obligation inside the review scope that you read but will not rate, with the reason. An item the descriptor already excludes is not declined; leave it out.
 
 Missing, failed, or inconclusive required verification prevents readiness.
 A conditional verdict remains non-ready until a new verified and reviewed

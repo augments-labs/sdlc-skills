@@ -378,6 +378,32 @@ else
 fi
 rm -rf "$stray"
 
+echo "--- error message includes system error code and actual path"
+stray_err="$(mktemp -d)"
+cp "$PLUGIN" "$stray_err/stray-plugin.js"
+error_output=$(node --input-type=module -e "
+import('file://$stray_err/stray-plugin.js').then(async (m) => {
+  const hooks = await (m.sdlcSkillsPlugin ?? m.default)({}, undefined);
+  await hooks['experimental.chat.system.transform']({}, { system: [] });
+}).catch((err) => { console.error(err && err.message); process.exit(1); });
+" 2>&1)
+has_error_code=false
+has_actual_path=false
+if echo "$error_output" | grep -q 'ENOENT'; then
+  has_error_code=true
+fi
+# Verify the message contains "cannot read router at" followed by a filesystem path
+# (starting with /) before the colon that separates path from error reason
+if echo "$error_output" | grep -qE 'cannot read router at /[^:]*:'; then
+  has_actual_path=true
+fi
+if [ "$has_error_code" = true ] && [ "$has_actual_path" = true ]; then
+  ok "error message contains both actual path and system error code"
+else
+  bad "error message missing content — has_error_code=$has_error_code has_actual_path=$has_actual_path: $error_output"
+fi
+rm -rf "$stray_err"
+
 echo "---"
 [ "$fails" -eq 0 ] && { echo "opencode plugin offline tests: PASS"; exit 0; }
 echo "opencode plugin offline tests: FAIL"; exit 1

@@ -29,7 +29,7 @@ assessments brief. A missing check belongs in Limitations, never a clean result.
 
 ## Declined to judge
 
-{{obligation, reason; or none}}
+{{obligation inside the review scope and the reason; or none}}
 
 ## Limitations
 

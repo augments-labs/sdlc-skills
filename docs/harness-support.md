@@ -36,17 +36,18 @@ The injector reads the router shipped in that installation; it does not embed a
 second handwritten body. After canonical skill edits, run
 `scripts/sh/sync-codex-plugin-skills.sh` to rebuild the Codex mirror. Then install
 or update the package being exercised. Editing this checkout does not update an
-existing plugin cache. `scripts/sh/validate-skills.sh` checks mirror equality
-and the skill set exposed by all four adapters.
+existing plugin cache. `scripts/sh/validate-skills.sh` checks mirror equality,
+the skills arrays of every manifest, and each adapter validator's own checks.
 
 The OpenCode plugin resolves the router from its own location at runtime, so the
 same file serves a contributor working inside this checkout and a user
 elsewhere. How each reaches it differs by generation. 1.x auto-discovers the
-plugin file from `.opencode/plugins/`; 2.x scans that same directory but keeps
-only entries that are directories, so it never picks the file up, and a
-contributor on 2.x names the checkout directory in `opencode.json` exactly as a
-user elsewhere does. Neither generation's passive discovery is exercised by the
-tests — the smoke adapter writes an explicit config entry for both. One file
+plugin file from `.opencode/plugins/`; on 2.0.14 a session started inside the
+checkout loads the file from `.opencode/plugins/` with no config entry —
+2.x's passive discovery, measured by the smoke run; 1.x's passive load is
+`Inferred, not observed`. A user outside the checkout still names it in
+`opencode.json`, on either generation; the smoke adapter also writes that
+explicit config entry for both, since it is the documented install. One file
 carries both contracts, because the two generations share no entry point:
 1.x discovers a plugin by scanning the module's named exports for hook
 factories, and 2.x calls `default.setup(ctx)` and nothing else. The factory is
@@ -102,7 +103,7 @@ loading the checkout in place, the copy's path is not knowable in advance —
 the adapter's inventory step reports skills by `source.plugin_name` from
 `grok inspect --json` instead of by path, matching the plugin id
 (`sdlc-skills`) the manifest declares. Measured on 1.0.40: the install
-registers every skill in the manifest (38 as of this branch) and 1 hook. `grok inspect` also cross-reads a real
+registers every skill in the manifest and 1 hook. `grok inspect` also cross-reads a real
 operator's `~/.claude/plugins/marketplaces/` regardless of `GROK_HOME` alone
 — on a machine that already has this plugin installed for Claude Code, that
 installed copy answers for the tree under test — so the adapter isolates
@@ -126,25 +127,28 @@ injection: it is one more file the model may or may not act on, and it is
 never re-verified here beyond `grok inspect` listing the file — until Grok
 exposes a hook that appends to the prompt at session start, this is the
 honest ceiling of what the router channel can do on this harness.
-`tests/run-plugin-smoke.sh --harness grok` checks the install and the skill
-inventory only; it does not read back Project Instructions or run a model
-turn, so whether `using-sdlc-skills` is actually invoked from the nudge is a
-live check, not a smoke one.
+`tests/run-plugin-smoke.sh --harness grok` proves the install, the skill
+inventory, and that `grok inspect` lists the rules-file nudge under
+`projectInstructions` in this same isolated home. It runs no model turn, so
+whether `using-sdlc-skills` is actually invoked from the nudge remains a live
+check, not a smoke one.
 
 Muse Code takes two routes, and which one a user gets is decided by their
 build, not by this repository. `.muse-plugin/plugin.json` is the native
 manifest: `schemaVersion` 1, one `{id, path}` under `capabilities.skills` for
-each canonical skill, and a `SessionStart` hook running the shared
-`scripts/sh/session-start.sh` injector. That is the full binding — discovery
-and the router in one file — and on a build that ships plugin support it needs
-no further step.
+each canonical skill, and a `SessionStart` hook declared to run the shared
+`scripts/sh/session-start.sh` injector — discovery and the router in one file.
+Inferred, not observed: no build that ships plugin support has been run against
+this manifest here, so whether that binding actually asks nothing more of the
+user is unconfirmed.
 
 Measured on 1.3.0: that build ships no plugin loader at all. `muse plugins`
 answers "plugins are not available in this build", so the manifest can be
 neither installed nor validated there, and its hook never runs. The manifest
 still ships, carrying the current release version like every other manifest, so
-the version gate covers it and a build that gains plugin support finds it
-already correct rather than a release behind.
+the version gate covers it. Inferred, not observed: whether a build that gains
+plugin support would find the manifest already correct rather than a release
+behind has not been run here.
 
 The route that build does offer is `muse skills install <dir> --scope user`,
 which takes exactly ONE skill directory — pointed at a tree it fails with
@@ -153,7 +157,7 @@ directory's `skills/`. `scripts/sh/install-muse-skills.sh` loops the canonical
 directories through it with `--force`, so a re-run overwrites rather than
 failing on "skill already installed", and `--remove` uninstalls the same set,
 treating the CLI's own `skill-not-installed` code as already gone so a second
-removal is a no-op rather than 38 errors.
+removal is a no-op rather than one error per skill.
 
 What that route buys is discovery and nothing else. No hook runs, so no router
 body reaches the prompt: `using-sdlc-skills` is listed like any other skill and
@@ -171,8 +175,8 @@ the network in a fresh home. The inventory step reads `muse skills list
 --source user --json`: the installed copies report `provenance: null`, so there
 is no source path to filter on, and the isolation is what makes the unfiltered
 list trustworthy — the home was empty before the install ran. Measured on
-1.3.0: 38 skills installed, 38 listed at user scope. `muse skills validate` is
-the per-skill check this build allows, and it returns valid for all 38.
+1.3.0: every skill installed is listed at user scope. `muse skills validate` is
+the per-skill check this build allows, and it returns valid for all of them.
 
 The smoke test proves the install and the skill inventory. It runs no model
 turn, so whether `using-sdlc-skills` is actually invoked from a listed skill is

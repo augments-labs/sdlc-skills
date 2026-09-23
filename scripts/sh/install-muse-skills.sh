@@ -12,8 +12,9 @@
 #
 # This buys DISCOVERY, not routing. No hook runs, so nothing injects the
 # `using-sdlc-skills` body at session start; the router is listed like any
-# other skill and has to be invoked. The hook lands on its own once a build
-# ships plugin support and the native manifest can be installed.
+# other skill and has to be invoked. A build that ships plugin support would
+# install the native manifest and its hook instead; none has been observed, so
+# that route is inferred, not measured.
 #
 # Flags and exit codes: --help.
 
@@ -36,7 +37,7 @@ but never injected — invoke `using-sdlc-skills` yourself at the start of a
 session.
 
 Exit codes: 0 every skill installed (or removed) · 1 at least one call failed
-            2 not run from the repo, or an unknown argument
+            2 not run from the repo, no skill directories under skills/, or an unknown argument
             3 no `muse` on PATH
 EOF
 }

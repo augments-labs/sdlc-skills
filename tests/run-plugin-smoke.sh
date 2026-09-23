@@ -18,11 +18,16 @@ harnessdir="$(cd "$(dirname "$0")/harnesses" && pwd)"
 cd "$scriptdir/.." || exit 2
 repo="$PWD"
 
+# Derived once from the adapters on disk so a new binding cannot leave the
+# help or the error text listing a stale set of harnesses.
+harness_names="$(cd "$harnessdir" && for f in *.sh; do basename "$f" .sh; done | sort | paste -sd '|' -)"
+harness_names_display="$(printf '%s' "$harness_names" | sed 's/|/ | /g')"
+
 usage() {
-  cat <<'EOF'
+  cat <<EOF
 tests/run-plugin-smoke.sh — do the skills land where this harness looks? No model call.
 
-  --harness NAME    claude-code | codex | kimi-code | opencode   (required)
+  --harness NAME    ${harness_names_display}   (required)
   --help            this text
 
 Exit codes: 0 every skill on disk was discovered after install
@@ -42,7 +47,7 @@ while [ "$#" -gt 0 ]; do
     *) echo "unknown argument: $1" >&2; exit 2;;
   esac
 done
-[ -n "$harness" ] || { echo "needs --harness claude-code|codex|kimi-code|opencode" >&2; exit 2; }
+[ -n "$harness" ] || { echo "needs --harness $harness_names" >&2; exit 2; }
 [ -f "$harnessdir/$harness.sh" ] || { echo "no harness adapter: $harness" >&2; exit 2; }
 command -v jq >/dev/null 2>&1 || { echo "needs \`jq\`" >&2; exit 3; }
 . "$harnessdir/$harness.sh"
@@ -80,21 +85,25 @@ root="${plugin_dir:-$harness_home}"
 # one place rather than two.
 #
 # `layout` matters more than it looks. A bare `-name SKILL.md` count is not an
-# assertion here: the repo carries the same 34 skills TWICE — phase-nested under
-# `skills/<phase>/<name>/` for Claude Code and Kimi, and flat under
-# `plugins/sdlc-skills/skills/<name>/` for Codex, whose plugin format has no
-# phase level. Counting both reaches 68, which clears a threshold of 34 on the
-# WRONG tree alone, so the check would pass with the tree the harness actually
-# loads entirely missing. That is the one failure it exists to catch. The depth
-# of the glob is what separates them.
+# assertion here: the repo carries the same $canonical skills (the canonical
+# count computed above) TWICE — phase-nested under `skills/<phase>/<name>/` for
+# Claude Code and Kimi, and flat under `plugins/sdlc-skills/skills/<name>/` for
+# Codex, whose plugin format has no phase level. Counting both reaches twice
+# the canonical count, which clears a threshold of $canonical on the WRONG tree
+# alone, so the check would pass with the tree the harness actually loads
+# entirely missing. That is the one failure it exists to catch. The depth of
+# the glob is what separates them.
 case "$harness" in
   claude-code) layout='*/skills/*/*/SKILL.md'; manifest='.claude-plugin/plugin.json';;
   kimi-code)   layout='*/skills/*/*/SKILL.md'; manifest='.kimi-plugin/plugin.json';;
   # Codex installs only the flat plugin dir, and registers via the marketplace
   # rather than copying a manifest file we could look for.
   codex)       layout='*/skills/*/SKILL.md';   manifest='';;
-  # OpenCode loads the tree in place through the plugin file, like Claude Code.
-  opencode)    layout='*/skills/*/*/SKILL.md'; manifest='.opencode/plugins/sdlc-skills.js';;
+  # OpenCode loads the tree in place through the plugin file. The adapter
+  # proves the load on 2.x and the inventory on 1.x; a file-exists check on the
+  # checkout the test itself pointed at would prove nothing, so there is no
+  # manifest file to look for here either.
+  opencode)    layout='*/skills/*/*/SKILL.md'; manifest='';;
   # Grok copies the install to an unpredictable path, so there is no manifest file to look for.
   grok)        layout='*/skills/*/*/SKILL.md'; manifest='';;
   # Muse installs skill by skill into its config dir, one flat directory per
@@ -103,6 +112,7 @@ case "$harness" in
   # pi installs a local-path source by reference, not a copy, so the tree
   # stays at the checkout the `pi` key in package.json names.
   pi)          layout='*/skills/*/*/SKILL.md'; manifest='.pi/extensions/sdlc-skills.js';;
+  *) echo "no layout for harness: $harness (see --help)" >&2; exit 2;;
 esac
 
 if declare -F adapter_component_inventory >/dev/null 2>&1; then
@@ -122,7 +132,7 @@ if declare -F adapter_component_inventory >/dev/null 2>&1; then
 else
   found="$(find "$root" -path "$layout" 2>/dev/null | wc -l | tr -d ' ')"
   if [ "$found" -ge "$canonical" ]; then
-    echo "  ok    $found SKILL.md discoverable after install ($layout)"
+    echo "  ok    $found SKILL.md present in the tree the harness was pointed at ($layout); the harness listed no inventory"
   else
     echo "  FAIL  only $found of $canonical skills at $layout under $root"; fails=1
   fi

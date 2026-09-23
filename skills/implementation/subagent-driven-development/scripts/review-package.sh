@@ -59,7 +59,7 @@ for rev in "$base" "$head_rev"; do
 done
 
 git -C "$repo" merge-base --is-ancestor "$base" "$head_rev" || {
-  echo "review-package: $base is not an ancestor of $head_rev" >&2; exit 3; }
+  echo "$base is not an ancestor of $head_rev" >&2; exit 3; }
 
 names="$(git -C "$repo" diff --name-only "$base" "$head_rev")"
 rc=$?
