@@ -8,7 +8,9 @@
 # inline code span) are enforced by one bash+awk block, not read on trust.
 # Each rule is broken, one file at a time, on a disposable copy of the tree,
 # and the gate must name the broken file; the real, unbroken tree must stay
-# green.
+# green. The fence rule's other branches — a 5-backtick opening fence, a
+# disallowed fence language, no fenced block at all, an empty file, and two
+# outer fence pairs — get their own fixtures alongside the five above.
 #
 # Deterministic on purpose: file in, file out, exit code out. No model runs,
 # no network. Both copies of the tree live under a temporary directory and
@@ -23,7 +25,8 @@ tests/run-validate-skills.sh — offline check for the "every assets/ template
 has the house shape" gate in scripts/sh/validate-skills.sh.
 
 Takes no arguments; copies the repository tree into a temporary directory
-twice (once to break one fixture per Shape rule, once left untouched), runs
+twice (once to break one or more fixtures per Shape rule, once left
+untouched), runs
 scripts/sh/validate-skills.sh against each copy, and asserts the check names
 the broken file and stays silent on the untouched tree. Never mutates the
 checkout.
@@ -62,6 +65,11 @@ r2="$broken/skills/common/handoff/assets/handoff-template.md"
 r3="$broken/skills/common/using-git-worktrees/assets/workspace-record.md"
 r4="$broken/skills/deployment/release-readiness/assets/release-candidate.md"
 r5="$broken/skills/design/architecture-decisions/assets/adr-template.md"
+r6="$broken/skills/analysis/writing-specs/assets/spec-template.md"
+r7="$broken/skills/design/coding-standards/assets/standards-template.md"
+r8="$broken/skills/common/clarifying-intent/assets/brief-template.md"
+r9="$broken/skills/design/data-model/assets/data-model-section.md"
+r10="$broken/skills/planning/scoping/assets/scope-section.md"
 
 # Rule 1: line 1 must be an H1.
 cat > "$r1" <<'EOF'
@@ -122,12 +130,60 @@ See `path/<phase>/<name>` for details, which must not be flagged.
 ```
 EOF
 
+# Rule 3 variant: the opening fence has 5 backticks, not 3 or 4.
+cat > "$r6" <<'EOF'
+# Example template
+
+This is the preamble sentence describing who fills this and when it happens.
+
+`````markdown
+Body line with a slot: {{name}}.
+`````
+EOF
+
+# Rule 3 variant: the opening fence's language is bash, not markdown or text.
+cat > "$r7" <<'EOF'
+# Example template
+
+This is the preamble sentence describing who fills this and when it happens.
+
+```bash
+echo "Body line with a slot: {{name}}."
+```
+EOF
+
+# Rule 3 variant: no fenced block at all.
+cat > "$r8" <<'EOF'
+# Example template
+
+This is the preamble sentence describing who fills this and when it happens,
+even though nothing here is ever fenced.
+EOF
+
+# Empty file.
+: > "$r9"
+
+# Rule 3 variant: two outer fence pairs (opens=2).
+cat > "$r10" <<'EOF'
+# Example template
+
+This is the preamble sentence describing who fills this and when it happens.
+
+```markdown
+Body line with a slot: {{name}}.
+```
+
+```markdown
+Second body block, also with a slot: {{other}}.
+```
+EOF
+
 echo "--- validate-skills.sh: the house-shape check names each broken fixture"
 out="$tmp/broken.out"
 ( cd "$broken" && bash scripts/sh/validate-skills.sh ) >"$out" 2>&1
 rc=$?
 [ "$rc" -ne 0 ] && ok "exit code is non-zero ($rc) with fixtures broken" \
-  || bad "exit code is 0 even though five fixtures are broken"
+  || bad "exit code is 0 even though ten fixtures are broken"
 
 check_violation() {  # <label> <path (relative to repo root)> <expected substring>
   if grep -F "FAIL: $2:" "$out" | grep -qF "$3"; then
@@ -151,6 +207,21 @@ check_violation "rule 4 ({{slot}}) names the broken file" \
 check_violation "rule 5 (bare <angle>) names the broken file" \
   "skills/design/architecture-decisions/assets/adr-template.md" \
   "bare <angle> placeholder outside a code span: <name>"
+check_violation "rule 3 (5-backtick fence) names the broken file" \
+  "skills/analysis/writing-specs/assets/spec-template.md" \
+  "opening fence is not 3 or 4 backticks"
+check_violation "rule 3 (bash fence language) names the broken file" \
+  "skills/design/coding-standards/assets/standards-template.md" \
+  "opening fence language is not markdown or text"
+check_violation "rule 3 (no fence) names the broken file" \
+  "skills/common/clarifying-intent/assets/brief-template.md" \
+  "no fenced block found"
+check_violation "empty file names the broken file" \
+  "skills/design/data-model/assets/data-model-section.md" \
+  "empty file"
+check_violation "rule 3 (two fence pairs) names the broken file" \
+  "skills/planning/scoping/assets/scope-section.md" \
+  "not exactly one outer fence pair (opens=2"
 
 # The code-span reading of rule 5 must not fire: `path/<phase>/<name>` is
 # backtick-wrapped prose, not a bare placeholder.
