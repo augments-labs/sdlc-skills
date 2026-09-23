@@ -11,6 +11,7 @@ in this repository.
 
 ```text
 tests/
+  run-check-skill.sh         offline check for check-skill.sh's reference-depth rule. (offline)
   run-opencode-plugin.sh     offline unit check for the OpenCode adapter. (offline)
   run-pi-extension.sh        offline unit check for the pi adapter. (offline)
   run-plugin-smoke.sh        do the skills land where this harness looks? No model call.
@@ -31,6 +32,7 @@ tests/run-pi-extension.sh
 tests/run-plugin-smoke.sh --harness codex
 tests/run-sdd-scripts.sh
 tests/run-serve-preview.sh
+tests/run-check-skill.sh
 ```
 
 ## What they catch
