@@ -4,10 +4,12 @@ The coordinator fills this template once per dispatched agent, before that
 agent's first dispatch under `dispatching-parallel-agents`, from the task the
 agent owns — never from session history. Fill every field; delete one only
 when it is genuinely empty for this task, and say so, so the agent reads the
-omission as deliberate rather than forgotten. The filled fence becomes that
-agent's entire prompt, sent through the dispatch action; nothing outside it
-reaches the agent. A high-risk run or one using phase queues also fills the
-controlled variant of this template, whose ten fields extend the matching
+omission as deliberate rather than forgotten. The filled fence, with
+`## Dispatch record` left blank, becomes that agent's entire prompt, sent
+through the dispatch action; nothing outside it reaches the agent. The
+coordinator fills `## Dispatch record` afterward, only in its own kept copy,
+never in what was sent. A high-risk run or one using phase queues also fills
+the controlled variant of this template, whose ten fields extend the matching
 section below with a stricter rule.
 
 ```markdown
@@ -22,7 +24,7 @@ section below with a stricter rule.
 - **Owns:** {{files/dirs it may edit}}
 - **Do not touch:** {{files/dirs owned by other agents, or off-limits}}
 - **Workspace:** {{path it reads and writes; a path outside it stays untouched even when this packet names it}}
-- **Subdispatch:** prohibited, unless a controlled packet's SUBDISPATCH field grants it.
+- **Subdispatch:** prohibited, unless a controlled packet's `Subdispatch` field grants it.
 
 ## Inputs
 
