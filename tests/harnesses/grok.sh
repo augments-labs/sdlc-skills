@@ -74,10 +74,9 @@ adapter_component_inventory() { # $1 plugin source (checkout, for cwd only)
   # runner's own comparison already catches. A NON-zero total with zero
   # matches is different — `grok inspect` saw skills but none had the
   # `.source.type`/`.source.plugin_name` shape the filter assumes, which
-  # silently degraded to "0 matched, exit 0" before this guard (see
-  # .sdlc-skills/evidence/2026-09-22-t009-grok-build/silent-failures-report.md
-  # F2). Name the shape it actually saw instead of leaving that
-  # indistinguishable from a total install breakage.
+  # silently degraded to "0 matched, exit 0" before this guard. Name the
+  # shape it actually saw instead of leaving that indistinguishable from a
+  # total install breakage.
   total="$(jq -r '.skills | length' <<<"$out" 2>>"$errlog")"
   found="$(printf '%s\n' "$names" | grep -c .)"
   if [ "$total" -gt 0 ] && [ "$found" -eq 0 ]; then
