@@ -124,10 +124,12 @@ In the task workspace recorded in Step 2, in order:
 
 1. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`: the index's
    `Acceptance` check plus every done task's evaluator, on the HEAD that combines
-   every task (`per task`: the base after the last integration). Task ledgers are
-   not evidence for this state.
-2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision.
-   Reading the diff yourself is not this step.
+   every task (`per task`: the base after the last integration), or, when
+   `workspace: not applicable`, on the deliverable files identified by
+   content digest. Task ledgers are not evidence for this state.
+2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on that revision, or
+   on that digest in working-tree mode. Reading the diff yourself is not this
+   step.
 3. `workspace: not applicable` → hand the result to the user. Otherwise,
    **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
