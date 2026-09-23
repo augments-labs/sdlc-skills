@@ -86,7 +86,10 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - Approved parallel work: invoke `dispatching-parallel-agents`.
+   - Approved parallel work is `waves: yes` on the approval row plus the
+     exact set of ready tasks passing the independence test of
+     `dispatching-parallel-agents` Step 1 → invoke it for that set. Without
+     both, run one task at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
    raw diff, result revision, and evaluator output, never its summary.
@@ -154,9 +157,6 @@ In the task workspace recorded in Step 2, in order:
 
 - Failed attempt: append it with its raw evidence and a stable failure-class
   ID; start a new attempt that links to it.
-- Worker past its deadline: write `cancellation requested`, wait until it and
-  everything it started have stopped, quarantine its output, reject its late
-  results.
 - Three attempts in one class without convergence: write `blocked` with the
   class and the attempts; end the turn. Never patch shard failures one at a
   time.
@@ -169,5 +169,4 @@ In the task workspace recorded in Step 2, in order:
   latest decision ledger row for the printed version, the workspace's base,
   HEAD, and dirty state through `using-git-worktrees`, the execution ledger,
   and whether each `done` row still matches the current revision.
-- Reality contradicts the plan: a change to what was approved → proposed
-  successor and direct reapproval; runtime facts → execution ledger only.
+- Reality contradicts the plan: runtime facts → execution ledger only.
