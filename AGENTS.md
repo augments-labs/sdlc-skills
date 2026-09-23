@@ -99,6 +99,9 @@ it on every push and PR. Run it before you commit:
 bash scripts/sh/validate-skills.sh
 ```
 
+Run `bash scripts/sh/install-git-hooks.sh` once to make `git commit` run the
+same gate automatically on a relevant staged change (`--remove` undoes it).
+
 For one skill, `skills/common/writing-skills/scripts/check-skill.sh` applies the
 checker's format and house-policy profile, including outside this repository.
 It extracts the library's frontmatter subset rather than parsing all YAML, and
@@ -180,8 +183,8 @@ never invoked are not a working integration.
 - `AGENTS.md` — this file, the canonical contributor guide. `GEMINI.md` symlinks to it; `CLAUDE.md` is a short pointer to it. A harness that reads its own instructions file gets the same guidance from one source, even one that refuses a symlinked instructions file.
 - `.github/` — CI (`workflows/validate.yml`, `workflows/release-readiness.yml`) and the PR template (`PULL_REQUEST_TEMPLATE.md`).
 - `.codex/` — the checkout-local Codex configuration: sandbox mode and approval policy, and agent nesting and concurrency limits.
-- `scripts/sh/` — portable validators, token budget, adapter checks, and hook scripts, plus `data/`, the gate data they read: `chains.toml`, each chain's skills and body-word budget, and `allowed-cycles.txt`; CI runs `validate-skills.sh`, `token-budget.sh`, `validate-trigger-collisions.sh`, and `validate-skill-graph.sh`, which reports skills that hand off to each other unless `data/allowed-cycles.txt` lists the pair. Everything here is deterministic, free, and safe to run anywhere.
-- `tests/` — offline tests, where the answer is known in advance and no model runs: `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, and `run-serve-preview.sh`.
+- `scripts/sh/` — portable validators, token budget, adapter checks, and hook scripts, plus `data/`, the gate data they read: `chains.toml`, each chain's skills and body-word budget, and `allowed-cycles.txt`; CI runs `validate-skills.sh`, `token-budget.sh`, `validate-trigger-collisions.sh`, and `validate-skill-graph.sh`, which reports skills that hand off to each other unless `data/allowed-cycles.txt` lists the pair. `install-git-hooks.sh` points `core.hooksPath` at `scripts/git-hooks/`, whose `pre-commit` runs those same four locally on a relevant staged change. Everything here is deterministic, free, and safe to run anywhere.
+- `tests/` — offline tests, where the answer is known in advance and no model runs: `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-serve-preview.sh`, and `run-git-hooks.sh`.
 - `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
 - `docs/` — repository-only rationale, markdown only: philosophy, activation, harness support, skill granularity, testing, and the conformance record. Never referenced from a shipped skill; the gate enforces that.
