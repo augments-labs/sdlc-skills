@@ -45,7 +45,7 @@ adapter_install() { # $1 plugin source
     echo "grok inspect failed (see $errlog)" >&2; return 1; }
   instructions="$(jq -c '.projectInstructions' <<<"$out" 2>>"$errlog")" || {
     echo "grok inspect output did not parse (see $errlog)" >&2; return 1; }
-  if jq -e '.[] | select(.path | endswith("rules/using-sdlc-skills.md"))' \
+  if jq -e '.[] | select((.path | endswith("rules/using-sdlc-skills.md")) and .scope == "global")' \
     <<<"$instructions" >/dev/null 2>>"$errlog"; then
     echo "  ok    rules-file nudge listed by grok inspect (offline)"
   else
