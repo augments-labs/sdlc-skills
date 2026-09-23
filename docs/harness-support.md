@@ -42,11 +42,12 @@ and the skill set exposed by all four adapters.
 The OpenCode plugin resolves the router from its own location at runtime, so the
 same file serves a contributor working inside this checkout and a user
 elsewhere. How each reaches it differs by generation. 1.x auto-discovers the
-plugin file from `.opencode/plugins/`; 2.x scans that same directory but keeps
-only entries that are directories, so it never picks the file up, and a
-contributor on 2.x names the checkout directory in `opencode.json` exactly as a
-user elsewhere does. Neither generation's passive discovery is exercised by the
-tests — the smoke adapter writes an explicit config entry for both. One file
+plugin file from `.opencode/plugins/`; on 2.0.14 a session started inside the
+checkout loads the file from `.opencode/plugins/` with no config entry —
+2.x's passive discovery, measured by the smoke run; 1.x's passive load is
+`Inferred, not observed`. A user outside the checkout still names it in
+`opencode.json`, on either generation; the smoke adapter also writes that
+explicit config entry for both, since it is the documented install. One file
 carries both contracts, because the two generations share no entry point:
 1.x discovers a plugin by scanning the module's named exports for hook
 factories, and 2.x calls `default.setup(ctx)` and nothing else. The factory is
@@ -86,13 +87,7 @@ difference is worth stating: the 1.x load is asserted structurally by the
 offline checks — the named export exists, and every function the package entry
 exposes answers a 1.x-shaped call with a hook set — and is not observed on a
 1.x binary, because the adapter's entry shape is what this arrangement
-changed and no 1.x build has run it here; passive discovery — a session
-started inside the checkout with no `plugin`/`plugins` entry naming it — is
-measured only for the installed generation: on 2.0.14 it loads
-`.opencode/plugins/sdlc-skills.js` directly, without the explicit `plugins`
-entry or its `index.js` resolution; whether 1.x's file-scanning
-auto-discovery does the same is Inferred, not observed, since no 1.x build
-has run it here.
+changed and no 1.x build has run it here.
 
 Grok Build 1.0.40 accepts a Claude-format plugin directory directly, so no
 dedicated Grok manifest is added — it reads `.claude-plugin/plugin.json` and
