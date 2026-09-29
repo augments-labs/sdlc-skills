@@ -53,12 +53,25 @@ done
 # Every assignment of text either goes through mask() or writes a value the
 # page computed itself: a label, a count, a clock time.
 unmasked="$(grep -nE '\.(textContent|title)[[:space:]]*=[^=]' "$page" | grep -v 'mask(' |
-  grep -vE "=[[:space:]]*(text|name === 'light'|n \? plural|p < 0 \? 'overview'|a \? clock|z \? clock|\(shown === |'[A-Za-z ]*'|state\.playing \?)" || true)"
+  grep -vE "=[[:space:]]*(text;|name === 'light'|n \? plural|p < 0 \? 'overview'|a \? clock|z \? clock|\(shown === |'Copied'|'Copy citation'|'Select and copy by hand'|state\.playing \?)" || true)"
 [ -z "$unmasked" ] && ok "no text is written around the mask" || bad "no text is written around the mask: $unmasked"
 
-want="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'"
+# Only the script that ships may run: the policy names its hash, so an inline
+# handler or an added script is refused by the browser.
+hash="$(python3 - "$page" <<'PY'
+import base64, hashlib, re, sys
+m = re.search(r"<script>(.*?)</script>", open(sys.argv[1]).read(), re.S)
+print(base64.b64encode(hashlib.sha256(m.group(1).encode()).digest()).decode())
+PY
+)"
+want="default-src 'none'; script-src 'sha256-$hash'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'"
 got="$(grep -o '<meta http-equiv="Content-Security-Policy" content="[^"]*"' "$page" | sed 's/.*content="//; s/"$//')"
-[ "$got" = "$want" ] && ok "the content security policy is exactly the expected one" || bad "the content security policy is exactly the expected one (got: $got)"
+[ "$got" = "$want" ] && ok "the content security policy is exact and names the script's hash" || bad "the content security policy is exact and names the script's hash (got: $got; the hash of the script is $hash)"
+# The address carries numbers only: no value from the trace reaches the history.
+if sed -n '/function remember()/,/^  }/p' "$page" | grep -qE "str\(|\.id\b|\.title|encodeURIComponent"; then
+  bad "the address holds ordinal numbers only"; else ok "the address holds ordinal numbers only"; fi
+grep -q "writeText(whole)" "$page" && grep -q "var whole = citation(" "$page" && ok "the clipboard receives the masked citation" || bad "the clipboard receives the masked citation"
+grep -q "return mask(str(v)).toLowerCase().indexOf(q) >= 0" "$page" && ok "search matches masked text only" || bad "search matches masked text only"
 
 if grep -qiE "(src|href)[[:space:]]*=[[:space:]]*[\"']?(https?:)?//" "$page"; then bad "page loads nothing remote"; else ok "page loads nothing remote"; fi
 if grep -q '{{' "$page"; then bad "page has no fill-in slot"; else ok "page has no fill-in slot"; fi
@@ -94,16 +107,24 @@ var hide = [
   'Authorization: Bearer abcdefghijklmnop123456', 'Authorization: Basic dXNlcjpwYXNzd29yZA==', 'Cookie: sid=9f8e7d6c5b4a',
   'postgres://admin:' + 's3cret@w0rd@db.internal/app', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcdefghijk',
   'npm_' + 'abcdefghijklmnopqrstuvwxyz0123456789', 'http://127.0.0.1:1/index.html?key=' + 'f9913b10d53b121873aa28ef80ed144e',
-  '-----BEGIN RSA PRIVATE KEY-----\nMIIEow\n-----END RSA PRIVATE KEY-----'
+  '-----BEGIN RSA PRIVATE KEY-----\nMIIEow\n-----END RSA PRIVATE KEY-----',
+  'DB_PASSWORD=Tr0ub4dor&3', '{"access_token":"9a8b7c6d5e4f3a2b"}', 'auth_token=zz11yy22xx33', 'client_secret: GOCSPX-abcdEFGH1234',
+  'SECRET_KEY = \'django-insecure-k3y-v4lue\'', 'AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY', 'SECRET_KEY_BASE=0f1e2d3c4b5a69788796',
+  'password: \'my pass phrase 12\'', 'mysql --password Synth3ticPw99 -h db', 'curl -u admin:Synth3ticPw99 https://x.example', 'redis://:Synth3ticPw99@cache.internal:6379',
+  'token=' + new Array(31).join('Ab3dEf7hIj'), 'token => "Qw3rtyUi0pAsdf"'
 ];
 var secretPart = [/A1b2C3d4/, /test1234567890/, /ABCDEFGHIJKLMNOP/, /hunter2/, /s3cret!/, /abc123/, /correct-horse/, /abcd1234efgh/,
-  /abcdefghijklmnop123456/, /dXNlcjpwYXNz/, /9f8e7d6c/, /s3cret@w0rd/, /eyJzdWIi/, /abcdefghijklmnopqrstuvwxyz0123456789/, /f9913b10d53b/, /MIIEow/];
+  /abcdefghijklmnop123456/, /dXNlcjpwYXNz/, /9f8e7d6c/, /s3cret@w0rd/, /eyJzdWIi/, /abcdefghijklmnopqrstuvwxyz0123456789/, /f9913b10d53b/, /MIIEow/,
+  /Tr0ub4dor/, /9a8b7c6d/, /zz11yy22/, /abcdEFGH1234/, /k3y-v4lue/, /wJalrXUtn/, /0f1e2d3c/, /pass phrase/, /Synth3ticPw99/, /Synth3ticPw99/, /Synth3ticPw99/, /Ab3dEf7hIj/, /Qw3rtyUi0p/];
 var keep = [
   'skipped password authentication checks', 'Ran token verification before the push', 'wrote skills/auth/authorization-middleware.ts',
   '/home/me/project/secret/configuration.yaml', 'src/auth/session-handler.ts', 'skills/security/secret-scanning/SKILL.md',
   'authentication_failed', 'tokenization_strategy', 'passenger_manifest.json', 'pass --no-verify-hooks', 'api_key_rotation_policy',
   'compass directions-and-more-things', 'commit 4b825dc642cb6eb9a060e54bf8d69288fbee4904', 'git push -u origin fix/login',
-  'The token: none was set', 'b92ab436-8bc9-4f1a-93c7-dd8cd8833e6f.jsonl:3121', 'Loads requesting-code-review, for the first time'
+  'The token: none was set', 'b92ab436-8bc9-4f1a-93c7-dd8cd8833e6f.jsonl:3121', 'Loads requesting-code-review, for the first time',
+  'task-runner-configuration-file', 'risk_assessment_for_release_candidate', 'token = get_token()', 'password: Optional[str] = None',
+  'def login(user, password=None):', 'api_key = os.environ["API_KEY"]', 'token: ${TOKEN}', 'password=$(cat /run/secrets/db)',
+  'pwd=/home/me/project', 'password: [credential, line 412]', 'the quarterly-passenger-token-report was filed', 'git log --author=me -u'
 ];
 var failed = 0;
 hide.forEach(function (v, i) { var m = mask('ran with ' + v + ' today'); if (secretPart[i].test(m) || m.indexOf('[masked]') < 0) { failed++; console.log('shown: ' + JSON.stringify(v.slice(0, 18)) + ' -> ' + JSON.stringify(m.slice(0, 60))); } });
@@ -113,6 +134,8 @@ keep.forEach(function (v) { if (mask(v) !== v) { failed++; console.log('hidden: 
   if (ms > 1000) { failed++; console.log('slow: hostile input ' + i + ' took ' + ms + ' ms'); }
 });
 if (mask(new Array(50000).join('x')).length > 20200) { failed++; console.log('long: an overlong value is not cut'); }
+var edge = mask(new Array(19991).join('x') + ' ghp_' + 'A1b2C3d4E5f6G7h8I9j0K1l2M3n4');
+if (/A1b2C3/.test(edge)) { failed++; console.log('edge: a credential across the cut shows its head'); }
 process.exit(failed ? 1 : 0);
 JS
   } > "$fixture/mask.js"
@@ -134,7 +157,7 @@ ev = [dict(id="e%d" % i, line=i + 1, time="2026-01-01T00:0%d:00Z" % i, kind="pro
            thread="main", title="T%d %s %s" % (i, payload, cred), summary=payload + cred, quote=(payload + cred) if i == 0 else None,
            fragment=cred, input=payload, result=cred, files=[payload, {"x": 1}], related=[None, {"event": "e0", "relation": payload}])
       for i in range(4)]
-json.dump(dict(schema="session-trace/1", headline=payload + cred, session=dict(which=payload, transcript="/x/" + cred + ".jsonl", symptom=cred, expected=payload),
+json.dump(dict(schema="session-trace/1", headline=payload + cred, session=dict(which=payload + " " + cred, transcript="/x/" + cred + ".jsonl", symptom=("s" * 50) + " " + cred, expected=payload),
                stats="nope", events=ev + [None, 7, "text"],
                findings=[None, dict(id=payload, dimension=payload, statement=cred, shows=payload, consequence=cred,
                                     evidence=[None, dict(line=1, fragment=cred)], steps=[dict(event="e0", note=cred), dict(event="e2", note=payload), None])],

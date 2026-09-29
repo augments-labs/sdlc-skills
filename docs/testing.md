@@ -68,6 +68,11 @@ staged. `bash scripts/sh/install-git-hooks.sh --remove` undoes it.
 
 Every runner answers `--help` with its flags and exit codes.
 
+`run-trace-viewer.sh` has three layers. Its source checks need nothing extra.
+Its mask and syntax checks need `node`, and its behaviour checks need a
+headless Chrome or Chromium. A missing tool skips its layer and says so. In CI
+a skipped layer is a failure.
+
 `run-plugin-smoke.sh` needs the CLI of the agent under test installed, so it
 runs on your machine and not in CI. It installs this tree into a throwaway
 home the way that agent does, then checks that every skill is discovered,

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Tqx4uWuXxyjqU0fReAGqOALpSmi1D0uuJc5QvOIPgSY='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <title>Session trace</title>
 <!--
   Session trace viewer. Copy this file verbatim next to trace.json; it has
@@ -314,7 +314,7 @@
   var SECRETS = [
     /-----BEGIN [A-Z ]{0,40}PRIVATE KEY(?: BLOCK)?-----[\s\S]*?(?:-----END [A-Z ]{0,40}PRIVATE KEY(?: BLOCK)?-----|$)/g,
     /eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{4,}/g,
-    /(?:sk|pk|rk)[-_][A-Za-z0-9_-]{16,}/g,
+    /(?<![A-Za-z0-9])(?:sk|pk|rk)[-_][A-Za-z0-9_-]{16,}/g,
     /gh[pousr]_[A-Za-z0-9]{20,}/g,
     /github_pat_[A-Za-z0-9_]{20,}/g,
     /glpat-[A-Za-z0-9_-]{16,}/g,
@@ -323,22 +323,36 @@
     /ya29\.[A-Za-z0-9_-]{20,}/g,
     /SG\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}/g,
     /xox[abprs]-[A-Za-z0-9-]{10,}/g,
-    /(?:AKIA|ASIA)[0-9A-Z]{16}/g,
+    /(?<![A-Za-z0-9])(?:AKIA|ASIA)[0-9A-Z]{16}/g,
     /AIza[0-9A-Za-z_-]{30,}/g,
     /[?&]key=[A-Za-z0-9]{24,}/g
   ];
-  var URLPASS = /([a-z][a-z0-9+.-]{1,20}:\/\/[^\s:@\/]{1,80}:)[^\s\/]{1,200}@/gi;
-  var KEYED = /\b((?:pass(?:word|wd|phrase)?|pwd|secret|token|api[ _-]?key|account[ _-]?key|private[ _-]?key|credentials?|authorization|cookie|set-cookie)["']?[ \t]{0,4}[:=][ \t]{0,4}["']?(?:(?:bearer|basic)[ \t]{1,4})?|\bbearer[ \t]{1,4})([^\s"'<>;,]{4,200})/gi;
+  var URLPASS = /([a-z][a-z0-9+.-]{1,20}:\/\/[^\s:@\/]{0,80}:)[^\s\/]+@/gi;
+  var FLAG = /((?<![A-Za-z0-9-])--?(?:password|passwd|pass|token|secret|api-key|apikey)(?:[ \t]{1,4}|=))([^\s"'<>;,]{4,})/gi;
+  var BASIC = /((?<![A-Za-z0-9-])-u[ \t]{1,4}[^\s:]{1,80}:)([^\s"'<>;,]{2,})/g;
+  var NAMED = '(?<![A-Za-z0-9])((?:[A-Za-z0-9]{1,30}[_-]){0,4}(?:pass(?:word|wd|phrase)?|pwd|secret|token|api[ _-]?key|apikey|' +
+              'account[ _-]?key|private[ _-]?key|credentials?|authorization|cookie)(?:[_-][A-Za-z0-9]{1,30}){0,3}["\']?[ \\t]{0,4}(?:=>|[:=])[ \\t]{0,4})';
+  var QUOTED = new RegExp(NAMED + '(["\'])([^"\'\\n]{4,})\\2', 'gi');
+  var KEYED = new RegExp(NAMED + '((?:(?:bearer|basic)[ \\t]{1,4})?[^\\s"\'<>;,]{4,})', 'gi');
+  var BEARER = /((?<![A-Za-z0-9])bearer[ \t]{1,4})([^\s"'<>;,]{8,})/gi;
+  // a value that is a reference to a secret, or the mark left in place of one, is not a secret
+  function plain(v) {
+    return /^\[(?:credential|masked|personal)/i.test(v) || /^[A-Za-z_][A-Za-z0-9_.]*[(\[]/.test(v) || /^\$[({A-Z_]/.test(v) ||
+           /^(?:process|os)\.env/.test(v) || /^[!<]/.test(v) || /^(?:\.{0,2}|~)\//.test(v) || /^(?:none|null|true|false|yes|no|undefined)(?![A-Za-z0-9])/i.test(v);
+  }
   function shaped(v) {
+    if (plain(v)) return false;
     return v.length >= 16 || (/[0-9]/.test(v) && /[A-Za-z]/.test(v)) || /[^A-Za-z0-9_.\/-]/.test(v) ||
            (v.length >= 8 && /[a-z]/.test(v) && /[A-Z]/.test(v));
   }
   function mask(v) {
-    var s = String(v);
-    if (s.length > LIMIT) s = s.slice(0, LIMIT) + ' … [cut: the value is longer than the page shows]';
+    var s = String(v), long = s.length > LIMIT;
+    if (long) s = s.slice(0, LIMIT + 400);
     SECRETS.forEach(function (r) { s = s.replace(r, '[masked]'); });
     s = s.replace(URLPASS, function (all, head) { return head + '[masked]@'; });
-    return s.replace(KEYED, function (all, key, val) { return shaped(val) ? key + '[masked]' : all; });
+    s = s.replace(QUOTED, function (all, key, q, val) { return plain(val) ? all : key + q + '[masked]' + q; });
+    [KEYED, FLAG, BASIC, BEARER].forEach(function (r) { s = s.replace(r, function (all, key, val) { return shaped(val) ? key + '[masked]' : all; }); });
+    return long ? s.slice(0, LIMIT) + ' … [cut: the value is longer than the page shows]' : s;
   }
   /* mask:end */
 

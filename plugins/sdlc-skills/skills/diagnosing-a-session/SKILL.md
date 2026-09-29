@@ -150,13 +150,18 @@ search is recorded as unavailable evidence, never as clean.
 
    ```bash
    dir=.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}
-   mkdir -p "$dir/trace" && chmod 700 "$dir"
-   git check-ignore -q "$dir" 2>/dev/null || printf '*\n' > "$dir/.gitignore"
-   git ls-files --error-unmatch "$dir" >/dev/null 2>&1 && echo "TRACKED: choose another directory name"
+   if git ls-files --error-unmatch "$dir" >/dev/null 2>&1; then
+     echo "TRACKED: choose another directory name"
+   else
+     mkdir -p "$dir/trace" && chmod 700 "$dir"
+     git check-ignore -q "$dir" 2>/dev/null || printf '*\n' > "$dir/.gitignore"
+     echo "READY: $dir"
+   fi
    ```
 
    `TRACKED` printed → the project already versions that path, and a file
-   written there would be committed with it. Use another `{{topic}}`.
+   written there would be committed with it. Nothing was written. Use
+   another `{{topic}}`.
 
 2. Fill `assets/diagnosis-report.md` when the triage is done: symptom,
    timeline, findings, evidence that was not available, next action. Write
@@ -185,7 +190,12 @@ table of line numbers, and the page is how they check your work.
 3. Copy `assets/trace-viewer.html` to `trace/index.html` when the trace is
    written. Copy it byte for byte; it has nothing to fill in and you never
    edit it.
-4. Check the trace parses, then start the preview from the project root.
+4. Run `git status --short` again and compare it with the value from
+   Step 1. Write the result into the report's `Workspace unchanged` line and
+   the trace's `workspace` field.
+   - They differ → name the paths that changed in the report and in your
+     reply, and change nothing to make them match.
+5. Check the trace parses, then start the preview from the project root.
 
    ```bash
    python3 -m json.tool .sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/trace/trace.json > /dev/null
@@ -205,11 +215,6 @@ table of line numbers, and the page is how they check your work.
 
    It prints one line of JSON. Its `url` value is the link to the page. The
    preview stops by itself after thirty idle minutes.
-5. Run `git status --short` again and compare it with the value from
-   Step 1. Write the result into the report's `Workspace unchanged` line and
-   the trace's `workspace` field.
-   - They differ → name the paths that changed in the report and in your
-     reply, and change nothing to make them match.
 6. Give the user that URL as a link they can click, complete with its
    `?key=` part, on a line of its own. Add the report path and the one-line
    next action. Apply nothing.
@@ -235,7 +240,7 @@ table of line numbers, and the page is how they check your work.
 - **Read-only.** No edit, write, commit, branch, or workspace change while
   diagnosing, including a fix that is obviously correct. The report and the
   trace directory under `.sdlc-skills/evidence/` are the only files you
-  write. `git status --short` at Step 6.5 must equal the value recorded in
+  write; the preview keeps its own log outside the project. `git status --short` at Step 6.4 must equal the value recorded in
   Step 1.
 - The trace directory holds transcript-derived text. It stays under
   `.sdlc-skills/evidence/`, is served on the local preview only, and is

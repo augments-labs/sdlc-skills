@@ -113,7 +113,7 @@ sed -n '1200,1240p' "$T" | cut -c1-400       # a slice, clipped
 For a JSON Lines file, extracting one field per line keeps a scan cheap:
 
 ```bash
-grep -n '"type":"user"' "$T" | cut -c1-200 | head -40
+grep -n '"{{kind-field}}":"{{user-kind}}"' "$T" | cut -c1-200 | head -40
 ```
 
 Every hit gives a line number. That number, with a short distinctive
