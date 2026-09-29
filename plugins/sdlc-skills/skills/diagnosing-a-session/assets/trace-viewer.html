@@ -298,11 +298,31 @@
   var state = { trace: null, sel: { type: 'root' }, walk: null, playing: false, speed: 1, timer: null, q: '', only: false };
   var $ = function (id) { return document.getElementById(id); };
 
+  // A net under the rule that no sensitive value is written to the trace:
+  // what looks like a credential is masked before it is shown or copied.
+  var SECRETS = [
+    /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?(?:-----END [A-Z ]*PRIVATE KEY-----|$)/g,
+    /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{4,}/g,
+    /\b(?:sk|pk|rk)[-_][A-Za-z0-9_-]{16,}/g,
+    /\bgh[pousr]_[A-Za-z0-9]{20,}/g,
+    /\bgithub_pat_[A-Za-z0-9_]{20,}/g,
+    /\bglpat-[A-Za-z0-9_-]{16,}/g,
+    /\bxox[abprs]-[A-Za-z0-9-]{10,}/g,
+    /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g,
+    /\bAIza[0-9A-Za-z_-]{30,}/g,
+    /\b[a-z][a-z0-9+.-]*:\/\/[^\s:@\/]+:[^\s@\/]+@/gi
+  ];
+  var KEYED = /((?:pass(?:word|wd)?|secret|token|api[_-]?key|auth(?:orization)?|bearer)["']?\s*[:=]?\s*["']?)([A-Za-z0-9+\/_.=-]{12,})/gi;
+  function mask(v) {
+    var s = String(v);
+    SECRETS.forEach(function (r) { s = s.replace(r, '[masked]'); });
+    return s.replace(KEYED, function (all, key) { return key + '[masked]'; });
+  }
   // The only way text enters the page. Never assign markup from the trace.
   function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
-    if (text !== undefined && text !== null) n.textContent = String(text);
+    if (text !== undefined && text !== null) n.textContent = mask(text);
     return n;
   }
   function btn(cls, text, fn) { var b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', fn); return b; }
@@ -340,7 +360,7 @@
   function fileName() { return str((state.trace.session || {}).transcript).split('/').pop(); }
   function citation(line, fragment) {
     var c = str((state.trace.session || {}).transcript) + ':' + str(line);
-    return fragment ? c + '  "' + str(fragment) + '"' : c;
+    return mask(fragment ? c + '  "' + str(fragment) + '"' : c);
   }
   function copy(text) {
     var b = btn('btn', 'Copy citation', function () {
@@ -364,7 +384,7 @@
   /* ---------- header ---------- */
   function renderHead() {
     var t = state.trace, s = t.session || {}, st = t.stats || {};
-    $('name').textContent = str(s.which);
+    $('name').textContent = mask(str(s.which));
     var box = $('stats');
     clear(box);
     [['Duration', span(st.duration_ms)], ['Prompts', st.prompts], ['Turns', st.turns], ['Tool calls', st.tool_calls], ['Errors', st.tool_errors, 1],
@@ -429,7 +449,7 @@
       var n = btn('fnode' + (later ? ' later' : '') + (citedBy(e).length ? ' cited' : '') + (statusOf(e) === 'missing' ? ' gone' : ''),
         statusOf(e) === 'missing' ? '∅' : GLYPH[k], function () { stop(); choose({ type: 'event', id: e.id }); });
       n.setAttribute('aria-current', state.sel.type === 'event' && state.sel.id === e.id ? 'true' : 'false');
-      n.title = NAME[k] + ': ' + str(e.title);
+      n.title = mask(NAME[k] + ': ' + str(e.title));
       n.setAttribute('aria-label', n.title);
       n.dataset.id = str(e.id);
       box.appendChild(n);
@@ -448,14 +468,14 @@
         ev.stopPropagation(); stop(); choose({ type: 'event', id: e.id });
       });
       t.style.left = (all.length > 1 ? 2 + i / (all.length - 1) * 96 : 50) + '%';
-      t.title = (i + 1) + '. ' + str(e.title);
+      t.title = mask((i + 1) + '. ' + str(e.title));
       t.setAttribute('aria-label', t.title);
       t.setAttribute('aria-current', i === cur ? 'true' : 'false');
       track.appendChild(t);
     });
     $('s1').textContent = seq.length;
     $('pos').textContent = (here < 0 ? 'overview' : 'step ' + (here + 1) + ' / ' + seq.length);
-    $('what').textContent = state.walk ? 'Replaying finding ' + str(state.walk.id) : 'Replaying the session';
+    $('what').textContent = mask(state.walk ? 'Replaying finding ' + str(state.walk.id) : 'Replaying the session');
     $('prev').disabled = here <= 0;
     $('next').disabled = here >= seq.length - 1;
     var play = $('play');
@@ -712,7 +732,7 @@
     }
     state.trace = trace;
     var s = trace.session || {};
-    if (str(s.symptom)) document.title = 'Session trace: ' + str(s.symptom).slice(0, 60);
+    if (str(s.symptom)) document.title = mask('Session trace: ' + str(s.symptom).slice(0, 60));
     theme(saved() || system(), false);
     if (window.matchMedia) {
       var mq = window.matchMedia('(prefers-color-scheme: light)'), follow = function () { if (!saved()) theme(system(), false); };

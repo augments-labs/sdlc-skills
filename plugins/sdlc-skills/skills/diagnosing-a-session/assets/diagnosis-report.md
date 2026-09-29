@@ -1,7 +1,8 @@
 # Session diagnosis report template
 
 Fill every section. A claim with no `path:line` does not go in. Quote only
-the user's own prompts; describe everything else by its line. Keep a clean
+the user's own prompts; describe everything else by its line. Replace a
+sensitive value, even inside a quote, with its kind and line. Keep a clean
 dimension to one line, and put anything you could not search under
 `Evidence not available`, never under a finding.
 

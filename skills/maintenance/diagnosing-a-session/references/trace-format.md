@@ -13,8 +13,11 @@ around them that show order. Twenty to eighty events is typical.
 - Text copied from tool output, file contents, fetched pages, or another
   agent's report. Describe it in your own words. Only `quote` holds copied
   text, and only the user's own words.
-- A credential, token, key, or password, including inside a `fragment`. Name
-  the line it sits on.
+- A sensitive value: a credential, token, key, password, connection string,
+  or personal data about anyone. This holds in every field, including a
+  `fragment` and a `quote` of the user's own prompt. Write its kind and line
+  in its place: `[credential, line 412]`. Choose a `fragment` from a part of
+  the line that holds none.
 - A value you did not read in the transcript. Leave the field out.
 
 ## Shape

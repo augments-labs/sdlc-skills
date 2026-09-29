@@ -38,6 +38,13 @@ for sink in 'innerHTML' 'outerHTML' 'insertAdjacentHTML' 'document.write' 'eval(
 done
 grep -q 'textContent' "$page" && ok "page writes text through textContent" || bad "page writes text through textContent"
 
+# Text enters through one function, and that function masks what looks like a
+# credential. A second writer of trace text would bypass both guarantees.
+grep -q 'n.textContent = mask(text)' "$page" && ok "the text writer masks credential-shaped values" || bad "the text writer masks credential-shaped values"
+if grep -E 'textContent = ' "$page" | grep -E 'str\(|trace|\.(title|summary|quote|fragment|input|result)' | grep -vq 'mask('; then
+  bad "no trace value is written around the mask"; else ok "no trace value is written around the mask"; fi
+if grep -E 'Storage\.setItem|document\.cookie|indexedDB' "$page" | grep -vq "setItem('session-trace-theme', name)"; then bad "the page stores no trace content in the browser"; else ok "the page stores no trace content in the browser"; fi
+
 csp="$(grep -o '<meta http-equiv="Content-Security-Policy"[^>]*>' "$page")"
 [ -n "$csp" ] && ok "page declares a content security policy" || bad "page declares a content security policy"
 case "$csp" in *"default-src 'none'"*) ok "policy denies by default";; *) bad "policy denies by default";; esac
