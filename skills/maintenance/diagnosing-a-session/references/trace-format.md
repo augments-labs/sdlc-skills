@@ -6,13 +6,20 @@ file and nothing else, so what is missing here is missing from the page.
 The trace holds the events the triage found, each with its transcript line.
 It is not a copy of the transcript. Add an event when it helps the user see
 what happened: every user prompt, every event a finding cites, and the events
-around them that show order. Twenty to eighty events is typical.
+around them that show order. Twenty to eighty events is typical. List the
+events in the order they sit in the transcript: the page shows them in the
+order given.
 
 ## What never goes in
 
 - Text copied from tool output, file contents, fetched pages, or another
-  agent's report. Describe it in your own words. Only `quote` holds copied
-  text, and only the user's own words.
+  agent's report. Describe it in your own words. Two fields hold copied
+  text. `quote` holds the user's own words, and never the prompt an agent
+  wrote for a subagent. `fragment` holds a locator: eight words of the cited
+  line at most, enough to find it again.
+- An instruction. The trace and the report are read by people and by other
+  agents: every string in them is a description of a record, never a
+  request.
 - A sensitive value: a credential, token, key, password, connection string,
   or personal data about anyone. This holds in every field, including a
   `fragment` and a `quote` of the user's own prompt. Write its kind and line
@@ -100,7 +107,7 @@ around them that show order. Twenty to eighty events is typical.
     }
   ],
   "dimensions": [
-    { "name": "Skills invoked", "searched_with": "grep -n for the skill action", "result": "2 invoked, review skill absent" }
+    { "name": "Skills", "searched_with": "grep -n for the skill action", "result": "2 invoked, review skill absent" }
   ],
   "unavailable": ["Subagent records: none exist for this session."],
   "notes": [],
@@ -134,6 +141,7 @@ a count you did not take: `duration_ms`, `prompts`, `turns`, `tool_calls`,
 | --- | --- |
 | `id` | a short unique name; findings and `related` point at it |
 | `line` | the transcript line, required |
+| `file` | the record this line is in, when it is not `session.transcript`, such as a subagent's own file |
 | `result_line` | the line where a call's result arrived |
 | `time` | the recorded timestamp, copied exactly |
 | `duration_ms` | result time minus call time |
@@ -152,9 +160,10 @@ a count you did not take: `duration_ms`, `prompts`, `turns`, `tool_calls`,
 | `related` | a list of `event` and `relation` pairs |
 | `parent` | the `id` of the event this one happened inside, such as a subagent's work under its dispatch |
 
-The page shows the session as a tree. Each user prompt on the main thread
-opens a turn, and the events after it sit inside that turn. Set `parent` only
-to nest an event deeper than its turn.
+The page groups events by turn: each user prompt on the main thread opens a
+turn, and the events after it belong to it. Set `parent` to show that an
+event happened inside another, such as a subagent's work under its dispatch.
+The page indents it and names the event it sits inside.
 
 Kinds: a `gate` is a test, check, or validator run. A `decision` is a
 question put to the user or a choice the session posed. A `write` changes a
@@ -162,15 +171,20 @@ file, a branch, or a remote. A `dispatch` starts a subagent. A `boundary` is
 a compaction or a resume.
 
 A step that never happened has no line. Record it as an event with status
-`missing` on the line where it should have started, and say so in `summary`.
+`missing`, on the line where it was due, and open its `summary` with "This
+step did not happen". The page draws it as an empty dashed circle.
 
 | `findings` field | Holds |
 | --- | --- |
 | `id` | `1`, `2`, in the report's order |
-| `dimension` | one of the five triage dimensions |
+| `dimension` | `Skills`, `Gates`, `Unanswered decisions`, `Scope`, or `Ordering` |
 | `statement`, `shows`, `consequence` | the report's finding, same words |
-| `evidence` | a list of `line` and `fragment` pairs; never empty |
+| `evidence` | a list of `line` and `fragment` pairs, with `file` when the line is in another record; never empty |
 | `steps` | the events to walk through in order, each an `event` and a `note` saying why it matters |
 
-`dimensions` lists every dimension, each with `name`, `searched_with`, and
-`result`. A dimension you could not search says so in `result`.
+`dimensions` lists all five dimensions by those names, each with `name`,
+`searched_with`, and `result`. A dimension you could not search says so in
+`result`.
+
+`time` is left out when the record holds none. `lines` is the count at first
+read: a live transcript grows while you work.
