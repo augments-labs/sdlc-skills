@@ -147,6 +147,11 @@ a count you did not take: `duration_ms`, `prompts`, `turns`, `tool_calls`,
 | `branch`, `cwd` | where it ran, when that differs or matters |
 | `files` | paths written or read |
 | `related` | a list of `event` and `relation` pairs |
+| `parent` | the `id` of the event this one happened inside, such as a subagent's work under its dispatch |
+
+The page shows the session as a tree. Each user prompt on the main thread
+opens a turn, and the events after it sit inside that turn. Set `parent` only
+to nest an event deeper than its turn.
 
 Kinds: a `gate` is a test, check, or validator run. A `decision` is a
 question put to the user or a choice the session posed. A `write` changes a

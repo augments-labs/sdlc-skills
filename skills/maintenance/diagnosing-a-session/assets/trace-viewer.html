@@ -11,218 +11,208 @@
   it. Every value from the trace reaches the page as text, never as markup:
   the trace describes a transcript, and a transcript holds text nobody here
   wrote. Self-contained: no external script, font, stylesheet, or image.
+
+  Layout: the session as a tree on the left (diagnosis, then each turn and
+  what happened inside it), the selected item in full on the right.
 -->
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #fafafa; --surface: #ffffff; --ink: #18181b; --muted: #52525b;
-    --line: #e4e4e7; --soft: #f4f4f5; --accent: #4f46e5; --accent-bg: #eef2ff;
-    --ok: #047857; --ok-bg: #ecfdf5; --err: #b91c1c; --err-bg: #fef2f2; --warn: #b45309; --warn-bg: #fffbeb;
-    --k-prompt: #4f46e5; --k-reply: #52525b; --k-skill: #7c3aed; --k-gate: #047857;
-    --k-tool: #0369a1; --k-decision: #b45309; --k-write: #be185d; --k-dispatch: #0f766e;
+    --bg: #f6f6f7; --surface: #ffffff; --ink: #18181b; --muted: #63636b;
+    --line: #e4e4e7; --soft: #f1f1f3; --hover: #ececef;
+    --accent: #4338ca; --accent-bg: #eef2ff;
+    --ok: #047857; --ok-bg: #ecfdf5; --err: #b91c1c; --err-bg: #fef2f2; --warn: #a16207; --warn-bg: #fefce8;
+    --k-prompt: #4338ca; --k-reply: #52525b; --k-skill: #7e22ce; --k-gate: #047857;
+    --k-tool: #0369a1; --k-decision: #a16207; --k-write: #be185d; --k-dispatch: #0f766e;
     --k-boundary: #71717a; --k-other: #71717a;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #09090b; --surface: #131316; --ink: #f4f4f5; --muted: #a1a1aa;
-      --line: #27272a; --soft: #1c1c1f; --accent: #818cf8; --accent-bg: #1a1c3a;
-      --ok: #34d399; --ok-bg: #052e1f; --err: #f87171; --err-bg: #2a1215; --warn: #fbbf24; --warn-bg: #251a08;
-      --k-prompt: #818cf8; --k-reply: #a1a1aa; --k-skill: #c4b5fd; --k-gate: #34d399;
-      --k-tool: #7dd3fc; --k-decision: #fbbf24; --k-write: #f9a8d4; --k-dispatch: #5eead4;
+      --bg: #09090b; --surface: #111113; --ink: #f4f4f5; --muted: #a1a1aa;
+      --line: #26262a; --soft: #19191c; --hover: #202024;
+      --accent: #a5b4fc; --accent-bg: #1e1b4b;
+      --ok: #34d399; --ok-bg: #052e1f; --err: #f87171; --err-bg: #2a1215; --warn: #facc15; --warn-bg: #2a2205;
+      --k-prompt: #a5b4fc; --k-reply: #a1a1aa; --k-skill: #d8b4fe; --k-gate: #34d399;
+      --k-tool: #7dd3fc; --k-decision: #facc15; --k-write: #f9a8d4; --k-dispatch: #5eead4;
       --k-boundary: #a1a1aa; --k-other: #a1a1aa;
     }
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 14px/1.5 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    display: flex; flex-direction: column;
-  }
+  body { margin: 0; background: var(--bg); color: var(--ink); display: flex; flex-direction: column;
+         font: 14px/1.5 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
   .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
   button, input { font: inherit; color: inherit; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-  h1, h2, h3, p { margin: 0; }
+  button { cursor: pointer; }
+  h1, h2, h3, p, dl, dd { margin: 0; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
-  /* ---- header: the answer first, then the session it came from ---- */
-  header { padding: 14px 20px 12px; border-bottom: 1px solid var(--line); background: var(--surface); }
-  .eyebrow { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
-  header h1 { font-size: 19px; line-height: 1.3; margin: 2px 0 10px; overflow-wrap: anywhere; }
-  .versus { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .versus > div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; min-width: 0; overflow-wrap: anywhere; }
-  .versus .saw { border-left: 3px solid var(--err); }
-  .versus .want { border-left: 3px solid var(--ok); }
-  .facts { display: flex; flex-wrap: wrap; gap: 2px 20px; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
-  .facts span { overflow-wrap: anywhere; min-width: 0; }
-  .facts b { color: var(--ink); font-weight: 600; }
+  /* ---- top bar: what this is, and the session's numbers ---- */
+  .top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding: 10px 16px;
+         background: var(--surface); border-bottom: 1px solid var(--line); }
+  .top h1 { font-size: 15px; font-weight: 650; }
+  .top .where { color: var(--muted); min-width: 0; overflow-wrap: anywhere; flex: 1 1 260px; }
+  .metrics { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); }
+  .metrics b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .metrics .bad b { color: var(--err); }
 
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; margin-top: 12px; }
-  .tile { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: var(--bg); }
-  .tile .v { font-size: 18px; font-weight: 650; line-height: 1.2; }
-  .tile .l { font-size: 12px; color: var(--muted); }
-  .tile.bad .v { color: var(--err); }
+  /* ---- two panes ---- */
+  main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(340px, 42%) minmax(0, 1fr); }
+  #nav { min-height: 0; display: flex; flex-direction: column; background: var(--surface); border-right: 1px solid var(--line); }
+  #view { min-height: 0; overflow: auto; }
 
-  /* ---- overview: the whole cited session on one line per thread ---- */
-  .overview { padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--surface); }
-  .lane { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; align-items: center; margin: 3px 0; }
-  .lane .name { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .lane .rail { position: relative; height: 18px; border-radius: 4px; background: var(--soft); }
-  .mark { position: absolute; top: 3px; width: 8px; height: 12px; margin-left: -4px; border-radius: 2px; border: 0; padding: 0;
-          background: currentColor; cursor: pointer; opacity: .8; }
-  .mark.cited { top: 0; height: 18px; opacity: 1; box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--err); }
-  .mark.sel { opacity: 1; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); z-index: 1; }
-  .mark.dim { opacity: .15; }
-  .axis { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; font-size: 11.5px; color: var(--muted); }
-  .axis div { display: flex; justify-content: space-between; }
-  .scope-note { margin-top: 6px; font-size: 12.5px; color: var(--warn); }
+  .tools { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .tools input[type=search] { flex: 1; min-width: 0; padding: 5px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; flex: none; }
+  .seg button { border: 0; background: transparent; padding: 4px 10px; font-size: 13px; color: var(--muted); }
+  .seg button[aria-pressed=true] { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  .toggle { border: 1px solid var(--line); background: transparent; border-radius: 6px; padding: 4px 10px; font-size: 13px; color: var(--muted); flex: none; }
+  .toggle[aria-pressed=true] { background: var(--err-bg); color: var(--err); border-color: var(--err); font-weight: 600; }
+  .axis { display: none; justify-content: space-between; padding: 3px 0; margin: 0 148px 0 calc(42% - 18px); font-size: 11.5px; color: var(--muted);
+          border-bottom: 1px solid var(--line); }
+  .timeline .axis { display: flex; }
 
-  /* ---- filters ---- */
-  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 20px; border-bottom: 1px solid var(--line); background: var(--surface); }
-  .bar input[type=search] { flex: 1 1 200px; min-width: 0; padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 2px 10px; cursor: pointer; font-size: 12.5px; }
-  .chip[aria-pressed=true] { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-  .chip .n { color: var(--muted); font-weight: 400; margin-left: 4px; }
-  .count { color: var(--muted); font-size: 12.5px; margin-left: auto; white-space: nowrap; }
+  #tree { flex: 1; min-height: 0; overflow: auto; padding: 4px 0 24px; }
+  .node { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 30px; padding: 3px 10px 3px 0; border: 0;
+          background: transparent; text-align: left; position: relative; }
+  .node:hover { background: var(--hover); }
+  .node[aria-selected=true] { background: var(--accent-bg); box-shadow: inset 2px 0 0 var(--accent); }
+  .node.dim { opacity: .38; }
+  .node .caret { flex: none; width: 18px; height: 22px; border: 0; background: transparent; color: var(--muted); padding: 0; font-size: 11px; }
+  .node .caret.none { visibility: hidden; }
+  .node .label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .node .right { flex: none; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .node.head { font-weight: 600; min-height: 34px; }
+  .node.group .label { font-weight: 600; }
+  .node.group .preview { font-weight: 400; color: var(--muted); }
+  .node .bar { display: none; }
+  .timeline .node .label { flex: 0 0 auto; width: calc(42% - var(--pad, 0px) - 50px); }
+  .timeline .node .bar { display: block; flex: 1; position: relative; height: 14px; min-width: 40px; border-radius: 3px; background: var(--soft); }
+  .timeline .node .bar i { position: absolute; top: 2px; bottom: 2px; min-width: 4px; border-radius: 2px; background: currentColor; }
+  .timeline .node .right .ln { display: none; }
+  .timeline .node .right { width: 132px; justify-content: flex-end; overflow: hidden; }
+  .sep { height: 1px; background: var(--line); margin: 4px 0; }
+  .caption { padding: 8px 12px 2px; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 
-  /* ---- three panes ---- */
-  main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 1.3fr) minmax(300px, 1.1fr); }
-  .pane { min-height: 0; overflow: auto; border-right: 1px solid var(--line); position: relative; }
-  .pane:last-child { border-right: 0; }
-  .pane > h2, .tabs { position: sticky; top: 0; z-index: 2; background: var(--surface); border-bottom: 1px solid var(--line); }
-  .pane > h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 9px 16px; }
-  .tabs { display: flex; gap: 2px; padding: 4px 12px 0; }
-  .tab { border: 0; background: transparent; padding: 6px 10px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--muted);
-         font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
-  .tab[aria-selected=true] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
-  .body { padding: 12px 16px 40px; }
-
-  /* findings */
-  .card { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 10px 12px; margin-bottom: 10px; cursor: pointer; }
-  .card:hover { border-color: var(--muted); }
-  .card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); cursor: default; }
-  .card .dim { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-  .card h3 { font-size: 14px; margin: 2px 0 0; overflow-wrap: anywhere; }
-  .card .more { margin-top: 8px; }
-  .label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 12px 0 3px; }
-  .text { overflow-wrap: anywhere; }
-  .walk { display: flex; align-items: center; gap: 8px; }
-  .walk .pos { font-size: 12.5px; color: var(--muted); margin-right: auto; }
-  .stepnote { margin-top: 8px; padding: 8px 10px; border-radius: 6px; background: var(--accent-bg); overflow-wrap: anywhere; }
-  .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
-  .btn:hover:not(:disabled) { background: var(--soft); }
-  .btn:disabled { opacity: .45; cursor: default; }
-
-  /* timeline */
-  .turn { position: sticky; top: 33px; z-index: 1; display: flex; gap: 8px; align-items: baseline; padding: 5px 16px;
-          background: var(--soft); border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
-  .turn b { color: var(--ink); }
-  .row { display: grid; grid-template-columns: 62px 84px minmax(0, 1fr) 54px; gap: 8px; align-items: center;
-         width: 100%; text-align: left; padding: 6px 16px; border: 0; border-bottom: 1px solid var(--line);
-         background: transparent; cursor: pointer; }
-  .row:hover { background: var(--soft); }
-  .row[aria-selected=true] { background: var(--accent-bg); box-shadow: inset 3px 0 0 var(--accent); }
-  .row.side { padding-left: 34px; }
-  .row.step { box-shadow: inset 3px 0 0 var(--err); }
-  .row[aria-selected=true].step { box-shadow: inset 3px 0 0 var(--accent); }
-  .row .t { color: var(--muted); font-size: 12px; white-space: nowrap; }
-  .row .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .row .ln { color: var(--muted); font-size: 12px; text-align: right; white-space: nowrap; }
-  .row .meta { grid-column: 3 / 5; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
-  .dur { color: var(--muted); font-size: 12px; white-space: nowrap; }
-  .gap { padding: 3px 16px 3px 162px; font-size: 12px; color: var(--muted); border-bottom: 1px dashed var(--line); }
-
-  .kind { font-size: 12px; font-weight: 600; white-space: nowrap; }
-  .kind::before { content: "\25CF\00a0"; }
+  .ico { flex: none; width: 20px; height: 20px; border-radius: 5px; display: inline-grid; place-items: center;
+         font-size: 11px; font-weight: 700; color: var(--surface); background: currentColor; }
+  .ico span { color: var(--surface); }
   .k-prompt { color: var(--k-prompt); } .k-reply { color: var(--k-reply); } .k-skill { color: var(--k-skill); }
   .k-gate { color: var(--k-gate); } .k-tool { color: var(--k-tool); } .k-decision { color: var(--k-decision); }
   .k-write { color: var(--k-write); } .k-dispatch { color: var(--k-dispatch); }
-  .k-boundary { color: var(--k-boundary); } .k-other { color: var(--k-other); }
+  .k-boundary { color: var(--k-boundary); } .k-other { color: var(--k-other); } .k-issue { color: var(--err); } .k-root { color: var(--ink); }
+  .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--err); }
+  .dot.warn { background: var(--warn); }
 
-  .tag { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 0 7px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; }
-  .tag.finding, .tag.error, .tag.missing { background: var(--err-bg); color: var(--err); }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 600; line-height: 18px; padding: 0 7px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; }
+  .tag.error, .tag.missing, .tag.issue { background: var(--err-bg); color: var(--err); }
   .tag.unanswered { background: var(--warn-bg); color: var(--warn); }
   .tag.ok { background: var(--ok-bg); color: var(--ok); }
   .tag.unknown, .tag.plain { color: var(--muted); border-color: var(--line); }
 
-  /* detail */
-  .detail h3 { font-size: 16px; margin: 4px 0 4px; overflow-wrap: anywhere; }
-  .block { font: inherit; margin: 0; padding: 8px 10px; border-radius: 6px; background: var(--soft); white-space: pre-wrap; overflow-wrap: anywhere; }
-  .block.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
-  .quote { border-left: 3px solid var(--k-prompt); }
-  .should { border-left: 3px solid var(--ok); }
-  .cite { display: flex; gap: 8px; align-items: flex-start; }
-  .cite .block { flex: 1; min-width: 0; }
-  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; }
-  .kv dt { color: var(--muted); }
-  .kv dd { margin: 0; overflow-wrap: anywhere; }
-  .link { border: 0; background: transparent; color: var(--accent); cursor: pointer; padding: 0; text-decoration: underline; text-align: left; }
-  .nav { display: flex; gap: 8px; margin-top: 16px; }
-  ul { margin: 0; padding-left: 18px; }
-  li { overflow-wrap: anywhere; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { text-align: left; vertical-align: top; padding: 5px 6px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
-  th { font-size: 12px; color: var(--muted); font-weight: 600; }
-  .empty { color: var(--muted); padding: 20px 16px; }
-  .fail { margin: 24px 20px; padding: 12px 14px; border-radius: 8px; background: var(--err-bg); color: var(--err); }
+  /* ---- right pane ---- */
+  .page { max-width: 980px; padding: 18px 24px 56px; }
+  .crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px 10px; border-radius: 8px;
+           background: var(--accent-bg); color: var(--accent); }
+  .crumb .grow { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+  .kicker .kind { font-weight: 650; }
+  .page h2 { font-size: 20px; line-height: 1.3; margin: 4px 0 6px; overflow-wrap: anywhere; }
+  .sub { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .note { margin-top: 12px; padding: 10px 12px; border-radius: 8px; border-left: 3px solid var(--accent); background: var(--accent-bg); overflow-wrap: anywhere; }
+  .note .t { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
 
-  @media (max-width: 1100px) {
-    main { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    #p-findings { grid-column: 1 / 3; max-height: 40vh; border-right: 0; border-bottom: 1px solid var(--line); }
-  }
-  @media (max-width: 760px) {
-    body { display: block; }
+  .box { margin-top: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); overflow: hidden; }
+  .box > .t { display: flex; align-items: center; gap: 8px; padding: 7px 12px; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase;
+              color: var(--muted); background: var(--soft); border-bottom: 1px solid var(--line); }
+  .box > .t .grow { flex: 1; }
+  .box > .b { padding: 10px 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .box.quote { border-left: 3px solid var(--k-prompt); }
+  .box.want { border-left: 3px solid var(--ok); }
+  .box.saw { border-left: 3px solid var(--err); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .pair .box { min-width: 0; }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 16px; padding: 10px 12px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { overflow-wrap: anywhere; white-space: pre-wrap; }
+  .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 3px 10px; font-size: 13px; white-space: nowrap; text-transform: none; letter-spacing: 0; color: var(--ink); }
+  .btn:hover:not(:disabled) { background: var(--hover); }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 600; }
+  .link { border: 0; background: transparent; color: var(--accent); padding: 0; text-decoration: underline; text-align: left; }
+  .rows > * { display: block; width: 100%; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: left; }
+  .rows > *:last-child { border-bottom: 0; }
+  .rows > button:hover { background: var(--hover); }
+  .rows .small { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+
+  .finding { margin-top: 14px; border: 1px solid var(--line); border-left: 3px solid var(--err); border-radius: 8px; background: var(--surface); padding: 12px 14px; }
+  .finding .d { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .finding h3 { font-size: 15px; margin: 2px 0 6px; overflow-wrap: anywhere; }
+  .finding p { color: var(--muted); overflow-wrap: anywhere; }
+  .finding .act { margin-top: 10px; }
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  .steps li { counter-increment: s; }
+  .steps button { display: grid; grid-template-columns: 28px minmax(0, 1fr) max-content; gap: 2px 10px; width: 100%; padding: 9px 12px; border: 0;
+                  border-bottom: 1px solid var(--line); background: transparent; text-align: left; }
+  .steps li:last-child button { border-bottom: 0; }
+  .steps button:hover { background: var(--hover); }
+  .steps button::before { content: counter(s); grid-row: 1 / 3; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+                          font-size: 12px; font-weight: 700; background: var(--soft); color: var(--muted); }
+  .steps .what { font-weight: 600; overflow-wrap: anywhere; }
+  .steps .ln { color: var(--muted); font-size: 12px; }
+  .steps .why { grid-column: 2 / 4; color: var(--muted); overflow-wrap: anywhere; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: 7px 12px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; background: var(--soft); }
+  ul.plain { margin: 0; padding: 10px 12px 10px 30px; }
+  ul.plain li { overflow-wrap: anywhere; }
+  .hint { margin-top: 16px; color: var(--muted); font-size: 13px; }
+  .empty { color: var(--muted); padding: 16px 12px; }
+  .fail { margin: 24px; padding: 12px 14px; border-radius: 8px; background: var(--err-bg); color: var(--err); }
+  #back { display: none; }
+
+  @media (max-width: 820px) {
+    body { display: block; height: auto; }
     main { display: block; }
-    .pane { border-right: 0; border-bottom: 1px solid var(--line); max-height: 70vh; }
-    #p-findings { max-height: none; }
-    .versus { grid-template-columns: 1fr; }
-    .lane, .axis { grid-template-columns: 70px minmax(0, 1fr); }
-    .row { grid-template-columns: 56px minmax(0, 1fr) 50px; }
-    .row .t, .row .kind, .row .ln { grid-row: 1; }
-    .row .kind { grid-column: 2; }
-    .row .ln { grid-column: 3; }
-    .row .title, .row .meta { grid-column: 1 / 4; }
-    .gap { padding-left: 16px; }
-    header, .overview, .bar { padding-left: 16px; padding-right: 16px; }
+    #nav { border-right: 0; }
+    #tree { overflow: visible; }
+    #view { display: none; overflow: visible; }
+    body.detail #nav { display: none; }
+    body.detail #view { display: block; }
+    body.detail #back { display: inline-block; margin-bottom: 12px; }
+    .page { padding: 14px 16px 48px; }
+    .pair { grid-template-columns: 1fr; }
+    .tools { flex-wrap: wrap; }
+    .timeline .node .label { width: calc(50% - var(--pad, 0px) - 50px); }
+    .axis { margin-left: calc(50% - 18px); }
   }
 </style>
 </head>
 <body>
-<header>
-  <div class="eyebrow">Session diagnosis</div>
-  <h1 id="headline">Session trace</h1>
-  <div class="versus">
-    <div class="saw"><div class="eyebrow">What you saw</div><div id="symptom"></div></div>
-    <div class="want"><div class="eyebrow">What you expected</div><div id="expected"></div></div>
-  </div>
-  <div class="facts" id="facts"></div>
-  <div class="tiles" id="tiles"></div>
-</header>
-<section class="overview" aria-label="Overview">
-  <div id="lanes"></div>
-  <div class="axis"><span></span><div><span id="axis-start"></span><span id="axis-end"></span></div></div>
-  <p class="scope-note">This page shows the events the diagnosis cited, not the whole transcript. An event that is absent here was not searched for, or not found. The Coverage tab says what was searched.</p>
-</section>
-<div class="bar">
-  <input type="search" id="q" placeholder="Filter events by text or line number" aria-label="Filter events">
-  <div class="chips" id="chips" role="group" aria-label="Filters"></div>
-  <span class="count" id="count" aria-live="polite"></span>
+<div class="top">
+  <h1>Session trace</h1>
+  <div class="where" id="where"></div>
+  <div class="metrics" id="metrics"></div>
 </div>
 <main>
-  <section class="pane" id="p-findings">
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-findings" data-tab="findings">Findings</button>
-      <button class="tab" role="tab" id="tab-coverage" data-tab="coverage">Coverage</button>
+  <section id="nav" aria-label="Session">
+    <div class="tools">
+      <input type="search" id="q" placeholder="Search events" aria-label="Search events">
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" id="m-tree" aria-pressed="true">Tree</button>
+        <button type="button" id="m-time" aria-pressed="false">Timeline</button>
+      </div>
+      <button type="button" class="toggle" id="only" aria-pressed="false">Problems only</button>
     </div>
-    <div class="body" id="left" role="tabpanel"></div>
+    <div class="axis"><span id="ax0"></span><span id="ax1"></span></div>
+    <div id="tree" role="tree" tabindex="0"></div>
   </section>
-  <section class="pane" id="p-timeline">
-    <h2>Timeline</h2>
-    <div id="timeline" role="listbox" aria-label="Timeline" tabindex="0"></div>
-  </section>
-  <section class="pane" id="p-detail">
-    <h2>Event</h2>
-    <div class="body detail" id="detail"></div>
+  <section id="view" aria-label="Detail" aria-live="polite">
+    <div class="page">
+      <button type="button" class="btn" id="back">&larr; Back to the session</button>
+      <div id="detail"></div>
+    </div>
   </section>
 </main>
 <noscript><p class="fail">This viewer needs JavaScript. The diagnosis report beside it holds the same findings as text.</p></noscript>
@@ -230,9 +220,12 @@
 (function () {
   'use strict';
   var KINDS = ['prompt', 'reply', 'skill', 'gate', 'tool', 'decision', 'write', 'dispatch', 'boundary', 'other'];
+  var LETTER = { prompt: 'U', reply: 'A', skill: 'S', gate: 'G', tool: 'T', decision: '?', write: 'W', dispatch: 'D', boundary: 'C', other: '·' };
+  var NAME = { prompt: 'User prompt', reply: 'Agent reply', skill: 'Skill', gate: 'Gate', tool: 'Tool call', decision: 'Decision',
+               write: 'Write', dispatch: 'Subagent dispatch', boundary: 'Context boundary', other: 'Event' };
   var STATUSES = ['ok', 'error', 'unanswered', 'missing', 'unknown'];
-  var state = { trace: null, kinds: {}, threads: {}, q: '', problems: false, cited: false,
-                selected: null, finding: null, step: 0, tab: 'findings' };
+  // sel: {type:'root'} | {type:'finding', f} | {type:'event', id} | {type:'group', key}
+  var state = { trace: null, sel: { type: 'root' }, walk: null, step: 0, closed: {}, q: '', only: false, mode: 'tree', rows: [] };
   var $ = function (id) { return document.getElementById(id); };
 
   // The only way text enters the page. Never assign markup from the trace.
@@ -242,28 +235,22 @@
     if (text !== undefined && text !== null) n.textContent = String(text);
     return n;
   }
-  function btn(cls, text, fn) {
-    var b = el('button', cls, text);
-    b.type = 'button';
-    b.addEventListener('click', fn);
-    return b;
-  }
+  function btn(cls, text, fn) { var b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', fn); return b; }
+  function add(parent) { for (var i = 1; i < arguments.length; i++) if (arguments[i]) parent.appendChild(arguments[i]); return parent; }
   function str(v) { return v === undefined || v === null ? '' : String(v); }
   function list(v) { return Array.isArray(v) ? v : []; }
   function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
   function kindOf(e) { return KINDS.indexOf(e.kind) >= 0 ? e.kind : 'other'; }
   function statusOf(e) { return STATUSES.indexOf(e.status) >= 0 ? e.status : ''; }
   function threadOf(e) { return str(e.thread) || 'main'; }
+  function bad(e) { var s = statusOf(e); return s === 'error' || s === 'missing' || s === 'unanswered'; }
   function ms(e) { var t = new Date(str(e.time)).getTime(); return isNaN(t) ? null : t; }
   function events() { return list(state.trace.events); }
   function byId(id) { return events().filter(function (e) { return e.id === id; })[0]; }
+  function findings() { return list(state.trace.findings); }
   function steps(f) { return list(f.steps).filter(function (s) { return s && byId(s.event); }); }
-  function findingsFor(e) {
-    return list(state.trace.findings).filter(function (f) {
-      return steps(f).some(function (s) { return s.event === e.id; });
-    });
-  }
-  function isProblem(e) { var s = statusOf(e); return s === 'error' || s === 'unanswered' || s === 'missing'; }
+  function citedBy(e) { return findings().filter(function (f) { return steps(f).some(function (s) { return s.event === e.id; }); }); }
+  function icon(k, letter) { var i = el('span', 'ico k-' + k); i.appendChild(el('span', '', letter || LETTER[k])); return i; }
 
   function clock(t) {
     var d = new Date(str(t));
@@ -277,398 +264,394 @@
     if (v < 3600000) return Math.floor(v / 60000) + ' min ' + Math.round((v % 60000) / 1000) + ' s';
     return Math.floor(v / 3600000) + ' h ' + Math.round((v % 3600000) / 60000) + ' min';
   }
+  function fileName() { return str((state.trace.session || {}).transcript).split('/').pop(); }
   function citation(line, fragment) {
-    var s = state.trace.session || {};
-    var c = str(s.transcript) + ':' + str(line);
+    var c = str((state.trace.session || {}).transcript) + ':' + str(line);
     return fragment ? c + '  "' + str(fragment) + '"' : c;
   }
-  function fail(message) {
-    var m = document.querySelector('main');
-    clear(m);
-    m.style.display = 'block';
-    m.appendChild(el('p', 'fail', message));
-  }
-
-  /* ---------- header ---------- */
-  function renderHeader() {
-    var t = state.trace, s = t.session || {};
-    $('headline').textContent = str(t.headline) || 'Session trace';
-    $('symptom').textContent = str(s.symptom) || 'not recorded';
-    $('expected').textContent = str(s.expected) || 'not recorded';
-    var facts = $('facts');
-    clear(facts);
-    [['Session', s.which], ['Transcript', s.transcript], ['Lines', s.lines], ['Read at', s.read_at],
-     ['Branch', s.branch], ['Directory', s.cwd], ['Workspace', s.workspace]].forEach(function (p) {
-      if (!str(p[1])) return;
-      var x = el('span');
-      x.appendChild(el('b', '', p[0] + ' '));
-      x.appendChild(el('span', p[0] === 'Transcript' || p[0] === 'Directory' ? 'mono' : '', p[1]));
-      facts.appendChild(x);
-    });
-
-    var st = t.stats || {}, tiles = $('tiles');
-    clear(tiles);
-    [['Duration', span(st.duration_ms)], ['User prompts', st.prompts], ['Agent turns', st.turns],
-     ['Tool calls', st.tool_calls], ['Tool errors', st.tool_errors, true], ['Skills invoked', st.skills],
-     ['Gates run', st.gates], ['Subagents', st.subagents], ['Compactions', st.compactions],
-     ['Findings', list(t.findings).length, true]].forEach(function (p) {
-      if (p[1] === undefined || p[1] === null || p[1] === '') return;
-      var x = el('div', 'tile' + (p[2] && Number(p[1]) > 0 ? ' bad' : ''));
-      x.appendChild(el('div', 'v', p[1]));
-      x.appendChild(el('div', 'l', p[0]));
-      tiles.appendChild(x);
-    });
-  }
-
-  /* ---------- overview ---------- */
-  function renderOverview() {
-    var box = $('lanes');
-    clear(box);
-    var all = events();
-    var times = all.map(ms).filter(function (t) { return t !== null; });
-    var t0 = Math.min.apply(null, times), t1 = Math.max.apply(null, times);
-    var total = times.length > 1 && t1 > t0 ? t1 - t0 : 0;
-    $('axis-start').textContent = times.length ? clock(new Date(t0).toISOString()) : '';
-    $('axis-end').textContent = times.length ? clock(new Date(t1).toISOString()) + (total ? '  (' + span(total) + ')' : '') : '';
-    var shown = {};
-    visible().forEach(function (e) { shown[e.id] = true; });
-    var active = state.finding ? steps(state.finding).map(function (s) { return s.event; }) : null;
-
-    var names = [];
-    all.forEach(function (e) { if (names.indexOf(threadOf(e)) < 0) names.push(threadOf(e)); });
-    names.forEach(function (name) {
-      var lane = el('div', 'lane');
-      lane.appendChild(el('div', 'name', name));
-      var rail = el('div', 'rail');
-      all.forEach(function (e, i) {
-        if (threadOf(e) !== name) return;
-        var t = ms(e);
-        var at = total && t !== null ? (t - t0) / total : (all.length > 1 ? i / (all.length - 1) : 0.5);
-        var cited = findingsFor(e).length > 0;
-        var cls = 'mark k-' + kindOf(e) + (cited ? ' cited' : '') + (state.selected === e.id ? ' sel' : '');
-        if (!shown[e.id] || (active && active.indexOf(e.id) < 0)) cls += ' dim';
-        var m = btn(cls, '', function () { select(e.id); });
-        m.style.left = (at * 100) + '%';
-        m.title = clock(e.time) + '  ' + kindOf(e) + '  ' + str(e.title);
-        m.setAttribute('aria-label', m.title);
-        rail.appendChild(m);
-      });
-      lane.appendChild(rail);
-      box.appendChild(lane);
-    });
-  }
-
-  /* ---------- filters ---------- */
-  function chip(label, n, pressed, cls, fn) {
-    var b = btn('chip ' + (cls || ''), label, fn);
-    b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
-    if (n !== null) b.appendChild(el('span', 'n', n));
-    return b;
-  }
-  function renderChips() {
-    var box = $('chips');
-    clear(box);
-    var all = events(), kinds = {}, threads = {}, problems = 0, cited = 0;
-    all.forEach(function (e) {
-      kinds[kindOf(e)] = (kinds[kindOf(e)] || 0) + 1;
-      threads[threadOf(e)] = (threads[threadOf(e)] || 0) + 1;
-      if (isProblem(e)) problems++;
-      if (findingsFor(e).length) cited++;
-    });
-    if (state.finding) {
-      box.appendChild(chip('Finding ' + str(state.finding.id) + ' only  ×', null, true, '', function () { openFinding(null); }));
-    }
-    if (cited) box.appendChild(chip('in a finding', cited, state.cited, '', function () { state.cited = !state.cited; refresh(); }));
-    if (problems) box.appendChild(chip('problems', problems, state.problems, '', function () { state.problems = !state.problems; refresh(); }));
-    KINDS.forEach(function (k) {
-      if (kinds[k]) box.appendChild(chip(k, kinds[k], state.kinds[k], 'k-' + k, function () { state.kinds[k] = !state.kinds[k]; refresh(); }));
-    });
-    var names = Object.keys(threads);
-    if (names.length > 1) names.forEach(function (n) {
-      box.appendChild(chip('thread ' + n, threads[n], state.threads[n], '', function () { state.threads[n] = !state.threads[n]; refresh(); }));
-    });
-  }
-  function visible() {
-    var anyKind = KINDS.some(function (k) { return state.kinds[k]; });
-    var anyThread = Object.keys(state.threads).some(function (k) { return state.threads[k]; });
-    var only = state.finding ? steps(state.finding).map(function (s) { return s.event; }) : null;
-    var q = state.q.toLowerCase();
-    return events().filter(function (e) {
-      if (only && only.indexOf(e.id) < 0) return false;
-      if (anyKind && !state.kinds[kindOf(e)]) return false;
-      if (anyThread && !state.threads[threadOf(e)]) return false;
-      if (state.problems && !isProblem(e)) return false;
-      if (state.cited && !findingsFor(e).length) return false;
-      if (!q) return true;
-      return [e.title, e.summary, e.quote, e.fragment, e.line, e.thread, e.kind, e.input, e.result,
-              e.expected, e.skill, e.tool, e.branch, e.cwd].concat(list(e.files)).some(function (v) {
-        return str(v).toLowerCase().indexOf(q) >= 0;
-      });
-    });
-  }
-
-  /* ---------- timeline ---------- */
-  function renderTimeline() {
-    var box = $('timeline');
-    clear(box);
-    var all = events(), rows = visible();
-    $('count').textContent = rows.length + ' of ' + all.length + ' events';
-    if (!rows.length) { box.appendChild(el('p', 'empty', all.length ? 'No event matches the filter.' : 'The trace holds no events.')); return; }
-    var turn = 0, previous = null;
-    var inStep = state.finding ? steps(state.finding).map(function (s) { return s.event; }) : [];
-    all.forEach(function (e) {
-      var k = kindOf(e);
-      if (k === 'prompt' && threadOf(e) === 'main') turn++;
-      if (rows.indexOf(e) < 0) return;
-      if (k === 'prompt' && threadOf(e) === 'main') {
-        var h = el('div', 'turn');
-        h.appendChild(el('b', '', 'Turn ' + turn));
-        h.appendChild(el('span', '', 'starts at line ' + str(e.line)));
-        box.appendChild(h);
-      }
-      var a = previous ? ms(previous) : null, b = ms(e);
-      if (a !== null && b !== null && b - a >= 60000) box.appendChild(el('div', 'gap', span(b - a) + ' later'));
-      previous = e;
-
-      var r = el('button', 'row' + (threadOf(e) !== 'main' ? ' side' : '') + (inStep.indexOf(e.id) >= 0 ? ' step' : ''));
-      r.type = 'button';
-      r.setAttribute('role', 'option');
-      r.setAttribute('aria-selected', state.selected === e.id ? 'true' : 'false');
-      r.appendChild(el('span', 't mono', clock(e.time)));
-      r.appendChild(el('span', 'kind k-' + k, k));
-      r.appendChild(el('span', 'title', e.title));
-      r.appendChild(el('span', 'ln mono', 'L' + str(e.line)));
-      var meta = el('span', 'meta');
-      var st = statusOf(e);
-      if (st) meta.appendChild(el('span', 'tag ' + st, st));
-      if (span(e.duration_ms)) meta.appendChild(el('span', 'dur', span(e.duration_ms)));
-      if (threadOf(e) !== 'main') meta.appendChild(el('span', 'tag plain', threadOf(e)));
-      if (str(e.skill)) meta.appendChild(el('span', 'tag plain', e.skill));
-      findingsFor(e).forEach(function (f) { meta.appendChild(el('span', 'tag finding', 'Finding ' + str(f.id))); });
-      if (meta.firstChild) r.appendChild(meta);
-      r.addEventListener('click', function () { select(e.id); });
-      box.appendChild(r);
-    });
-  }
-
-  /* ---------- detail ---------- */
-  function copyButton(text) {
-    var b = btn('btn', 'Copy citation', function () {
-      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy citation'; }, 1500); };
+  function copy(text, label) {
+    var b = btn('btn', label || 'Copy citation', function () {
+      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = label || 'Copy citation'; }, 1500); };
       var no = function () { b.textContent = 'Select and copy by hand'; };
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, no);
-      else no();
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, no); else no();
     });
+    b.title = text;
     return b;
   }
-  function cite(parent, line, fragment) {
-    var full = citation(line, fragment);
-    var name = str((state.trace.session || {}).transcript).split('/').pop();
-    var c = el('div', 'cite');
-    var shown = el('pre', 'block mono', name + ':' + str(line) + (fragment ? '\n"' + str(fragment) + '"' : ''));
-    shown.title = full;
-    c.appendChild(shown);
-    c.appendChild(copyButton(full));
-    parent.appendChild(c);
-  }
-  function section(parent, title, text, cls) {
-    if (!str(text)) return;
-    parent.appendChild(el('div', 'label', title));
-    parent.appendChild(el('pre', 'block ' + (cls || ''), text));
-  }
-  function eventLink(e, prefix) {
-    return btn('link', (prefix ? prefix + ': ' : '') + 'L' + str(e.line) + '  ' + kindOf(e) + '  ' + str(e.title), function () { select(e.id); });
-  }
+  function fail(message) { var m = document.querySelector('main'); clear(m); m.style.display = 'block'; m.appendChild(el('p', 'fail', message)); }
 
-  function renderDetail() {
-    var box = $('detail');
-    clear(box);
-    var e = byId(state.selected);
-    if (!e) { box.appendChild(el('p', 'empty', 'Select an event in the timeline or the overview, or open a finding and walk through it.')); return; }
-    var k = kindOf(e);
-    var top = el('div');
-    top.appendChild(el('span', 'kind k-' + k, k));
-    if (statusOf(e)) { top.appendChild(document.createTextNode(' ')); top.appendChild(el('span', 'tag ' + statusOf(e), statusOf(e))); }
-    box.appendChild(top);
-    box.appendChild(el('h3', '', e.title));
-
-    var f = state.finding;
-    if (f) {
-      var note = steps(f).filter(function (s) { return s.event === e.id; })[0];
-      if (note && str(note.note)) {
-        box.appendChild(el('div', 'label', 'Why this matters to finding ' + str(f.id)));
-        box.appendChild(el('div', 'stepnote', note.note));
-      }
-    }
-
-    box.appendChild(el('div', 'label', 'Citation'));
-    cite(box, e.line, e.fragment);
-    section(box, 'The user wrote', e.quote, 'quote');
-    section(box, 'What happened', e.summary);
-    section(box, 'What should have happened', e.expected, 'should');
-    section(box, 'What it was given', e.input);
-    section(box, 'What came back', e.result);
-
-    var kv = el('dl', 'kv'), any = false;
-    [['Time', str(e.time)], ['Took', span(e.duration_ms)], ['Thread', threadOf(e)], ['Skill', e.skill], ['Tool', e.tool],
-     ['Result at', e.result_line ? 'line ' + str(e.result_line) : ''], ['Branch', e.branch], ['Directory', e.cwd]].forEach(function (p) {
-      if (!str(p[1])) return;
-      any = true;
-      kv.appendChild(el('dt', '', p[0]));
-      kv.appendChild(el('dd', p[0] === 'Directory' || p[0] === 'Time' ? 'mono' : '', p[1]));
-    });
-    if (any) { box.appendChild(el('div', 'label', 'Facts')); box.appendChild(kv); }
-
-    if (list(e.files).length) {
-      box.appendChild(el('div', 'label', 'Files touched'));
-      var ul = el('ul');
-      list(e.files).forEach(function (p) { ul.appendChild(el('li', 'mono', p)); });
-      box.appendChild(ul);
-    }
-    var related = list(e.related).filter(function (r) { return r && byId(r.event); });
-    if (related.length) {
-      box.appendChild(el('div', 'label', 'Related events'));
-      related.forEach(function (r) { var p = el('p'); p.appendChild(eventLink(byId(r.event), str(r.relation))); box.appendChild(p); });
-    }
-    var fs = findingsFor(e);
-    if (fs.length) {
-      box.appendChild(el('div', 'label', 'Cited by'));
-      fs.forEach(function (x) {
-        var p = el('p');
-        p.appendChild(btn('link', 'Finding ' + str(x.id) + ': ' + str(x.statement), function () { openFinding(x, e.id); }));
-        box.appendChild(p);
-      });
-    }
-
-    var rows = visible(), i = rows.indexOf(e), nav = el('div', 'nav');
-    var prev = btn('btn', '↑ Previous event', function () { select(rows[i - 1].id); });
-    var next = btn('btn', '↓ Next event', function () { select(rows[i + 1].id); });
-    prev.disabled = i <= 0; next.disabled = i < 0 || i >= rows.length - 1;
-    nav.appendChild(prev); nav.appendChild(next);
-    box.appendChild(nav);
-  }
-
-  /* ---------- findings and coverage ---------- */
-  function openFinding(f, at) {
-    state.finding = f;
-    state.tab = 'findings';
-    if (f) {
-      state.kinds = {}; state.threads = {}; state.problems = false; state.cited = false; state.q = ''; $('q').value = '';
-      var ss = steps(f), i = 0;
-      ss.forEach(function (s, n) { if (s.event === at) i = n; });
-      state.step = i;
-      if (ss.length) state.selected = ss[i].event;
-    }
-    refresh();
-    reveal();
-  }
-  function walk(delta) {
-    var ss = steps(state.finding);
-    state.step = Math.max(0, Math.min(ss.length - 1, state.step + delta));
-    state.selected = ss[state.step].event;
-    refresh();
-    reveal();
-  }
-  function renderFindings(box) {
-    var fs = list(state.trace.findings);
-    if (!fs.length) { box.appendChild(el('p', 'empty', 'The diagnosis recorded no findings. The Coverage tab lists what was searched.')); return; }
-    fs.forEach(function (f) {
-      var open = state.finding === f;
-      var card = el('div', 'card' + (open ? ' active' : ''));
-      card.appendChild(el('div', 'dim', 'Finding ' + str(f.id) + '  ·  ' + str(f.dimension)));
-      card.appendChild(el('h3', '', f.statement));
-      if (!open) {
-        card.setAttribute('role', 'button');
-        card.tabIndex = 0;
-        card.addEventListener('click', function () { openFinding(f); });
-        card.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openFinding(f); } });
-        card.appendChild(el('div', 'dur more', steps(f).length + ' events, ' + list(f.evidence).length + ' citations. Open to walk through it.'));
-        box.appendChild(card);
+  /* ---------- the tree model ---------- */
+  // An event sits under its `parent` when it names one, else under the turn
+  // it happened in: the latest main-thread prompt before it.
+  function build() {
+    var groups = [], current = null, turn = 0, kids = {};
+    events().forEach(function (e) {
+      var k = kindOf(e);
+      if (k === 'prompt' && threadOf(e) === 'main') {
+        turn++;
+        current = { key: 'turn-' + turn, title: 'Turn ' + turn, prompt: e, items: [] };
+        groups.push(current);
         return;
       }
-      var ss = steps(f);
-      if (ss.length) {
-        card.appendChild(el('div', 'label', 'Walk through it'));
-        var w = el('div', 'walk');
-        w.appendChild(el('span', 'pos', 'Step ' + (state.step + 1) + ' of ' + ss.length));
-        var back = btn('btn', '← Back', function () { walk(-1); });
-        var on = btn('btn', 'Next →', function () { walk(1); });
-        back.disabled = state.step <= 0; on.disabled = state.step >= ss.length - 1;
-        w.appendChild(back); w.appendChild(on);
-        card.appendChild(w);
-        var cur = ss[state.step];
-        var p = el('p'); p.style.marginTop = '8px';
-        p.appendChild(eventLink(byId(cur.event)));
-        card.appendChild(p);
-        if (str(cur.note)) card.appendChild(el('div', 'stepnote', cur.note));
-      }
-      if (str(f.shows)) { card.appendChild(el('div', 'label', 'What it shows')); card.appendChild(el('div', 'text', f.shows)); }
-      if (str(f.consequence)) { card.appendChild(el('div', 'label', 'How it produced what you saw')); card.appendChild(el('div', 'text', f.consequence)); }
-      card.appendChild(el('div', 'label', 'Evidence'));
-      list(f.evidence).forEach(function (ev) { cite(card, ev.line, ev.fragment); });
-      if (!list(f.evidence).length) card.appendChild(el('span', 'tag error', 'No citation: this finding is unsupported'));
-      box.appendChild(card);
+      if (e.parent !== undefined && e.parent !== null && byId(e.parent)) { (kids[e.parent] = kids[e.parent] || []).push(e); return; }
+      if (!current) { current = { key: 'start', title: 'Before the first prompt', prompt: null, items: [] }; groups.push(current); }
+      current.items.push(e);
+    });
+    return { groups: groups, kids: kids };
+  }
+  function matches(e) {
+    if (state.only && !bad(e) && !citedBy(e).length) return false;
+    var q = state.q.toLowerCase();
+    if (!q) return true;
+    return [e.title, e.summary, e.quote, e.fragment, e.line, e.thread, e.kind, e.input, e.result, e.expected, e.skill, e.tool,
+            e.branch, e.cwd].concat(list(e.files)).some(function (v) { return str(v).toLowerCase().indexOf(q) >= 0; });
+  }
+
+  /* ---------- left pane ---------- */
+  function renderTop() {
+    var t = state.trace, s = t.session || {}, st = t.stats || {};
+    $('where').textContent = str(s.which);
+    var m = $('metrics');
+    clear(m);
+    [['Duration', span(st.duration_ms)], ['Prompts', st.prompts], ['Agent turns', st.turns], ['Tool calls', st.tool_calls],
+     ['Tool errors', st.tool_errors, 1], ['Skills', st.skills], ['Gates', st.gates], ['Subagents', st.subagents],
+     ['Compactions', st.compactions]].forEach(function (p) {
+      if (p[1] === undefined || p[1] === null || p[1] === '') return;
+      var x = el('span', p[2] && Number(p[1]) > 0 ? 'bad' : '');
+      add(x, document.createTextNode(p[0] + ' '), el('b', '', p[1]));
+      m.appendChild(x);
     });
   }
-  function renderCoverage(box) {
-    var t = state.trace;
-    box.appendChild(el('div', 'label', 'Dimensions searched'));
-    var ds = list(t.dimensions);
-    if (ds.length) {
+
+  function same(a, b) {
+    return a.type === b.type && (a.type === 'root' || (a.type === 'finding' && a.f === b.f) ||
+      (a.type === 'event' && a.id === b.id) || (a.type === 'group' && a.key === b.key));
+  }
+  function row(sel, depth, opts) {
+    var n = el('div', 'node ' + (opts.cls || ''));
+    n.setAttribute('role', 'treeitem');
+    n.setAttribute('aria-selected', same(state.sel, sel) ? 'true' : 'false');
+    n.style.paddingLeft = (8 + depth * 18) + 'px';
+    n.style.setProperty('--pad', (8 + depth * 18) + 'px');
+    var caret = el('button', 'caret' + (opts.key ? '' : ' none'), opts.key ? (state.closed[opts.key] ? '▸' : '▾') : '');
+    caret.type = 'button';
+    caret.tabIndex = -1;
+    if (opts.key) {
+      caret.setAttribute('aria-label', state.closed[opts.key] ? 'Expand' : 'Collapse');
+      caret.addEventListener('click', function (ev) { ev.stopPropagation(); state.closed[opts.key] = !state.closed[opts.key]; renderTree(); });
+      n.setAttribute('aria-expanded', state.closed[opts.key] ? 'false' : 'true');
+    }
+    n.appendChild(caret);
+    if (opts.icon) n.appendChild(opts.icon);
+    var label = el('span', 'label', opts.title);
+    if (opts.preview) label.appendChild(el('span', 'preview', '  ' + opts.preview));
+    n.appendChild(label);
+    if (opts.bar) n.appendChild(opts.bar);
+    var right = el('span', 'right');
+    list(opts.right).forEach(function (r) { if (r) right.appendChild(r); });
+    n.appendChild(right);
+    n.style.cursor = 'pointer';
+    n.addEventListener('click', function () { choose(sel); });
+    state.rows.push({ sel: sel, key: opts.key, node: n });
+    return n;
+  }
+  function bar(e, t0, total) {
+    var b = el('span', 'bar k-' + kindOf(e)), t = ms(e);
+    if (!total || t === null) return b;
+    var i = el('i'), left = Math.max(0, Math.min(99, (t - t0) / total * 100));
+    i.style.left = left + '%';
+    i.style.width = Math.max(0, Math.min(100 - left, (typeof e.duration_ms === 'number' ? e.duration_ms : 0) / total * 100)) + '%';
+    b.appendChild(i);
+    return b;
+  }
+  function eventRow(e, depth, model, box, t0, total, inWalk) {
+    var k = kindOf(e), kids = list(model.kids[e.id]).filter(function (c) { return matches(c) || list(model.kids[c.id]).length; });
+    var right = [];
+    if (statusOf(e) === 'missing') right.push(el('span', 'tag missing', 'missing'));
+    else if (bad(e)) right.push(el('span', 'dot' + (statusOf(e) === 'unanswered' ? ' warn' : '')));
+    citedBy(e).forEach(function (f) { right.push(el('span', 'tag issue', 'F' + str(f.id))); });
+    if (span(e.duration_ms)) right.push(el('span', '', span(e.duration_ms)));
+    right.push(el('span', 'ln mono', 'L' + str(e.line)));
+    var n = row({ type: 'event', id: e.id }, depth, {
+      key: kids.length ? 'e-' + e.id : null, icon: icon(k), title: str(e.title), right: right,
+      bar: bar(e, t0, total), cls: inWalk && inWalk.indexOf(e.id) < 0 ? 'dim' : ''
+    });
+    n.title = NAME[k] + ', line ' + str(e.line);
+    box.appendChild(n);
+    if (kids.length && !state.closed['e-' + e.id]) kids.forEach(function (c) { eventRow(c, depth + 1, model, box, t0, total, inWalk); });
+  }
+  function renderTree() {
+    var box = $('tree');
+    clear(box);
+    state.rows = [];
+    $('nav').className = state.mode === 'time' ? 'timeline' : '';
+    var all = events(), times = all.map(ms).filter(function (t) { return t !== null; });
+    var t0 = Math.min.apply(null, times), t1 = Math.max.apply(null, times), total = times.length > 1 && t1 > t0 ? t1 - t0 : 0;
+    $('ax0').textContent = times.length ? clock(new Date(t0).toISOString()) : '';
+    $('ax1').textContent = times.length ? clock(new Date(t1).toISOString()) : '';
+    var inWalk = state.walk ? steps(state.walk).map(function (s) { return s.event; }) : null;
+
+    box.appendChild(row({ type: 'root' }, 0, { icon: icon('root', '⚑'), title: 'Diagnosis', cls: 'head',
+      right: [el('span', 'tag ' + (findings().length ? 'issue' : 'ok'), findings().length + (findings().length === 1 ? ' finding' : ' findings'))] }));
+    findings().forEach(function (f) {
+      box.appendChild(row({ type: 'finding', f: f }, 1, { icon: icon('issue', '!'), title: 'Finding ' + str(f.id) + ': ' + str(f.statement),
+        right: [el('span', '', str(f.dimension))] }));
+    });
+    box.appendChild(el('div', 'sep'));
+    box.appendChild(el('div', 'caption', 'Session, in order'));
+
+    var model = build(), shown = 0;
+    model.groups.forEach(function (g) {
+      var items = g.items.filter(function (e) { return matches(e) || list(model.kids[e.id]).some(matches); });
+      var own = g.prompt && matches(g.prompt);
+      if (!items.length && !own) return;
+      shown += items.length + (g.prompt ? 1 : 0);
+      var p = g.prompt, right = [];
+      var problems = g.items.filter(function (e) { return bad(e) || citedBy(e).length; }).length + (p && citedBy(p).length ? 1 : 0);
+      if (problems) right.push(el('span', 'dot'));
+      right.push(el('span', '', g.items.length + (g.items.length === 1 ? ' event' : ' events')));
+      if (p) right.push(el('span', 'ln mono', 'L' + str(p.line)));
+      var sel = p ? { type: 'event', id: p.id } : { type: 'group', key: g.key };
+      var lit = !inWalk || (p && inWalk.indexOf(p.id) >= 0) || items.some(function (e) { return inWalk.indexOf(e.id) >= 0; });
+      box.appendChild(row(sel, 0, { key: g.key, icon: icon(p ? 'prompt' : 'other'), title: g.title, preview: p ? str(p.quote || p.title) : '',
+        right: right, cls: 'group' + (lit ? '' : ' dim'), bar: p ? bar(p, t0, total) : el('span', 'bar') }));
+      if (!state.closed[g.key]) items.forEach(function (e) { eventRow(e, 1, model, box, t0, total, inWalk); });
+    });
+    if (!shown) box.appendChild(el('p', 'empty', all.length ? 'No event matches.' : 'The trace holds no events.'));
+  }
+
+  /* ---------- right pane ---------- */
+  function box(title, text, cls, extra) {
+    if (!str(text)) return null;
+    var b = el('div', 'box ' + (cls || '')), t = el('div', 't');
+    add(t, el('span', 'grow', title), extra);
+    return add(b, t, el('div', 'b', text));
+  }
+  function cite(parent, line, fragment) {
+    var b = el('div', 'box'), t = el('div', 't');
+    add(t, el('span', 'grow', 'Transcript line ' + str(line)), copy(citation(line, fragment)));
+    add(b, t, el('div', 'b mono', fileName() + ':' + str(line) + (fragment ? '\n"' + str(fragment) + '"' : '')));
+    parent.appendChild(b);
+  }
+  function eventLine(e, prefix, note) {
+    var b = btn('', '', function () { choose({ type: 'event', id: e.id }); });
+    add(b, el('div', '', (prefix ? prefix + '  ' : '') + str(e.title)),
+      el('div', 'small', NAME[kindOf(e)] + ' · line ' + str(e.line) + (note ? ' · ' + note : '')));
+    return b;
+  }
+
+  function viewRoot(d) {
+    var t = state.trace, s = t.session || {};
+    add(d, el('div', 'kicker', 'Diagnosis'), el('h2', '', str(t.headline) || 'Session diagnosis'));
+    var pair = el('div', 'pair');
+    add(pair, box('What you saw', str(s.symptom) || 'not recorded', 'saw'), box('What you expected', str(s.expected) || 'not recorded', 'want'));
+    d.appendChild(pair);
+
+    if (!findings().length) d.appendChild(box('Findings', 'The diagnosis recorded no findings. The table below lists what was searched.'));
+    findings().forEach(function (f) {
+      var c = el('div', 'finding');
+      add(c, el('div', 'd', 'Finding ' + str(f.id) + ' · ' + str(f.dimension)), el('h3', '', f.statement), el('p', '', f.consequence));
+      var act = el('div', 'act');
+      add(act, btn('btn primary', 'See how it happened', function () { choose({ type: 'finding', f: f }); }));
+      d.appendChild(add(c, act));
+    });
+
+    var cov = el('div', 'box');
+    cov.appendChild(add(el('div', 't'), el('span', 'grow', 'What was searched')));
+    if (list(t.dimensions).length) {
       var table = el('table'), head = el('tr');
       ['Dimension', 'Searched with', 'Result'].forEach(function (h) { head.appendChild(el('th', '', h)); });
       table.appendChild(head);
-      ds.forEach(function (d) {
-        var tr = el('tr');
-        tr.appendChild(el('td', '', d.name));
-        tr.appendChild(el('td', 'mono', d.searched_with));
-        tr.appendChild(el('td', '', d.result));
-        table.appendChild(tr);
+      list(t.dimensions).forEach(function (x) {
+        table.appendChild(add(el('tr'), el('td', '', x.name), el('td', 'mono', x.searched_with), el('td', '', x.result)));
       });
-      box.appendChild(table);
-    } else { box.appendChild(el('p', 'text', 'The trace lists no dimension. Nothing here was shown to be clean.')); }
-    [['Evidence not available', t.unavailable], ['Notes for a skill’s own repository', t.notes]].forEach(function (p) {
-      box.appendChild(el('div', 'label', p[0]));
-      var items = list(p[1]);
-      if (!items.length) { box.appendChild(el('p', 'text', 'none')); return; }
-      var ul = el('ul');
-      items.forEach(function (i) { ul.appendChild(el('li', '', i)); });
-      box.appendChild(ul);
+      cov.appendChild(table);
+    } else cov.appendChild(el('div', 'b', 'The trace lists no dimension. Nothing here was shown to be clean.'));
+    d.appendChild(cov);
+
+    [['Evidence that was not available', t.unavailable], ['Notes for a skill’s own repository', t.notes]].forEach(function (p) {
+      var b = el('div', 'box');
+      b.appendChild(add(el('div', 't'), el('span', 'grow', p[0])));
+      if (!list(p[1]).length) b.appendChild(el('div', 'b', 'none'));
+      else { var ul = el('ul', 'plain'); list(p[1]).forEach(function (i) { ul.appendChild(el('li', '', i)); }); b.appendChild(ul); }
+      d.appendChild(b);
     });
-    box.appendChild(el('div', 'label', 'Next action'));
-    box.appendChild(el('p', 'text', str(t.next_action) || 'none'));
-    if (str(t.report)) {
-      box.appendChild(el('div', 'label', 'Written report'));
-      box.appendChild(el('p', 'text mono', t.report));
+    d.appendChild(box('Next action', str(t.next_action) || 'none'));
+
+    var facts = el('div', 'box'), kv = el('dl', 'kv');
+    facts.appendChild(add(el('div', 't'), el('span', 'grow', 'Session')));
+    [['Session', s.which], ['Transcript', s.transcript], ['Lines', s.lines], ['Read at', s.read_at], ['Branch', s.branch],
+     ['Directory', s.cwd], ['Workspace', s.workspace], ['Written report', t.report]].forEach(function (p) {
+      if (str(p[1])) add(kv, el('dt', '', p[0]), el('dd', /Transcript|Directory|report/.test(p[0]) ? 'mono' : '', p[1]));
+    });
+    d.appendChild(add(facts, kv));
+    d.appendChild(el('p', 'hint', 'This page shows the events the diagnosis cited, not the whole transcript. An event that is absent was not searched for, or not found.'));
+  }
+
+  function viewFinding(d, f) {
+    add(d, add(el('div', 'kicker'), icon('issue', '!'), el('span', 'kind', 'Finding ' + str(f.id)), el('span', '', str(f.dimension))),
+      el('h2', '', f.statement));
+    add(d, box('What the record shows', f.shows), box('How it produced what you saw', f.consequence, 'saw'));
+
+    var ss = steps(f);
+    if (ss.length) {
+      var w = el('div', 'box'), t = el('div', 't');
+      add(t, el('span', 'grow', 'How it happened, step by step'), btn('btn primary', 'Start at step 1', function () { walkTo(f, 0); }));
+      var ol = el('ol', 'steps');
+      ss.forEach(function (s, i) {
+        var e = byId(s.event), b = btn('', '', function () { walkTo(f, i); });
+        add(b, el('span', 'what', str(e.title)), el('span', 'ln mono', clock(e.time) + '  L' + str(e.line)), el('span', 'why', s.note));
+        ol.appendChild(add(el('li'), b));
+      });
+      d.appendChild(add(w, t, ol));
+    }
+    var ev = list(f.evidence);
+    if (!ev.length) d.appendChild(box('Evidence', 'No citation. This finding is unsupported and should not be here.', 'saw'));
+    ev.forEach(function (x) { cite(d, x.line, x.fragment); });
+  }
+
+  function viewEvent(d, e) {
+    var k = kindOf(e), f = state.walk, ss = f ? steps(f) : [];
+    var at = -1;
+    ss.forEach(function (s, i) { if (s.event === e.id && (at < 0 || i === state.step)) at = i; });
+    if (f && at >= 0) {
+      state.step = at;
+      var c = el('div', 'crumb');
+      var prev = btn('btn', '← Previous step', function () { walkTo(f, at - 1); });
+      var next = btn('btn primary', 'Next step →', function () { walkTo(f, at + 1); });
+      prev.disabled = at <= 0; next.disabled = at >= ss.length - 1;
+      add(c, btn('link grow', 'Finding ' + str(f.id) + ': step ' + (at + 1) + ' of ' + ss.length, function () { choose({ type: 'finding', f: f }); }), prev, next);
+      d.appendChild(c);
+    }
+    var kick = add(el('div', 'kicker'), icon(k), el('span', 'kind k-' + k, NAME[k]));
+    if (statusOf(e)) kick.appendChild(el('span', 'tag ' + statusOf(e), statusOf(e)));
+    add(d, kick, el('h2', '', e.title));
+    var sub = el('div', 'sub');
+    [clock(e.time), span(e.duration_ms) ? 'took ' + span(e.duration_ms) : '', 'line ' + str(e.line),
+     threadOf(e) !== 'main' ? 'thread ' + threadOf(e) : ''].forEach(function (x) { if (x) sub.appendChild(el('span', '', x)); });
+    d.appendChild(sub);
+    if (f && at >= 0 && str(ss[at].note)) add(d, add(el('div', 'note'), el('div', 't', 'Why this step matters'), el('div', '', ss[at].note)));
+
+    add(d, box('The user wrote', e.quote, 'quote'), box('What happened', e.summary), box('What should have happened', e.expected, 'want'));
+    if (str(e.input) || str(e.result)) {
+      var pair = el('div', 'pair');
+      add(pair, box('Input', str(e.input) || 'not recorded'), box('Output', str(e.result) || 'not recorded', statusOf(e) === 'error' ? 'saw' : ''));
+      d.appendChild(pair);
+    }
+    cite(d, e.line, e.fragment);
+
+    var kv = el('dl', 'kv'), any = false;
+    [['Time', str(e.time)], ['Took', span(e.duration_ms)], ['Thread', threadOf(e)], ['Skill', e.skill], ['Tool', e.tool],
+     ['Result at', e.result_line ? 'line ' + str(e.result_line) : ''], ['Branch', e.branch], ['Directory', e.cwd],
+     ['Files', list(e.files).join('\n')]].forEach(function (p) {
+      if (!str(p[1])) return;
+      any = true;
+      add(kv, el('dt', '', p[0]), el('dd', /Time|Directory|Files/.test(p[0]) ? 'mono' : '', p[1]));
+    });
+    if (any) d.appendChild(add(el('div', 'box'), add(el('div', 't'), el('span', 'grow', 'Attributes')), kv));
+
+    var rel = list(e.related).filter(function (r) { return r && byId(r.event); }), by = citedBy(e);
+    if (rel.length || by.length) {
+      var b = el('div', 'box'), rows = el('div', 'rows');
+      b.appendChild(add(el('div', 't'), el('span', 'grow', 'Connected to')));
+      rel.forEach(function (r) { rows.appendChild(eventLine(byId(r.event), '', str(r.relation))); });
+      by.forEach(function (x) {
+        var l = btn('', '', function () { choose({ type: 'finding', f: x }); });
+        add(l, el('div', '', 'Finding ' + str(x.id) + ': ' + str(x.statement)), el('div', 'small', str(x.dimension)));
+        rows.appendChild(l);
+      });
+      d.appendChild(add(b, rows));
     }
   }
-  function renderLeft() {
-    ['findings', 'coverage'].forEach(function (n) { $('tab-' + n).setAttribute('aria-selected', state.tab === n ? 'true' : 'false'); });
-    var box = $('left');
-    clear(box);
-    if (state.tab === 'findings') renderFindings(box); else renderCoverage(box);
+
+  function viewGroup(d, key) {
+    var g = build().groups.filter(function (x) { return x.key === key; })[0];
+    if (!g) return viewRoot(d);
+    add(d, el('div', 'kicker', 'Session'), el('h2', '', g.title));
+    var b = el('div', 'box'), rows = el('div', 'rows');
+    b.appendChild(add(el('div', 't'), el('span', 'grow', g.items.length + ' events')));
+    g.items.forEach(function (e) { rows.appendChild(eventLine(e, clock(e.time))); });
+    d.appendChild(add(b, rows));
+  }
+
+  function renderView() {
+    var d = $('detail'), s = state.sel;
+    clear(d);
+    if (s.type === 'finding') viewFinding(d, s.f);
+    else if (s.type === 'event' && byId(s.id)) viewEvent(d, byId(s.id));
+    else if (s.type === 'group') viewGroup(d, s.key);
+    else viewRoot(d);
+    $('view').scrollTop = 0;
   }
 
   /* ---------- wiring ---------- */
-  function refresh() { renderChips(); renderOverview(); renderTimeline(); renderDetail(); renderLeft(); }
   function reveal() {
-    var row = document.querySelector('.row[aria-selected=true]'), pane = $('p-timeline');
-    if (!row || pane.scrollHeight <= pane.clientHeight) return;
-    var top = row.offsetTop - pane.offsetTop, room = 70;
-    if (top < pane.scrollTop + room) pane.scrollTop = Math.max(0, top - room);
-    else if (top + row.offsetHeight > pane.scrollTop + pane.clientHeight) pane.scrollTop = top + row.offsetHeight - pane.clientHeight + 8;
+    var r = state.rows.filter(function (x) { return same(x.sel, state.sel); })[0], pane = $('tree');
+    if (!r || pane.scrollHeight <= pane.clientHeight) return;
+    var top = r.node.offsetTop - pane.offsetTop;
+    if (top < pane.scrollTop) pane.scrollTop = Math.max(0, top - 40);
+    else if (top + r.node.offsetHeight > pane.scrollTop + pane.clientHeight) pane.scrollTop = top + r.node.offsetHeight - pane.clientHeight + 40;
   }
-  function select(id) {
-    state.selected = id;
-    if (state.finding) steps(state.finding).forEach(function (s, n) { if (s.event === id) state.step = n; });
-    refresh();
-    reveal();
+  function unfold(id) {
+    // the row of an event must not stay hidden inside a collapsed parent
+    build().groups.forEach(function (g) {
+      if ((g.prompt && g.prompt.id === id) || g.items.some(function (e) { return e.id === id; })) state.closed[g.key] = false;
+    });
+    var e = byId(id), guard = 0;
+    while (e && e.parent !== undefined && e.parent !== null && byId(e.parent) && guard++ < 50) {
+      state.closed['e-' + e.parent] = false;
+      e = byId(e.parent);
+      build().groups.forEach(function (g) { if (g.items.indexOf(e) >= 0) state.closed[g.key] = false; });
+    }
+  }
+  function choose(sel, keepWalk) {
+    state.sel = sel;
+    if (sel.type === 'finding') { state.walk = sel.f; state.step = 0; }
+    else if (sel.type === 'root') state.walk = null;
+    else if (sel.type === 'event' && !keepWalk && state.walk &&
+             !steps(state.walk).some(function (s) { return s.event === sel.id; })) state.walk = null;
+    if (sel.type === 'event') unfold(sel.id);
+    document.body.className = sel.type === 'root' ? '' : 'detail';
+    remember();
+    renderTree(); renderView(); reveal();
+  }
+  // The address names what is open, so a link can point at one event.
+  function remember() {
+    var s = state.sel, parts = [];
+    if (state.walk) parts.push('finding=' + encodeURIComponent(str(state.walk.id)));
+    if (s.type === 'event') parts.push('event=' + encodeURIComponent(str(s.id)));
+    if (state.mode === 'time') parts.push('view=timeline');
+    try { history.replaceState(null, '', location.pathname + location.search + (parts.length ? '#' + parts.join('&') : '')); } catch (e) { /* file or sandbox */ }
+  }
+  function restore() {
+    var want = {};
+    location.hash.replace(/^#/, '').split('&').forEach(function (p) {
+      var i = p.indexOf('=');
+      if (i > 0) want[p.slice(0, i)] = decodeURIComponent(p.slice(i + 1));
+    });
+    if (want.view === 'timeline') { state.mode = 'time'; $('m-tree').setAttribute('aria-pressed', 'false'); $('m-time').setAttribute('aria-pressed', 'true'); }
+    var f = findings().filter(function (x) { return str(x.id) === want.finding; })[0];
+    var e = events().filter(function (x) { return str(x.id) === want.event; })[0];
+    if (f && e) { state.walk = f; choose({ type: 'event', id: e.id }, true); }
+    else if (f) choose({ type: 'finding', f: f });
+    else if (e) choose({ type: 'event', id: e.id });
+    else { renderTree(); renderView(); }
+  }
+  function walkTo(f, i) {
+    var ss = steps(f);
+    if (i < 0 || i >= ss.length) return;
+    state.walk = f; state.step = i;
+    choose({ type: 'event', id: ss[i].event }, true);
   }
   function move(delta) {
-    var rows = visible();
-    if (!rows.length) return;
-    var i = rows.map(function (e) { return e.id; }).indexOf(state.selected);
-    select(rows[Math.max(0, Math.min(rows.length - 1, i < 0 ? 0 : i + delta))].id);
+    var i = -1;
+    state.rows.forEach(function (r, n) { if (same(r.sel, state.sel)) i = n; });
+    var next = state.rows[Math.max(0, Math.min(state.rows.length - 1, i + delta))];
+    if (next) choose(next.sel);
+  }
+  function fold(shut) {
+    var r = state.rows.filter(function (x) { return same(x.sel, state.sel); })[0];
+    if (r && r.key) { state.closed[r.key] = shut; renderTree(); }
   }
   function start(trace) {
     if (!trace || trace.schema !== 'session-trace/1' || !Array.isArray(trace.events)) {
@@ -678,17 +661,24 @@
     state.trace = trace;
     var s = trace.session || {};
     if (str(s.symptom)) document.title = 'Session trace: ' + str(s.symptom).slice(0, 60);
-    renderHeader();
-    $('q').addEventListener('input', function (ev) { state.q = ev.target.value; renderOverview(); renderTimeline(); renderDetail(); });
-    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (b) {
-      b.addEventListener('click', function () { state.tab = b.dataset.tab; renderLeft(); });
+    renderTop(); restore();
+    $('q').addEventListener('input', function (ev) { state.q = ev.target.value; renderTree(); });
+    $('only').addEventListener('click', function () { state.only = !state.only; $('only').setAttribute('aria-pressed', state.only ? 'true' : 'false'); renderTree(); });
+    [['m-tree', 'tree'], ['m-time', 'time']].forEach(function (p) {
+      $(p[0]).addEventListener('click', function () {
+        state.mode = p[1];
+        $('m-tree').setAttribute('aria-pressed', p[1] === 'tree' ? 'true' : 'false');
+        $('m-time').setAttribute('aria-pressed', p[1] === 'time' ? 'true' : 'false');
+        remember(); renderTree();
+      });
     });
-    $('timeline').addEventListener('keydown', function (ev) {
+    $('back').addEventListener('click', function () { document.body.className = ''; });
+    $('tree').addEventListener('keydown', function (ev) {
       if (ev.key === 'ArrowDown' || ev.key === 'j') { ev.preventDefault(); move(1); }
-      if (ev.key === 'ArrowUp' || ev.key === 'k') { ev.preventDefault(); move(-1); }
+      else if (ev.key === 'ArrowUp' || ev.key === 'k') { ev.preventDefault(); move(-1); }
+      else if (ev.key === 'ArrowLeft') { ev.preventDefault(); fold(true); }
+      else if (ev.key === 'ArrowRight') { ev.preventDefault(); fold(false); }
     });
-    var first = list(trace.findings)[0];
-    if (first) openFinding(first); else refresh();
   }
 
   fetch('trace.json', { cache: 'no-store', credentials: 'same-origin' })
