@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Tqx4uWuXxyjqU0fReAGqOALpSmi1D0uuJc5QvOIPgSY='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hkYB2TwB9TcmpFnmclgE/6KZYAT6m+plaPI6pj3oblY='; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <title>Session trace</title>
 <!--
   Session trace viewer. Copy this file verbatim next to trace.json; it has
@@ -89,7 +89,7 @@
   .row .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; align-self: center; }
   .row .num { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
   .row .ttl { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .row .tags { display: flex; gap: 4px; align-items: center; }
+  .row .tags { display: flex; gap: 4px; align-items: center; min-width: 0; max-width: 170px; overflow: hidden; }
   .row .pre { grid-column: 3 / 5; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .row.finding .dot { border-radius: 2px; transform: rotate(45deg); }
   .turn { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; padding: 4px 12px; background: var(--raised);
@@ -104,7 +104,7 @@
   .k-write { color: var(--k-write); } .k-dispatch { color: var(--k-dispatch); } .k-boundary { color: var(--k-boundary); }
   .k-other { color: var(--k-other); } .k-issue { color: var(--err); } .k-root { color: var(--accent); }
 
-  .tag { display: inline-block; font-size: 11px; font-weight: 650; line-height: 17px; padding: 0 6px; border-radius: 5px; white-space: nowrap; }
+  .tag { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; font-size: 11px; font-weight: 650; line-height: 17px; padding: 0 6px; border-radius: 5px; white-space: nowrap; }
   .tag.error, .tag.missing, .tag.issue { background: var(--err-bg); color: var(--err); }
   .tag.unanswered, .tag.unknown { background: var(--warn-bg); color: var(--warn); }
   .tag.ok { background: var(--ok-bg); color: var(--ok); }
@@ -330,9 +330,10 @@
   var URLPASS = /([a-z][a-z0-9+.-]{1,20}:\/\/[^\s:@\/]{0,80}:)[^\s\/]+@/gi;
   var FLAG = /((?<![A-Za-z0-9-])--?(?:password|passwd|pass|token|secret|api-key|apikey)(?:[ \t]{1,4}|=))([^\s"'<>;,]{4,})/gi;
   var BASIC = /((?<![A-Za-z0-9-])-u[ \t]{1,4}[^\s:]{1,80}:)([^\s"'<>;,]{2,})/g;
-  var NAMED = '(?<![A-Za-z0-9])((?:[A-Za-z0-9]{1,30}[_-]){0,4}(?:pass(?:word|wd|phrase)?|pwd|secret|token|api[ _-]?key|apikey|' +
-              'account[ _-]?key|private[ _-]?key|credentials?|authorization|cookie)(?:[_-][A-Za-z0-9]{1,30}){0,3}["\']?[ \\t]{0,4}(?:=>|[:=])[ \\t]{0,4})';
-  var QUOTED = new RegExp(NAMED + '(["\'])([^"\'\\n]{4,})\\2', 'gi');
+  var NAMED = '(?<![A-Za-z0-9])((?:[A-Za-z0-9]{1,30}[_.-]){0,4}[A-Za-z0-9]{0,30}?(?:pass(?:word|wd|phrase)?|pwd|secret|token|api[ _-]?key|apikey|' +
+              'access[ _-]?key|account[ _-]?key|private[ _-]?key|credentials?|authorization|cookie)[A-Za-z0-9]{0,30}(?:[_.-][A-Za-z0-9]{1,30}){0,3}' +
+              '["\']?[ \\t]{0,4}(=>|[:=])[ \\t]{0,4})';
+  var QUOTED = new RegExp(NAMED + '(["\'])([^"\'\\n]{4,})\\3', 'gi');
   var KEYED = new RegExp(NAMED + '((?:(?:bearer|basic)[ \\t]{1,4})?[^\\s"\'<>;,]{4,})', 'gi');
   var BEARER = /((?<![A-Za-z0-9])bearer[ \t]{1,4})([^\s"'<>;,]{8,})/gi;
   // a value that is a reference to a secret, or the mark left in place of one, is not a secret
@@ -350,8 +351,13 @@
     if (long) s = s.slice(0, LIMIT + 400);
     SECRETS.forEach(function (r) { s = s.replace(r, '[masked]'); });
     s = s.replace(URLPASS, function (all, head) { return head + '[masked]@'; });
-    s = s.replace(QUOTED, function (all, key, q, val) { return plain(val) ? all : key + q + '[masked]' + q; });
-    [KEYED, FLAG, BASIC, BEARER].forEach(function (r) { s = s.replace(r, function (all, key, val) { return shaped(val) ? key + '[masked]' : all; }); });
+    s = s.replace(QUOTED, function (all, key, sep, q, val) { return plain(val) ? all : key + q + '[masked]' + q; });
+    // name=value with nothing around the sign is an assignment, not prose: any value counts
+    s = s.replace(KEYED, function (all, key, sep, val) {
+      var tight = sep === '=' && /=$/.test(key) && !/[ \t]=$/.test(key);
+      return (tight ? !plain(val) && !/^[0-9]+$/.test(val) : shaped(val)) ? key + '[masked]' : all;
+    });
+    [FLAG, BASIC, BEARER].forEach(function (r) { s = s.replace(r, function (all, key, val) { return shaped(val) ? key + '[masked]' : all; }); });
     return long ? s.slice(0, LIMIT) + ' … [cut: the value is longer than the page shows]' : s;
   }
   /* mask:end */

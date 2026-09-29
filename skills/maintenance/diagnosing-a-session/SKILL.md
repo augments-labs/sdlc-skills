@@ -208,7 +208,6 @@ table of line numbers, and the page is how they check your work.
      give the report path and the start command to run once it is
      installed. Install nothing unless asked.
 
-
    ```bash
    bash scripts/start-server.sh --root .sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/trace --entry index.html --idle-timeout-minutes 30
    ```
@@ -238,10 +237,10 @@ table of line numbers, and the page is how they check your work.
 ## Hard stops
 
 - **Read-only.** No edit, write, commit, branch, or workspace change while
-  diagnosing, including a fix that is obviously correct. The report and the
-  trace directory under `.sdlc-skills/evidence/` are the only files you
-  write; the preview keeps its own log outside the project. `git status --short` at Step 6.4 must equal the value recorded in
-  Step 1.
+  diagnosing, including a fix that is obviously correct. You write inside
+  the evidence directory of Step 5.1 and nowhere else; the preview keeps its
+  own log outside the project. `git status --short` at Step 6.4 must equal
+  the value recorded in Step 1.
 - The trace directory holds transcript-derived text. It stays under
   `.sdlc-skills/evidence/`, is served on the local preview only, and is
   never committed, uploaded, or pasted elsewhere.

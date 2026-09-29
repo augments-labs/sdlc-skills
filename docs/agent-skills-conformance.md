@@ -50,8 +50,8 @@ standard.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 311 (62% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~3478 |
+| Body lines | At most 500; longest is 310 (62% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker; largest is ~3476 |
 | Typical body size | Aim for about 80 to 120 lines. A longer discipline body needs behavioral evidence that justifies it |
 | Presentation | The checker warns on long stretches of undivided prose. Keep sentences readable |
 | Supporting paths | They resolve inside the installed skill, and direct references stay shallow |

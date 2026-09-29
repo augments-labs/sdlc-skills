@@ -111,11 +111,14 @@ var hide = [
   'DB_PASSWORD=Tr0ub4dor&3', '{"access_token":"9a8b7c6d5e4f3a2b"}', 'auth_token=zz11yy22xx33', 'client_secret: GOCSPX-abcdEFGH1234',
   'SECRET_KEY = \'django-insecure-k3y-v4lue\'', 'AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY', 'SECRET_KEY_BASE=0f1e2d3c4b5a69788796',
   'password: \'my pass phrase 12\'', 'mysql --password Synth3ticPw99 -h db', 'curl -u admin:Synth3ticPw99 https://x.example', 'redis://:Synth3ticPw99@cache.internal:6379',
-  'token=' + new Array(31).join('Ab3dEf7hIj'), 'token => "Qw3rtyUi0pAsdf"'
+  'token=' + new Array(31).join('Ab3dEf7hIj'), 'token => "Qw3rtyUi0pAsdf"',
+  '{"accessToken":"Zx9Cv8Bn7Mq6"}', 'PGPASSWORD=Synth3ticPw99', '"SecretAccessKey": "wJalrXUtnFEMIK7MDENG"', 'dbPassword=Hq7Lm2Pz', 'sessionToken=Kd83Jf92Ls01',
+  'POSTGRES_PASSWORD=postgres', 'password=letmein'
 ];
 var secretPart = [/A1b2C3d4/, /test1234567890/, /ABCDEFGHIJKLMNOP/, /hunter2/, /s3cret!/, /abc123/, /correct-horse/, /abcd1234efgh/,
   /abcdefghijklmnop123456/, /dXNlcjpwYXNz/, /9f8e7d6c/, /s3cret@w0rd/, /eyJzdWIi/, /abcdefghijklmnopqrstuvwxyz0123456789/, /f9913b10d53b/, /MIIEow/,
-  /Tr0ub4dor/, /9a8b7c6d/, /zz11yy22/, /abcdEFGH1234/, /k3y-v4lue/, /wJalrXUtn/, /0f1e2d3c/, /pass phrase/, /Synth3ticPw99/, /Synth3ticPw99/, /Synth3ticPw99/, /Ab3dEf7hIj/, /Qw3rtyUi0p/];
+  /Tr0ub4dor/, /9a8b7c6d/, /zz11yy22/, /abcdEFGH1234/, /k3y-v4lue/, /wJalrXUtn/, /0f1e2d3c/, /pass phrase/, /Synth3ticPw99/, /Synth3ticPw99/, /Synth3ticPw99/, /Ab3dEf7hIj/, /Qw3rtyUi0p/,
+  /Zx9Cv8Bn/, /Synth3ticPw99/, /wJalrXUtn/, /Hq7Lm2Pz/, /Kd83Jf92/, /=postgres/, /letmein/];
 var keep = [
   'skipped password authentication checks', 'Ran token verification before the push', 'wrote skills/auth/authorization-middleware.ts',
   '/home/me/project/secret/configuration.yaml', 'src/auth/session-handler.ts', 'skills/security/secret-scanning/SKILL.md',
@@ -124,7 +127,8 @@ var keep = [
   'The token: none was set', 'b92ab436-8bc9-4f1a-93c7-dd8cd8833e6f.jsonl:3121', 'Loads requesting-code-review, for the first time',
   'task-runner-configuration-file', 'risk_assessment_for_release_candidate', 'token = get_token()', 'password: Optional[str] = None',
   'def login(user, password=None):', 'api_key = os.environ["API_KEY"]', 'token: ${TOKEN}', 'password=$(cat /run/secrets/db)',
-  'pwd=/home/me/project', 'password: [credential, line 412]', 'the quarterly-passenger-token-report was filed', 'git log --author=me -u'
+  'pwd=/home/me/project', 'password: [credential, line 412]', 'the quarterly-passenger-token-report was filed', 'git log --author=me -u',
+  'password: required', 'token: missing', 'retries=3 tokens=1200', 'passwordless login is enabled', 'max_tokens=4096', 'secret: none'
 ];
 var failed = 0;
 hide.forEach(function (v, i) { var m = mask('ran with ' + v + ' today'); if (secretPart[i].test(m) || m.indexOf('[masked]') < 0) { failed++; console.log('shown: ' + JSON.stringify(v.slice(0, 18)) + ' -> ' + JSON.stringify(m.slice(0, 60))); } });
@@ -135,7 +139,7 @@ keep.forEach(function (v) { if (mask(v) !== v) { failed++; console.log('hidden: 
 });
 if (mask(new Array(50000).join('x')).length > 20200) { failed++; console.log('long: an overlong value is not cut'); }
 var edge = mask(new Array(19991).join('x') + ' ghp_' + 'A1b2C3d4E5f6G7h8I9j0K1l2M3n4');
-if (/A1b2C3/.test(edge)) { failed++; console.log('edge: a credential across the cut shows its head'); }
+if (/ghp_|A1b2/.test(edge)) { failed++; console.log('edge: a credential across the cut shows its head'); }
 process.exit(failed ? 1 : 0);
 JS
   } > "$fixture/mask.js"
@@ -217,7 +221,7 @@ if printf '%s' "$line" | jq -e '.url and .pid' >/dev/null 2>&1; then
       d="$(dom hostile "$h" 3000)"
       has "$d" 'id="detail"' || { bad "the hostile trace renders at '$h'"; continue; }
       has "$d" '<img|<script>document|<title>[^<]*PWNED| onerror="' && { bad "hostile text stays text at '$h'"; leaks=1; }
-      has "$d" 'A1b2C3d4E5f6' && { bad "a credential-shaped value is masked at '$h'"; leaks=1; }
+      has "$d" 'A1b2C3d4E5f6|<title>[^<]*ghp_' && { bad "a credential-shaped value is masked at '$h'"; leaks=1; }
       grep -qE 'img|onerror|script' <<<"$(grep -oE 'class="[^"]*"' <<<"$d")" && { bad "no class name comes from the trace at '$h'"; leaks=1; }
     done
     [ "$leaks" = 0 ] && ok "hostile text stays text, and credential shapes are masked, in six states"
