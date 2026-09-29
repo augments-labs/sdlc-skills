@@ -6,7 +6,8 @@ skill is an ordinary directory holding a `SKILL.md` file with YAML
 frontmatter, so any agent that reads the format can load it.
 
 The standard outranks the rules of this repository. A house rule may be
-stricter than the standard. It may never allow what the standard forbids. This
+stricter than the standard, and it must be labelled as a house limit and not
+as a requirement of the standard. It may never allow what the standard forbids. This
 page records what the standard requires, what the checks cover, and where the
 library is stricter on purpose.
 

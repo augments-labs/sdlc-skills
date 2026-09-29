@@ -38,7 +38,8 @@ follows.
 
 ## Run the checks
 
-Run these before you commit. CI runs them on every push and pull request.
+Run these before you commit. CI runs them on every pull request and on every
+push to `main` and `dev`.
 
 ```bash
 bash scripts/sh/validate-skills.sh
@@ -49,18 +50,23 @@ bash scripts/sh/token-budget.sh --chain NAME
 
 Run the last one for each chain listed in `scripts/sh/data/chains.toml`.
 
+The first three report some findings as warnings. Add `--strict` to turn those
+warnings into failures, `reference-load-condition` included. CI runs them with
+`--strict`, so a change that passes without it can still fail in CI.
+
 For each skill you edited, also run the strict check:
 
 ```bash
 bash skills/common/writing-skills/scripts/check-skill.sh --strict path/to/skill
 ```
 
-To run the checks automatically on every commit, install the git hook once:
+To run the checks automatically when you commit, install the git hook once:
 
 ```bash
 bash scripts/sh/install-git-hooks.sh
 ```
 
+The hook runs whenever a relevant file is staged.
 `bash scripts/sh/install-git-hooks.sh --remove` undoes it.
 
 [`docs/testing.md`](docs/testing.md) explains what each check proves.
@@ -74,6 +80,6 @@ bash scripts/sh/install-git-hooks.sh
 3. If the change alters what a skill makes an agent do, name the failure or
    the gap it answers. No live agent runs in this repository, so the pull
    request argues from the skill text and the checks.
-4. Say how the change was written: by hand, or with which model, agent, agent
-   version, and plugins. A pull request that hides this is closed.
+4. Say how the change was written: by hand, or with which model, harness,
+   harness version, and plugins. A pull request that hides this is closed.
 5. Read the complete diff yourself before you submit it.

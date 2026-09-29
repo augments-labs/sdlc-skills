@@ -24,8 +24,8 @@ user first asked for. The skill before it names it.
 
 ## The router
 
-`using-sdlc-skills` is the routing skill. It is in context from the start of
-every session. It tells the agent to load every skill that might apply before
+`using-sdlc-skills` is the routing skill. Where the harness allows it, the
+adapter puts it in context at the start of every session. It tells the agent to load every skill that might apply before
 it acts, and to check again whenever the state of the work changes: a phase
 ends, a decision comes back, feedback arrives.
 
@@ -39,19 +39,21 @@ high-risk transformation, `migration-strategy` classifies the work and sets
 the conditions that must hold before it starts. A general classifier reading
 the first message cannot stand in for that assessment.
 
-The router body stays within 700 words, because every session loads all of it.
+The router body is kept to about 700 words, because every session loads all
+of it.
 
 ## Instructions do not enforce anything
 
 Each adapter puts the full router body into the session context, so the agent
-does not need a separate step to load it. That is all the adapters do. They
+does not need a separate step to load it. Grok Build and Muse Code 1.3.0 are
+the exceptions, because neither offers a way to do it. That is all the adapters do. They
 register no hook on tool calls, on prompts, or at the end of a turn.
 
 Compaction needs special care. When a long session is compacted, the
 transcript is replaced by a summary, and text that was injected at session
 start is not carried into the replacement. The adapters therefore supply the
-router again after compaction, on every agent that exposes that moment. Some
-agents also offer a hook that only reports that compaction happened. Its
+router again after compaction, on every harness that exposes that moment. Some
+harnesses also offer a hook that only reports that compaction happened. Its
 output never enters the new context, so it cannot carry the router, and the
 adapters leave it unregistered. [`harness-support.md`](harness-support.md) has
 the details for each agent.
@@ -69,7 +71,8 @@ of conditions.
 
 ## Gates decide the result
 
-Tests, compilers, static analysis, reviews, and release criteria inspect the
+Tests, compilers, static analysis, reviews, differential checks, and release
+criteria inspect the
 work itself. The project that adopts this library decides which checks apply,
 ties them to specific versions of the work, and wires them into CI, protected
 branches, and release controls.

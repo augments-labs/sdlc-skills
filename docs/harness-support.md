@@ -357,8 +357,9 @@ below have no row for pi.
 
 ## Lifecycle policy
 
-Every adapter supplies the full router through a session-start mechanism. No
-adapter registers a hook on tool calls, on prompts, or at the end of a turn.
+Every adapter supplies the full router through a session-start mechanism,
+with two exceptions described above: Grok Build gets a rules-file nudge, and
+Muse Code 1.3.0 gets discovery only. No adapter registers a hook on tool calls, on prompts, or at the end of a turn.
 
 Compaction is a boundary like start, resume, and clear. It replaces the
 transcript with a summary, and text injected at session start is not carried
@@ -429,8 +430,9 @@ adapter:
 Availability, nesting, and agent names belong to the installed build. They
 change between versions, and some builds keep multi-agent tools behind a
 configuration entry that is off by default. Check a cell again with the CLI
-before you rely on it, and ask the installed CLI which tools it exposes. Do
-not trust a snippet copied from somewhere else.
+before you rely on it. Check the harness's own configuration reference for the
+current form, and ask the installed CLI which tools it exposes. Do not trust a
+snippet copied from somewhere else.
 
 ### When the action is not available
 
@@ -466,7 +468,7 @@ A harness that renames or removes an agent changes no shipped skill.
 | --- | --- | --- |
 | Claude Code | The built-in general-purpose type, plus any agent defined under `.claude/agents/`, selected with the `subagent_type` of the `Agent` tool | The general-purpose type carrying the role prompt |
 | Codex | The agent roles the installed build exposes to `spawn_agent` | A general agent carrying the role prompt |
-| Kimi Code | The `subagent_type` values bound in the `skillInstructions` of `.kimi-plugin/plugin.json` | The general-purpose type carrying the role prompt |
+| Kimi Code | The `subagent_type` values bound in the `skillInstructions` of `.kimi-plugin/plugin.json` | `coder` carrying the role prompt. It cannot enforce read-only, so a review brief sent to it forbids every edit, commit, and push |
 | OpenCode | `general` for the implementer and `explore` for the reviewers, selected with the `Task` tool on 1.x and the `agent` argument of the `subagent` tool on 2.x | The general-purpose subagent carrying the role prompt, which forbids every edit, commit, and push |
 
 The tier is a separate choice from the agent. The skill sets `small`,
@@ -475,8 +477,8 @@ tier to a model. An agent name never implies a tier.
 
 ## Repository instruction files
 
-`AGENTS.md` is the guide that coding agents read when they work in this
-repository. `GEMINI.md` is a symbolic link to it, and `CLAUDE.md` is a short
+`AGENTS.md` is the canonical contributor guide, and the file coding agents
+read when they work in this repository. `GEMINI.md` is a symbolic link to it, and `CLAUDE.md` is a short
 pointer to it. A harness that reads its own conventional instructions file
 gets the same rules from one source, including a harness that refuses a
 symlinked instructions file.

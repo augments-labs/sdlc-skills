@@ -26,11 +26,12 @@ skills that fit the task in front of it.
 ## How it works
 
 When a session starts, the plugin gives your agent a small routing skill called
-`using-sdlc-skills`. From then on, before the agent answers or touches
-anything, it looks through the catalogue and loads the skills that match what
-you asked for.
+`using-sdlc-skills`. It instructs the agent to look through the catalogue and
+load the skills that match what you asked for, before it answers or touches
+anything. On Grok Build and Muse Code this needs one manual step, described in
+their installation sections.
 
-Ask for a new feature and the agent sets up an isolated worktree, writes a
+Ask for a new feature and a well-behaved agent sets up an isolated worktree, writes a
 failing test first, and keeps the change to what you asked for. Report a bug
 and it looks for the cause before it proposes a fix. When it thinks the work is
 finished, it runs the checks and reads their output before it says so, then
@@ -44,9 +45,11 @@ Two things are worth knowing up front:
 - **It is a toolbox.** Nothing forces a task through every phase. A one-line
   fix does not get a project brief. Each skill states when it applies and when
   to skip it.
-- **The skills guide the agent. Your checks decide the result.** A skill can
-  steer an agent toward running the tests, but only the tests can tell you the
-  code works. Keep your CI, reviews, and release controls in place.
+- **The skills guide the agent. Your checks decide the result.** These are
+  instructions to a non-deterministic agent, and nothing enforces that a skill
+  is invoked. A skill can steer an agent toward running the tests, but only
+  the tests can tell you the code works. Keep your CI, reviews, and release
+  controls in place.
 
 ## Installation
 
@@ -147,8 +150,11 @@ session-start hook that can hand the routing skill to the agent.
    ```
 
 2. Create `$GROK_HOME/rules/using-sdlc-skills.md` (the default location is
-   `~/.grok/rules/`) containing one line that tells Grok to invoke
-   `using-sdlc-skills` before acting.
+   `~/.grok/rules/`) containing this line:
+
+   ```text
+   Invoke the `using-sdlc-skills` skill before acting.
+   ```
 
 ### Muse Code
 
@@ -167,6 +173,10 @@ bash scripts/sh/install-muse-skills.sh --remove
 Muse 1.3.0 does not load plugins, so this installs the skills one by one and
 the agent can see them, but nothing hands it the routing skill. Start each
 session by asking the agent to invoke `using-sdlc-skills`.
+
+A Muse build that ships plugin support installs `.muse-plugin/plugin.json`
+instead, which declares the session-start hook. This has not been observed on
+a real build.
 
 ### pi
 
@@ -195,8 +205,11 @@ it is using before it starts. If it does not, ask it to invoke
 
 ## A typical workflow
 
-The skills are grouped by phase. A large project may touch all of them. Most
-tasks use a few.
+Skills live under `skills/<phase>/<name>/`. The phase folders are unnumbered,
+so they sort alphabetically on disk. The order below is the canonical one. The
+phase is for organization only and is not part of a skill's address.
+
+A large project may touch every phase. Most tasks use a few skills.
 
 1. **Planning.** `define-goals`, `scoping`, and `feasibility-check` turn an
    idea into a project brief: what it is for, what is in and out, and whether
@@ -206,11 +219,12 @@ tasks use a few.
 3. **Design.** `system-architecture`, `data-model`, and `ui-ux-design` shape
    the solution. `writing-plans` breaks it into tasks, and `reviewing-plans`
    gets a second opinion on a risky plan before you approve it.
-4. **Implementation.** `using-git-worktrees` isolates the work.
+4. **Implementation.** `using-git-worktrees`, a common skill, isolates the
+   work.
    `executing-plans` runs the plan in the current session, or
    `subagent-driven-development` hands each task to a fresh subagent.
-   `test-driven-development` and `yagni` keep each change tested and no larger
-   than it needs to be.
+   `test-driven-development` and `yagni`, another common skill, keep each
+   change tested and no larger than it needs to be.
 5. **Testing.** `verification-before-completion` runs the checks before any
    claim that work is done. `requesting-code-review` and
    `receiving-code-review` handle the review.
@@ -298,7 +312,7 @@ every claim.
 
 ### Common
 
-These skills are not tied to a phase.
+These skills are not tied to a phase. They live in `skills/common/`.
 
 | Skill | What it does |
 | --- | --- |
@@ -310,7 +324,7 @@ These skills are not tied to a phase.
 | `dispatching-parallel-agents` | Splits independent work across parallel agents |
 | `yagni` | Keeps a change to what the task needs, and makes sure that part is complete |
 | `handoff` | Writes a handoff so another session or agent can continue unfinished work |
-| `viewing-artifacts` | Shows the state of briefs, specs, designs, and plans in a local viewer |
+| `viewing-artifacts` | Shows the state of briefs, specs, designs, plans, and execution in a local viewer |
 | `writing-skills` | Guides writing and editing the skills in this library |
 
 ## Philosophy

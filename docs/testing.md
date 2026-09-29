@@ -1,7 +1,7 @@
 # Testing this library
 
-This repository runs deterministic checks only. Each one knows the right
-answer before it runs, needs no model, and costs nothing, so a red result
+This repository runs deterministic checks only, and they answer before a
+merge. Each one knows the right answer before it runs, needs no model, and costs nothing, so a red result
 means something is broken.
 
 No live agent runs here or in CI. These checks tell you the library is well
@@ -12,13 +12,14 @@ skill.
 
 | Where | What a result proves | Commands |
 | --- | --- | --- |
-| `scripts/sh/`, run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
-| `tests/`, offline | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh` |
+| `scripts/sh/`, all run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
+| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-git-hooks.sh`, and `run-state-identity.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh` |
 | `tests/harnesses/` | Nothing on its own. These files hold how each CLI installs the plugin, and the smoke test drives them | One file per supported CLI |
 
 ## The four gates
 
-Run these before you commit. CI runs them on every push and pull request.
+Run these before you commit. CI runs them on every pull request and on every
+push to `main` and `dev`.
 
 ```bash
 bash scripts/sh/validate-skills.sh
@@ -29,10 +30,10 @@ bash scripts/sh/token-budget.sh --chain NAME
 
 | Gate | What it checks |
 | --- | --- |
-| `validate-skills.sh` | Frontmatter, body and description size limits, the ban on external references and vendor model names, where templates and references live, that every manifest lists every skill, that the adapters are in sync, that links inside the repository resolve, and that the conformance record matches the tree |
+| `validate-skills.sh` | Frontmatter, body and description size limits, the ban on external references and vendor model names, where templates and references live, that every manifest lists every skill, that the adapters are in sync, that `docs/` and `tests/` Markdown paths and skill reference paths resolve, and that the conformance record matches the tree |
 | `validate-skill-graph.sh` | Pairs of skills that hand off to each other. A pair listed in `scripts/sh/data/allowed-cycles.txt` is allowed |
 | `validate-trigger-collisions.sh` | Trigger phrases of two or more words that more than one description shares |
-| `token-budget.sh` | The approximate size of the text a session loads |
+| `token-budget.sh` | With `--chain NAME`, the total body words of one chain against its budget. With `--max N`, the approximate token size of each `SKILL.md` against a ceiling. CI runs both, the second with `--max 5000` |
 
 The first three report some findings as warnings. Add `--strict` to turn those
 warnings into failures. CI runs all three with `--strict`.
@@ -68,7 +69,8 @@ Every runner answers `--help` with its flags and exit codes.
 
 `run-plugin-smoke.sh` needs the CLI of the agent under test installed, so it
 runs on your machine and not in CI. It installs this tree into a throwaway
-home the way that agent does, then checks that every skill is discovered.
+home the way that agent does, then checks that every skill is discovered,
+where the CLI can list them.
 [`tests/README.md`](../tests/README.md) describes the runners in more detail.
 
 ## Chain budgets
