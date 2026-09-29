@@ -2,6 +2,16 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.4.1] — 2026-09-29
+
+`diagnosing-a-session` now presents every diagnosis as a local trace page
+beside the written report: a timeline, an inspector, and a replay of the
+session or of one finding, step by step. No sensitive value appears in the
+report, the trace, or a reply unless the user asks for that one value.
+
+The README, the contributing guide, and the pages under `docs/` are rewritten
+for human readers, with step-by-step installation for each harness.
+
 ## [10.4.0] — 2026-09-24
 
 `reviewing-plans` puts one exact plan version in front of an independent
