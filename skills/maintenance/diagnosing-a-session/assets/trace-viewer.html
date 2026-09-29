@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Session trace</title>
+<!--
+  Session trace viewer. Copy this file verbatim next to trace.json; it has
+  nothing to fill in. It reads trace.json from its own directory and renders
+  it. Every value from the trace reaches the page as text, never as markup:
+  the trace describes a transcript, and a transcript holds text nobody here
+  wrote. Self-contained: no external script, font, stylesheet, or image.
+-->
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fafafa; --surface: #ffffff; --ink: #18181b; --muted: #52525b;
+    --line: #e4e4e7; --soft: #f4f4f5; --accent: #4f46e5; --accent-bg: #eef2ff;
+    --ok: #047857; --ok-bg: #ecfdf5; --err: #b91c1c; --err-bg: #fef2f2; --warn: #b45309; --warn-bg: #fffbeb;
+    --k-prompt: #4f46e5; --k-reply: #52525b; --k-skill: #7c3aed; --k-gate: #047857;
+    --k-tool: #0369a1; --k-decision: #b45309; --k-write: #be185d; --k-dispatch: #0f766e;
+    --k-boundary: #71717a; --k-other: #71717a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #09090b; --surface: #131316; --ink: #f4f4f5; --muted: #a1a1aa;
+      --line: #27272a; --soft: #1c1c1f; --accent: #818cf8; --accent-bg: #1a1c3a;
+      --ok: #34d399; --ok-bg: #052e1f; --err: #f87171; --err-bg: #2a1215; --warn: #fbbf24; --warn-bg: #251a08;
+      --k-prompt: #818cf8; --k-reply: #a1a1aa; --k-skill: #c4b5fd; --k-gate: #34d399;
+      --k-tool: #7dd3fc; --k-decision: #fbbf24; --k-write: #f9a8d4; --k-dispatch: #5eead4;
+      --k-boundary: #a1a1aa; --k-other: #a1a1aa;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 14px/1.5 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex; flex-direction: column;
+  }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  h1, h2, h3, p { margin: 0; }
+
+  /* ---- header: the answer first, then the session it came from ---- */
+  header { padding: 14px 20px 12px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .eyebrow { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  header h1 { font-size: 19px; line-height: 1.3; margin: 2px 0 10px; overflow-wrap: anywhere; }
+  .versus { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .versus > div { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; min-width: 0; overflow-wrap: anywhere; }
+  .versus .saw { border-left: 3px solid var(--err); }
+  .versus .want { border-left: 3px solid var(--ok); }
+  .facts { display: flex; flex-wrap: wrap; gap: 2px 20px; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+  .facts span { overflow-wrap: anywhere; min-width: 0; }
+  .facts b { color: var(--ink); font-weight: 600; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; margin-top: 12px; }
+  .tile { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: var(--bg); }
+  .tile .v { font-size: 18px; font-weight: 650; line-height: 1.2; }
+  .tile .l { font-size: 12px; color: var(--muted); }
+  .tile.bad .v { color: var(--err); }
+
+  /* ---- overview: the whole cited session on one line per thread ---- */
+  .overview { padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .lane { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; align-items: center; margin: 3px 0; }
+  .lane .name { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lane .rail { position: relative; height: 18px; border-radius: 4px; background: var(--soft); }
+  .mark { position: absolute; top: 3px; width: 8px; height: 12px; margin-left: -4px; border-radius: 2px; border: 0; padding: 0;
+          background: currentColor; cursor: pointer; opacity: .8; }
+  .mark.cited { top: 0; height: 18px; opacity: 1; box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--err); }
+  .mark.sel { opacity: 1; box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); z-index: 1; }
+  .mark.dim { opacity: .15; }
+  .axis { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; font-size: 11.5px; color: var(--muted); }
+  .axis div { display: flex; justify-content: space-between; }
+  .scope-note { margin-top: 6px; font-size: 12.5px; color: var(--warn); }
+
+  /* ---- filters ---- */
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 20px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .bar input[type=search] { flex: 1 1 200px; min-width: 0; padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 2px 10px; cursor: pointer; font-size: 12.5px; }
+  .chip[aria-pressed=true] { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .chip .n { color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .count { color: var(--muted); font-size: 12.5px; margin-left: auto; white-space: nowrap; }
+
+  /* ---- three panes ---- */
+  main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 1.3fr) minmax(300px, 1.1fr); }
+  .pane { min-height: 0; overflow: auto; border-right: 1px solid var(--line); }
+  .pane:last-child { border-right: 0; }
+  .pane > h2, .tabs { position: sticky; top: 0; z-index: 2; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .pane > h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 9px 16px; }
+  .tabs { display: flex; gap: 2px; padding: 4px 12px 0; }
+  .tab { border: 0; background: transparent; padding: 6px 10px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--muted);
+         font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .tab[aria-selected=true] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+  .body { padding: 12px 16px 40px; }
+
+  /* findings */
+  .card { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 10px 12px; margin-bottom: 10px; cursor: pointer; }
+  .card:hover { border-color: var(--muted); }
+  .card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); cursor: default; }
+  .card .dim { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .card h3 { font-size: 14px; margin: 2px 0 0; overflow-wrap: anywhere; }
+  .card .more { margin-top: 8px; }
+  .label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 12px 0 3px; }
+  .text { overflow-wrap: anywhere; }
+  .walk { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .walk .pos { font-size: 12.5px; color: var(--muted); margin-right: auto; }
+  .stepnote { margin-top: 8px; padding: 8px 10px; border-radius: 6px; background: var(--accent-bg); overflow-wrap: anywhere; }
+  .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+  .btn:hover:not(:disabled) { background: var(--soft); }
+  .btn:disabled { opacity: .45; cursor: default; }
+
+  /* timeline */
+  .turn { position: sticky; top: 33px; z-index: 1; display: flex; gap: 8px; align-items: baseline; padding: 5px 16px;
+          background: var(--soft); border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+  .turn b { color: var(--ink); }
+  .row { display: grid; grid-template-columns: 62px 84px minmax(0, 1fr) 54px; gap: 8px; align-items: center;
+         width: 100%; text-align: left; padding: 6px 16px; border: 0; border-bottom: 1px solid var(--line);
+         background: transparent; cursor: pointer; }
+  .row:hover { background: var(--soft); }
+  .row[aria-selected=true] { background: var(--accent-bg); box-shadow: inset 3px 0 0 var(--accent); }
+  .row.side { padding-left: 34px; }
+  .row.step { box-shadow: inset 3px 0 0 var(--err); }
+  .row[aria-selected=true].step { box-shadow: inset 3px 0 0 var(--accent); }
+  .row .t { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .row .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row .ln { color: var(--muted); font-size: 12px; text-align: right; white-space: nowrap; }
+  .row .meta { grid-column: 3 / 5; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+  .dur { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .gap { padding: 3px 16px 3px 162px; font-size: 12px; color: var(--muted); border-bottom: 1px dashed var(--line); }
+
+  .kind { font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .kind::before { content: "\25CF\00a0"; }
+  .k-prompt { color: var(--k-prompt); } .k-reply { color: var(--k-reply); } .k-skill { color: var(--k-skill); }
+  .k-gate { color: var(--k-gate); } .k-tool { color: var(--k-tool); } .k-decision { color: var(--k-decision); }
+  .k-write { color: var(--k-write); } .k-dispatch { color: var(--k-dispatch); }
+  .k-boundary { color: var(--k-boundary); } .k-other { color: var(--k-other); }
+
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 0 7px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; }
+  .tag.finding, .tag.error, .tag.missing { background: var(--err-bg); color: var(--err); }
+  .tag.unanswered { background: var(--warn-bg); color: var(--warn); }
+  .tag.ok { background: var(--ok-bg); color: var(--ok); }
+  .tag.unknown, .tag.plain { color: var(--muted); border-color: var(--line); }
+
+  /* detail */
+  .detail h3 { font-size: 16px; margin: 4px 0 4px; overflow-wrap: anywhere; }
+  .block { margin: 0; padding: 8px 10px; border-radius: 6px; background: var(--soft); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .quote { border-left: 3px solid var(--k-prompt); }
+  .should { border-left: 3px solid var(--ok); }
+  .cite { display: flex; gap: 8px; align-items: flex-start; }
+  .cite .block { flex: 1; min-width: 0; }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; overflow-wrap: anywhere; }
+  .link { border: 0; background: transparent; color: var(--accent); cursor: pointer; padding: 0; text-decoration: underline; text-align: left; }
+  .nav { display: flex; gap: 8px; margin-top: 16px; }
+  ul { margin: 0; padding-left: 18px; }
+  li { overflow-wrap: anywhere; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: 5px 6px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .empty { color: var(--muted); padding: 20px 16px; }
+  .fail { margin: 24px 20px; padding: 12px 14px; border-radius: 8px; background: var(--err-bg); color: var(--err); }
+
+  @media (max-width: 1100px) {
+    main { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    #p-findings { grid-column: 1 / 3; max-height: 40vh; border-right: 0; border-bottom: 1px solid var(--line); }
+  }
+  @media (max-width: 760px) {
+    body { display: block; }
+    main { display: block; }
+    .pane { border-right: 0; border-bottom: 1px solid var(--line); max-height: 70vh; }
+    #p-findings { max-height: none; }
+    .versus { grid-template-columns: 1fr; }
+    .lane, .axis { grid-template-columns: 70px minmax(0, 1fr); }
+    .row { grid-template-columns: 56px minmax(0, 1fr) 50px; }
+    .row .kind { grid-column: 2; }
+    .row .title, .row .meta { grid-column: 1 / 4; }
+    .gap { padding-left: 16px; }
+    header, .overview, .bar { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Session diagnosis</div>
+  <h1 id="headline">Session trace</h1>
+  <div class="versus">
+    <div class="saw"><div class="eyebrow">What you saw</div><div id="symptom"></div></div>
+    <div class="want"><div class="eyebrow">What you expected</div><div id="expected"></div></div>
+  </div>
+  <div class="facts" id="facts"></div>
+  <div class="tiles" id="tiles"></div>
+</header>
+<section class="overview" aria-label="Overview">
+  <div id="lanes"></div>
+  <div class="axis"><span></span><div><span id="axis-start"></span><span id="axis-end"></span></div></div>
+  <p class="scope-note">This page shows the events the diagnosis cited, not the whole transcript. An event that is absent here was not searched for, or not found. The Coverage tab says what was searched.</p>
+</section>
+<div class="bar">
+  <input type="search" id="q" placeholder="Filter events by text or line number" aria-label="Filter events">
+  <div class="chips" id="chips" role="group" aria-label="Filters"></div>
+  <span class="count" id="count" aria-live="polite"></span>
+</div>
+<main>
+  <section class="pane" id="p-findings">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-findings" data-tab="findings">Findings</button>
+      <button class="tab" role="tab" id="tab-coverage" data-tab="coverage">Coverage</button>
+    </div>
+    <div class="body" id="left" role="tabpanel"></div>
+  </section>
+  <section class="pane" id="p-timeline">
+    <h2>Timeline</h2>
+    <div id="timeline" role="listbox" aria-label="Timeline" tabindex="0"></div>
+  </section>
+  <section class="pane" id="p-detail">
+    <h2>Event</h2>
+    <div class="body detail" id="detail"></div>
+  </section>
+</main>
+<noscript><p class="fail">This viewer needs JavaScript. The diagnosis report beside it holds the same findings as text.</p></noscript>
+<script>
+(function () {
+  'use strict';
+  var KINDS = ['prompt', 'reply', 'skill', 'gate', 'tool', 'decision', 'write', 'dispatch', 'boundary', 'other'];
+  var STATUSES = ['ok', 'error', 'unanswered', 'missing', 'unknown'];
+  var state = { trace: null, kinds: {}, threads: {}, q: '', problems: false, cited: false,
+                selected: null, finding: null, step: 0, tab: 'findings' };
+  var $ = function (id) { return document.getElementById(id); };
+
+  // The only way text enters the page. Never assign markup from the trace.
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = String(text);
+    return n;
+  }
+  function btn(cls, text, fn) {
+    var b = el('button', cls, text);
+    b.type = 'button';
+    b.addEventListener('click', fn);
+    return b;
+  }
+  function str(v) { return v === undefined || v === null ? '' : String(v); }
+  function list(v) { return Array.isArray(v) ? v : []; }
+  function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+  function kindOf(e) { return KINDS.indexOf(e.kind) >= 0 ? e.kind : 'other'; }
+  function statusOf(e) { return STATUSES.indexOf(e.status) >= 0 ? e.status : ''; }
+  function threadOf(e) { return str(e.thread) || 'main'; }
+  function ms(e) { var t = new Date(str(e.time)).getTime(); return isNaN(t) ? null : t; }
+  function events() { return list(state.trace.events); }
+  function byId(id) { return events().filter(function (e) { return e.id === id; })[0]; }
+  function steps(f) { return list(f.steps).filter(function (s) { return s && byId(s.event); }); }
+  function findingsFor(e) {
+    return list(state.trace.findings).filter(function (f) {
+      return steps(f).some(function (s) { return s.event === e.id; });
+    });
+  }
+  function isProblem(e) { var s = statusOf(e); return s === 'error' || s === 'unanswered' || s === 'missing'; }
+
+  function clock(t) {
+    var d = new Date(str(t));
+    if (!t || isNaN(d.getTime())) return str(t).slice(0, 8);
+    return d.toISOString().slice(11, 19);
+  }
+  function span(v) {
+    if (typeof v !== 'number' || !isFinite(v) || v < 0) return '';
+    if (v < 1000) return Math.round(v) + ' ms';
+    if (v < 60000) return (v / 1000).toFixed(1) + ' s';
+    if (v < 3600000) return Math.floor(v / 60000) + ' min ' + Math.round((v % 60000) / 1000) + ' s';
+    return Math.floor(v / 3600000) + ' h ' + Math.round((v % 3600000) / 60000) + ' min';
+  }
+  function citation(line, fragment) {
+    var s = state.trace.session || {};
+    var c = str(s.transcript) + ':' + str(line);
+    return fragment ? c + '  "' + str(fragment) + '"' : c;
+  }
+  function fail(message) {
+    var m = document.querySelector('main');
+    clear(m);
+    m.style.display = 'block';
+    m.appendChild(el('p', 'fail', message));
+  }
+
+  /* ---------- header ---------- */
+  function renderHeader() {
+    var t = state.trace, s = t.session || {};
+    $('headline').textContent = str(t.headline) || 'Session trace';
+    $('symptom').textContent = str(s.symptom) || 'not recorded';
+    $('expected').textContent = str(s.expected) || 'not recorded';
+    var facts = $('facts');
+    clear(facts);
+    [['Session', s.which], ['Transcript', s.transcript], ['Lines', s.lines], ['Read at', s.read_at],
+     ['Branch', s.branch], ['Directory', s.cwd], ['Workspace', s.workspace]].forEach(function (p) {
+      if (!str(p[1])) return;
+      var x = el('span');
+      x.appendChild(el('b', '', p[0] + ' '));
+      x.appendChild(el('span', p[0] === 'Transcript' || p[0] === 'Directory' ? 'mono' : '', p[1]));
+      facts.appendChild(x);
+    });
+
+    var st = t.stats || {}, tiles = $('tiles');
+    clear(tiles);
+    [['Duration', span(st.duration_ms)], ['User prompts', st.prompts], ['Agent turns', st.turns],
+     ['Tool calls', st.tool_calls], ['Tool errors', st.tool_errors, true], ['Skills invoked', st.skills],
+     ['Gates run', st.gates], ['Subagents', st.subagents], ['Compactions', st.compactions],
+     ['Findings', list(t.findings).length, true]].forEach(function (p) {
+      if (p[1] === undefined || p[1] === null || p[1] === '') return;
+      var x = el('div', 'tile' + (p[2] && Number(p[1]) > 0 ? ' bad' : ''));
+      x.appendChild(el('div', 'v', p[1]));
+      x.appendChild(el('div', 'l', p[0]));
+      tiles.appendChild(x);
+    });
+  }
+
+  /* ---------- overview ---------- */
+  function renderOverview() {
+    var box = $('lanes');
+    clear(box);
+    var all = events();
+    var times = all.map(ms).filter(function (t) { return t !== null; });
+    var t0 = Math.min.apply(null, times), t1 = Math.max.apply(null, times);
+    var total = times.length > 1 && t1 > t0 ? t1 - t0 : 0;
+    $('axis-start').textContent = times.length ? clock(new Date(t0).toISOString()) : '';
+    $('axis-end').textContent = times.length ? clock(new Date(t1).toISOString()) + (total ? '  (' + span(total) + ')' : '') : '';
+    var shown = {};
+    visible().forEach(function (e) { shown[e.id] = true; });
+    var active = state.finding ? steps(state.finding).map(function (s) { return s.event; }) : null;
+
+    var names = [];
+    all.forEach(function (e) { if (names.indexOf(threadOf(e)) < 0) names.push(threadOf(e)); });
+    names.forEach(function (name) {
+      var lane = el('div', 'lane');
+      lane.appendChild(el('div', 'name', name));
+      var rail = el('div', 'rail');
+      all.forEach(function (e, i) {
+        if (threadOf(e) !== name) return;
+        var t = ms(e);
+        var at = total && t !== null ? (t - t0) / total : (all.length > 1 ? i / (all.length - 1) : 0.5);
+        var cited = findingsFor(e).length > 0;
+        var cls = 'mark k-' + kindOf(e) + (cited ? ' cited' : '') + (state.selected === e.id ? ' sel' : '');
+        if (!shown[e.id] || (active && active.indexOf(e.id) < 0)) cls += ' dim';
+        var m = btn(cls, '', function () { select(e.id); });
+        m.style.left = (at * 100) + '%';
+        m.title = clock(e.time) + '  ' + kindOf(e) + '  ' + str(e.title);
+        m.setAttribute('aria-label', m.title);
+        rail.appendChild(m);
+      });
+      lane.appendChild(rail);
+      box.appendChild(lane);
+    });
+  }
+
+  /* ---------- filters ---------- */
+  function chip(label, n, pressed, cls, fn) {
+    var b = btn('chip ' + (cls || ''), label, fn);
+    b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+    if (n !== null) b.appendChild(el('span', 'n', n));
+    return b;
+  }
+  function renderChips() {
+    var box = $('chips');
+    clear(box);
+    var all = events(), kinds = {}, threads = {}, problems = 0, cited = 0;
+    all.forEach(function (e) {
+      kinds[kindOf(e)] = (kinds[kindOf(e)] || 0) + 1;
+      threads[threadOf(e)] = (threads[threadOf(e)] || 0) + 1;
+      if (isProblem(e)) problems++;
+      if (findingsFor(e).length) cited++;
+    });
+    if (state.finding) {
+      box.appendChild(chip('Finding ' + str(state.finding.id) + ' only  ×', null, true, '', function () { openFinding(null); }));
+    }
+    if (cited) box.appendChild(chip('in a finding', cited, state.cited, '', function () { state.cited = !state.cited; refresh(); }));
+    if (problems) box.appendChild(chip('problems', problems, state.problems, '', function () { state.problems = !state.problems; refresh(); }));
+    KINDS.forEach(function (k) {
+      if (kinds[k]) box.appendChild(chip(k, kinds[k], state.kinds[k], 'k-' + k, function () { state.kinds[k] = !state.kinds[k]; refresh(); }));
+    });
+    var names = Object.keys(threads);
+    if (names.length > 1) names.forEach(function (n) {
+      box.appendChild(chip('thread ' + n, threads[n], state.threads[n], '', function () { state.threads[n] = !state.threads[n]; refresh(); }));
+    });
+  }
+  function visible() {
+    var anyKind = KINDS.some(function (k) { return state.kinds[k]; });
+    var anyThread = Object.keys(state.threads).some(function (k) { return state.threads[k]; });
+    var only = state.finding ? steps(state.finding).map(function (s) { return s.event; }) : null;
+    var q = state.q.toLowerCase();
+    return events().filter(function (e) {
+      if (only && only.indexOf(e.id) < 0) return false;
+      if (anyKind && !state.kinds[kindOf(e)]) return false;
+      if (anyThread && !state.threads[threadOf(e)]) return false;
+      if (state.problems && !isProblem(e)) return false;
+      if (state.cited && !findingsFor(e).length) return false;
+      if (!q) return true;
+      return [e.title, e.summary, e.quote, e.fragment, e.line, e.thread, e.kind, e.input, e.result,
+              e.expected, e.skill, e.tool, e.branch, e.cwd].concat(list(e.files)).some(function (v) {
+        return str(v).toLowerCase().indexOf(q) >= 0;
+      });
+    });
+  }
+
+  /* ---------- timeline ---------- */
+  function renderTimeline() {
+    var box = $('timeline');
+    clear(box);
+    var all = events(), rows = visible();
+    $('count').textContent = rows.length + ' of ' + all.length + ' events';
+    if (!rows.length) { box.appendChild(el('p', 'empty', all.length ? 'No event matches the filter.' : 'The trace holds no events.')); return; }
+    var turn = 0, previous = null;
+    var inStep = state.finding ? steps(state.finding).map(function (s) { return s.event; }) : [];
+    all.forEach(function (e) {
+      var k = kindOf(e);
+      if (k === 'prompt' && threadOf(e) === 'main') turn++;
+      if (rows.indexOf(e) < 0) return;
+      if (k === 'prompt' && threadOf(e) === 'main') {
+        var h = el('div', 'turn');
+        h.appendChild(el('b', '', 'Turn ' + turn));
+        h.appendChild(el('span', '', 'starts at line ' + str(e.line)));
+        box.appendChild(h);
+      }
+      var a = previous ? ms(previous) : null, b = ms(e);
+      if (a !== null && b !== null && b - a >= 60000) box.appendChild(el('div', 'gap', span(b - a) + ' later'));
+      previous = e;
+
+      var r = el('button', 'row' + (threadOf(e) !== 'main' ? ' side' : '') + (inStep.indexOf(e.id) >= 0 ? ' step' : ''));
+      r.type = 'button';
+      r.setAttribute('role', 'option');
+      r.setAttribute('aria-selected', state.selected === e.id ? 'true' : 'false');
+      r.appendChild(el('span', 't mono', clock(e.time)));
+      r.appendChild(el('span', 'kind k-' + k, k));
+      r.appendChild(el('span', 'title', e.title));
+      r.appendChild(el('span', 'ln mono', 'L' + str(e.line)));
+      var meta = el('span', 'meta');
+      var st = statusOf(e);
+      if (st) meta.appendChild(el('span', 'tag ' + st, st));
+      if (span(e.duration_ms)) meta.appendChild(el('span', 'dur', span(e.duration_ms)));
+      if (threadOf(e) !== 'main') meta.appendChild(el('span', 'tag plain', threadOf(e)));
+      if (str(e.skill)) meta.appendChild(el('span', 'tag plain', e.skill));
+      findingsFor(e).forEach(function (f) { meta.appendChild(el('span', 'tag finding', 'Finding ' + str(f.id))); });
+      if (meta.firstChild) r.appendChild(meta);
+      r.addEventListener('click', function () { select(e.id); });
+      box.appendChild(r);
+    });
+  }
+
+  /* ---------- detail ---------- */
+  function copyButton(text) {
+    var b = btn('btn', 'Copy citation', function () {
+      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy citation'; }, 1500); };
+      var no = function () { b.textContent = 'Select and copy by hand'; };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, no);
+      else no();
+    });
+    return b;
+  }
+  function cite(parent, line, fragment) {
+    var text = citation(line, fragment);
+    var c = el('div', 'cite');
+    c.appendChild(el('pre', 'block mono', text));
+    c.appendChild(copyButton(text));
+    parent.appendChild(c);
+  }
+  function section(parent, title, text, cls) {
+    if (!str(text)) return;
+    parent.appendChild(el('div', 'label', title));
+    parent.appendChild(el('pre', 'block ' + (cls || ''), text));
+  }
+  function eventLink(e, prefix) {
+    return btn('link', (prefix ? prefix + ': ' : '') + 'L' + str(e.line) + '  ' + kindOf(e) + '  ' + str(e.title), function () { select(e.id); });
+  }
+
+  function renderDetail() {
+    var box = $('detail');
+    clear(box);
+    var e = byId(state.selected);
+    if (!e) { box.appendChild(el('p', 'empty', 'Select an event in the timeline or the overview, or open a finding and walk through it.')); return; }
+    var k = kindOf(e);
+    var top = el('div');
+    top.appendChild(el('span', 'kind k-' + k, k));
+    if (statusOf(e)) { top.appendChild(document.createTextNode(' ')); top.appendChild(el('span', 'tag ' + statusOf(e), statusOf(e))); }
+    box.appendChild(top);
+    box.appendChild(el('h3', '', e.title));
+
+    var f = state.finding;
+    if (f) {
+      var note = steps(f).filter(function (s) { return s.event === e.id; })[0];
+      if (note && str(note.note)) {
+        box.appendChild(el('div', 'label', 'Why this matters to finding ' + str(f.id)));
+        box.appendChild(el('div', 'stepnote', note.note));
+      }
+    }
+
+    box.appendChild(el('div', 'label', 'Citation'));
+    cite(box, e.line, e.fragment);
+    section(box, 'The user wrote', e.quote, 'quote');
+    section(box, 'What happened', e.summary);
+    section(box, 'What should have happened', e.expected, 'should');
+    section(box, 'What it was given', e.input);
+    section(box, 'What came back', e.result);
+
+    var kv = el('dl', 'kv'), any = false;
+    [['Time', str(e.time)], ['Took', span(e.duration_ms)], ['Thread', threadOf(e)], ['Skill', e.skill], ['Tool', e.tool],
+     ['Result at', e.result_line ? 'line ' + str(e.result_line) : ''], ['Branch', e.branch], ['Directory', e.cwd]].forEach(function (p) {
+      if (!str(p[1])) return;
+      any = true;
+      kv.appendChild(el('dt', '', p[0]));
+      kv.appendChild(el('dd', p[0] === 'Directory' || p[0] === 'Time' ? 'mono' : '', p[1]));
+    });
+    if (any) { box.appendChild(el('div', 'label', 'Facts')); box.appendChild(kv); }
+
+    if (list(e.files).length) {
+      box.appendChild(el('div', 'label', 'Files touched'));
+      var ul = el('ul');
+      list(e.files).forEach(function (p) { ul.appendChild(el('li', 'mono', p)); });
+      box.appendChild(ul);
+    }
+    var related = list(e.related).filter(function (r) { return r && byId(r.event); });
+    if (related.length) {
+      box.appendChild(el('div', 'label', 'Related events'));
+      related.forEach(function (r) { var p = el('p'); p.appendChild(eventLink(byId(r.event), str(r.relation))); box.appendChild(p); });
+    }
+    var fs = findingsFor(e);
+    if (fs.length) {
+      box.appendChild(el('div', 'label', 'Cited by'));
+      fs.forEach(function (x) {
+        var p = el('p');
+        p.appendChild(btn('link', 'Finding ' + str(x.id) + ': ' + str(x.statement), function () { openFinding(x, e.id); }));
+        box.appendChild(p);
+      });
+    }
+
+    var rows = visible(), i = rows.indexOf(e), nav = el('div', 'nav');
+    var prev = btn('btn', '↑ Previous event', function () { select(rows[i - 1].id); });
+    var next = btn('btn', '↓ Next event', function () { select(rows[i + 1].id); });
+    prev.disabled = i <= 0; next.disabled = i < 0 || i >= rows.length - 1;
+    nav.appendChild(prev); nav.appendChild(next);
+    box.appendChild(nav);
+  }
+
+  /* ---------- findings and coverage ---------- */
+  function openFinding(f, at) {
+    state.finding = f;
+    state.tab = 'findings';
+    if (f) {
+      state.kinds = {}; state.threads = {}; state.problems = false; state.cited = false; state.q = ''; $('q').value = '';
+      var ss = steps(f), i = 0;
+      ss.forEach(function (s, n) { if (s.event === at) i = n; });
+      state.step = i;
+      if (ss.length) state.selected = ss[i].event;
+    }
+    refresh();
+    reveal();
+  }
+  function walk(delta) {
+    var ss = steps(state.finding);
+    state.step = Math.max(0, Math.min(ss.length - 1, state.step + delta));
+    state.selected = ss[state.step].event;
+    refresh();
+    reveal();
+  }
+  function renderFindings(box) {
+    var fs = list(state.trace.findings);
+    if (!fs.length) { box.appendChild(el('p', 'empty', 'The diagnosis recorded no findings. The Coverage tab lists what was searched.')); return; }
+    fs.forEach(function (f) {
+      var open = state.finding === f;
+      var card = el('div', 'card' + (open ? ' active' : ''));
+      card.appendChild(el('div', 'dim', 'Finding ' + str(f.id) + '  ·  ' + str(f.dimension)));
+      card.appendChild(el('h3', '', f.statement));
+      if (!open) {
+        card.setAttribute('role', 'button');
+        card.tabIndex = 0;
+        card.addEventListener('click', function () { openFinding(f); });
+        card.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openFinding(f); } });
+        card.appendChild(el('div', 'dur more', steps(f).length + ' events, ' + list(f.evidence).length + ' citations. Open to walk through it.'));
+        box.appendChild(card);
+        return;
+      }
+      if (str(f.shows)) { card.appendChild(el('div', 'label', 'What it shows')); card.appendChild(el('div', 'text', f.shows)); }
+      if (str(f.consequence)) { card.appendChild(el('div', 'label', 'How it produced what you saw')); card.appendChild(el('div', 'text', f.consequence)); }
+      card.appendChild(el('div', 'label', 'Evidence'));
+      list(f.evidence).forEach(function (ev) { cite(card, ev.line, ev.fragment); });
+      if (!list(f.evidence).length) card.appendChild(el('span', 'tag error', 'No citation: this finding is unsupported'));
+      var ss = steps(f);
+      if (ss.length) {
+        var w = el('div', 'walk');
+        w.appendChild(el('span', 'pos', 'Step ' + (state.step + 1) + ' of ' + ss.length));
+        var back = btn('btn', '← Back', function () { walk(-1); });
+        var on = btn('btn', 'Next →', function () { walk(1); });
+        back.disabled = state.step <= 0; on.disabled = state.step >= ss.length - 1;
+        w.appendChild(back); w.appendChild(on);
+        card.appendChild(w);
+        var cur = ss[state.step];
+        var p = el('p'); p.style.marginTop = '8px';
+        p.appendChild(eventLink(byId(cur.event)));
+        card.appendChild(p);
+        if (str(cur.note)) card.appendChild(el('div', 'stepnote', cur.note));
+      }
+      box.appendChild(card);
+    });
+  }
+  function renderCoverage(box) {
+    var t = state.trace;
+    box.appendChild(el('div', 'label', 'Dimensions searched'));
+    var ds = list(t.dimensions);
+    if (ds.length) {
+      var table = el('table'), head = el('tr');
+      ['Dimension', 'Searched with', 'Result'].forEach(function (h) { head.appendChild(el('th', '', h)); });
+      table.appendChild(head);
+      ds.forEach(function (d) {
+        var tr = el('tr');
+        tr.appendChild(el('td', '', d.name));
+        tr.appendChild(el('td', 'mono', d.searched_with));
+        tr.appendChild(el('td', '', d.result));
+        table.appendChild(tr);
+      });
+      box.appendChild(table);
+    } else { box.appendChild(el('p', 'text', 'The trace lists no dimension. Nothing here was shown to be clean.')); }
+    [['Evidence not available', t.unavailable], ['Notes for a skill’s own repository', t.notes]].forEach(function (p) {
+      box.appendChild(el('div', 'label', p[0]));
+      var items = list(p[1]);
+      if (!items.length) { box.appendChild(el('p', 'text', 'none')); return; }
+      var ul = el('ul');
+      items.forEach(function (i) { ul.appendChild(el('li', '', i)); });
+      box.appendChild(ul);
+    });
+    box.appendChild(el('div', 'label', 'Next action'));
+    box.appendChild(el('p', 'text', str(t.next_action) || 'none'));
+    if (str(t.report)) {
+      box.appendChild(el('div', 'label', 'Written report'));
+      box.appendChild(el('p', 'text mono', t.report));
+    }
+  }
+  function renderLeft() {
+    ['findings', 'coverage'].forEach(function (n) { $('tab-' + n).setAttribute('aria-selected', state.tab === n ? 'true' : 'false'); });
+    var box = $('left');
+    clear(box);
+    if (state.tab === 'findings') renderFindings(box); else renderCoverage(box);
+  }
+
+  /* ---------- wiring ---------- */
+  function refresh() { renderChips(); renderOverview(); renderTimeline(); renderDetail(); renderLeft(); }
+  function reveal() {
+    var row = document.querySelector('.row[aria-selected=true]');
+    if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest' });
+  }
+  function select(id) {
+    state.selected = id;
+    if (state.finding) steps(state.finding).forEach(function (s, n) { if (s.event === id) state.step = n; });
+    refresh();
+    reveal();
+  }
+  function move(delta) {
+    var rows = visible();
+    if (!rows.length) return;
+    var i = rows.map(function (e) { return e.id; }).indexOf(state.selected);
+    select(rows[Math.max(0, Math.min(rows.length - 1, i < 0 ? 0 : i + delta))].id);
+  }
+  function start(trace) {
+    if (!trace || trace.schema !== 'session-trace/1' || !Array.isArray(trace.events)) {
+      fail('trace.json is not a session-trace/1 file. The diagnosis report beside it holds the findings as text.');
+      return;
+    }
+    state.trace = trace;
+    var s = trace.session || {};
+    if (str(s.symptom)) document.title = 'Session trace: ' + str(s.symptom).slice(0, 60);
+    renderHeader();
+    $('q').addEventListener('input', function (ev) { state.q = ev.target.value; renderOverview(); renderTimeline(); renderDetail(); });
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (b) {
+      b.addEventListener('click', function () { state.tab = b.dataset.tab; renderLeft(); });
+    });
+    $('timeline').addEventListener('keydown', function (ev) {
+      if (ev.key === 'ArrowDown' || ev.key === 'j') { ev.preventDefault(); move(1); }
+      if (ev.key === 'ArrowUp' || ev.key === 'k') { ev.preventDefault(); move(-1); }
+    });
+    var first = list(trace.findings)[0];
+    if (first) openFinding(first); else refresh();
+  }
+
+  fetch('trace.json', { cache: 'no-store', credentials: 'same-origin' })
+    .then(function (r) { if (!r.ok) throw new Error('status ' + r.status); return r.json(); })
+    .then(start)
+    .catch(function () {
+      fail('trace.json could not be read. Open this page through the preview URL, not as a file, and check that trace.json sits beside it.');
+    });
+})();
+</script>
+</body>
+</html>

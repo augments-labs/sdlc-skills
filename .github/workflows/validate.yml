@@ -25,6 +25,8 @@ jobs:
         run: bash tests/run-session-start.sh
       - name: Governed localhost preview (serve.py + wrappers)
         run: bash tests/run-serve-preview.sh
+      - name: Session trace page (diagnosing-a-session)
+        run: bash tests/run-trace-viewer.sh
       - name: Local git hook installer (scripts/sh/install-git-hooks.sh)
         run: bash tests/run-git-hooks.sh
       - name: State identity (in-repository and non-repository modes)

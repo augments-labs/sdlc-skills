@@ -50,8 +50,8 @@ standard.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 204 (41% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~2312 |
+| Body lines | At most 500; longest is 223 (45% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker; largest is ~2479 |
 | Typical body size | Aim for about 80 to 120 lines. A longer discipline body needs behavioral evidence that justifies it |
 | Presentation | The checker warns on long stretches of undivided prose. Keep sentences readable |
 | Supporting paths | They resolve inside the installed skill, and direct references stay shallow |
@@ -118,7 +118,7 @@ fragile. The library applies them through its authoring skill,
 | --- | --- |
 | `references/` | 25 skills; rubrics, checklists, worked examples, and lookup guidance |
 | `assets/` | 32 skills; every fill-in template and other static resources |
-| `scripts/` | 9 skills — see below |
+| `scripts/` | 10 skills — see below |
 
 The repository classifies a document by how it is used. A file that is filled
 in and emitted is a template, whatever its filename says. The gate rejects
@@ -137,6 +137,7 @@ conventions are optional and do not forbid other valid arrangements.
 | `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`. Never overwrites a file |
 | `viewing-artifacts` | `serve.py`, `start-server.sh`, `stop-server.sh` | Starts and stops a local preview that the skill owns, writes a log, and may open a browser |
 | `ui-ux-design` | The same preview scripts | Provides the comparison preview. The gate checks that the copies are byte-identical to the viewer's |
+| `diagnosing-a-session` | The same preview scripts | Serves the session trace page. The gate checks the same byte equality |
 
 The scripts need the runtimes and system tools they declare. They add no
 third-party packages.
