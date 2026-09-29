@@ -87,7 +87,7 @@
 
   /* ---- three panes ---- */
   main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 1.3fr) minmax(300px, 1.1fr); }
-  .pane { min-height: 0; overflow: auto; border-right: 1px solid var(--line); }
+  .pane { min-height: 0; overflow: auto; border-right: 1px solid var(--line); position: relative; }
   .pane:last-child { border-right: 0; }
   .pane > h2, .tabs { position: sticky; top: 0; z-index: 2; background: var(--surface); border-bottom: 1px solid var(--line); }
   .pane > h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 9px 16px; }
@@ -106,7 +106,7 @@
   .card .more { margin-top: 8px; }
   .label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 12px 0 3px; }
   .text { overflow-wrap: anywhere; }
-  .walk { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .walk { display: flex; align-items: center; gap: 8px; }
   .walk .pos { font-size: 12.5px; color: var(--muted); margin-right: auto; }
   .stepnote { margin-top: 8px; padding: 8px 10px; border-radius: 6px; background: var(--accent-bg); overflow-wrap: anywhere; }
   .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
@@ -147,7 +147,8 @@
 
   /* detail */
   .detail h3 { font-size: 16px; margin: 4px 0 4px; overflow-wrap: anywhere; }
-  .block { margin: 0; padding: 8px 10px; border-radius: 6px; background: var(--soft); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .block { font: inherit; margin: 0; padding: 8px 10px; border-radius: 6px; background: var(--soft); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .block.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
   .quote { border-left: 3px solid var(--k-prompt); }
   .should { border-left: 3px solid var(--ok); }
   .cite { display: flex; gap: 8px; align-items: flex-start; }
@@ -177,7 +178,9 @@
     .versus { grid-template-columns: 1fr; }
     .lane, .axis { grid-template-columns: 70px minmax(0, 1fr); }
     .row { grid-template-columns: 56px minmax(0, 1fr) 50px; }
+    .row .t, .row .kind, .row .ln { grid-row: 1; }
     .row .kind { grid-column: 2; }
+    .row .ln { grid-column: 3; }
     .row .title, .row .meta { grid-column: 1 / 4; }
     .gap { padding-left: 16px; }
     header, .overview, .bar { padding-left: 16px; padding-right: 16px; }
@@ -459,10 +462,13 @@
     return b;
   }
   function cite(parent, line, fragment) {
-    var text = citation(line, fragment);
+    var full = citation(line, fragment);
+    var name = str((state.trace.session || {}).transcript).split('/').pop();
     var c = el('div', 'cite');
-    c.appendChild(el('pre', 'block mono', text));
-    c.appendChild(copyButton(text));
+    var shown = el('pre', 'block mono', name + ':' + str(line) + (fragment ? '\n"' + str(fragment) + '"' : ''));
+    shown.title = full;
+    c.appendChild(shown);
+    c.appendChild(copyButton(full));
     parent.appendChild(c);
   }
   function section(parent, title, text, cls) {
@@ -580,13 +586,9 @@
         box.appendChild(card);
         return;
       }
-      if (str(f.shows)) { card.appendChild(el('div', 'label', 'What it shows')); card.appendChild(el('div', 'text', f.shows)); }
-      if (str(f.consequence)) { card.appendChild(el('div', 'label', 'How it produced what you saw')); card.appendChild(el('div', 'text', f.consequence)); }
-      card.appendChild(el('div', 'label', 'Evidence'));
-      list(f.evidence).forEach(function (ev) { cite(card, ev.line, ev.fragment); });
-      if (!list(f.evidence).length) card.appendChild(el('span', 'tag error', 'No citation: this finding is unsupported'));
       var ss = steps(f);
       if (ss.length) {
+        card.appendChild(el('div', 'label', 'Walk through it'));
         var w = el('div', 'walk');
         w.appendChild(el('span', 'pos', 'Step ' + (state.step + 1) + ' of ' + ss.length));
         var back = btn('btn', '← Back', function () { walk(-1); });
@@ -600,6 +602,11 @@
         card.appendChild(p);
         if (str(cur.note)) card.appendChild(el('div', 'stepnote', cur.note));
       }
+      if (str(f.shows)) { card.appendChild(el('div', 'label', 'What it shows')); card.appendChild(el('div', 'text', f.shows)); }
+      if (str(f.consequence)) { card.appendChild(el('div', 'label', 'How it produced what you saw')); card.appendChild(el('div', 'text', f.consequence)); }
+      card.appendChild(el('div', 'label', 'Evidence'));
+      list(f.evidence).forEach(function (ev) { cite(card, ev.line, ev.fragment); });
+      if (!list(f.evidence).length) card.appendChild(el('span', 'tag error', 'No citation: this finding is unsupported'));
       box.appendChild(card);
     });
   }
@@ -645,8 +652,11 @@
   /* ---------- wiring ---------- */
   function refresh() { renderChips(); renderOverview(); renderTimeline(); renderDetail(); renderLeft(); }
   function reveal() {
-    var row = document.querySelector('.row[aria-selected=true]');
-    if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest' });
+    var row = document.querySelector('.row[aria-selected=true]'), pane = $('p-timeline');
+    if (!row || pane.scrollHeight <= pane.clientHeight) return;
+    var top = row.offsetTop - pane.offsetTop, room = 70;
+    if (top < pane.scrollTop + room) pane.scrollTop = Math.max(0, top - room);
+    else if (top + row.offsetHeight > pane.scrollTop + pane.clientHeight) pane.scrollTop = top + row.offsetHeight - pane.clientHeight + 8;
   }
   function select(id) {
     state.selected = id;

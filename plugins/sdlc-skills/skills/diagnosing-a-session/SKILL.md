@@ -140,15 +140,25 @@ table of line numbers, and the page is how they check your work.
 3. Copy `assets/trace-viewer.html` to `trace/index.html` when the trace is
    written. Copy it byte for byte; it has nothing to fill in and you never
    edit it.
-4. Check the trace parses, then start the preview from the project root:
+4. Start the preview from the project root:
 
    ```bash
-   python3 -m json.tool .sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/trace/trace.json > /dev/null
    bash scripts/start-server.sh --root .sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/trace --entry index.html
    ```
 
-5. Hand over the printed URL with the report path and the one-line next
-   action. Apply nothing.
+   It prints one line of JSON. Its `url` value is the link to the page.
+5. Give the user that URL as a link they can click, complete with its
+   `?key=` part, on a line of its own. Add the report path and the one-line
+   next action. Apply nothing.
+
+   ```text
+   Session trace: {{url}}
+   Written report: {{report path}}
+   Next action: {{one line}}
+   ```
+
+   - The page shows an error instead of the trace → the trace file does not
+     parse. Fix the file and reload; the link stays the same.
    - `needs python3`, or the preview fails to start → say the page could not
      be served and why, and hand over the report path and the page's file
      path. Install nothing unless asked.
