@@ -242,7 +242,9 @@ yesterday's session?" and it uses `diagnosing-a-session`.
 
 The skill reads the recorded transcript of the session without changing
 anything, and reports what happened in order, with the transcript line behind
-every claim.
+every claim. You get a written report and a local page to explore: the
+findings, a timeline of the session, and the detail of each event, with a
+walkthrough of how each finding came about.
 
 ## Available skills
 
@@ -306,7 +308,7 @@ every claim.
 | `containing-an-incident` | Stops a failure that is reaching users before diagnosing it |
 | `debugging` | Finds the cause of a bug before any fix is proposed |
 | `post-mortem` | Explains how a failure got past the safeguards and what prevents a repeat |
-| `diagnosing-a-session` | Reconstructs what an agent session did from its transcript |
+| `diagnosing-a-session` | Reconstructs what an agent session did from its transcript, as a report and an interactive trace page |
 | `complexity-audit` | Audits existing code for complexity it does not need |
 | `refactor-architecture` | Restructures code whose shape makes every change expensive |
 

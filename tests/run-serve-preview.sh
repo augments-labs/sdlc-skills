@@ -117,6 +117,7 @@ test_copy() { # $1 = path to the serve.py copy under test
 
 test_copy skills/common/viewing-artifacts/scripts/serve.py "viewing-artifacts copy"
 test_copy skills/design/ui-ux-design/scripts/serve.py "ui-ux-design copy"
+test_copy skills/maintenance/diagnosing-a-session/scripts/serve.py "diagnosing-a-session copy"
 
 echo "--- start/stop wrappers"
 S=skills/common/viewing-artifacts/scripts
@@ -163,6 +164,9 @@ echo '<h1>trail view</h1>' > "$project/.sdlc-skills/views/index.html"
 # directory holds only that page: a start command without --entry serves 404
 # here, in CI, instead of in front of a user.
 echo '<h1>visual decision</h1>' > "$project/.sdlc-skills/designs/2026-01-01-fixture/visuals/fixture-decision.html"
+# diagnosing-a-session copies its viewer beside the trace it wrote.
+mkdir -p "$project/.sdlc-skills/evidence/2026-01-01-fixture/trace"
+echo '<h1>session trace</h1>' > "$project/.sdlc-skills/evidence/2026-01-01-fixture/trace/index.html"
 
 fill() { # $1 documented command, $2 pid; fills the placeholders bodies use
   printf '%s' "$1" | sed -e 's/{{YYYY-MM-DD}}/2026-01-01/g' -e 's/{{topic}}/fixture/g' -e 's/{{decision-slug}}/fixture-decision/g' -e "s/{{pid}}/$2/g"
@@ -208,6 +212,7 @@ check_documented() { # $1 body, $2 marker of the page it should serve, $3 file d
 }
 check_documented skills/common/viewing-artifacts/SKILL.md '<h1>trail view</h1>'
 check_documented skills/design/ui-ux-design/SKILL.md '<h1>visual decision</h1>' skills/design/ui-ux-design/references/visual-decisions.md
+check_documented skills/maintenance/diagnosing-a-session/SKILL.md '<h1>session trace</h1>'
 
 echo
 if [ "$fails" -eq 0 ]; then echo "✓ serve preview passes"; else echo "✗ serve preview violations found"; fi

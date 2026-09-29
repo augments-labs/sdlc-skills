@@ -13,7 +13,7 @@ skill.
 | Where | What a result proves | Commands |
 | --- | --- | --- |
 | `scripts/sh/`, all run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
-| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-git-hooks.sh`, and `run-state-identity.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh` |
+| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, and `run-state-identity.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
 | `tests/harnesses/` | Nothing on its own. These files hold how each CLI installs the plugin, and the smoke test drives them | One file per supported CLI |
 
 ## The four gates
@@ -60,12 +60,18 @@ staged. `bash scripts/sh/install-git-hooks.sh --remove` undoes it.
 | The pi extension file | `tests/run-pi-extension.sh` |
 | A `subagent-driven-development` script | `tests/run-sdd-scripts.sh` |
 | The preview server or its wrappers | `tests/run-serve-preview.sh` |
+| The session trace page or its format | `tests/run-trace-viewer.sh` |
 | `scripts/sh/validate-skills.sh` | `tests/run-validate-skills.sh` |
 | `check-skill.sh` | `tests/run-check-skill.sh` |
 | `state-identity.sh` | `tests/run-state-identity.sh` |
 | The git hook installer | `tests/run-git-hooks.sh` |
 
 Every runner answers `--help` with its flags and exit codes.
+
+`run-trace-viewer.sh` has three layers. Its source checks need nothing extra.
+Its mask and syntax checks need `node`, and its behaviour checks need a
+headless Chrome or Chromium. A missing tool skips its layer and says so. In CI
+a skipped layer is a failure.
 
 `run-plugin-smoke.sh` needs the CLI of the agent under test installed, so it
 runs on your machine and not in CI. It installs this tree into a throwaway
