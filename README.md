@@ -1,165 +1,385 @@
 # SDLC skills
 
-SDLC skills is a cross-platform library of engineering skills for coding agents,
-organized by the phases of the software development life cycle. Skills guide the
-work; external checks and accountable decisions govern its results.
+SDLC skills is a library of engineering skills for coding agents. It covers the
+whole software development life cycle, from the first conversation about goals
+to debugging in production, and it works with several agents from one set of
+files.
 
-## Philosophy
+A skill is a short set of instructions your agent loads when a situation calls
+for it: how to write a plan, how to find the cause of a bug, what to check
+before calling work done. You install the library once and the agent picks the
+skills that fit the task in front of it.
 
-- **Toolbox, not pipeline.** Phase folders help discovery. Use the skills that
-  apply to the current task; their preconditions and handoffs determine the path.
-- **Earn every line.** Keep instructions concise and load supporting files when
-  needed. Reuse a current skill body already in context. Discipline skills keep
-  the pressure controls their behavioral evidence supports.
-- **Portable instructions.** Skills use capability tiers and portable actions.
-  Adapters bind them to each harness; discovery and behavior still need evidence
-  from that environment.
-- **Claims need evidence.** Executable checks support correctness claims;
-  revision-bound decisions or controlled rubrics govern judgment and authority.
-  Scale effort through each skill's own rules, preserving required gates.
+## Table of contents
 
-Every skill here is a standard **Agent Skills** skill — a directory holding a
-`SKILL.md` with YAML frontmatter, loadable by any compliant agent, needing no
-bespoke loader or house file format. Where a house rule in this repository
-conflicts with the standard, the standard wins and the house rule is the bug.
-What the standard requires, where the gate enforces it, and where this library
-is deliberately stricter is recorded in
-[`docs/agent-skills-conformance.md`](docs/agent-skills-conformance.md).
+- [How it works](#how-it-works)
+- [Installation](#installation)
+- [A typical workflow](#a-typical-workflow)
+- [When a session goes wrong](#when-a-session-goes-wrong)
+- [Available skills](#available-skills)
+- [Philosophy](#philosophy)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
-The deeper rationale—why claims leave a non-deterministic generator through
-external evidence or decision gates—is in
-[`docs/philosophy.md`](docs/philosophy.md); when a phase is one
-skill versus several is in
-[`docs/skill-granularity.md`](docs/skill-granularity.md).
+## How it works
 
-## The SDLC phases
+When a session starts, the plugin gives your agent a small routing skill called
+`using-sdlc-skills`. It instructs the agent to look through the catalogue and
+load the skills that match what you asked for, before it answers or touches
+anything. On Grok Build and Muse Code this needs one manual step, described in
+their installation sections.
 
-Skills live under `skills/<phase>/<name>/`. The folders are unnumbered (they sort alphabetically on disk); the canonical order is:
+Ask for a new feature and a well-behaved agent sets up an isolated worktree, writes a
+failing test first, and keeps the change to what you asked for. Report a bug
+and it looks for the cause before it proposes a fix. When it thinks the work is
+finished, it runs the checks and reads their output before it says so, then
+asks for a review and asks you what to do with the branch.
 
-1. **planning** — feasibility, scope, and goals → a project brief
-2. **analysis** — the detailed requirements: what the software must do → a spec
-3. **design** — architecture, interfaces, and the build plan
-4. **implementation** — build it
-5. **testing** — does it work, and is it good?
-6. **deployment** — ship it
-7. **maintenance** — debug and evolve after ship
+You do not have to call skills by name, although you can. Every skill is
+addressed as `sdlc-skills:<name>`.
 
-Plus **common** — phase-agnostic and meta skills (authoring skills, communication, handoff).
+Two things are worth knowing up front:
 
-A skill is invoked as `sdlc-skills:<name>` regardless of which phase folder holds it — the phase is organization for humans, not part of the address.
+- **It is a toolbox.** Nothing forces a task through every phase. A one-line
+  fix does not get a project brief. Each skill states when it applies and when
+  to skip it.
+- **The skills guide the agent. Your checks decide the result.** These are
+  instructions to a non-deterministic agent, and nothing enforces that a skill
+  is invoked. A skill can steer an agent toward running the tests, but only
+  the tests can tell you the code works. Keep your CI, reviews, and release
+  controls in place.
+
+## Installation
+
+Installation differs by agent. If you use more than one, install the library
+in each.
+
+Some agents install from a local copy of this repository. For those, clone it
+first:
+
+```bash
+git clone https://github.com/augments-labs/sdlc-skills.git
+```
+
+### Claude Code
+
+1. Register the marketplace:
+
+   ```text
+   /plugin marketplace add augments-labs/sdlc-skills
+   ```
+
+2. Install the plugin:
+
+   ```text
+   /plugin install sdlc-skills@augments-labs
+   ```
+
+### Codex CLI
+
+Codex installs from a local clone.
+
+1. Register the clone as a marketplace:
+
+   ```bash
+   codex plugin marketplace add /path/to/sdlc-skills
+   ```
+
+2. Install the plugin:
+
+   ```bash
+   codex plugin add sdlc-skills@augments-labs-dev
+   ```
+
+### Kimi Code
+
+1. Install from this repository:
+
+   ```text
+   /plugins install https://github.com/augments-labs/sdlc-skills
+   ```
+
+   You can also use the `/plugins` manager and its Custom tab.
+
+2. Reload:
+
+   ```text
+   /reload
+   ```
+
+### OpenCode
+
+Add the plugin to your `opencode.json`, either the global one or the project
+one, then restart OpenCode. The key is named differently in the two
+generations.
+
+OpenCode 1.x:
+
+```json
+{
+  "plugin": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]
+}
+```
+
+OpenCode 2.x:
+
+```json
+{
+  "plugins": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]
+}
+```
+
+To use a local clone instead, name `.opencode/plugins/sdlc-skills.js` inside
+the clone on 1.x, or the clone directory itself on 2.x.
+
+If the skills do not show up, run `opencode run --print-logs` on 1.x or
+`opencode run --standalone --print-logs` on 2.x, and look for the line that
+names the plugin entry point.
+
+### Grok Build
+
+Grok installs from a local clone and needs one extra file, because it has no
+session-start hook that can hand the routing skill to the agent.
+
+1. Install the plugin:
+
+   ```bash
+   grok plugin install /path/to/sdlc-skills --trust
+   ```
+
+2. Create `$GROK_HOME/rules/using-sdlc-skills.md` (the default location is
+   `~/.grok/rules/`) containing this line:
+
+   ```text
+   Invoke the `using-sdlc-skills` skill before acting.
+   ```
+
+### Muse Code
+
+Muse installs from a local clone. From inside the clone, run:
+
+```bash
+bash scripts/sh/install-muse-skills.sh
+```
+
+To remove the skills later:
+
+```bash
+bash scripts/sh/install-muse-skills.sh --remove
+```
+
+Muse 1.3.0 does not load plugins, so this installs the skills one by one and
+the agent can see them, but nothing hands it the routing skill. Start each
+session by asking the agent to invoke `using-sdlc-skills`.
+
+A Muse build that ships plugin support installs `.muse-plugin/plugin.json`
+instead, which declares the session-start hook. This has not been observed on
+a real build.
+
+### pi
+
+pi installs from a local clone:
+
+```bash
+pi install /path/to/sdlc-skills
+```
+
+Add `-l` to register it for the current project only.
+
+### Other agents
+
+Every skill follows the open Agent Skills format: a directory with a `SKILL.md`
+file and YAML frontmatter. An agent that reads that format can load them.
+[`docs/harness-support.md`](docs/harness-support.md) explains what an
+integration needs beyond making the files visible.
+
+### Check that it works
+
+Start a new session and ask for something that should trigger a skill, such as
+"fix this bug" or "let's plan this feature". The agent should say which skill
+it is using before it starts. If it does not, ask it to invoke
+`using-sdlc-skills`, and see the notes for your agent in
+[`docs/harness-support.md`](docs/harness-support.md).
+
+## A typical workflow
+
+Skills live under `skills/<phase>/<name>/`. The phase folders are unnumbered,
+so they sort alphabetically on disk. The order below is the canonical one. The
+phase is for organization only and is not part of a skill's address.
+
+A large project may touch every phase. Most tasks use a few skills.
+
+1. **Planning.** `define-goals`, `scoping`, and `feasibility-check` turn an
+   idea into a project brief: what it is for, what is in and out, and whether
+   it can be delivered.
+2. **Analysis.** `writing-specs` turns settled intent into requirements and
+   acceptance criteria.
+3. **Design.** `system-architecture`, `data-model`, and `ui-ux-design` shape
+   the solution. `writing-plans` breaks it into tasks, and `reviewing-plans`
+   gets a second opinion on a risky plan before you approve it.
+4. **Implementation.** `using-git-worktrees`, a common skill, isolates the
+   work.
+   `executing-plans` runs the plan in the current session, or
+   `subagent-driven-development` hands each task to a fresh subagent.
+   `test-driven-development` and `yagni`, another common skill, keep each
+   change tested and no larger than it needs to be.
+5. **Testing.** `verification-before-completion` runs the checks before any
+   claim that work is done. `requesting-code-review` and
+   `receiving-code-review` handle the review.
+6. **Deployment.** `finishing-a-branch` asks what to do with the branch: push,
+   open a PR, merge, keep, or discard. `release-readiness` decides whether a
+   build is safe to ship.
+7. **Maintenance.** `debugging` finds the cause of a bug before any fix.
+   `containing-an-incident` and `post-mortem` handle failures that reach users.
+
+## When a session goes wrong
+
+Sometimes an agent skips a step, does something nobody asked for, or loses
+track of the task. Ask it "why did you do that?" or "what went wrong in
+yesterday's session?" and it uses `diagnosing-a-session`.
+
+The skill reads the recorded transcript of the session without changing
+anything, and reports what happened in order, with the transcript line behind
+every claim.
 
 ## Available skills
 
-| Phase | Skill | What it does |
-| ----- | ----- | ------------ |
-| common | `using-sdlc-skills` | Route from the current task state and real preconditions; high-risk transformations cannot bypass their migration and assurance entry gates |
-| common | `writing-skills` | Author concise skills and evaluate their behavior |
-| common | `viewing-artifacts` | View the state and consistency of briefs, specs, designs, plans, and execution in a local artifact viewer |
-| planning | `define-goals` | At project kickoff — pin the objective and measurable success criteria into the project brief |
-| planning | `scoping` | Draw the boundary — what's in, what's explicitly out, the MVP cut |
-| planning | `feasibility-check` | Assess whole-initiative achievability and give the accountable owner an evidence-bound go / no-go / go-if recommendation |
-| analysis | `writing-specs` | Turn a goal or feature into a requirements spec — testable requirements, acceptance criteria, edge cases |
-| common | `clarifying-intent` | Resolve only material unknowns the codebase cannot answer, and require direct answers for decisions rather than inferring approval |
-| common | `prototyping` | Answer one uncertain design or feasibility question with a throwaway spike, then delete it |
-| common | `mapping-the-codebase` | Before changing unfamiliar code, go up a layer and map the relevant modules and their callers in the project's own vocabulary |
-| common | `handoff` | Write a durable, resumable handoff when a session ends — goal, state, decisions, gotchas, and the one concrete next step |
-| common | `using-git-worktrees` | Create an owned, gitignored git worktree on a proven base with a real baseline and isolated runtime state before edits, then checkpoint locally as the work goes; integration and cleanup remain separate decisions |
-| common | `dispatching-parallel-agents` | Fan out independent work only with exclusive ownership and isolated state, then inspect raw results and run a combined gate |
-| common | `yagni` | Build exactly the accepted scope—neither speculative additions nor incomplete delivery—and preserve inherited correctness, compatibility, recovery, and assurance commitments |
-| design | `system-architecture` | Design the target system—traceable components, trust/data paths, failure and recovery behavior, operational views, and justified seams |
-| design | `data-model` | Model the domain's concepts, relationships, state transitions, and invariants — stored or not — before the code that manipulates them |
-| design | `ui-ux-design` | Design user flows, visual direction, layout, unhappy states, and evidence-backed interface alternatives before implementation |
-| design | `coding-standards` | Set the project's conventions and domain vocabulary so all contributors write code like one author |
-| design | `architecture-decisions` | Record significant, hard-to-reverse choices as ADRs — options weighed, decision, why the alternatives were rejected |
-| design | `migration-strategy` | Define preservation, translation, partition, convergence, cutover, abort, and rollback contracts for high-risk transformations |
-| design | `writing-plans` | Convert approved inputs into independently loadable contracts; high-risk plans may build missing gates first but cannot start target phases before entry |
-| design | `reviewing-plans` | Put one exact plan version in front of an independent reviewer before approval — required for high-risk plans — and return every blocker to the plan's author as a successor |
-| implementation | `test-driven-development` | Let a failing behavior gate lead new behavior and a deliberately falsified independent green oracle lead preservation work |
-| implementation | `executing-plans` | Advance a directly approved plan through evaluator-backed task, shard, phase, and integrated state transitions |
-| implementation | `subagent-driven-development` | Run an approved plan's tasks through a cold implementer, an independent task reviewer, and a re-reviewer, each carrying only its filled brief |
-| testing | `verification-before-completion` | Bind a real check and its raw output to the exact state, artifact, environment, platform, and build mode before making a claim |
-| testing | `requesting-code-review` | Freeze an exact candidate and challenge it with risk-scaled independent review, including separate equivalence and adversarial roles for high-risk transformations |
-| testing | `receiving-code-review` | Inventory and verify every revision-bound finding, resolve conflicts by evidence, and re-review any changed candidate |
-| testing | `security-audits` | Audit the changed attack surface and trust boundaries with threat-specific gates; a separate fixer cannot self-approve the security verdict |
-| testing | `verification-strategy` | Design a project- or initiative-wide risk-to-gate matrix: thresholds, environments, cadence, evidence, ownership, promotion wiring, and failure response |
-| testing | `visual-ui-verification` | Drive an integrated GUI or TUI across accepted visual conditions, inspect candidate-bound frames, and return a calibrated evidence-backed verdict |
-| deployment | `finishing-a-branch` | Classify the real checkout, finalize only with authorized history changes, verify the integrated result, and make explicit integration and owned-cleanup decisions |
-| deployment | `release-readiness` | Judge an immutable artifact set for one named promotion; later stages consume observed canary/soak evidence rather than borrowing readiness from an earlier verdict |
-| maintenance | `containing-an-incident` | Stop live user impact with the narrowest reversible lever, prove it stopped from the outside signal, and record the mitigation as reversible debt before diagnosing |
-| maintenance | `debugging` | Establish causal root cause through deterministic or quantified probabilistic evidence before changing behavior |
-| maintenance | `post-mortem` | Reconstruct the escape path and carry owned corrective controls through falsification, enforcement, rollout, and effectiveness review |
-| maintenance | `diagnosing-a-session` | Reconstruct from a session's own transcript what the run actually did, read-only, and report where it went wrong with a transcript line behind every claim |
-| maintenance | `complexity-audit` | Audit a bounded existing module or codebase for accidental complexity through read-only, evidence-bound keep, simplify, remove, decision, and investigate findings |
-| maintenance | `refactor-architecture` | Improve measured structural friction under a falsified preservation gate and reversible, reviewable slices |
+### Planning
 
-## Installation and support
+| Skill | What it does |
+| --- | --- |
+| `define-goals` | Pins down what a project is for: the objective, the stakeholders, how success is measured |
+| `scoping` | Draws the boundary: what is in, what is out, and what is enough for the goal |
+| `feasibility-check` | Checks whether an initiative can be delivered before you commit to it |
 
-The catalogue contains every canonical skill across all seven phases and `common/`.
+### Analysis
 
-Each supported harness has an adapter:
+| Skill | What it does |
+| --- | --- |
+| `writing-specs` | Writes requirements, acceptance criteria, and edge cases for settled intent |
 
-| Harness | Adapter | Routing support |
-| --- | --- | --- |
-| Claude Code | `.claude-plugin/` | `SessionStart` router injection |
-| Codex CLI | `plugins/sdlc-skills/`, listed in `.agents/plugins/marketplace.json` | bundled `SessionStart` router |
-| Kimi Code | `.kimi-plugin/` | session-start router and tool bindings |
-| OpenCode | `.opencode/`, entered through the root `index.js` | 1.x: system-context router injection and tool bindings. 2.x: skill registration plus router injection into the first user message. The install test proves a listed skill inventory on 1.x and a loaded plugin on 2.x |
-| Grok Build | reads `.claude-plugin/plugin.json` and `hooks/hooks.json` as installed — no separate manifest | no session-start hook on 1.0.40 reaches the prompt; a `$GROK_HOME/rules/` file nudges `using-sdlc-skills` first as a global rule instead of an injected router body |
-| Muse Code | `.muse-plugin/` for a build with plugin support; `scripts/sh/install-muse-skills.sh` installs skill by skill on a build without it | the manifest declares a `SessionStart` hook, but 1.3.0 loads no plugin, so the per-skill route gives discovery only — the router skill is listed and has to be invoked |
-| pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` router injection via `appendSystemPrompt`; `session_compact` re-appends it into the in-memory compaction entry, after pi has already persisted the entry — a resumed session relies on `before_agent_start` again. The offline test proves the extension's own registration and injection; the harness test proves the package is installed and loaded, since 0.86.1 has no non-interactive skill dump |
+### Design
 
-`AGENTS.md` is the canonical contributor guide. `GEMINI.md` symlinks to it and
-`CLAUDE.md` is a short pointer to it, so a harness that reads its own
-instructions file gets the same guidance from one source, even one that
-refuses a symlinked instructions file.
+| Skill | What it does |
+| --- | --- |
+| `system-architecture` | Designs components, boundaries, data flow, and failure handling |
+| `data-model` | Defines domain concepts, relationships, state transitions, and invariants |
+| `ui-ux-design` | Designs an interface's flow, states, layout, and visual direction before it is built |
+| `coding-standards` | Settles a project's naming, patterns, and vocabulary |
+| `architecture-decisions` | Records a hard-to-reverse technical decision and the options weighed |
+| `migration-strategy` | Plans how a rewrite or migration keeps behavior through cutover and rollback |
+| `writing-plans` | Breaks approved work into ordered tasks, each with a way to know it is done |
+| `reviewing-plans` | Gets an independent review of a plan before you approve it |
 
-Because the skills are portable Markdown invoked by name, other harnesses can
-adopt them — each proven by its own tests when added; see
-[`docs/harness-support.md`](docs/harness-support.md).
+### Implementation
 
-- **Claude Code**: `/plugin marketplace add augments-labs/sdlc-skills` then `/plugin install sdlc-skills@augments-labs` — installs the plugin and its `SessionStart` router injection.
-- **Codex CLI**: for local development, register this checkout as a marketplace with `codex plugin marketplace add /path/to/sdlc-skills`, then install `sdlc-skills@augments-labs-dev` — the bundled `SessionStart` hook carries the router.
-- **Kimi Code**: `/plugins install https://github.com/augments-labs/sdlc-skills` (or the `/plugins` manager, Custom tab), then `/reload` — installs the plugin and its session-start router.
-- **OpenCode**: add the same git package spec to `opencode.json` (global or project), then restart — `"plugin": ["sdlc-skills@git+https://github.com/augments-labs/sdlc-skills.git"]` on 1.x, `"plugins": [...]` (same spec) on 2.x; a local checkout works too, named as `.opencode/plugins/sdlc-skills.js` on 1.x or the checkout directory itself on 2.x. If skills don't show up, run `opencode run --print-logs` (1.x) or `opencode run --standalone --print-logs` (2.x) and look for the line naming the resolved entry point.
-- **Grok Build**: `grok plugin install /path/to/sdlc-skills --trust`, then create `$GROK_HOME/rules/using-sdlc-skills.md` (default `~/.grok/rules/`) with one line telling Grok to invoke `using-sdlc-skills` before acting — Grok reads the Claude plugin manifest directly but has no session-start hook that reaches the prompt, so this rules file is what nudges the router.
-- **Muse Code**: run `bash scripts/sh/install-muse-skills.sh` from a checkout (`bash scripts/sh/install-muse-skills.sh --remove` to undo) — on 1.3.0, which answers `plugins are not available in this build`, this gives discovery only, so invoke `using-sdlc-skills` yourself at the start of a session. A build that does ship plugin support instead installs `.muse-plugin/plugin.json`, whose manifest declares the same `SessionStart` hook — inferred, not observed.
-- **pi**: `pi install /path/to/sdlc-skills` (or `-l` to register it project-locally) — registers the checkout by reference and injects the router through `before_agent_start`, re-applied into the in-memory compaction entry on `session_compact`.
+| Skill | What it does |
+| --- | --- |
+| `test-driven-development` | Makes a test fail for the right reason, then makes it pass |
+| `executing-plans` | Runs an approved plan task by task in the current session |
+| `subagent-driven-development` | Runs an approved plan through fresh subagents, with a reviewer on each task |
 
-See [`docs/harness-support.md`](docs/harness-support.md) for everything measured about each adapter's lifecycle and limits.
+### Testing
 
-## Proactive skill use
+| Skill | What it does |
+| --- | --- |
+| `verification-before-completion` | Runs the checks and reads their output before any claim that work is done |
+| `requesting-code-review` | Gets an independent review of a change before it is pushed or merged |
+| `receiving-code-review` | Checks review feedback on its merits before acting on it |
+| `security-audits` | Audits what an attacker could make a change do |
+| `verification-strategy` | Designs which checks a project runs, what each catches, and when |
+| `visual-ui-verification` | Checks a running interface across states, screen sizes, and themes |
 
-Each adapter supplies the full `using-sdlc-skills` body through its session-start
-mechanism. The router requires applicable skills to load before action;
-catalogue names and descriptions identify candidates, while explicit requests
-and loaded skill handoffs also direct invocation. Current bodies already in
-context can be reused.
+### Deployment
 
-This is an instruction to a non-deterministic agent, not enforced invocation.
-Project tests, review, CI, and release controls govern whether results advance.
-See [`docs/activation.md`](docs/activation.md) for the distinction.
+| Skill | What it does |
+| --- | --- |
+| `finishing-a-branch` | Takes a finished branch through the choice you make: push, PR, merge, keep, or discard |
+| `release-readiness` | Decides whether a build is safe to release, deploy, or publish |
 
-Adapters register no tool, prompt, or turn-end hooks. They supply the router
-again after compaction, which replaces the transcript rather than carrying
-injected text forward. The current lifecycle policy, its evidence limits, and the packaging
-step that keeps the Codex mirror current are documented once in
-[`docs/harness-support.md`](docs/harness-support.md).
+### Maintenance
 
-## Contributing and testing
+| Skill | What it does |
+| --- | --- |
+| `containing-an-incident` | Stops a failure that is reaching users before diagnosing it |
+| `debugging` | Finds the cause of a bug before any fix is proposed |
+| `post-mortem` | Explains how a failure got past the safeguards and what prevents a repeat |
+| `diagnosing-a-session` | Reconstructs what an agent session did from its transcript |
+| `complexity-audit` | Audits existing code for complexity it does not need |
+| `refactor-architecture` | Restructures code whose shape makes every change expensive |
 
-Read [`AGENTS.md`](AGENTS.md) before changing the library. It defines the PR
-requirements, authoring policy, and structural gate. For skill changes, use
-`writing-skills` and run the gates. See [`docs/testing.md`](docs/testing.md) for
-what each check establishes.
+### Common
+
+These skills are not tied to a phase. They live in `skills/common/`.
+
+| Skill | What it does |
+| --- | --- |
+| `using-sdlc-skills` | Routes each task to the skills it needs |
+| `clarifying-intent` | Asks the questions that settle what you want before work is built on a guess |
+| `prototyping` | Answers an uncertain question with a throwaway prototype |
+| `mapping-the-codebase` | Maps how a region of code fits together before it is changed |
+| `using-git-worktrees` | Creates an isolated worktree for a task and checkpoints work there |
+| `dispatching-parallel-agents` | Splits independent work across parallel agents |
+| `yagni` | Keeps a change to what the task needs, and makes sure that part is complete |
+| `handoff` | Writes a handoff so another session or agent can continue unfinished work |
+| `viewing-artifacts` | Shows the state of briefs, specs, designs, plans, and execution in a local viewer |
+| `writing-skills` | Guides writing and editing the skills in this library |
+
+## Philosophy
+
+- **Toolbox, not pipeline.** Use the skills that fit the task. Each skill
+  states its own preconditions and what comes next.
+- **Claims need evidence.** "It works" is backed by a check that ran, and an
+  approval is a decision somebody made. An agent's confidence is neither.
+- **Every line earns its place.** Skills stay short, and supporting files load
+  only when they are needed.
+- **Portable.** Skills name no vendor, model, or tool. Each agent's adapter
+  binds them to what that agent provides.
+
+[`docs/philosophy.md`](docs/philosophy.md) explains the reasoning.
+
+## Documentation
+
+| Document | What it covers |
+| --- | --- |
+| [`docs/philosophy.md`](docs/philosophy.md) | Why skills guide the work and external checks judge it |
+| [`docs/activation.md`](docs/activation.md) | How the agent finds and loads skills, and what that does not guarantee |
+| [`docs/harness-support.md`](docs/harness-support.md) | How each supported agent is integrated, and how to add another |
+| [`docs/skill-granularity.md`](docs/skill-granularity.md) | When a phase is one skill and when it is several |
+| [`docs/testing.md`](docs/testing.md) | The checks this repository runs and what each one proves |
+| [`docs/agent-skills-conformance.md`](docs/agent-skills-conformance.md) | How the library follows the Agent Skills format |
+
+## Contributing
+
+Contributions are welcome. The short version:
+
+1. Fork the repository and create a branch from `dev`.
+2. Make one focused change that solves a problem you actually hit.
+3. If you are changing a skill, follow the `writing-skills` skill.
+4. Run the checks:
+
+   ```bash
+   bash scripts/sh/validate-skills.sh
+   ```
+
+5. Open a pull request against `dev` and fill in the template.
+
+[`CONTRIBUTING.md`](CONTRIBUTING.md) has the full guide, and
+[`docs/testing.md`](docs/testing.md) explains the checks.
+
+## License
+
+MIT. See [`LICENSE`](LICENSE).
 
 ## Acknowledgements
 
-This library draws on prior art and ongoing work from across the
-multi-agent ecosystem:
+This library draws on prior work from across the coding-agent community:
 
-- [**Superpowers**](https://github.com/obra/superpowers) —
-  A complete software development methodology for coding agents.
-- [**Matt Pocock skills**](https://github.com/mattpocock/skills) —
-  Agent skills for real engineering.
-- [**Ponytail**](https://github.com/DietrichGebert/ponytail) —
-  The "laziest senior dev" discipline that inspired the `yagni` skill.
+- [**Superpowers**](https://github.com/obra/superpowers): a complete software
+  development methodology for coding agents.
+- [**Matt Pocock skills**](https://github.com/mattpocock/skills): agent skills
+  for real engineering.
+- [**Ponytail**](https://github.com/DietrichGebert/ponytail): the "laziest
+  senior dev" discipline that inspired the `yagni` skill.

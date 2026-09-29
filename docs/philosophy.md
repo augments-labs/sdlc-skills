@@ -1,71 +1,101 @@
 # The Generator and the Gate
 
-A coding agent can generate useful work and still misjudge it. The library uses
-instructions to guide the work and external evidence to assess its results.
-Neither confidence nor forceful wording establishes correctness.
+A coding agent can produce useful work and still be wrong about how good it
+is. It can write a function, report that the tests pass, and be mistaken on
+both counts, with the same confidence it has when it is right.
 
-## What a gate establishes
+This library is built around that fact. Skills guide the work. Something
+outside the agent judges the result. We call that outside thing a gate.
 
-An executable check decides a declared predicate for a particular candidate and
-environment. Its acceptance supports the requirements its assertions actually
-cover, under their stated assumptions. A deterministic check can be incomplete;
-a sampled test can miss an intermittent failure. Inspect the evidence and keep
-those limits visible.
+## What a gate is
 
-Judgment and authority need a different boundary. Designs, product preferences,
-and integration decisions use controlled review or an accountable decision bound
-to the exact version and action. Approval authorizes that transition; it is not
-proof of every correctness claim.
+A gate is anything that accepts or rejects a result without relying on the
+agent's opinion of it. There are two kinds.
 
-| Skill | Generated work or claim | Required evidence |
+**An executable check** answers a question about correctness. A test, a
+compiler, a linter, or a validator runs against one exact version of the work
+and returns a verdict. The verdict covers what the check actually asserts and
+nothing more. A passing test suite says nothing about a requirement no test
+covers, and a test that passed once can still miss a failure that only happens
+sometimes. So read the output, and keep its limits in view.
+
+**An accountable decision** answers a question of judgment or authority. No
+test can say whether a design is the right one, or whether a branch should be
+merged. A person decides, or a review against a fixed rubric does, and the
+decision applies to one exact version and one action. Approval lets that step
+go ahead. It does not prove the work is correct.
+
+Here is how some of the skills pair a claim with the evidence it needs:
+
+| Skill | The claim | The evidence |
 | --- | --- | --- |
-| `test-driven-development` | New or preserved behavior | New behavior: relevant RED then GREEN; preservation: independent GREEN, controlled falsification, restored GREEN |
-| `verification-before-completion` | A claim that work is done | Actual check results bound to the current candidate and conditions |
-| `writing-plans` / `executing-plans` | An executable plan and its implementation | Per-task Evaluators and integrated plan Acceptance |
-| `debugging` | A causal explanation and fix | Reproduction or quantified intermittent evidence that distinguishes the hypothesis |
-| Planning and design skills | Intent and proposed structure | Revision-bound review, rubric, and accountable decision |
+| `test-driven-development` | New or preserved behavior works | For new behavior, a test that fails and then passes. For preserved behavior, a passing check that is broken on purpose to prove it can fail, then restored |
+| `verification-before-completion` | The work is done | Real check results, tied to the current version and conditions |
+| `writing-plans` and `executing-plans` | The plan was carried out | An evaluator for each task, and an acceptance check for the whole plan |
+| `debugging` | This is the cause, and this fixes it | A reproduction, or measured evidence for an intermittent failure, that separates this cause from the others |
+| Planning and design skills | This is the right intent and structure | A review of one exact version, a rubric, and a decision somebody owns |
 
 ## Why instructions still matter
 
-Instructions direct an agent toward the right check before it skips a step or
-makes an unsupported claim. A discipline skill keeps a hard stop, concrete red
-flags, or a rationalization table where pressure can make that omission tempting.
-Those instructions remain probabilistic; emphasis gets the agent to a gate and
-cannot replace its result.
+If gates judge the result, why write instructions at all? Because a gate only
+helps when the agent reaches it. Instructions steer the agent toward the right
+check before it skips a step or makes a claim it cannot back up.
 
-Descriptions serve discovery. They name the situations in which a skill applies
-and distinguish nearby skills. Loaded bodies carry procedures and handoffs.
-The router requires applicable skills to load before action; see
-[`activation.md`](activation.md) for its limits.
+Some steps are tempting to skip under pressure. The skills that guard those
+steps use hard stops, lists of warning signs, and tables that answer the usual
+excuses, placed exactly where the temptation appears.
 
-Where enforcement is needed, the adopting project wires checks into its actual
-integration and release paths. A CI check blocks the transition it controls;
-it does not automatically govern unwired paths. This library supplies guidance
-for choosing and binding gates, not a universal enforcement system.
+Instructions remain probabilistic. Strong wording makes an agent more likely
+to reach a gate. It never replaces the gate's result, and nothing becomes true
+by being said forcefully.
 
-## Evidence and authority retain their source
+Descriptions and bodies do different jobs. A description helps the agent find
+a skill: it names the situations where the skill applies and separates it from
+its neighbors. The body holds the procedure and says which skill comes next.
+[`activation.md`](activation.md) explains how skills are found and loaded, and
+where that stops.
 
-An agent's summary that tests passed is not the raw result. A field labeled
-`Approval:` is not, by itself, an authenticated decision. Keep evidence bound to
-its source: the check output and candidate, or the current user answer or trusted
-receipt identifying the actor, version, and permitted action.
+## Enforcement belongs to your project
 
-Missing or stale evidence leaves the affected claim unresolved. A passing
-behavioral sample does not cancel an observed failure or demonstrate that an
-instruction is unnecessary. Testing narrows uncertainty; report what was
-observed and what remains unproven.
+This library gives guidance for choosing checks and tying them to the work. It
+is not an enforcement system.
 
-## Scale guidance to the work
+When something must be enforced, the project wires the check into its real
+integration and release paths. A CI check blocks the step it controls, and
+only that step. A path that bypasses CI is not covered by it.
 
-Skills form a toolbox, not a mandatory walk through every phase. Each skill's
-scope and scale-down rules govern how much process applies. Some gates, including
-verification of completion claims, have no skip; use the smallest check that can
-fail the relevant claim.
+## Keep evidence tied to its source
 
-Keep guidance that changes actions, preserves required information, or resolves
-a demonstrated ambiguity. Remove repetitions and speculative procedure. Concision
-means fewer unnecessary instructions, not fewer words at the cost of meaning.
+An agent's summary that the tests passed is not the test output. A field
+labelled `Approval:` is not, by itself, a decision anyone made.
 
-A constraint earns its context only where the agent would otherwise violate it.
-Ask of every line "would the agent get this wrong without this?" A line the agent
-already follows unprompted costs attention on every load and prevents nothing.
+Evidence stays attached to where it came from. For a check, that is the raw
+output and the version it ran against. For a decision, that is the user's
+current answer, or a trusted record that names who decided, which version, and
+which action they allowed.
+
+When evidence is missing or out of date, the claim stays open. One passing run
+does not cancel a failure that was observed, and it does not show that an
+instruction is unnecessary. Testing narrows uncertainty. Report what was
+observed and what is still unproven.
+
+## Scale the process to the work
+
+The skills are a toolbox. Nothing requires a task to walk through every phase.
+Each skill says when it applies and how to scale it down for small work.
+
+A few gates have no skip. Checking a claim that work is done is one of them.
+Even there, use the smallest check that could prove the claim wrong.
+
+## Keep what changes behavior
+
+Every line in a skill costs attention each time the skill is loaded, so each
+line has to earn its place. The question to ask is: would the agent get this
+wrong without it?
+
+Keep guidance that changes what the agent does, preserves information it
+needs, or settles a confusion that has actually been seen. Remove repetition,
+and remove procedure written for situations that may never happen.
+
+Being concise means fewer unnecessary instructions. It does not mean squeezing
+the necessary ones until they are hard to read.
