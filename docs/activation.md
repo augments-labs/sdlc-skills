@@ -1,59 +1,90 @@
 # Activation: routing and enforcement
 
-The agent must reach the applicable skill, then produce a result that meets the
-project's gates. Those are different claims with different evidence.
+Two separate things have to go right. The agent has to reach the skill that
+applies, and the work it produces has to pass the project's checks. This page
+explains how the first one works, what it cannot guarantee, and why the second
+one is what decides the outcome.
 
-## How routing works
+## How the agent finds a skill
 
-Catalogue names and descriptions nominate skills for the current situation.
-Explicit user requests and handoffs from loaded skills also cause invocation;
-a downstream skill need not match the original opening. Descriptions therefore
-focus on when a skill applies, including boundaries with neighboring skills.
-The body supplies its procedure, preconditions, skips, and next owner.
+The agent sees the name and description of every skill in the catalogue. A
+description says when the skill applies and where it stops, so the agent can
+tell it apart from its neighbors. The body is loaded afterwards and holds the
+procedure, the preconditions, the conditions for skipping, and the skill that
+comes next.
 
-The resident `using-sdlc-skills` router requires loading applicable bodies before
-action and checking routing again when state changes. Its entry examples help
-start the work; the current owning skill governs the actual transition. A body
-already loaded and current can be applied without another read. A candidate
-skill is set aside according to its own scope or skip conditions.
+A skill is invoked in one of three ways:
 
-For a high-risk transformation, for example, `migration-strategy` classifies the
-work and establishes the required assurance entry conditions. A generic opening
-classifier cannot substitute for that assessment.
+- Its description matches the current situation.
+- The user asks for it by name.
+- A skill that is already loaded hands off to it.
 
-## Instructions do not enforce invocation
+The third way means a skill later in a task does not have to match what the
+user first asked for. The skill before it names it.
 
-Adapters supply the full router body as session context, removing a separate
-step to load that body. They register no tool, prompt, or turn-end enforcement
-hooks. Packaging and lifecycle details belong in
-[`harness-support.md`](harness-support.md).
+## The router
 
-Compaction replaces the transcript with a summary, and text injected at session
-start is not carried into the replacement, so the body is supplied again at that
-boundary wherever the harness exposes it. A post-compaction hook whose output
-only reports the event, rather than entering the context it produced, cannot
-carry the router and is left unregistered.
+`using-sdlc-skills` is the routing skill. Where the harness allows it, the
+adapter puts it in context at the start of every session. It tells the agent to load every skill that might apply before
+it acts, and to check again whenever the state of the work changes: a phase
+ends, a decision comes back, feedback arrives.
 
-The router body stays within 700 words, because every session loads all of it.
+The router gives examples of where to start. Once a skill is loaded, that
+skill decides what happens next. A body that is already in context and still
+current is reused without being read again. A skill is set aside only when its
+own scope or skip conditions show that it does not fit.
 
-Resident instructions can influence a non-deterministic agent; they do not prove
-that another skill loaded or that its procedure was followed. A live activation
-observation describes one run in its harness and conditions. Reading a body,
-following it, and producing an acceptable result are separate observations.
+Some assessments cannot be made from the opening message alone. For a
+high-risk transformation, `migration-strategy` classifies the work and sets
+the conditions that must hold before it starts. A general classifier reading
+the first message cannot stand in for that assessment.
 
-## Gates govern the result
+The router body is kept to about 700 words, because every session loads all
+of it.
 
-Tests, compilers, static analysis, controlled review, differential checks, and
-release criteria inspect artifacts or promotion state. Projects bind applicable
-gates to specific candidates and wire them into CI, protected integration paths,
-and release controls. The commands, thresholds, environments, and failure
-responses belong to the adopting project; this library supplies no universal
-project CI template.
+## Instructions do not enforce anything
 
-Acceptance supports the claims covered by those checks and decisions. A green
-but incomplete check does not establish an untested requirement. Keep raw
-failures, missing evidence, and uncertainty visible.
+Each adapter puts the full router body into the session context, so the agent
+does not need a separate step to load it. Grok Build and Muse Code 1.3.0 are
+the exceptions, because neither offers a way to do it. That is all the adapters do. They
+register no hook on tool calls, on prompts, or at the end of a turn.
 
-Structural checks establish packaging and script predicates. Behavioral tests
-observe sampled actions and outputs. Neither is a substitute for the other; see
-[`testing.md`](testing.md) for interpreting their results.
+Compaction needs special care. When a long session is compacted, the
+transcript is replaced by a summary, and text that was injected at session
+start is not carried into the replacement. The adapters therefore supply the
+router again after compaction, on every harness that exposes that moment. Some
+harnesses also offer a hook that only reports that compaction happened. Its
+output never enters the new context, so it cannot carry the router, and the
+adapters leave it unregistered. [`harness-support.md`](harness-support.md) has
+the details for each agent.
+
+Instructions in context influence an agent. They do not prove that a skill was
+loaded, or that its procedure was followed. These are three separate
+observations:
+
+1. The agent read the skill body.
+2. The agent followed it.
+3. The result was acceptable.
+
+Watching a skill activate once describes one run, on one agent, under one set
+of conditions.
+
+## Gates decide the result
+
+Tests, compilers, static analysis, reviews, differential checks, and release
+criteria inspect the
+work itself. The project that adopts this library decides which checks apply,
+ties them to specific versions of the work, and wires them into CI, protected
+branches, and release controls.
+
+The commands, thresholds, environments, and responses to failure belong to
+that project. This library ships no universal CI template.
+
+Passing a check supports the claims that check covers. A green result from an
+incomplete check says nothing about a requirement nobody tested. Keep raw
+failures, missing evidence, and open questions visible.
+
+Two kinds of check are easy to confuse. Structural checks confirm that
+packaging and scripts are in order. Behavioral tests observe what an agent
+does in a sample of runs. Neither replaces the other.
+[`testing.md`](testing.md) covers how to read the checks in this repository.

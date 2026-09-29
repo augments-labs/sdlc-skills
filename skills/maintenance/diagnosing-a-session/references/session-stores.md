@@ -83,14 +83,17 @@ The common on-disk format is JSON Lines: one self-contained JSON object per
 line, appended as the session runs. The fields that matter for a diagnosis,
 under whatever names a given format gives them:
 
-| What it carries | Typical field | Why it matters |
-| --- | --- | --- |
-| Record kind | `type` | separates a user turn, an agent turn, and the tool's own bookkeeping |
-| Wall-clock time | `timestamp` | builds the timeline |
-| Identity and parent | `uuid`, `parentUuid` | reconstructs order when lines interleave |
-| Side-thread marker | an `isSidechain`-style boolean | marks a subagent's work rather than the main thread |
-| Working directory and branch | `cwd`, `gitBranch` | shows where a write landed |
-| The turn itself | `message` with a role and content blocks | holds the prompt text, the agent's text, tool calls, and tool results |
+| What it carries | Why it matters |
+| --- | --- |
+| The kind of record | separates a user turn, an agent turn, and the tool's own bookkeeping |
+| Wall-clock time | builds the timeline |
+| An identifier and its parent's | reconstructs order when lines interleave |
+| A side-thread flag | marks a subagent's work rather than the main thread |
+| Working directory and branch | shows where a write landed |
+| The turn itself, with a role and content blocks | holds the prompt text, the agent's text, tool calls, and tool results |
+
+Read the first lines of the file to learn which names this format uses, and
+search by those names.
 
 A tool call and its result are separate blocks, usually on separate lines: a
 call with no matching result line is itself a finding.
@@ -110,7 +113,7 @@ sed -n '1200,1240p' "$T" | cut -c1-400       # a slice, clipped
 For a JSON Lines file, extracting one field per line keeps a scan cheap:
 
 ```bash
-grep -n '"type":"user"' "$T" | cut -c1-200 | head -40
+grep -n '"{{kind-field}}":"{{user-kind}}"' "$T" | cut -c1-200 | head -40
 ```
 
 Every hit gives a line number. That number, with a short distinctive
