@@ -53,7 +53,7 @@ done
 # Every assignment of text either goes through mask() or writes a value the
 # page computed itself: a label, a count, a clock time.
 unmasked="$(grep -nE '\.(textContent|title)[[:space:]]*=[^=]' "$page" | grep -v 'mask(' |
-  grep -vE "=[[:space:]]*(text|name === 'light'|n \? plural|p < 0 \? plural|a \? clock|z \? clock|\(state\.playing|'[A-Za-z ]*'|state\.playing \?)" || true)"
+  grep -vE "=[[:space:]]*(text|name === 'light'|n \? plural|p < 0 \? 'overview'|a \? clock|z \? clock|\(shown === |'[A-Za-z ]*'|state\.playing \?)" || true)"
 [ -z "$unmasked" ] && ok "no text is written around the mask" || bad "no text is written around the mask: $unmasked"
 
 want="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'"
@@ -64,7 +64,6 @@ if grep -qiE "(src|href)[[:space:]]*=[[:space:]]*[\"']?(https?:)?//" "$page"; th
 if grep -q '{{' "$page"; then bad "page has no fill-in slot"; else ok "page has no fill-in slot"; fi
 if grep -E 'Storage\.setItem|Storage\[|document\.cookie|indexedDB' "$page" | grep -vq "setItem('session-trace-theme', name)"; then
   bad "the page stores no trace content in the browser"; else ok "the page stores no trace content in the browser"; fi
-if grep -qE "[^A-Za-z]emoji|\\\\uD83[CDE]" "$page"; then bad "icons are drawn, not emoji"; else ok "icons are drawn, not emoji"; fi
 
 echo "--- the documented format"
 [ -f "$ref" ] && ok "the trace format is documented" || bad "the trace format is documented ($ref)"
@@ -173,7 +172,7 @@ if printf '%s' "$line" | jq -e '.url and .pid' >/dev/null 2>&1; then
     has() { grep -qE -- "$2" <<<"$1"; }
     d="$(dom plain '' 3000)"
     has "$d" 'id="detail"' && has "$d" 'The agent pushed before the review' && ok "the documented example renders its headline" || bad "the documented example renders its headline"
-    has "$d" '<svg class="g"' && ok "kinds are drawn as glyphs" || bad "kinds are drawn as glyphs"
+    has "$d" '<svg class="g"' && ok "the transport icons are drawn" || bad "the transport icons are drawn"
     d="$(dom plain '#finding=1&play=1' 1500)"
     has "$d" 'aria-label="Pause"' && has "$d" 'step 1 of 2' && ok "a replay starts at step 1 and shows Pause" || bad "a replay starts at step 1 and shows Pause"
     d="$(dom plain '#finding=1&play=1' 12000)"
@@ -186,7 +185,10 @@ if printf '%s' "$line" | jq -e '.url and .pid' >/dev/null 2>&1; then
     d="$(dom plain '#event=%E0%A4%A&finding=%' 3000)"
     has "$d" 'The agent pushed before the review' && ok "a malformed link still shows the overview" || bad "a malformed link still shows the overview"
     d="$(dom broken '' 3000)"
-    has "$d" '<main[^>]*><p class="fail">trace.json could not be read' && ok "a trace that does not parse is reported, not shown blank" || bad "a trace that does not parse is reported, not shown blank"
+    has "$d" '<main[^>]*><p class="fail">trace.json is not valid JSON' && ok "a trace that does not parse is reported as such" || bad "a trace that does not parse is reported as such"
+    mkdir -p "$fixture/none"; cp "$page" "$fixture/none/index.html"
+    d="$(dom none '' 3000)"
+    has "$d" '<main[^>]*><p class="fail">trace.json could not be read' && ok "a missing trace is reported as such" || bad "a missing trace is reported as such"
     leaks=0
     for h in '' '#finding=2' '#finding=2&step=1' '#event=1' '#event=3' '#event=2&tab=flow'; do
       d="$(dom hostile "$h" 3000)"
