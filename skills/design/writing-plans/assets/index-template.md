@@ -69,8 +69,9 @@ conformance evaluator; no row may be inferred from task prose.
   task's `done` an integration boundary; it requires the user's direct
   instruction, quoted here.
 - **Out-of-task findings:** `log and report | fix when admitted`. `log and
-  report` is the default: a defect or gap outside every task's contract is a
-  ledger row the executor lists when the plan finishes, and nobody builds it.
+  report` is the default: a defect or gap outside the contract of the task
+  that meets it, and of every later task, is a ledger row the executor lists
+  when the plan finishes, and nobody builds it.
   `fix when admitted` requires the user's direct instruction, quoted here,
   and a budget: {{the most tasks the run may add; a quarter of this plan's
   task count, rounded up, unless the user sets another}}. Under it a finding

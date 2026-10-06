@@ -152,8 +152,8 @@ In the task workspace recorded in Step 2, in order:
 
 - An instruction to fix whatever turns up reads as licence to queue every
   advisory as a task, and each fix's review then raises more — reproduced
-  whenever a plan carries that instruction with no budget: one such run's
-  14-row list grew to 91. Admit by observed failure, inside the budget.
+  by a plan run that carried that instruction with no budget: its 14-row
+  list grew to 91. Admit by observed failure, inside the budget.
 - A task file edited after approval leaves the index unchanged; only the
   printed version moves.
 - A workspace created from HEAD lacks an uncommitted plan, or holds an older,
@@ -184,7 +184,8 @@ someone wrote it down.
    crash, a shipped statement that is false, a test that passes on broken
    code. Write the admitted finding a task file shaped like the plan's own
    under `{{plan-dir}}/added/`, unlisted in the index so the plan's identity
-   holds, and append an `admitted` row naming the finding and that file.
+   holds, and append an `admitted` row that repeats the finding row's
+   where-text and names that file.
 3. The approved field authorizes an added task inside its budget, and
    nothing else. Its `Evaluator` reproduces the observed failure and is red
    before the fix; its `Depends on` names every listed task that owns a file

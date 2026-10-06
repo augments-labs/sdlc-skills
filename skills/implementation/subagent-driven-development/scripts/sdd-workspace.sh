@@ -91,9 +91,9 @@ mkdir -p "$dir" 2>/dev/null || { echo "cannot create $dir" >&2; exit 2; }
 {
   printf '# Subagent-driven run — plan %s, identity %s\n' "$(basename "$plan")" "$identity"
   printf '\n'
-  printf 'Append only. One row per dispatch, ruling, finding, and task state.\n'
-  printf 'Rulings carry their reason, so the next brief can inherit them and the\n'
-  printf 'finish message can list them.\n'
+  printf 'Append only. One row per dispatch, ruling, finding, admitted finding,\n'
+  printf 'and task state. Rulings carry their reason, so the next brief can inherit\n'
+  printf 'them and the finish message can list them.\n'
   printf '\n'
   printf '| When | Kind | Task | Detail |\n'
   printf '| --- | --- | --- | --- |\n'

@@ -142,11 +142,11 @@ reapproval, end the turn.
    touches, whatever the reviewer rated it:
    - an edit the diff makes outside the contract, the implementer report's
      `Done beyond the contract` line included, is `blocking`: a fix round
-     removes it, unless a Step 3 ruling keeps it.
-   - a defect or gap in code the diff does not touch, in the review or under
-     the implementer report's `Defects noticed and not edited` line and
-     `## Gaps outside this task` → *Findings outside the task*. It never
-     enters a round.
+     removes it, unless a ruling names the contract clause that needs it.
+   - a defect or gap outside the contract, in code the diff does not touch,
+     in the review or under the implementer report's `Defects noticed and
+     not edited` line and `## Gaps outside this task` → *Findings outside
+     the task*. It never enters a round.
    - `blocking` → a fix round.
    - `advisory` → one ledger disposition: accepted as it stands, folded into
      a round a blocking finding opened, or ruled blocking with the failure it
@@ -219,7 +219,8 @@ the evidence. It is never a task because someone wrote it down.
    crash, a shipped statement that is false, a test that passes on broken
    code. Write the admitted finding a task file shaped like the plan's own
    under `{{plan-dir}}/added/`, unlisted in the index so the plan's identity
-   holds, and append an `admitted` row naming the finding and that file.
+   holds, and append an `admitted` row that repeats the finding row's
+   where-text and names that file.
 3. The approved field authorizes an added task inside its budget, and
    nothing else. Its `Evaluator` reproduces the observed failure and is red
    before the fix; its `Depends on` names every listed task that owns a file
@@ -239,8 +240,8 @@ the evidence. It is never a task because someone wrote it down.
 
 - An instruction to fix whatever turns up reads as licence to queue every
   advisory as a task, and each fix's review then raises more — reproduced
-  whenever a plan carries that instruction with no budget: one such run's
-  14-row list grew to 91. Admit by observed failure, inside the budget.
+  by a plan run that carried that instruction with no budget: its 14-row
+  list grew to 91. Admit by observed failure, inside the budget.
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
   yourself; that is what Step 5.5 is for.
