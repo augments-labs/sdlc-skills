@@ -113,10 +113,13 @@ reapproval, end the turn.
    sequence a failing pair.
 2. Batch tasks into one dispatch only when they are small and the same shape —
    same kind of file, same act.
-3. Fill `assets/implementer.md` when dispatching an implementer — every input a
-   file path the worker opens for itself, the task contract pasted and nothing
-   else — rendering it with `bash scripts/task-brief.sh`, which inserts
-   `assets/implementer-report.md` before dispatch.
+3. Fill `assets/implementer.md` when dispatching an implementer, rendering it
+   with `bash scripts/task-brief.sh`, which pastes the task contract and
+   inserts `assets/implementer-report.md` before dispatch. Pass with
+   `--input` each path the worker would otherwise search for: the task's
+   `Context`, the guide and the nearest test of the module it edits, and a
+   file, written beside the report, of the ledger rulings that touch this
+   task. Paths the worker opens for itself; never pasted history.
 4. Set the tier explicitly, from the Model selection table in
    `dispatching-parallel-agents`.
 5. Bind the role to a runtime: where the harness exposes a named agent whose
