@@ -37,7 +37,10 @@ non-executable work.
 5. **Assurance:** Evaluators reference the accepted thresholds, environments,
    cadence, and failure response without weakening them.
 6. **Control:** trial, phase entry/exit, pause/abort, repeated-failure re-audit,
-   cutover, rollback, and ownership transfer are executable where required.
+   cutover, rollback, and ownership transfer are executable where required;
+   an instruction with no end — fix everything found, clean up along the way
+   — sits in `Out-of-task findings` with a budget, never in a task or the
+   goal.
 7. **Authorization:** the reviewed plan version and execution mode are pending
    until directly approved.
 

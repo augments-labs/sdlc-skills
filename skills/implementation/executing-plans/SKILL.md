@@ -91,7 +91,9 @@ mode; switching needs the user's direct answer.
      Step 1 → invoke it for that set; otherwise one task at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. Dispatched task: read its
-   raw diff, result revision, and evaluator output, never its summary.
+   raw diff, result revision, and evaluator output, never its summary. A
+   defect or gap outside the task's contract → *Findings outside the task*;
+   never fix it inside this task.
 5. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on that exact state:
    the `Evaluator`, every `VCONF` row, `visual-ui-verification` for an
    integrated UI.
@@ -136,6 +138,8 @@ In the task workspace recorded in Step 2, in order:
    **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
+4. Close with "Findings not built": every `finding` row with no `admitted`
+   row, with its evidence, one line each. The user decides which become work.
 
 | Thought | Reality |
 | --- | --- |
@@ -146,6 +150,10 @@ In the task workspace recorded in Step 2, in order:
 
 ## Gotchas
 
+- An instruction to fix whatever turns up reads as licence to queue every
+  advisory as a task, and each fix's review then raises more — reproduced
+  by a plan run that carried that instruction with no budget: its 14-row
+  list grew to 91. Admit by observed failure, inside the budget.
 - A task file edited after approval leaves the index unchanged; only the
   printed version moves.
 - A workspace created from HEAD lacks an uncommitted plan, or holds an older,
@@ -161,6 +169,37 @@ In the task workspace recorded in Step 2, in order:
 - Three attempts in one class without convergence: write `blocked` with the
   class and the attempts; end the turn. Never patch shard failures one at a
   time.
+
+## Findings outside the task
+
+A defect or gap outside the current task's contract is never an edit in this
+task. One a later listed task's contract covers is left to that task. Any
+other, whether you or a review raised it, is a `finding` row in the
+execution ledger: where, what, the evidence. It is never a task because
+someone wrote it down.
+
+1. The index's `Out-of-task findings` field says `log and report`, or is
+   absent → every finding waits for Step 5.4.
+2. `fix when admitted` → admit only an observed failure: wrong output, a
+   crash, a shipped statement that is false, a test that passes on broken
+   code. Write the admitted finding a task file shaped like the plan's own
+   under `{{plan-dir}}/added/`, unlisted in the index so the plan's identity
+   holds, and append an `admitted` row that repeats the finding row's
+   where-text and names that file.
+3. The approved field authorizes an added task inside its budget, and
+   nothing else. Its `Evaluator` reproduces the observed failure and is red
+   before the fix; its `Depends on` names every listed task that owns a file
+   it edits; it passes Step 3. A finding whose fix would change a listed
+   task's contract or `Evaluator` is not admitted: it waits for Step 5.4.
+4. Run an added task through Step 4 before Step 5. It has no index row to
+   mirror: its state lives in the execution ledger only, and Step 5.1 runs
+   its evaluator with the listed tasks'.
+5. A finding raised while building or reviewing an added task, or by the
+   Step 5.2 review outside every task's contract, waits for Step 5.4. It
+   never becomes another task.
+6. Added tasks reach the field's budget → admit nothing more; the rest wait
+   for Step 5.4. No budget recorded → a quarter of the listed tasks, rounded
+   up.
 
 ## Stopping and resuming
 

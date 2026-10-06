@@ -2,6 +2,14 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.4.2] — 2026-10-06
+
+A plan run no longer grows from its own findings: a defect outside a task is
+logged and listed when the plan finishes, and becomes work only where the
+plan's new `Out-of-task findings` field allows it, inside a budget. Delegated
+workers are briefed with the rulings, instructions, and tests they would
+otherwise search for, and the mode question recommends by the plan's shape.
+
 ## [10.4.1] — 2026-09-29
 
 `diagnosing-a-session` now presents every diagnosis as a local trace page

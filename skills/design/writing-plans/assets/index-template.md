@@ -68,6 +68,15 @@ conformance evaluator; no row may be inferred from task prose.
   `requesting-code-review` and `finishing-a-branch` once. `per task` makes every
   task's `done` an integration boundary; it requires the user's direct
   instruction, quoted here.
+- **Out-of-task findings:** `log and report | fix when admitted`. `log and
+  report` is the default: a defect or gap outside the contract of the task
+  that meets it, and of every later task, is a ledger row the executor lists
+  when the plan finishes, and nobody builds it.
+  `fix when admitted` requires the user's direct instruction, quoted here,
+  and a budget: {{the most tasks the run may add; a quarter of this plan's
+  task count, rounded up, unless the user sets another}}. Under it a finding
+  becomes an added task only on an observed failure, a finding raised by an
+  added task is never admitted, and at the budget the rest are listed.
 
 Every normative change creates a proposed successor with an exact delta. An
 approved successor invalidates predecessor-bound consumers until each owner

@@ -35,13 +35,17 @@ how that is judged, not the code.
    first.
 2. Leave `Integration cadence` at `plan end`. Write `per task` only when the
    user directly asked for per-task integration, and quote the instruction.
-3. Approved UI design with **Selected visual references** → copy the complete
+3. Leave `Out-of-task findings` at `log and report`. The request says to fix
+   whatever turns up along the way → write `fix when admitted`, quote the
+   instruction, and fill its budget. An instruction with no end is planned
+   as that bounded policy, never copied into a task or the goal.
+4. Approved UI design with **Selected visual references** → copy the complete
    keyed collection into the index; map every Reference ID to an owning task
    and conformance evaluator ID in **Visual reference coverage**. Missing
    reference or unowned ID → return the plan to `ui-ux-design`.
-4. Give every file and side effect exactly one owning task. Two tasks on the
+5. Give every file and side effect exactly one owning task. Two tasks on the
    same one → add a dependency and name a single transition owner.
-5. One transformation across many items → bind the machine-readable
+6. One transformation across many items → bind the machine-readable
    inventory and the output pattern instead of listing items.
 
 ## Step 2: Write the tasks
