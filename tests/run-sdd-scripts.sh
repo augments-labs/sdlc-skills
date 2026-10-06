@@ -112,6 +112,13 @@ printf '# Plan\n\n## Tasks\n\n- [x] `T-1` — Task one · `01-task.md` · `done`
 bash "$D/sdd-workspace.sh" --plan "$plan" --check >/dev/null 2>&1
 rc=$?
 check "--check still passes after the checkbox flip (identity unchanged)" "$rc" "0"
+# A task added under an approved findings policy lives in added/, unlisted in
+# the index, so it leaves the identity alone: the run keeps its ledger.
+mkdir -p "$plan/added"
+printf '# Task A1\n\n**Task ID:** `A-1`\n**Files:** src/b.txt\n' > "$plan/added/01-fix.md"
+bash "$D/sdd-workspace.sh" --plan "$plan" --check >/dev/null 2>&1
+rc=$?
+check "--check still passes after an unlisted added/ task file (identity unchanged)" "$rc" "0"
 printf '\n- amended\n' >> "$plan/00-index.md"
 bash "$D/sdd-workspace.sh" --plan "$plan" --check >/dev/null 2>&1
 rc=$?

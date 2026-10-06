@@ -134,9 +134,18 @@ reapproval, end the turn.
    `assets/task-reviewer.md` when the implementer reports, rendering it with
    `bash scripts/task-brief.sh`, which inserts
    `assets/task-reviewer-report.md` before dispatch.
-2. Findings open a fix round. Rounds 1 to 3 go back to the same implementer,
-   which still holds the task. Rounds 4 and 5 go to a fresh implementer one tier
-   up, briefed from the findings file — it has read nothing.
+2. Sort the findings before any round opens:
+   - `blocking` → a fix round.
+   - `advisory` → one ledger disposition: accepted as it stands, folded into
+     a round a blocking finding opened, or ruled blocking with the failure it
+     causes. It never opens a round or a task by itself.
+   - outside the contract, in the review or under the implementer report's
+     `## Outside the contract` and `## Gaps outside this task` → *Findings
+     outside the task*. It never enters a round.
+
+   Rounds 1 to 3 go back to the same implementer, which still holds the
+   task. Rounds 4 and 5 go to a fresh implementer one tier up, briefed from
+   the findings file — it has read nothing.
 3. Fill `assets/re-reviewer.md` when a fix round returns, so the second look
    judges the fix and its blast radius rather than the task again, rendering it
    with `bash scripts/task-brief.sh`, which inserts
@@ -179,15 +188,38 @@ In the worktree from Step 2, in order:
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
-4. Close with "Rulings I made": every ruling in the ledger, one line each.
+4. Close with "Rulings I made": every ruling in the ledger, one line each,
+   then "Findings not built": every open `finding` row with its evidence, one
+   line each. The user decides which become work.
 
 | Thought | Reality |
 | --- | --- |
 | "Every worker returned DONE, so the plan is done" | DONE is a claim per task. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "The reviewer subagent passed it, so review is covered" | That reviewed one task's diff against its contract. The branch review is a separate gate on the integrated state. |
 
+## Findings outside the task
+
+A defect or gap outside the current task's contract, whoever reports it, is a
+`finding` row in the ledger: where, what, the evidence. It is never an edit in
+this task, and never a task because someone wrote it down.
+
+1. The index's `Out-of-task findings` field says `log and report`, or is
+   absent → every finding waits for Step 6.4.
+2. `fix when admitted` → admit only an observed failure: wrong output, a
+   crash, a shipped statement that is false, a test that passes on broken
+   code. Write the admitted finding a task file shaped like the plan's own
+   under `{{plan-dir}}/added/`, unlisted in the index so the plan's identity
+   holds, and run it through Steps 4 and 5 before Step 6.
+3. A finding raised while building or reviewing an added task waits for
+   Step 6.4. It never becomes another task.
+4. Added tasks reach the field's budget → admit nothing more; the rest wait
+   for Step 6.4.
+
 ## Gotchas
 
+- "Fix what you find along the way" reads as licence to queue every advisory
+  as a task, and each fix's review then raises more — reproduced in a run
+  whose 14-row list grew to 91. Admit by observed failure, inside the budget.
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
   yourself; that is what Step 5.5 is for.
