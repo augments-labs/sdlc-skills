@@ -117,9 +117,10 @@ reapproval, end the turn.
    with `bash scripts/task-brief.sh`, which pastes the task contract and
    inserts `assets/implementer-report.md` before dispatch. Pass with
    `--input` each path the worker would otherwise search for: the task's
-   `Context`, the guide and the nearest test of the module it edits, and a
-   file, written beside the report, of the ledger rulings that touch this
-   task. Paths the worker opens for itself; never pasted history.
+   `Context`, the instructions file and the nearest test of the module it
+   edits where they exist, and a file, written beside the report, of the
+   ledger rulings that touch this task. Paths the worker opens for itself;
+   never pasted history.
 4. Set the tier explicitly, from the Model selection table in
    `dispatching-parallel-agents`.
 5. Bind the role to a runtime: where the harness exposes a named agent whose

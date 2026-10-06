@@ -30,9 +30,10 @@ yourself before anything integrates.
      → invoke `using-git-worktrees` for each.
    - **Order** — neither consumes the other's output. A dependency is a
      sequence.
-   - **Capacity** — the machine can run every worker's build and tests at
-     once. A heavy build → measure one run's memory and cores, cap the wave
-     at what fits, and sequence the rest.
+
+   Then cap the wave at what the machine runs at once. A heavy build →
+   measure one run's memory and cores, dispatch what fits, and sequence the
+   rest.
 2. Pick each agent's tier from the table below. Write it in the packet's
    `TIER` field. Lowest tier sufficient for the remaining decisions and the
    cost of an error. Supply missing context before moving up a tier.

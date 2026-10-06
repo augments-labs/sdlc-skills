@@ -3,12 +3,12 @@
 Ask this when a plan version is approved and its `External decision ledger`
 row records no `mode:`. Offer options 2 and 3 only when the harness has a
 subagent action and the index holds no phases or shards. Recommend by the
-plan's shape, never by default: option 1 when most tasks are small or share
-files and context, because every fresh worker re-reads the brief, the skills,
-and the code before its first edit; option 2 when the tasks are large and
-self-contained enough that keeping them out of this session's context is
-worth that cost; option 3 only when the plan's task list shows two or more
-ready tasks whose files, state, and outputs are disjoint.
+plan's shape, the first that holds, never by default: option 3 when the
+plan's task list shows two or more ready tasks that are large and whose
+files, state, and outputs are disjoint; option 2 when most tasks are large
+and self-contained enough that keeping them out of this session's context is
+worth every fresh worker re-reading the brief, the skills, and the code
+before its first edit; else option 1.
 `executing-plans` owns the inline loop and `subagent-driven-development` the
 delegated one; the answer picks which is invoked. Ask through the harness's
 user-input action when one exists, else print the block as text; end the
@@ -29,5 +29,5 @@ Plan {{version}} is approved. How should it run?
    Each task still gets its own subagent and reviewer; the merged state is re-gated before any of them is done.
 
 {{one sentence on the context trade-off}}
-Recommendation: {{inline when most tasks are small or share context; delegated when they are large and self-contained; in waves only when two or more ready tasks are disjoint}} — {{one sentence}}.
+Recommendation: {{in waves when two or more ready tasks are large and disjoint; else delegated when most tasks are large and self-contained; else inline}} — {{one sentence}}.
 ```

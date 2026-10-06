@@ -19,8 +19,8 @@ budget_words = 8764
 
 [delegated-execution]
 skills = ["using-sdlc-skills", "subagent-driven-development", "using-git-worktrees", "dispatching-parallel-agents", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 8244
-budget_words = 8294
+recorded_words = 8242
+budget_words = 8292
 
 [incident]
 skills = ["using-sdlc-skills", "containing-an-incident", "debugging", "verification-before-completion", "post-mortem"]
