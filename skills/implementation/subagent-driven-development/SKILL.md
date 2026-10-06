@@ -137,14 +137,19 @@ reapproval, end the turn.
    `assets/task-reviewer.md` when the implementer reports, rendering it with
    `bash scripts/task-brief.sh`, which inserts
    `assets/task-reviewer-report.md` before dispatch.
-2. Sort the findings before any round opens:
+2. Sort the findings before any round opens, first by what each one
+   touches, whatever the reviewer rated it:
+   - an edit the diff makes outside the contract, the implementer report's
+     `Done beyond the contract` line included, is `blocking`: a fix round
+     removes it, unless a Step 3 ruling keeps it.
+   - a defect or gap in code the diff does not touch, in the review or under
+     the implementer report's `Defects noticed and not edited` line and
+     `## Gaps outside this task` → *Findings outside the task*. It never
+     enters a round.
    - `blocking` → a fix round.
    - `advisory` → one ledger disposition: accepted as it stands, folded into
      a round a blocking finding opened, or ruled blocking with the failure it
      causes. It never opens a round or a task by itself.
-   - outside the contract, in the review or under the implementer report's
-     `## Outside the contract` and `## Gaps outside this task` → *Findings
-     outside the task*. It never enters a round.
 
    Rounds 1 to 3 go back to the same implementer, which still holds the
    task. Rounds 4 and 5 go to a fresh implementer one tier up, briefed from
@@ -192,8 +197,8 @@ In the worktree from Step 2, in order:
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
 4. Close with "Rulings I made": every ruling in the ledger, one line each,
-   then "Findings not built": every open `finding` row with its evidence, one
-   line each. The user decides which become work.
+   then "Findings not built": every `finding` row with no `admitted` row,
+   with its evidence, one line each. The user decides which become work.
 
 | Thought | Reality |
 | --- | --- |
@@ -202,9 +207,10 @@ In the worktree from Step 2, in order:
 
 ## Findings outside the task
 
-A defect or gap outside the current task's contract, whoever reports it, is a
-`finding` row in the ledger: where, what, the evidence. It is never an edit in
-this task, and never a task because someone wrote it down.
+A defect or gap outside the current task's contract is never an edit in this
+task. One a later listed task's contract covers is left to that task. Any
+other, whoever reports it, is a `finding` row in the ledger: where, what,
+the evidence. It is never a task because someone wrote it down.
 
 1. The index's `Out-of-task findings` field says `log and report`, or is
    absent → every finding waits for Step 6.4.
@@ -212,17 +218,28 @@ this task, and never a task because someone wrote it down.
    crash, a shipped statement that is false, a test that passes on broken
    code. Write the admitted finding a task file shaped like the plan's own
    under `{{plan-dir}}/added/`, unlisted in the index so the plan's identity
-   holds, and run it through Steps 4 and 5 before Step 6.
-3. A finding raised while building or reviewing an added task waits for
-   Step 6.4. It never becomes another task.
-4. Added tasks reach the field's budget → admit nothing more; the rest wait
-   for Step 6.4.
+   holds, and append an `admitted` row naming the finding and that file.
+3. The approved field authorizes an added task inside its budget, and
+   nothing else. Its `Evaluator` reproduces the observed failure and is red
+   before the fix; its `Depends on` names every listed task that owns a file
+   it edits; it passes Step 2.4. A finding whose fix would change a listed
+   task's contract or `Evaluator` is not admitted: it waits for Step 6.4.
+4. Run an added task through Steps 4 and 5 before Step 6. It has no index
+   row to mirror: its state lives in the ledger only, and Step 6.1 runs its
+   evaluator with the listed tasks'.
+5. A finding raised while building or reviewing an added task, or by the
+   Step 6.2 review outside every task's contract, waits for Step 6.4. It
+   never becomes another task.
+6. Added tasks reach the field's budget → admit nothing more; the rest wait
+   for Step 6.4. No budget recorded → a quarter of the listed tasks, rounded
+   up.
 
 ## Gotchas
 
-- "Fix what you find along the way" reads as licence to queue every advisory
-  as a task, and each fix's review then raises more — reproduced in a run
-  whose 14-row list grew to 91. Admit by observed failure, inside the budget.
+- An instruction to fix whatever turns up reads as licence to queue every
+  advisory as a task, and each fix's review then raises more — reproduced
+  whenever a plan carries that instruction with no budget: one such run's
+  14-row list grew to 91. Admit by observed failure, inside the budget.
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
   yourself; that is what Step 5.5 is for.
