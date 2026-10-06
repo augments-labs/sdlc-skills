@@ -30,6 +30,10 @@ yourself before anything integrates.
      → invoke `using-git-worktrees` for each.
    - **Order** — neither consumes the other's output. A dependency is a
      sequence.
+
+   Then cap the wave at what the machine runs at once. A heavy build →
+   measure one run's memory and cores, dispatch what fits, and sequence the
+   rest.
 2. Pick each agent's tier from the table below. Write it in the packet's
    `TIER` field. Lowest tier sufficient for the remaining decisions and the
    cost of an error. Supply missing context before moving up a tier.
@@ -55,6 +59,10 @@ permitted models.
 | `small` | Mechanical transformations, formatting, structured extraction; rules and expected output are explicit. |
 | `medium` | Execution of settled decisions that still requires judgment: specified implementation, focused review, substantive summarization. |
 | `large` | Resolving uncertainty: architecture, unclear requirements, unexplained failures, uncertain impact, or consequential tradeoffs. |
+
+Work that writes a test or code under `test-driven-development` is never
+`small`: choosing the assertion is a judgment, and a tier too low returns as
+fix rounds.
 
 At dispatch, map the chosen tier to an available model and set the harness's
 model parameter or agent configuration explicitly; naming a tier in the prompt

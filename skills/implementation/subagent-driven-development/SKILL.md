@@ -113,10 +113,14 @@ reapproval, end the turn.
    sequence a failing pair.
 2. Batch tasks into one dispatch only when they are small and the same shape —
    same kind of file, same act.
-3. Fill `assets/implementer.md` when dispatching an implementer — every input a
-   file path the worker opens for itself, the task contract pasted and nothing
-   else — rendering it with `bash scripts/task-brief.sh`, which inserts
-   `assets/implementer-report.md` before dispatch.
+3. Fill `assets/implementer.md` when dispatching an implementer, rendering it
+   with `bash scripts/task-brief.sh`, which pastes the task contract and
+   inserts `assets/implementer-report.md` before dispatch. Pass with
+   `--input` each path the worker would otherwise search for: the task's
+   `Context`, the instructions file and the nearest test of the module it
+   edits where they exist, and a file, written beside the report, of the
+   ledger rulings that touch this task. Paths the worker opens for itself;
+   never pasted history.
 4. Set the tier explicitly, from the Model selection table in
    `dispatching-parallel-agents`.
 5. Bind the role to a runtime: where the harness exposes a named agent whose
@@ -134,9 +138,23 @@ reapproval, end the turn.
    `assets/task-reviewer.md` when the implementer reports, rendering it with
    `bash scripts/task-brief.sh`, which inserts
    `assets/task-reviewer-report.md` before dispatch.
-2. Findings open a fix round. Rounds 1 to 3 go back to the same implementer,
-   which still holds the task. Rounds 4 and 5 go to a fresh implementer one tier
-   up, briefed from the findings file — it has read nothing.
+2. Sort the findings before any round opens, first by what each one
+   touches, whatever the reviewer rated it:
+   - an edit the diff makes outside the contract, the implementer report's
+     `Done beyond the contract` line included, is `blocking`: a fix round
+     removes it, unless a ruling names the contract clause that needs it.
+   - a defect or gap outside the contract, in code the diff does not touch,
+     in the review or under the implementer report's `Defects noticed and
+     not edited` line and `## Gaps outside this task` → *Findings outside
+     the task*. It never enters a round.
+   - `blocking` → a fix round.
+   - `advisory` → one ledger disposition: accepted as it stands, folded into
+     a round a blocking finding opened, or ruled blocking with the failure it
+     causes. It never opens a round or a task by itself.
+
+   Rounds 1 to 3 go back to the same implementer, which still holds the
+   task. Rounds 4 and 5 go to a fresh implementer one tier up, briefed from
+   the findings file — it has read nothing.
 3. Fill `assets/re-reviewer.md` when a fix round returns, so the second look
    judges the fix and its blast radius rather than the task again, rendering it
    with `bash scripts/task-brief.sh`, which inserts
@@ -179,15 +197,51 @@ In the worktree from Step 2, in order:
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
-4. Close with "Rulings I made": every ruling in the ledger, one line each.
+4. Close with "Rulings I made": every ruling in the ledger, one line each,
+   then "Findings not built": every `finding` row with no `admitted` row,
+   with its evidence, one line each. The user decides which become work.
 
 | Thought | Reality |
 | --- | --- |
 | "Every worker returned DONE, so the plan is done" | DONE is a claim per task. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "The reviewer subagent passed it, so review is covered" | That reviewed one task's diff against its contract. The branch review is a separate gate on the integrated state. |
 
+## Findings outside the task
+
+A defect or gap outside the current task's contract is never an edit in this
+task. One a later listed task's contract covers is left to that task. Any
+other, whoever reports it, is a `finding` row in the ledger: where, what,
+the evidence. It is never a task because someone wrote it down.
+
+1. The index's `Out-of-task findings` field says `log and report`, or is
+   absent → every finding waits for Step 6.4.
+2. `fix when admitted` → admit only an observed failure: wrong output, a
+   crash, a shipped statement that is false, a test that passes on broken
+   code. Write the admitted finding a task file shaped like the plan's own
+   under `{{plan-dir}}/added/`, unlisted in the index so the plan's identity
+   holds, and append an `admitted` row that repeats the finding row's
+   where-text and names that file.
+3. The approved field authorizes an added task inside its budget, and
+   nothing else. Its `Evaluator` reproduces the observed failure and is red
+   before the fix; its `Depends on` names every listed task that owns a file
+   it edits; it passes Step 2.4. A finding whose fix would change a listed
+   task's contract or `Evaluator` is not admitted: it waits for Step 6.4.
+4. Run an added task through Steps 4 and 5 before Step 6. It has no index
+   row to mirror: its state lives in the ledger only, and Step 6.1 runs its
+   evaluator with the listed tasks'.
+5. A finding raised while building or reviewing an added task, or by the
+   Step 6.2 review outside every task's contract, waits for Step 6.4. It
+   never becomes another task.
+6. Added tasks reach the field's budget → admit nothing more; the rest wait
+   for Step 6.4. No budget recorded → a quarter of the listed tasks, rounded
+   up.
+
 ## Gotchas
 
+- An instruction to fix whatever turns up reads as licence to queue every
+  advisory as a task, and each fix's review then raises more — reproduced
+  by a plan run that carried that instruction with no budget: its 14-row
+  list grew to 91. Admit by observed failure, inside the budget.
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
   yourself; that is what Step 5.5 is for.
