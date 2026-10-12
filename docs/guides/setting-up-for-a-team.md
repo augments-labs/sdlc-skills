@@ -56,6 +56,16 @@ If your project keeps planning out of the repository, add `.sdlc-skills/` to
 git just does not see them. [The `.sdlc-skills/` folder](../concepts/project-artifacts.md)
 says what the folder holds if you decide to commit it instead.
 
+## If your team works from tickets
+
+Connecting your tracker is done in the agent, not in the instructions file:
+the agent reads a linked ticket or an identifier only through a tool the
+harness already provides for that tracker and you are entitled to use.
+Without one, it asks you to paste the ticket, acceptance criteria and
+comments included. Either way, `working-from-a-ticket` records the ticket
+and its acceptance criteria as written, and re-reads it before calling the
+work done.
+
 ## What the file does not switch off
 
 For any change to behavior, the agent still writes a failing test before the
