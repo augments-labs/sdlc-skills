@@ -36,9 +36,9 @@ then asks for a review and asks you what to do with the branch.
 
 You do not have to call skills by name, although you can. Every skill is
 addressed as `sdlc-skills:<name>`. That name is stable: a skill keeps its name
-across updates, so a skill you invoke by name keeps working. A rename or
-removal only comes in a major version, with the changelog saying how to
-update.
+in every minor and patch update, so a skill you invoke by name keeps working. A
+rename or removal only comes in a major version, with the
+[changelog](CHANGELOG.md) saying how to update.
 
 Two things are worth knowing up front:
 
