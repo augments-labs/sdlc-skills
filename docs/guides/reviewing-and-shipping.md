@@ -101,7 +101,7 @@ Things to know about this menu:
   contribution rules and PR template, with the verification evidence. A
   project with no template gets the skill's own: what changes and why, the
   checks run on that exact candidate, the review verdict, risk and rollback,
-  and what is left for you to decide.
+  and what is left for the reviewer to decide.
 
 ## Discarding work
 

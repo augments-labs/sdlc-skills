@@ -58,9 +58,10 @@ mutation.
    moved → back to `requesting-code-review`.
 9. For PR creation/update, prepare the description from the project's
    contribution rules and base-bound template; none exists → open
-   `assets/pr-description.md` before writing it. Fill evidence fields from the
-   bound ledger and verdict only, adding them when the project's template lacks
-   them. Prepare other actions' applicable fields without inventing a PR.
+   `assets/pr-description.md` before writing it. Fill evidence fields only
+   from the bound ledger and verdict; add gate results, review verdict, and
+   what was not verified when the project's template has no place for them.
+   Prepare other actions' applicable fields without inventing a PR.
 
 ## Step 2: Present the choices
 
