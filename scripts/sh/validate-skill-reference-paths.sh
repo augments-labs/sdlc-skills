@@ -59,7 +59,7 @@ done < <(
 )
 
 # Install adapters are allowed to package only a skill directory/tree. A
-# shipped skill cannot depend on repository-only rationale under docs/.
+# shipped skill cannot depend on the repository documentation under docs/.
 while IFS=: read -r src line _; do
   err "$src:$line: repository-only docs/ path is not install-portable"
 done < <(grep -rnE 'docs/[A-Za-z0-9._/-]+\.md' "$tree" || true)

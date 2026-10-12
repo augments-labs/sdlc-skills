@@ -43,7 +43,7 @@ into the throwaway home.
 
 Add `{{name}}.sh` implementing the contract above.
 Bindings alone do not make a harness supported — what one has to prove before
-claiming support is in `docs/harness-support.md`.
+claiming support is in `CONTRIBUTING.md`, under "Adding an adapter".
 
 ## Regression net
 
