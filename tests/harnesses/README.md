@@ -9,6 +9,7 @@ none of them decides anything — judging an observation belongs to the runner.
 
 ```text
 tests/harnesses/
+  antigravity.sh
   claude-code.sh
   codex.sh
   devin.sh

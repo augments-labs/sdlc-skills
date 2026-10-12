@@ -204,6 +204,24 @@ other machines. To install from a local clone on this machine only:
 devin plugins install --local /path/to/sdlc-skills/plugins/sdlc-skills
 ```
 
+### Antigravity
+
+Antigravity installs the plugin directory inside this repository, not the
+repository root:
+
+```bash
+agy plugin install https://github.com/augments-labs/sdlc-skills/tree/main/plugins/sdlc-skills
+```
+
+To install from a local clone instead:
+
+```bash
+agy plugin install /path/to/sdlc-skills/plugins/sdlc-skills
+```
+
+Antigravity runs no session-start hook from a plugin, so the plugin ships a
+rule telling the agent to invoke `using-sdlc-skills` before acting.
+
 ### Other agents
 
 Every skill follows the open Agent Skills format: a directory with a `SKILL.md`

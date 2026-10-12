@@ -45,8 +45,10 @@ of it.
 ## Instructions do not enforce anything
 
 Each adapter puts the full router body into the session context, so the agent
-does not need a separate step to load it. Grok Build and Muse Code 1.3.0 are
-the exceptions, because neither offers a way to do it. That is all the adapters do. They
+does not need a separate step to load it. There are three exceptions. Grok
+Build and Muse Code 1.3.0 offer no way to do it. Antigravity offers plugins no
+session-start hook, so it gets an always-on rule that tells the agent to load
+`using-sdlc-skills` first. That is all the adapters do. They
 register no hook on tool calls, on prompts, or at the end of a turn.
 
 Compaction needs special care. When a long session is compacted, the

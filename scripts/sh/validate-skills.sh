@@ -413,28 +413,43 @@ check_manifest_skills .muse-plugin/plugin.json \
 echo "• Codex adapter"
 if ! bash scripts/sh/validate-codex-plugin.sh; then fail=1; fi
 
-# Devin installs the Codex plugin directory, not the repository root: it loads
-# skills one level deep, which the flat mirror satisfies, and it injects any
-# AGENTS.md, AGENT.md, or .windsurfrules at the plugin root into every user
-# session as an always-on rule — at the repository root that would ship the
+# Devin and Antigravity install the Codex plugin directory, not the repository
+# root. Both load skills one level deep, which the flat mirror satisfies, and
+# both read rule files at a plugin's root — Devin injects AGENTS.md, AGENT.md, or
+# .windsurfrules into every user session, and Antigravity reads a standalone
+# AGENTS.md or GEMINI.md — so at the repository root they would ship the
 # contributor guide to users. A `skills` field would replace the default
 # `skills/` directory, so none is allowed: the mirror the Codex gate checks is
-# exactly what Devin loads.
-echo "• Devin adapter"
-devin_manifest="plugins/sdlc-skills/.devin-plugin/plugin.json"
-if [ ! -f "$devin_manifest" ]; then
-  err "missing $devin_manifest"
-elif ! jq -e . "$devin_manifest" >/dev/null 2>&1; then
-  err "$devin_manifest does not parse as JSON"
-else
-  [ "$(jq -r '.name // ""' "$devin_manifest")" = "sdlc-skills" ] || err "$devin_manifest: name is not sdlc-skills"
-  jq -e 'has("skills") | not' "$devin_manifest" >/dev/null ||
-    err "$devin_manifest: a skills field replaces the flat skills/ mirror Devin loads"
-fi
-for rule in AGENTS.md AGENT.md .windsurfrules; do
+# exactly what both load.
+check_flat_plugin_manifest() { # $1 harness label, $2 manifest path
+  if [ ! -f "$2" ]; then
+    err "missing $2"
+  elif ! jq -e . "$2" >/dev/null 2>&1; then
+    err "$2 does not parse as JSON"
+  else
+    [ "$(jq -r '.name // ""' "$2")" = "sdlc-skills" ] || err "$2: name is not sdlc-skills"
+    jq -e 'has("skills") | not' "$2" >/dev/null ||
+      err "$2: a skills field replaces the flat skills/ mirror $1 loads"
+  fi
+}
+echo "• Devin and Antigravity adapters"
+check_flat_plugin_manifest Devin plugins/sdlc-skills/.devin-plugin/plugin.json
+check_flat_plugin_manifest Antigravity plugins/sdlc-skills/.antigravity-plugin/plugin.json
+for rule in AGENTS.md AGENT.md GEMINI.md .windsurfrules; do
   [ ! -e "plugins/sdlc-skills/$rule" ] ||
-    err "plugins/sdlc-skills/$rule: Devin would inject it into every session as an always-on rule"
+    err "plugins/sdlc-skills/$rule: a harness installing this directory would load it into every session as a rule"
 done
+# Antigravity runs no session-start hook from a plugin, so its router arrives
+# as a nudge in the plugin's always-on rules file. Antigravity wants that file
+# without frontmatter; Devin reads the same file as a manual rule, and a
+# `trigger` frontmatter would make it fire there beside the hook.
+agy_rule="plugins/sdlc-skills/rules/AGENTS.md"
+if [ ! -f "$agy_rule" ]; then
+  err "missing $agy_rule — Antigravity would load the skills and never the router"
+else
+  grep -q '`using-sdlc-skills`' "$agy_rule" || err "$agy_rule does not name the using-sdlc-skills skill"
+  [ "$(head -n 1 "$agy_rule")" != "---" ] || err "$agy_rule carries frontmatter; Antigravity rules take none"
+fi
 
 echo "• Kimi adapter"
 if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
@@ -448,7 +463,7 @@ if ! bash scripts/sh/validate-opencode-plugin.sh; then fail=1; fi
 echo "• manifest versions agree"
 versions=""
 for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json .muse-plugin/plugin.json \
-                plugins/sdlc-skills/.devin-plugin/plugin.json; do
+                plugins/sdlc-skills/.devin-plugin/plugin.json plugins/sdlc-skills/.antigravity-plugin/plugin.json; do
   if [ ! -f "$manifest" ]; then err "missing $manifest"; continue; fi
   v=$(grep -m1 -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' "$manifest" | sed -E 's/.*"([^"]+)"$/\1/')
   if [ -z "$v" ]; then err "$manifest: no \"version\" field"; continue; fi

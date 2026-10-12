@@ -30,6 +30,7 @@ An adapter has two jobs:
 | Muse Code | `.muse-plugin/plugin.json` on a build with plugin support, otherwise `scripts/sh/install-muse-skills.sh` | The manifest's `SessionStart` hook. Never on 1.3.0, which loads no plugin | No. No hook runs |
 | pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` hook, through `appendSystemPrompt` | In the running process only. See [pi](#pi) |
 | Devin | `plugins/sdlc-skills/` with `.devin-plugin/plugin.json`, the Codex plugin directory | The `SessionStart` hook the Codex plugin bundles | Inferred, not observed. See [Devin](#devin) |
+| Antigravity | `plugins/sdlc-skills/` with `.antigravity-plugin/plugin.json`, the Codex plugin directory | It does not. The plugin's always-on `rules/AGENTS.md` nudges the agent instead | Not applicable |
 
 This page uses two labels for its claims. **Measured** means the behavior was
 observed on the version named. **Inferred, not observed** means it follows
@@ -423,11 +424,64 @@ skill as `/sdlc-skills:<name>` and names the `session_start` hook. Measured:
 every canonical skill and the hook are listed. The smoke test runs no model
 turn.
 
+## Antigravity
+
+Antigravity 1.3.3 (`agy`) installs a plugin from a directory holding
+`.antigravity-plugin/plugin.json`. Like Devin, it installs the Codex plugin
+directory, `plugins/sdlc-skills/`, and for the same reasons:
+
+- It loads skills one level deep, as `skills/<name>/SKILL.md`. Measured:
+  `agy plugin validate` processes every skill in the flat mirror, and none in
+  the canonical tree without a `skills` field listing each one.
+- It reads a standalone `AGENTS.md` or `GEMINI.md` in a customization root as a
+  rule. At the repository root those are the contributor guide.
+
+The same gate covers both manifests: no `skills` field, and no rule file at
+the plugin root.
+
+### The router
+
+Antigravity runs no session-start hook from a plugin that its documentation
+describes. Its documented hook events are `PreToolUse`, `PostToolUse`,
+`PreInvocation`, `PostInvocation`, and `Stop`. `PreInvocation` runs before
+every model call, which the lifecycle policy forbids. The binary carries an
+undocumented `SessionStart` event, which has not been observed to fire.
+
+The router therefore arrives the way it does on Grok Build, as a nudge, but
+the plugin ships it. `rules/AGENTS.md` in the plugin is always on while the
+plugin is enabled, and tells the agent to invoke `using-sdlc-skills` before
+acting. The gate checks that the file exists, names the skill, and carries no
+frontmatter.
+
+Devin installs the same directory and lists that file as a `manual` rule, so
+it does not fire there beside the hook. Measured on Devin 3000.11.3.
+
+### Installation
+
+`agy plugin install <directory>` copies the directory into
+`~/.gemini/config/plugins/sdlc-skills/`. A GitHub URL is cloned first; a
+`/tree/<branch>/<path>` URL selects the plugin directory inside the
+repository. Measured on 1.3.3: the clone resolves that path. A local install
+needs no sign-in and no network.
+
+### What the tests prove
+
+`tests/harnesses/antigravity.sh` installs into a throwaway `HOME`. Antigravity
+reports how many skills it processed from the installed copy but not their
+names, so the inventory reads the names from the copy and accepts them only
+when `agy plugin validate` processed the same number. It also fails when the
+rules file did not reach the copy. The smoke test runs no model turn.
+
+### No tool bindings yet
+
+Antigravity's subagent tools have not been measured against a running
+session, so the dispatch and role-binding tables below have no row for it.
+
 ## Lifecycle policy
 
 Every adapter supplies the full router through a session-start mechanism,
-with two exceptions described above: Grok Build gets a rules-file nudge, and
-Muse Code 1.3.0 gets discovery only. No adapter registers a hook on tool calls, on prompts, or at the end of a turn.
+with three exceptions described above: Grok Build and Antigravity get a
+rules-file nudge, and Muse Code 1.3.0 gets discovery only. No adapter registers a hook on tool calls, on prompts, or at the end of a turn.
 
 Compaction is a boundary like start, resume, and clear. It replaces the
 transcript with a summary, and text injected at session start is not carried
@@ -473,8 +527,8 @@ whether it exists at all.
 | Kimi Code | `Agent` tool | The brief names the file to read, because a subagent may not resolve paths relative to the plugin | One level. A background run adds parallelism, not nesting | Not settable. The tier is stated in the prompt and the harness binds it |
 | OpenCode | 1.x: the `Task` tool, to the `general` and `explore` subagents. 2.x: the `subagent` tool, with the same role names as its `agent` argument | Yes, for the whole session, through the plugin's skill registration | Not declared by the build. Treat a worker's own dispatch as prohibited | Settable through the agent's `model`. A subagent without one inherits the invoking agent's. The tier is stated in the prompt and the harness binds it |
 
-Grok Build, Muse Code, pi, and Devin have no row. No tool binding ships for
-them. Devin documents `run_subagent` and `read_subagent`, but they have not
+Grok Build, Muse Code, pi, Devin, and Antigravity have no row. No tool binding
+ships for them. Devin documents `run_subagent` and `read_subagent`, but they have not
 been measured against a running session.
 
 ### Where the tool names live
