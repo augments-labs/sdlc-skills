@@ -6,7 +6,7 @@ How SDLC skills is versioned and how a release is cut. This is maintainer guidan
 
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). For a skills library, the "public API" is the **skill surface**: which skills exist, their names (the invocation address — `sdlc-skills:<name>`), and how they install (the manifests).
 
-- **Major** — the surface breaks: a skill is renamed or removed, or the invocation/manifest structure changes. Anything that invokes or installs the library must adapt.
+- **Major** — the surface breaks: a skill is renamed or removed, or the invocation/manifest structure changes. Anything that invokes or installs the library must adapt. Skill names are frozen: a clearer name alone does not justify a rename. A skill is renamed only when keeping the name would itself cause a user-facing break.
 - **Minor** — the surface grows, backwards-compatibly: a new skill, a new harness adapter.
 - **Patch** — the surface is unchanged; existing skills behave better: trigger descriptions, discipline bodies, sibling files, docs, test records.
 
