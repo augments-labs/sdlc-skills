@@ -13,6 +13,7 @@ in this repository.
 tests/
   run-check-skill.sh         offline check for check-skill.sh's reference-depth rule. (offline)
   run-git-hooks.sh           offline unit check for the local git hook installer. (offline)
+  run-hermes-plugin.sh       offline unit check for the Hermes adapter. (offline)
   run-opencode-plugin.sh     offline unit check for the OpenCode adapter. (offline)
   run-pi-extension.sh        offline unit check for the pi adapter. (offline)
   run-plugin-smoke.sh        do the skills land where this harness looks? No model call.
@@ -32,6 +33,7 @@ file covers only what the flags cannot say.
 tests/run-session-start.sh
 tests/run-opencode-plugin.sh
 tests/run-pi-extension.sh
+tests/run-hermes-plugin.sh
 tests/run-plugin-smoke.sh --harness codex
 tests/run-sdd-scripts.sh
 tests/run-serve-preview.sh

@@ -413,6 +413,72 @@ check_manifest_skills .muse-plugin/plugin.json \
 echo "• Codex adapter"
 if ! bash scripts/sh/validate-codex-plugin.sh; then fail=1; fi
 
+# Devin and Antigravity install the Codex plugin directory, not the repository
+# root. Both load skills one level deep, which the flat mirror satisfies, and
+# both read rule files at a plugin's root — Devin injects AGENTS.md, AGENT.md, or
+# .windsurfrules into every user session, and Antigravity reads a standalone
+# AGENTS.md or GEMINI.md — so at the repository root they would ship the
+# contributor guide to users. A `skills` field would replace the default
+# `skills/` directory, so none is allowed: the mirror the Codex gate checks is
+# exactly what both load.
+check_flat_plugin_manifest() { # $1 harness label, $2 manifest path
+  if [ ! -f "$2" ]; then
+    err "missing $2"
+  elif ! jq -e . "$2" >/dev/null 2>&1; then
+    err "$2 does not parse as JSON"
+  else
+    [ "$(jq -r '.name // ""' "$2")" = "sdlc-skills" ] || err "$2: name is not sdlc-skills"
+    jq -e 'has("skills") | not' "$2" >/dev/null ||
+      err "$2: a skills field replaces the flat skills/ mirror $1 loads"
+  fi
+}
+echo "• Devin and Antigravity adapters"
+check_flat_plugin_manifest Devin plugins/sdlc-skills/.devin-plugin/plugin.json
+check_flat_plugin_manifest Antigravity plugins/sdlc-skills/.antigravity-plugin/plugin.json
+for rule in AGENTS.md AGENT.md GEMINI.md .windsurfrules; do
+  [ ! -e "plugins/sdlc-skills/$rule" ] ||
+    err "plugins/sdlc-skills/$rule: a harness installing this directory would load it into every session as a rule"
+done
+# Antigravity runs no session-start hook from a plugin, so its router arrives
+# as a nudge in the plugin's always-on rules file. Antigravity wants that file
+# without frontmatter; Devin reads the same file as a manual rule, and a
+# `trigger` frontmatter would make it fire there beside the hook.
+agy_rule="plugins/sdlc-skills/rules/AGENTS.md"
+if [ ! -f "$agy_rule" ]; then
+  err "missing $agy_rule — Antigravity would load the skills and never the router"
+else
+  grep -q '`using-sdlc-skills`' "$agy_rule" || err "$agy_rule does not name the using-sdlc-skills skill"
+  [ "$(head -n 1 "$agy_rule")" != "---" ] || err "$agy_rule carries frontmatter; Antigravity rules take none"
+fi
+
+# Hermes finds no manifest at the root of the clone, so it looks one level
+# down and loads .hermes-plugin/, whose entry point registers the canonical
+# tree and the router itself. tests/run-hermes-plugin.sh checks what
+# register() does; this checks that the files it needs ship, and that no root
+# manifest stops Hermes before it looks one level down.
+echo "• Hermes adapter"
+hermes_manifest=".hermes-plugin/plugin.yaml"
+if [ ! -f "$hermes_manifest" ]; then
+  err "missing $hermes_manifest"
+else
+  grep -qxE 'name:[[:space:]]*"?sdlc-skills"?' "$hermes_manifest" || err "$hermes_manifest: name is not sdlc-skills"
+fi
+[ -f .hermes-plugin/__init__.py ] || err "missing .hermes-plugin/__init__.py — Hermes would install a plugin that registers nothing"
+for path in plugin.yaml plugin.yml plugin.json; do
+  [ ! -e "$path" ] ||
+    err "$path at the repository root: Hermes would read it as the plugin and never load .hermes-plugin/"
+done
+
+# Cursor installs the repository root and reads .claude-plugin/plugin.json when
+# no .cursor-plugin/plugin.json exists, so the skills list checked above is the
+# one it loads. A .cursor-plugin/plugin.json would replace that list, and Cursor
+# loads any rules/, agents/, or commands/ at a plugin's root into user sessions.
+echo "• Cursor adapter"
+for path in .cursor-plugin rules agents commands; do
+  [ ! -e "$path" ] ||
+    err "$path/ at the repository root: Cursor installs the root and would load it in place of, or beside, the Claude manifest"
+done
+
 echo "• Kimi adapter"
 if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
 
@@ -424,12 +490,18 @@ if ! bash scripts/sh/validate-opencode-plugin.sh; then fail=1; fi
 # disagreeing versions, so any disagreement fails.
 echo "• manifest versions agree"
 versions=""
-for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json .muse-plugin/plugin.json; do
+for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json .muse-plugin/plugin.json \
+                plugins/sdlc-skills/.devin-plugin/plugin.json plugins/sdlc-skills/.antigravity-plugin/plugin.json; do
   if [ ! -f "$manifest" ]; then err "missing $manifest"; continue; fi
   v=$(grep -m1 -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' "$manifest" | sed -E 's/.*"([^"]+)"$/\1/')
   if [ -z "$v" ]; then err "$manifest: no \"version\" field"; continue; fi
   versions="$versions$v"$'\n'
 done
+# Hermes' manifest is YAML, so its version is read by key rather than as JSON.
+if [ -f .hermes-plugin/plugin.yaml ]; then
+  v=$(sed -nE 's/^version:[[:space:]]*"?([^"[:space:]]+)"?.*/\1/p' .hermes-plugin/plugin.yaml | head -n 1)
+  if [ -z "$v" ]; then err ".hermes-plugin/plugin.yaml: no version field"; else versions="$versions$v"$'\n'; fi
+fi
 distinct=$(printf '%s' "$versions" | sort -u | grep -c .)
 [ "$distinct" -gt 1 ] && err "manifest versions disagree: $(printf '%s' "$versions" | sort -u | tr '\n' ' ')"
 

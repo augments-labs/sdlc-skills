@@ -13,7 +13,7 @@ skill.
 | Where | What a result proves | Commands |
 | --- | --- | --- |
 | `scripts/sh/`, all run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
-| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, and `run-state-identity.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
+| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, and `run-state-identity.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
 | `tests/harnesses/` | Nothing on its own. These files hold how each CLI installs the plugin, and the smoke test drives them | One file per supported CLI |
 
 ## The four gates
@@ -58,6 +58,7 @@ staged. `bash scripts/sh/install-git-hooks.sh --remove` undoes it.
 | An adapter or a hook | `tests/run-session-start.sh` and `tests/run-plugin-smoke.sh --harness {{name}}` |
 | The OpenCode plugin file | `tests/run-opencode-plugin.sh` |
 | The pi extension file | `tests/run-pi-extension.sh` |
+| The Hermes plugin file | `tests/run-hermes-plugin.sh` |
 | A `subagent-driven-development` script | `tests/run-sdd-scripts.sh` |
 | The preview server or its wrappers | `tests/run-serve-preview.sh` |
 | The session trace page or its format | `tests/run-trace-viewer.sh` |

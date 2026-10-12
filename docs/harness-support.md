@@ -29,6 +29,10 @@ An adapter has two jobs:
 | Grok Build | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped | It does not. A rules file nudges the agent instead | Not applicable |
 | Muse Code | `.muse-plugin/plugin.json` on a build with plugin support, otherwise `scripts/sh/install-muse-skills.sh` | The manifest's `SessionStart` hook. Never on 1.3.0, which loads no plugin | No. No hook runs |
 | pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` hook, through `appendSystemPrompt` | In the running process only. See [pi](#pi) |
+| Devin | `plugins/sdlc-skills/` with `.devin-plugin/plugin.json`, the Codex plugin directory | The `SessionStart` hook the Codex plugin bundles | Inferred, not observed. See [Devin](#devin) |
+| Antigravity | `plugins/sdlc-skills/` with `.antigravity-plugin/plugin.json`, the Codex plugin directory | It does not. The plugin's always-on `rules/AGENTS.md` nudges the agent instead | Not applicable |
+| Hermes | `.hermes-plugin/plugin.yaml` and `.hermes-plugin/__init__.py` | Plugin system-prompt sections, rendered once per session | Yes. Compression rebuilds the system prompt, which renders the sections again |
+| Cursor | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped from the cloned root | `SessionStart` hook, which Cursor runs as its `sessionStart` | Not observed. See [Cursor](#cursor) |
 
 This page uses two labels for its claims. **Measured** means the behavior was
 observed on the version named. **Inferred, not observed** means it follows
@@ -355,11 +359,259 @@ No tool bindings file ships with this adapter. pi's tool names have not been
 measured against a running session, so the dispatch and role-binding tables
 below have no row for pi.
 
+## Devin
+
+Devin 3000.11.3 installs a plugin from a directory holding
+`.devin-plugin/plugin.json`. The adapter is the Codex plugin directory,
+`plugins/sdlc-skills/`, with a Devin manifest added beside the Codex one. The
+two harnesses share its flat skill mirror, its hooks file, and its copy of the
+injector.
+
+### Why not the repository root
+
+Two things rule the root out:
+
+- Devin loads skills one level deep, as `skills/<name>/SKILL.md`. Measured: a
+  skill nested a level further is not listed. The canonical tree nests every
+  skill under its phase, so the root would load none of them, while the
+  Codex mirror is already flat.
+- Devin injects an `AGENTS.md`, `AGENT.md`, or `.windsurfrules` found at the
+  plugin root into every session as an always-on rule. At the repository root
+  that is the contributor guide, which would reach every user's session.
+
+`scripts/sh/validate-skills.sh` fails if the Devin manifest declares a
+`skills` field, which would replace the mirror, or if one of those rule files
+appears in the plugin directory.
+
+### The router
+
+Devin reads `hooks/hooks.json` from the plugin, so the Codex `SessionStart`
+hook runs on Devin unchanged. Devin exports `CLAUDE_PLUGIN_ROOT` and
+`DEVIN_PLUGIN_ROOT` to plugin hooks, not `PLUGIN_ROOT`, so the command
+resolves `${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}`. Devin documents
+`hookSpecificOutput.additionalContext` for `SessionStart`, the envelope the
+injector already prints.
+
+Devin's plugin hooks fail open: a hook that cannot run is skipped and the
+session continues without the router. `tests/run-session-start.sh` therefore
+runs the shipped command with Devin's variables and no `PLUGIN_ROOT`.
+
+### Compaction
+
+Inferred, not observed. Devin does not document the `source` values of
+`SessionStart`. The hook has no matcher, so a compaction reported as a
+`SessionStart` would reach the injector. Devin's own `post_compaction` event
+receives the summary but is not documented to add context, so the adapter
+does not register it.
+
+### Installation
+
+`devin plugins install --local <path> -y` links the directory in place. A
+remote install, `devin plugins install augments-labs/sdlc-skills#plugins/sdlc-skills`,
+is recorded in the account's plugin list on Devin's service and follows the
+user to other machines.
+
+Measured on 3000.11.3: plugin management refuses to run signed out, even for a
+local directory, and the install checks the organisation's plugin policy over
+the network.
+
+### What the tests prove
+
+`tests/harnesses/devin.sh` installs into a throwaway `HOME` holding a copy of
+the credentials file. It isolates `HOME` and not only Devin's own directories,
+because Devin also reads `~/.claude/` hooks and skills.
+
+The inventory step reads `devin plugins info sdlc-skills`, which lists each
+skill as `/sdlc-skills:<name>` and names the `session_start` hook. Measured:
+every canonical skill and the hook are listed. The smoke test runs no model
+turn.
+
+## Antigravity
+
+Antigravity 1.3.3 (`agy`) installs a plugin from a directory holding
+`.antigravity-plugin/plugin.json`. Like Devin, it installs the Codex plugin
+directory, `plugins/sdlc-skills/`, and for the same reasons:
+
+- It loads skills one level deep, as `skills/<name>/SKILL.md`. Measured:
+  `agy plugin validate` processes every skill in the flat mirror, and none in
+  the canonical tree without a `skills` field listing each one.
+- It reads a standalone `AGENTS.md` or `GEMINI.md` in a customization root as a
+  rule. At the repository root those are the contributor guide.
+
+The same gate covers both manifests: no `skills` field, and no rule file at
+the plugin root.
+
+### The router
+
+Antigravity runs no session-start hook from a plugin that its documentation
+describes. Its documented hook events are `PreToolUse`, `PostToolUse`,
+`PreInvocation`, `PostInvocation`, and `Stop`. `PreInvocation` runs before
+every model call, which the lifecycle policy forbids. The binary carries an
+undocumented `SessionStart` event, which has not been observed to fire.
+
+The router therefore arrives the way it does on Grok Build, as a nudge, but
+the plugin ships it. `rules/AGENTS.md` in the plugin is always on while the
+plugin is enabled, and tells the agent to invoke `using-sdlc-skills` before
+acting. The gate checks that the file exists, names the skill, and carries no
+frontmatter.
+
+Devin installs the same directory and lists that file as a `manual` rule, so
+it does not fire there beside the hook. Measured on Devin 3000.11.3.
+
+### Installation
+
+`agy plugin install <directory>` copies the directory into
+`~/.gemini/config/plugins/sdlc-skills/`. A GitHub URL is cloned first; a
+`/tree/<branch>/<path>` URL selects the plugin directory inside the
+repository. Measured on 1.3.3: the clone resolves that path. A local install
+needs no sign-in and no network.
+
+### What the tests prove
+
+`tests/harnesses/antigravity.sh` installs into a throwaway `HOME`. Antigravity
+reports how many skills it processed from the installed copy but not their
+names, so the inventory reads the names from the copy and accepts them only
+when `agy plugin validate` processed the same number. It also fails when the
+rules file did not reach the copy. The smoke test runs no model turn.
+
+### No tool bindings yet
+
+Antigravity's subagent tools have not been measured against a running
+session, so the dispatch and role-binding tables below have no row for it.
+
+## Hermes
+
+Hermes Agent 0.21.7 installs a plugin by cloning a git repository. The clone's
+root has no Hermes manifest, so Hermes looks one level down, finds
+`.hermes-plugin/plugin.yaml`, and loads `.hermes-plugin/__init__.py` as the
+plugin `sdlc-skills/.hermes-plugin`. The entry point does both jobs in Python,
+from the canonical tree, with the standard library only. A `plugin.yaml`,
+`plugin.yml`, or `plugin.json` at the repository root would stop that search,
+so the gate rejects one.
+
+On the same pass Hermes also tries `.muse-plugin/plugin.json`, which is not a
+Hermes manifest, and logs a warning that it could not parse it. The warning is
+harmless: Hermes skips that folder and loads the plugin as usual.
+
+### Discovery
+
+`register()` registers each canonical `SKILL.md` by its directory name, so
+Hermes lists it as `sdlc-skills:<name>`; the `name` in `plugin.yaml` sets that
+prefix. Registration is per file, so the
+phase level costs nothing. Hermes does not read a registered skill's
+description from its frontmatter, so the adapter parses the `description:`
+field itself.
+
+### The router
+
+The router reaches the model as plugin system-prompt sections. Hermes builds
+the system prompt once per session and rebuilds it only after context
+compression, so the sections arrive at every boundary the lifecycle policy
+names and at no other time.
+
+A `pre_llm_call` hook was rejected. It runs before every turn, which the
+lifecycle policy forbids, and text it adds on the first turn is lost at the
+first compression. `on_session_start` cannot add context: Hermes ignores its
+return value.
+
+Hermes skips, whole, any section longer than 4,000 characters, and all plugins
+share 8,000. The router is longer than one section, so the adapter splits it at
+its own `## ` headings, reading the canonical file each time a section renders.
+The ids are zero-padded because Hermes renders sections in id order. If other
+enabled plugins use up the shared budget, Hermes skips a section and logs a
+warning.
+
+### Installation
+
+`hermes plugins install` takes a catalog name, a git URL, or `owner/repo`, and
+refuses a local path. It clones the default branch, names the install after the
+repository, writes it to `$HERMES_HOME/plugins/sdlc-skills`, and with
+`--enable` adds it to `plugins.enabled`. Measured: the repository passes the install-time security
+scan without `--force`.
+
+### What the tests prove
+
+`tests/run-hermes-plugin.sh` loads the entry point with a stub context. It
+checks that exactly the canonical skills register, each with its own
+`SKILL.md` and a description, that no hook registers, and that the sections
+carry the router body verbatim, in order, each within the cap and together
+within the shared budget.
+
+`tests/harnesses/hermes.sh` snapshots the working tree into a throwaway git
+repository, because Hermes clones a commit and not a working tree, and
+installs it into a throwaway `HERMES_HOME`. `hermes prompt-size` then builds a
+session's system prompt without a model call. The binding requires every
+router section to render with none skipped, and reads the skill index from the
+same output. The first launch in a new `HERMES_HOME` downloads a Python
+environment, so this smoke test needs the network once.
+
+### No tool bindings yet
+
+Hermes' subagent tool, `delegate_task`, has not been measured against a
+running session, and its model is set globally rather than per call. The
+dispatch and role-binding tables below have no row for it.
+
+## Cursor
+
+Cursor CLI 2026.10.01 (`cursor-agent`) loads every directory under
+`~/.cursor/plugins/local/` as a plugin. The adapter is the repository root,
+read as shipped: Cursor reads `.cursor-plugin/plugin.json` and falls back to
+`.claude-plugin/plugin.json`, so it takes the Claude Code skills list and
+`hooks/hooks.json`.
+
+### Discovery
+
+Without a manifest list, Cursor loads skills one level deep, which would miss
+the phase-nested canonical tree. The Claude manifest lists every skill
+directory, and Cursor accepts the list. Measured: a session reports all
+canonical skills from the plugin.
+
+Cursor also loads any `rules/`, `agents/`, or `commands/` directory at a
+plugin's root, and a `.cursor-plugin/plugin.json` would replace the Claude
+manifest. `scripts/sh/validate-skills.sh` fails if any of them appears at the
+repository root.
+
+### The router
+
+Cursor converts the Claude `SessionStart` entry in `hooks/hooks.json` to its
+own `sessionStart` event, runs the command from the plugin root, and exports
+both `CURSOR_PLUGIN_ROOT` and `CLAUDE_PLUGIN_ROOT`. The injector's Cursor
+branch keys on `CURSOR_PLUGIN_ROOT` and prints the snake_case
+`additional_context` that Cursor reads. Measured: the router body reaches the
+model at session start. Cursor's plugin hooks fail open.
+
+### Compaction
+
+Not observed. Cursor's `preCompact` hook can return only a message for the
+user, so it cannot carry the router. Whether `sessionStart` runs again after
+compaction has not been measured.
+
+### Installation
+
+Cursor's CLI can add a marketplace (`cursor-agent plugin marketplace add`) and
+load a folder for one session (`--plugin-dir`), but it has no command that
+installs a single plugin. A user therefore clones the repository into
+`~/.cursor/plugins/local/sdlc-skills`, which Cursor loads in every session. Measured: a symlink in that folder
+is rejected when its target lies outside it.
+
+### What the tests prove
+
+`tests/harnesses/cursor.sh` copies the working tree into the local plugins
+folder of a throwaway `HOME`. Cursor lists a plugin's skills only inside a
+model session, so the smoke test has no inventory: it counts the installed
+`SKILL.md` files and checks that the Claude manifest landed. Discovery and
+the router are shown by a live session instead.
+
+### No tool bindings yet
+
+Cursor's subagent tool has not been measured against a running session. The
+dispatch and role-binding tables below have no row for it.
+
 ## Lifecycle policy
 
 Every adapter supplies the full router through a session-start mechanism,
-with two exceptions described above: Grok Build gets a rules-file nudge, and
-Muse Code 1.3.0 gets discovery only. No adapter registers a hook on tool calls, on prompts, or at the end of a turn.
+with three exceptions described above: Grok Build and Antigravity get a
+rules-file nudge, and Muse Code 1.3.0 gets discovery only. No adapter registers a hook on tool calls, on prompts, or at the end of a turn.
 
 Compaction is a boundary like start, resume, and clear. It replaces the
 transcript with a summary, and text injected at session start is not carried
@@ -405,7 +657,9 @@ whether it exists at all.
 | Kimi Code | `Agent` tool | The brief names the file to read, because a subagent may not resolve paths relative to the plugin | One level. A background run adds parallelism, not nesting | Not settable. The tier is stated in the prompt and the harness binds it |
 | OpenCode | 1.x: the `Task` tool, to the `general` and `explore` subagents. 2.x: the `subagent` tool, with the same role names as its `agent` argument | Yes, for the whole session, through the plugin's skill registration | Not declared by the build. Treat a worker's own dispatch as prohibited | Settable through the agent's `model`. A subagent without one inherits the invoking agent's. The tier is stated in the prompt and the harness binds it |
 
-Grok Build, Muse Code, and pi have no row. No tool binding ships for them.
+Grok Build, Muse Code, pi, Devin, Antigravity, Hermes, and Cursor have no row. No tool
+binding ships for them. Devin documents `run_subagent` and `read_subagent`, but they have not
+been measured against a running session.
 
 ### Where the tool names live
 
