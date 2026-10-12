@@ -61,8 +61,9 @@ says what the folder holds if you decide to commit it instead.
 Connecting your tracker is done in the agent, not in the instructions file:
 the agent reads a linked ticket or an identifier only through a tool the
 harness already provides for that tracker and you are entitled to use.
-Without one, it asks you to paste the ticket, acceptance criteria and
-comments included. Either way, `working-from-a-ticket` records the ticket
+Without one, it asks you to paste the ticket, to name a tool it may use, or
+to continue from what it read, recorded as partial. Either way,
+`working-from-a-ticket` records the ticket
 and its acceptance criteria as written, and re-reads it before calling the
 work done.
 

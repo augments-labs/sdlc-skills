@@ -67,59 +67,66 @@ recorded text instead of a memory of it.
    code answers. List one line per point the text and the code together do
    not settle: which component, where a boundary sits, a criterion with no
    observable, a comment that contradicts the description.
-4. Write the capture to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or
-   the user-set path. Run `git hash-object` on it, take the first 7
-   characters, and append one row to its ledger (append-only, `.ledger.md`
-   in place of `.md`): that identity, state `captured`, and the source and
-   read time as bound evidence. Never edit the capture afterwards; a changed
-   ticket gets a successor (Step 4).
+4. Write the capture to
+   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{identifier}}-ticket.md` or the
+   user-set path. No other skill writes that name, and a successor always
+   gets its own new file, never the predecessor's path. Take its identity
+   under the Identity rule of the artifact layout reference
+   (`using-sdlc-skills`), and append one row to its ledger (append-only,
+   `.ledger.md` in place of `.md`): that identity, state `captured`, and
+   the source and read time as bound evidence. Never edit the capture
+   afterwards; a changed ticket gets a successor (Step 4).
 
 ## Step 3: Settle what is unclear, then hand on
 
 1. `Unclear` holds an entry → **REQUIRED SUB-SKILL:** invoke
-   `clarifying-intent` with that list. Its answers live where it records
-   them; the capture stays as read. Return here when it returns. Never guess
-   an entry, and never promote a guess to an acceptance criterion.
+   `clarifying-intent` with that list, addressed to the capture's decision
+   owner. Its answers live where it records them; the capture stays as read.
+   Return here when it returns. Never guess an entry, and never promote a
+   guess to an acceptance criterion.
 2. The ticket describes a new project or initiative rather than one change →
-   **REQUIRED SUB-SKILL:** invoke `define-goals`, with the capture as its
-   input, and stop here.
+   **REQUIRED SUB-SKILL:** invoke `define-goals`, which writes its own brief
+   file with the capture's identity as an input, and stop here.
 3. The ticket reports behavior that is broken, cause unknown →
    **REQUIRED SUB-SKILL:** invoke `debugging` before any fix; the acceptance
    criteria stay the done condition.
 4. The work spans several steps or files, or the user calls it too big for
    one go → **REQUIRED SUB-SKILL:** invoke `writing-plans`. The capture's
-   identity goes on its `Bound inputs` line and the acceptance criteria
-   become the plan's **Acceptance**.
+   identity goes on the plan's `Bound inputs` line; each acceptance
+   criterion traces, cited by that identity, to a task's Evaluator or to the
+   plan's **Acceptance** check; and the plan's last task re-reads the ticket
+   (Step 4).
 5. Otherwise → **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`, then
    `test-driven-development` and `yagni` before the first edit. The first
-   test comes from the first acceptance criterion, and the capture's identity
-   goes in the RED record.
+   test comes from the first acceptance criterion, or, when the capture says
+   `none stated`, from the done condition `clarifying-intent` recorded.
 
 ## Step 4: Before the work is called done
 
 1. Re-read the ticket the way Step 1 read it.
 2. The text, the criteria, or the comments differ from the capture → the
-   capture is stale. Write a successor capture (Step 2) naming the
-   predecessor, append a `superseded` row to the ledger, and return to
-   Step 3: a plan or a test bound to the old identity is bound to the old
-   ticket.
-3. Unchanged → say so, with the identity and the time of the re-read.
-   `verification-before-completion` judges each criterion against evidence;
-   this skill never does.
+   capture is stale. Write a successor capture (Step 2) in its own new file,
+   naming the predecessor; append a `superseded` row to the predecessor's
+   ledger; and return to Step 3: a plan or a test bound to the old identity
+   is bound to the old ticket.
+3. Unchanged → say so, with the identity and the time of the re-read; then
+   **REQUIRED SUB-SKILL:** invoke `verification-before-completion`, listing
+   each acceptance criterion as an item. It judges each criterion against
+   evidence; this skill never does.
 
 ## Gotchas
 
-- A ticket's title, its description, and its last comment often disagree,
-  and the comment usually wins; a capture made from the title alone binds
-  the wrong work — reproduced by a ticket whose final comment narrows the
-  scope.
+- A ticket's title, its description, and its last comment can disagree, and
+  the latest comment often carries the current ask; a capture made from the
+  title alone binds the wrong work — shows when a ticket's final comment
+  narrows the scope.
 - `git hash-object` can bind only a file in the project, so the identity
   names the capture, never the ticket; the recorded read time and means are
-  what tell a later reader which version of the ticket it was — reproduced
-  by a ticket edited between capture and review.
+  what tell a later reader which version of the ticket it was — shows when a
+  ticket is edited between capture and review.
 - A criterion written as "should" or "ideally" still binds; dropping it as
-  optional ships a change the ticket's owner rejects — reproduced by a ticket
-  whose only latency requirement is phrased as "ideally".
+  optional ships a change the ticket's owner rejects — shows when a ticket's
+  only latency requirement is phrased as "ideally".
 
 ## Common mistakes
 

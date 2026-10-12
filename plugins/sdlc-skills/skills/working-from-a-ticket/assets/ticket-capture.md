@@ -2,24 +2,26 @@
 
 `working-from-a-ticket` fills this after reading the ticket and before any
 other work on it. Write the filled copy to
-`.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path. Only
-text that was read goes in: nothing is paraphrased, completed from memory, or
-taken from a similar ticket. A section with nothing to hold carries the exact
-phrase given under it, and a slot that cannot be filled means the ticket was
-not read far enough; read it, or record it under `## Not readable`.
+`.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{identifier}}-ticket.md` or the user-set
+path; no other skill writes that name, and a successor gets its own new file.
+Only text that was read goes in: nothing is paraphrased, completed from
+memory, or taken from a similar ticket. A section with nothing to hold carries
+the exact phrase given under it, and a slot that cannot be filled means the
+ticket was not read far enough; read it, or record it under `## Not readable`.
 
 ```markdown
 # Ticket: {{identifier}} — {{title as written}}
 
-- **Status:** {{draft | captured; lifecycle stays external}}
-- **Identity:** recorded in the ledger row, never here: the first 7
-  characters of `git hash-object` over this file
+- **Status:** {{captured; lifecycle stays external}}
+- **Identity:** recorded in the ledger row, never here: this file's identity
+  under the Identity rule of the artifact layout reference
+  (`using-sdlc-skills`)
 - **Predecessor:** {{identity of the capture this one replaces, or none}}
 - **Source:** {{the tracker as the user named it, or "pasted by the user";
   the identifier; the link as given}}
 - **Read:** {{date and time}} through {{the user's paste | the tool used}}
-- **Owner:** {{who decides the unclear points; the user unless the ticket
-  names another}}
+- **Decision owner:** {{who answers the unclear points; the user unless the
+  ticket names another}}
 - **External decision ledger:** {{this file's path with .ledger.md in place
   of .md unless the user sets another; one row per state: captured,
   superseded by a successor capture}}
@@ -59,4 +61,4 @@ entry under `## Unclear`.
 goes to `clarifying-intent`; no entry is answered in this file.
 ```
 
-The filled copy is never edited; a changed ticket gets a successor capture that names this one as its predecessor.
+The filled copy is never edited; a changed ticket gets a successor capture in its own new file, naming this one as its predecessor.
