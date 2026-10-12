@@ -17,7 +17,7 @@ suite looked like before you touched anything.
 | Branch or HEAD | {{branch-or-detached-revision}} |
 | Base | {{base-ref}} at {{revision}} |
 | Remote freshness | {{fetched-at}} / {{stale}} |
-| Isolation kind | worktree / harness-native workspace / user-okayed current checkout |
+| Isolation kind | worktree / harness-native workspace / user-okayed current checkout / project-policy current checkout ({{policy-file}}: "{{quoted-line}}") |
 | Ignore rule | `.gitignore` / `info/exclude` / outside the repository / native tool owns it |
 | Owner of the checkout | this task / user / host |
 | Local commit authority | user answer (quoted) / project policy (path) / none — ask once |
