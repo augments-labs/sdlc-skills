@@ -6,7 +6,7 @@ How SDLC skills is versioned and how a release is cut. This is maintainer guidan
 
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). For a skills library, the "public API" is the **skill surface**: which skills exist, their names (the invocation address — `sdlc-skills:<name>`), and how they install (the manifests).
 
-- **Major** — the surface breaks: a skill is renamed or removed, or the invocation/manifest structure changes. Anything that invokes or installs the library must adapt.
+- **Major** — the surface breaks: a skill is renamed or removed, or the invocation/manifest structure changes. Anything that invokes or installs the library must adapt. Skill names are frozen: a clearer name alone does not justify a rename. A skill is renamed only when its name stops working: a harness or the Agent Skills standard rejects it, or a harness ships its own skill under the same name.
 - **Minor** — the surface grows, backwards-compatibly: a new skill, a new harness adapter.
 - **Patch** — the surface is unchanged; existing skills behave better: trigger descriptions, discipline bodies, sibling files, docs, test records.
 
@@ -34,6 +34,8 @@ Nobody bumps in a contribution PR. Versioning is decided once per release, by th
 An entry answers two questions and stops: **what changed**, and **why someone
 using this library should care**. One or two sentences. A reader who wants the
 investigation behind it follows the release link, which is what that page is for.
+A major entry also names each renamed or removed skill and what to invoke
+instead; the README promises users that much.
 
 `CHANGELOG.md` has drifted from that before: across 110 entries the median is 273
 characters and the longest is 936 — most of a whole skill description spent on a
