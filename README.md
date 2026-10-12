@@ -231,6 +231,17 @@ hermes plugins install augments-labs/sdlc-skills --enable
 During the install, Hermes asks whether to install Node dependencies because
 the repository has a `package.json`. Answer no: the plugin needs none.
 
+### Cursor
+
+Cursor loads plugins cloned into its local plugins folder:
+
+```bash
+git clone https://github.com/augments-labs/sdlc-skills.git ~/.cursor/plugins/local/sdlc-skills
+```
+
+Cursor ignores a symlink there that points outside that folder, so clone into
+it rather than linking an existing clone. To update, run `git pull` inside it.
+
 ### Other agents
 
 Every skill follows the open Agent Skills format: a directory with a `SKILL.md`

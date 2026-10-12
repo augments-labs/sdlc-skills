@@ -12,6 +12,7 @@ tests/harnesses/
   antigravity.sh
   claude-code.sh
   codex.sh
+  cursor.sh
   devin.sh
   grok.sh
   hermes.sh

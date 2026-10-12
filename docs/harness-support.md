@@ -32,6 +32,7 @@ An adapter has two jobs:
 | Devin | `plugins/sdlc-skills/` with `.devin-plugin/plugin.json`, the Codex plugin directory | The `SessionStart` hook the Codex plugin bundles | Inferred, not observed. See [Devin](#devin) |
 | Antigravity | `plugins/sdlc-skills/` with `.antigravity-plugin/plugin.json`, the Codex plugin directory | It does not. The plugin's always-on `rules/AGENTS.md` nudges the agent instead | Not applicable |
 | Hermes | `.hermes-plugin/plugin.yaml` and `.hermes-plugin/__init__.py` | Plugin system-prompt sections, rendered once per session | Yes. Compression rebuilds the system prompt, which renders the sections again |
+| Cursor | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped from the cloned root | `SessionStart` hook, which Cursor runs as its `sessionStart` | Not observed. See [Cursor](#cursor) |
 
 This page uses two labels for its claims. **Measured** means the behavior was
 observed on the version named. **Inferred, not observed** means it follows
@@ -550,6 +551,62 @@ Hermes' subagent tool, `delegate_task`, has not been measured against a
 running session, and its model is set globally rather than per call. The
 dispatch and role-binding tables below have no row for it.
 
+## Cursor
+
+Cursor CLI 2026.10.01 (`cursor-agent`) loads every directory under
+`~/.cursor/plugins/local/` as a plugin. The adapter is the repository root,
+read as shipped: Cursor reads `.cursor-plugin/plugin.json` and falls back to
+`.claude-plugin/plugin.json`, so it takes the Claude Code skills list and
+`hooks/hooks.json`.
+
+### Discovery
+
+Without a manifest list, Cursor loads skills one level deep, which would miss
+the phase-nested canonical tree. The Claude manifest lists every skill
+directory, and Cursor accepts the list. Measured: a session reports all
+canonical skills from the plugin.
+
+Cursor also loads any `rules/`, `agents/`, or `commands/` directory at a
+plugin's root, and a `.cursor-plugin/plugin.json` would replace the Claude
+manifest. `scripts/sh/validate-skills.sh` fails if any of them appears at the
+repository root.
+
+### The router
+
+Cursor converts the Claude `SessionStart` entry in `hooks/hooks.json` to its
+own `sessionStart` event, runs the command from the plugin root, and exports
+both `CURSOR_PLUGIN_ROOT` and `CLAUDE_PLUGIN_ROOT`. The injector's Cursor
+branch keys on `CURSOR_PLUGIN_ROOT` and prints the snake_case
+`additional_context` that Cursor reads. Measured: the router body reaches the
+model at session start. Cursor's plugin hooks fail open.
+
+### Compaction
+
+Not observed. Cursor's `preCompact` hook can return only a message for the
+user, so it cannot carry the router. Whether `sessionStart` runs again after
+compaction has not been measured.
+
+### Installation
+
+Cursor's CLI can add a marketplace (`cursor-agent plugin marketplace add`) and
+load a folder for one session (`--plugin-dir`), but it has no command that
+installs a single plugin. A user therefore clones the repository into
+`~/.cursor/plugins/local/sdlc-skills`, which Cursor loads in every session. Measured: a symlink in that folder
+is rejected when its target lies outside it.
+
+### What the tests prove
+
+`tests/harnesses/cursor.sh` copies the working tree into the local plugins
+folder of a throwaway `HOME`. Cursor lists a plugin's skills only inside a
+model session, so the smoke test has no inventory: it counts the installed
+`SKILL.md` files and checks that the Claude manifest landed. Discovery and
+the router are shown by a live session instead.
+
+### No tool bindings yet
+
+Cursor's subagent tool has not been measured against a running session. The
+dispatch and role-binding tables below have no row for it.
+
 ## Lifecycle policy
 
 Every adapter supplies the full router through a session-start mechanism,
@@ -600,7 +657,7 @@ whether it exists at all.
 | Kimi Code | `Agent` tool | The brief names the file to read, because a subagent may not resolve paths relative to the plugin | One level. A background run adds parallelism, not nesting | Not settable. The tier is stated in the prompt and the harness binds it |
 | OpenCode | 1.x: the `Task` tool, to the `general` and `explore` subagents. 2.x: the `subagent` tool, with the same role names as its `agent` argument | Yes, for the whole session, through the plugin's skill registration | Not declared by the build. Treat a worker's own dispatch as prohibited | Settable through the agent's `model`. A subagent without one inherits the invoking agent's. The tier is stated in the prompt and the harness binds it |
 
-Grok Build, Muse Code, pi, Devin, Antigravity, and Hermes have no row. No tool
+Grok Build, Muse Code, pi, Devin, Antigravity, Hermes, and Cursor have no row. No tool
 binding ships for them. Devin documents `run_subagent` and `read_subagent`, but they have not
 been measured against a running session.
 

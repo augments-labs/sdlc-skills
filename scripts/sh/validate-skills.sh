@@ -469,6 +469,16 @@ for path in plugin.yaml plugin.yml plugin.json; do
     err "$path at the repository root: Hermes would read it as the plugin and never load .hermes-plugin/"
 done
 
+# Cursor installs the repository root and reads .claude-plugin/plugin.json when
+# no .cursor-plugin/plugin.json exists, so the skills list checked above is the
+# one it loads. A .cursor-plugin/plugin.json would replace that list, and Cursor
+# loads any rules/, agents/, or commands/ at a plugin's root into user sessions.
+echo "• Cursor adapter"
+for path in .cursor-plugin rules agents commands; do
+  [ ! -e "$path" ] ||
+    err "$path/ at the repository root: Cursor installs the root and would load it in place of, or beside, the Claude manifest"
+done
+
 echo "• Kimi adapter"
 if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
 
