@@ -2,9 +2,9 @@
 
 `working-from-a-ticket` fills this after reading the ticket and before any
 other work on it. Write the filled copy to
-`.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{identifier slug}}-ticket.md` or the
-user-set path; no other skill writes that name, and a successor gets its own
-new file (`-{{n}}` before `-ticket` when the path exists).
+`.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{slug}}-ticket.md` or the user-set
+path; no other skill writes that name, and a successor gets its own new file
+(`-{{n}}` before `-ticket` when the path exists).
 Only text that was read goes in: nothing is paraphrased, completed from
 memory, or taken from a similar ticket. A section with nothing to hold carries
 the exact phrase given under it, and a slot that cannot be filled means the

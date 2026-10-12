@@ -70,14 +70,14 @@ recorded text instead of a memory of it.
 4. Write the capture to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{slug}}-ticket.md` or the user-set
    path: the slug is the identifier lowercased, each run of other characters
-   `-`, or a short topic slug when there is none; the H1 keeps the identifier
-   as written. The path exists → add `-{{n}}` before `-ticket`; a successor
-   never takes the predecessor's path. No other skill writes that name. Take
-   its identity under the artifact layout's captured-ticket rule
-   (`using-sdlc-skills`), and append one row to its ledger (append-only,
-   `.ledger.md` in place of `.md`): that identity, state `captured`, and
-   the source and read time as bound evidence. Never edit the capture
-   afterwards; a changed ticket gets a successor (Step 4).
+   → `-`, trimmed at both ends, or a short topic slug when there is none; the
+   H1 keeps the identifier as written. The path exists → add `-{{n}}` before
+   `-ticket`; a successor never takes the predecessor's path. No other skill
+   writes that name. Take its identity under the artifact layout's
+   captured-ticket rule (`using-sdlc-skills`), and append one row to its
+   ledger (append-only, `.ledger.md` in place of `.md`): that identity, state
+   `captured`, and the source and read time as bound evidence. Never edit the
+   capture afterwards; a changed ticket gets a successor (Step 4).
 
 ## Step 3: Settle what is unclear, then hand on
 
@@ -102,7 +102,7 @@ recorded text instead of a memory of it.
    `test-driven-development` and `yagni` before the first edit. The first
    test comes from the first acceptance criterion, or, when the capture says
    `none stated`, from the done condition `clarifying-intent` settled,
-   recorded as one of its Decisions.
+   wherever it recorded it.
 
 ## Step 4: Before the work is called done
 
