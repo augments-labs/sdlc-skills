@@ -94,7 +94,7 @@ for skill in "${skills[@]}"; do
   # The line target was once a hard failure at 120, and that was a mistake with a
   # visible cost: authors bought line count by dropping articles and verbs until
   # the prose read as a noun stack. Compression is not concision. A body that
-  # needs 140 clear lines should take them; see docs/agent-skills-conformance.md.
+  # needs 140 clear lines should take them; see docs/reference/agent-skills-conformance.md.
   lines=$(wc -l < "$skill")
   [ "$lines" -gt 200 ] && note "warn: $lines lines (>200; well over the house target — is every line earning its place?)"
 
@@ -513,7 +513,7 @@ while IFS=: read -r src ref; do
 done < <(grep -roE --include='*.md' --include='*.sh' \
            '(docs|tests)/[A-Za-z0-9._/-]+\.md' skills docs tests README.md AGENTS.md | sort -u)
 
-# Conformance record freshness. docs/agent-skills-conformance.md
+# Conformance record freshness. docs/reference/agent-skills-conformance.md
 # states how much headroom the library actually has against the standard's
 # ceilings, and how many skills use each directory kind. Those are measurements
 # of this tree, so they rot on any edit — and a conformance record with stale
@@ -522,7 +522,7 @@ done < <(grep -roE --include='*.md' --include='*.sh' \
 # This compares measurements, not limits. The ceilings themselves (1024, 500,
 # 5000) live in check-skill.sh alone and are deliberately not restated here.
 echo "• conformance record matches the tree"
-CONF_DOC=docs/agent-skills-conformance.md
+CONF_DOC=docs/reference/agent-skills-conformance.md
 if [ ! -f "$CONF_DOC" ]; then
   err "$CONF_DOC is missing — the conformance record is part of the gate"
 else
@@ -560,7 +560,7 @@ else
   conf_claim "largest body tokens"  "$max_tokens" 'largest is ~[0-9]+'
   conf_claim "references/ count"    "$n_refs"     '\| [0-9]+ skills; rubrics'
   conf_claim "assets/ count"        "$n_assets"   '\| [0-9]+ skills; every fill-in template'
-  conf_claim "scripts/ count"       "$n_scripts"  '\| [0-9]+ skills — see below'
+  conf_claim "scripts/ count"       "$n_scripts"  '\| [0-9]+ skills \(see below\)'
 fi
 
 echo ""

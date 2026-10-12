@@ -3,7 +3,7 @@
 Guidance for anyone — human or agent — working in this repository.
 
 `sdlc-skills` is a cross-platform library of opt-in SDLC skills for coding
-agents. Read `README.md` for the philosophy, and
+agents. Read `docs/concepts/skills-and-gates.md` for the philosophy, and
 `skills/common/writing-skills/SKILL.md` before authoring or editing any skill.
 
 The one idea behind every skill: you are a non-deterministic generator, so claims
@@ -48,18 +48,25 @@ Local checkpoint commits on a task branch are ordinary authorized work here, and
 
 ## Authoring rules (non-negotiable)
 
-Files under `skills/` and `docs/` ship to users. They must be self-contained,
-portable engineering guidance.
+Files under `skills/` ship to users. They must be self-contained, portable
+engineering guidance. Files under `docs/` are read by users and follow the same
+authoring rules.
 
-`docs/` is website documentation for the current library contract. Never put
-run transcripts, failure records, pass-rate anecdotes, superseded behavior, or
-investigation notes there. Keep ephemeral results in the review workflow or private notes.
+`docs/` is user documentation for the current library contract: task guides,
+short concept pages, and reference pages for people who install and use the
+library, written in plain second person. Design reasons, gates, test notes,
+adapter internals, and other maintainer material belong in `CONTRIBUTING.md`,
+not in `docs/`. Never put run transcripts, failure records, pass-rate anecdotes,
+superseded behavior, or investigation notes in either. Keep ephemeral results in
+the review workflow or private notes.
 
 **The Agent Skills standard outranks every rule here.** Where this file, or
 anything under `docs/`, conflicts with agentskills.io, the standard wins and the
 house rule is the bug. A house rule may be *stricter*; it may never permit what
 the standard forbids, forbid what it requires, or reassign a meaning it defines.
-The conformance record is `docs/agent-skills-conformance.md`.
+The conformance record is `docs/reference/agent-skills-conformance.md`; the
+gate reads its numbers, so keep the matched phrases intact when editing it
+(see `CONTRIBUTING.md`, "Keeping the conformance record current").
 
 1. **No external references.** Do not name other repositories, projects,
    articles, or authors, and do not cite issue/PR numbers or tracker links. State
@@ -105,8 +112,8 @@ same gate automatically on a relevant staged change (`--remove` undoes it).
 For one skill, `skills/common/writing-skills/scripts/check-skill.sh` applies the
 checker's format and house-policy profile, including outside this repository.
 It extracts the library's frontmatter subset rather than parsing all YAML, and
-executes bundled scripts with `--help`. See `docs/agent-skills-conformance.md`
-for coverage and effects before checking an unfamiliar skill.
+executes bundled scripts with `--help`. See `CONTRIBUTING.md`, "Conformance
+checks", for coverage and effects before checking an unfamiliar skill.
 
 Rule 4 (behavior) has no deterministic gate — that is the honest limit. No live
 agent runs in this repository or its CI.
@@ -116,7 +123,7 @@ agent runs in this repository or its CI.
 Invoke `writing-skills` and follow its procedure — it owns the template, the
 format, and the checks to run before calling one done. Three things are this
 repository's and are not in there: name the failure it answers, pick the phase
-folder from the canonical order in `README.md` (or `common/`), and run
+folder from the canonical order in `docs/reference/skills.md` (or `common/`), and run
 `scripts/sh/validate-skills.sh`, which adds the house rules on top of the
 standard's.
 
@@ -149,7 +156,7 @@ workflow belongs in your own skill library, not here. The test: would this help
 someone on a completely different kind of project?
 
 For whether a phase's activities are separable or one interleaved pass, see
-`docs/skill-granularity.md`.
+`CONTRIBUTING.md`, "One skill or several".
 
 ## Contributing
 
@@ -168,7 +175,7 @@ Adding a harness (an IDE, CLI, or agent runner) means more than dropping skill
 files where the tool can see them — they must actually *load and activate*. These
 skills are inert unless the harness both discovers them and is nudged to reach
 for one at the right moment (on Claude Code, the `hooks/` SessionStart nudge;
-elsewhere, an equivalent). See `docs/harness-support.md`.
+elsewhere, an equivalent). See `CONTRIBUTING.md`, "Agent adapters".
 
 A PR adding a harness MUST add `tests/harnesses/{{name}}.sh` offline bindings
 for `tests/run-plugin-smoke.sh` and
@@ -178,8 +185,8 @@ never invoked are not a working integration.
 
 ## Layout
 
-- `skills/<phase>/<name>/` — the skills, by SDLC phase (canonical order is in `README.md`; folders are unnumbered).
-- `.claude-plugin/` — the install manifest; its skills array must list every skill on disk (the gate checks it). Cursor reads it too, from the repository root, so no `.cursor-plugin/`, `rules/`, `agents/`, or `commands/` may sit there (the gate checks it). `.kimi-plugin/` — the Kimi Code manifest; its skills paths must resolve to the same canonical set. `plugins/sdlc-skills/` — the Codex plugin, whose skill mirror the sync script regenerates, listed for install by `.agents/plugins/marketplace.json`; Devin and Antigravity install the same directory through `.devin-plugin/` and `.antigravity-plugin/`, so no `AGENTS.md` or `GEMINI.md` may sit at its root, and `rules/AGENTS.md` there carries the Antigravity router nudge (the gate checks both). `.opencode/` — the OpenCode plugin, which registers the canonical skills and injects the router through hooks (the gate checks it; opencode's own cache files there stay ignored). `.muse-plugin/` — the Muse Code manifest, the same skills list for builds that ship plugin support. `.pi/extensions/` — the pi extension, which injects the router in-process. `.hermes-plugin/` — the Hermes plugin, which registers the canonical skills and puts the router in the system prompt (the gate and `tests/run-hermes-plugin.sh` check it). `index.js` — the package entry OpenCode 2.x resolves when the plugin is installed from npm. Adding a harness: `docs/harness-support.md`.
+- `skills/<phase>/<name>/` — the skills, by SDLC phase (canonical order is in `docs/reference/skills.md`; folders are unnumbered).
+- `.claude-plugin/` — the install manifest; its skills array must list every skill on disk (the gate checks it). Cursor reads it too, from the repository root, so no `.cursor-plugin/`, `rules/`, `agents/`, or `commands/` may sit there (the gate checks it). `.kimi-plugin/` — the Kimi Code manifest; its skills paths must resolve to the same canonical set. `plugins/sdlc-skills/` — the Codex plugin, whose skill mirror the sync script regenerates, listed for install by `.agents/plugins/marketplace.json`; Devin and Antigravity install the same directory through `.devin-plugin/` and `.antigravity-plugin/`, so no `AGENTS.md` or `GEMINI.md` may sit at its root, and `rules/AGENTS.md` there carries the Antigravity router nudge (the gate checks both). `.opencode/` — the OpenCode plugin, which registers the canonical skills and injects the router through hooks (the gate checks it; opencode's own cache files there stay ignored). `.muse-plugin/` — the Muse Code manifest, the same skills list for builds that ship plugin support. `.pi/extensions/` — the pi extension, which injects the router in-process. `.hermes-plugin/` — the Hermes plugin, which registers the canonical skills and puts the router in the system prompt (the gate and `tests/run-hermes-plugin.sh` check it). `index.js` — the package entry OpenCode 2.x resolves when the plugin is installed from npm. Adding a harness: `CONTRIBUTING.md`, "Adding an adapter".
 - `AGENTS.md` — this file, the canonical contributor guide. `GEMINI.md` symlinks to it; `CLAUDE.md` is a short pointer to it. A harness that reads its own instructions file gets the same guidance from one source, even one that refuses a symlinked instructions file.
 - `.github/` — CI (`workflows/validate.yml`, `workflows/release-readiness.yml`) and the PR template (`PULL_REQUEST_TEMPLATE.md`).
 - `.codex/` — the checkout-local Codex configuration: sandbox mode and approval policy, and agent nesting and concurrency limits.
@@ -187,6 +194,6 @@ never invoked are not a working integration.
 - `tests/` — offline tests, where the answer is known in advance and no model runs: `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, and `run-state-identity.sh`.
 - `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
 - `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
-- `docs/` — repository-only rationale, markdown only: philosophy, activation, harness support, skill granularity, testing, and the conformance record. Never referenced from a shipped skill; the gate enforces that.
+- `docs/` — user documentation, markdown only: `README.md` (the index), `guides/` (task guides), `concepts/` (short explanations), and `reference/` (the skill catalogue, supported agents, and the conformance record the gate reads). Maintainer material lives in `CONTRIBUTING.md`. Never referenced from a shipped skill; the gate enforces that.
 - `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the nine manifest versions agree).
 - `.claude/` — local config and notes; gitignored, never shipped.
