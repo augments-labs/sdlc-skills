@@ -294,6 +294,7 @@ people need first:
 | [Building a feature](docs/guides/building-a-feature.md) | From the request to a reviewed branch |
 | [Fixing a bug](docs/guides/fixing-a-bug.md) | How the agent finds the cause before it proposes a fix |
 | [When a session goes wrong](docs/guides/when-a-session-goes-wrong.md) | Getting a cited account of what a session did |
+| [Setting up for a team](docs/guides/setting-up-for-a-team.md) | What a team writes once in its agent instructions file |
 | [Skills guide, your checks decide](docs/concepts/skills-and-gates.md) | Why the library relies on your tests, reviews, and decisions |
 | [Skill catalogue](docs/reference/skills.md) | Every skill, by phase |
 | [Supported agents](docs/reference/agents.md) | What each agent gets and its known limits |

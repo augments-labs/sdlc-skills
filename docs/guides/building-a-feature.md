@@ -43,6 +43,10 @@ If you would rather the agent stayed in the current checkout, say so:
 Stay in this checkout, no worktree.
 ```
 
+If your team always works this way, write it once in your project's agent
+instructions file instead; [Setting up for a team](setting-up-for-a-team.md)
+shows the line.
+
 ## 3. It writes a failing test first
 
 `test-driven-development` writes one test for the behavior, runs it with

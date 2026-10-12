@@ -32,6 +32,7 @@ does along the way, with example prompts.
 | [Reviewing and shipping](guides/reviewing-and-shipping.md) | Verification, independent review, and the choice of what happens to the branch |
 | [Planning larger work](guides/planning-larger-work.md) | Briefs, specs, designs, and plans for work that is bigger than one change |
 | [When a session goes wrong](guides/when-a-session-goes-wrong.md) | Getting a cited account of what a session did, as a report and a trace page |
+| [Setting up for a team](guides/setting-up-for-a-team.md) | What a team writes once in its agent instructions file: checkout, base branch, branch names, local commits, review depth, PR rules |
 | [Using the skills on another agent](guides/other-agents.md) | What to do when your agent is not in the supported list |
 
 ## Concepts

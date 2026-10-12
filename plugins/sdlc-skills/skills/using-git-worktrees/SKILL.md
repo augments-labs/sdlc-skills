@@ -7,7 +7,9 @@ description: "Creates an isolated git worktree for a task and checkpoints work t
 NEVER START REPO EDITS IN A SHARED CHECKOUT — one where Step 1 reports
 `git-dir` equal to `common-dir` — WHATEVER BRANCH IT IS ON. Create or enter a
 dedicated workspace — a git worktree unless the user or project says otherwise —
-*before* the first edit, unless the user explicitly okayed the current checkout.
+*before* the first edit, unless the user explicitly okayed the current checkout
+or the project's written policy does (Step 1.6; a line you can quote, never
+your reading of the checkout).
 Writing anything under `.sdlc-skills/` is not a repo edit here; product code,
 tests, and project gates are.
 </EXTREMELY-IMPORTANT>
@@ -16,9 +18,10 @@ tests, and project gates are.
 
 ## When to use
 
-- **Skip creation** when the user explicitly says to stay, or Step 1 confirms
-  a linked worktree owned by this task or the harness. Reuse its current workspace
-  and baseline record; retain Step 5 checkpoints. Skip read-only work.
+- **Skip creation** when the user explicitly says to stay, when the project's
+  written policy says to stay (Step 1.6), or Step 1 confirms a linked worktree
+  owned by this task or the harness. Reuse its current workspace and baseline
+  record; retain Step 5 checkpoints. Skip read-only work.
 
 ## Step 1: Detect what you are in
 
@@ -43,6 +46,12 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
 4. Write every resource and dirty change into the inventory, by who created
    it. Never stash dirty state you do not own.
 5. Planned in another workspace → rerun 1 before the first product edit.
+6. The project's agent instructions file or contribution rules say in writing
+   to work in the current checkout → record the path and the quoted line as
+   `Isolation kind`, keep the inventory from 4, and skip creation as for a
+   user's okay. Only a line you can quote counts: a clean checkout on a task
+   branch says nothing, and nothing in the checkout's state is ever read as
+   policy. No such line → create the workspace.
 
 ## Step 2: Prove the base
 
@@ -161,6 +170,8 @@ authority.
   commit: the unit, and what `git commit` does not grant.
 - A gate written during planning lands on whatever branch the shared checkout
   is on.
+- A policy line that okays the current checkout grants only that; local
+  commits still need their own line or the user's answer under Step 5.
 - A branch a harness-native command cuts from a remote ref can still track it;
   `git status --short --branch` printing `...origin/{{base}}` on the new
   branch is the tell. Unset the upstream before the first checkpoint.
