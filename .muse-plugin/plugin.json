@@ -11,6 +11,10 @@
   "capabilities": {
     "skills": [
       {
+        "id": "working-from-a-ticket",
+        "path": "skills/analysis/working-from-a-ticket/SKILL.md"
+      },
+      {
         "id": "writing-specs",
         "path": "skills/analysis/writing-specs/SKILL.md"
       },

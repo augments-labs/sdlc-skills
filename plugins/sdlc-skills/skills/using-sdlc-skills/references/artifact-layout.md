@@ -11,7 +11,7 @@ nothing.
 
 | Directory | Holds | Committed |
 | --- | --- | --- |
-| `briefs/` | goals, scope, feasibility, and interview briefs | yes |
+| `briefs/` | goals, scope, feasibility, and interview briefs; captured tickets | yes |
 | `specs/` | specifications | yes |
 | `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts | yes |
 | `plans/` | plan directories: an index and its task files | yes |

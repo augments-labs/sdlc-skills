@@ -15,6 +15,12 @@ For work that needs a design or a plan first, see
 [Planning larger work](planning-larger-work.md). The steps below are what
 happens for a change the agent can start on directly.
 
+If the work is already written up as a ticket, hand the agent the ticket:
+paste it, or give the link or identifier if the agent has a tool to read it.
+`working-from-a-ticket` records the ticket and its acceptance criteria as
+written, so the plan and the tests bind to that record rather than to a
+summary, and the agent re-reads the ticket before it calls the work done.
+
 ## 1. It settles what you mean, if anything is open
 
 If the request leaves something open that the code cannot answer (which

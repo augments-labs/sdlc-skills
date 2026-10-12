@@ -8,7 +8,7 @@ what goes in it and what to commit.
 
 | Directory | Holds | Commit it? |
 | --- | --- | --- |
-| `briefs/` | Goals, scope, feasibility, and interview briefs | Yes |
+| `briefs/` | Goals, scope, feasibility, and interview briefs; captured tickets | Yes |
 | `specs/` | Specifications | Yes |
 | `designs/` | Architecture, data models, UI designs, coding standards, decision records, migration contracts | Yes |
 | `plans/` | Plan directories: an index and one file per task | Yes |

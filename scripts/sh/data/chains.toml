@@ -8,9 +8,9 @@ recorded_words = 6049
 budget_words = 6099
 
 [new-feature]
-skills = ["using-sdlc-skills", "clarifying-intent", "writing-specs", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 11409
-budget_words = 11459
+skills = ["using-sdlc-skills", "working-from-a-ticket", "clarifying-intent", "writing-specs", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
+recorded_words = 12411
+budget_words = 12461
 
 [plan-execution]
 skills = ["using-sdlc-skills", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]

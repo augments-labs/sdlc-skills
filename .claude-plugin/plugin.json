@@ -19,6 +19,7 @@
     "sdlc"
   ],
   "skills": [
+    "./skills/analysis/working-from-a-ticket",
     "./skills/analysis/writing-specs",
     "./skills/common/dispatching-parallel-agents",
     "./skills/common/handoff",
