@@ -99,6 +99,13 @@ case "$harness" in
   # Codex installs only the flat plugin dir, and registers via the marketplace
   # rather than copying a manifest file we could look for.
   codex)       layout='*/skills/*/SKILL.md';   manifest='';;
+  # Cursor loads the checkout root from its local plugins dir, through the
+  # Claude manifest.
+  cursor)      layout='*/.cursor/plugins/local/sdlc-skills/skills/*/*/SKILL.md'; manifest='.claude-plugin/plugin.json';;
+  # Devin links the same flat plugin dir in place.
+  devin)       layout='*/skills/*/SKILL.md';   manifest='.devin-plugin/plugin.json';;
+  # Antigravity copies the same flat plugin dir into its config dir.
+  antigravity) layout='*/.gemini/config/plugins/sdlc-skills/skills/*/SKILL.md'; manifest='.antigravity-plugin/plugin.json';;
   # OpenCode loads the tree in place through the plugin file. The adapter
   # proves the load on 2.x and the inventory on 1.x; a file-exists check on the
   # checkout the test itself pointed at would prove nothing, so there is no
@@ -109,6 +116,9 @@ case "$harness" in
   # Muse installs skill by skill into its config dir, one flat directory per
   # skill and no phase level; that route copies files and writes no manifest.
   muse)        layout='*/muse/skills/*/SKILL.md'; manifest='';;
+  # Hermes clones a snapshot of the checkout into its plugins dir; the root
+  # manifest registers the phase-nested canonical tree.
+  hermes)      layout='*/skills/*/*/SKILL.md'; manifest='.hermes-plugin/plugin.yaml';;
   # pi installs a local-path source by reference, not a copy, so the tree
   # stays at the checkout the `pi` key in package.json names.
   pi)          layout='*/skills/*/*/SKILL.md'; manifest='.pi/extensions/sdlc-skills.js';;

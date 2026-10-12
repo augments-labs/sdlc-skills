@@ -100,7 +100,7 @@ elif [ -n "${COPILOT_CLI:-}" ]; then
     # SDK-style hooks consume top-level camelCase additional context.
     printf '{\n  "additionalContext": "%s"\n}\n' "$esc"
 else
-    # Claude Code and Codex consume the nested SessionStart envelope, including
+    # Claude Code, Codex, and Devin consume the nested SessionStart envelope, including
     # the post-compaction invocation (source=compact), which reaches here like
     # any other source and is answered the same way.
     printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "%s",\n    "additionalContext": "%s"\n  }\n}\n' "$event" "$esc"

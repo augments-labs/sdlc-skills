@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$PLUGIN_ROOT/scripts/sh/session-start.sh\" SessionStart",
+            "command": "bash \"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/scripts/sh/session-start.sh\" SessionStart",
             "timeout": 15,
             "statusMessage": "Loading the SDLC skills router (start, resume, clear, compact)"
           }

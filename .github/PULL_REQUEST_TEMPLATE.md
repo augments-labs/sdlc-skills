@@ -62,7 +62,7 @@ and leave the rest of this section blank. A blank section is placeholder text
 and the PR is closed without review.
 
 An added skill must be general-purpose SDLC guidance: it belongs to a phase of
-the software development lifecycle in the canonical order `README.md` lists
+the software development lifecycle in the canonical order `docs/reference/skills.md` lists
 (or to `common/`), and would help someone on a completely different kind of
 project. Name that phase and the failure the skill answers.
 
@@ -70,7 +70,7 @@ A PR that adds a skill outside the SDLC is closed without review, whatever its
 quality. -->
 
 - Adds a skill: <!-- yes or not applicable -->
-- Phase folder: <!-- a phase from the README catalogue table's phase column, common, or n/a -->
+- Phase folder: <!-- a phase from the skill catalogue (`docs/reference/skills.md`), common, or n/a -->
 - Why this is SDLC guidance, not domain, tool, or workflow content: <!-- or n/a -->
 
 ## Prior PRs and issues

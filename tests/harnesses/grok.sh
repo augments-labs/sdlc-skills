@@ -29,7 +29,7 @@ adapter_install() { # $1 plugin source
     echo "grok plugin install failed (see $errlog)" >&2; return 1; }
 
   # RULES-FILE PROBE: no hook on 1.0.40 reaches the prompt (see
-  # docs/harness-support.md), so the one channel that nudges the router is a
+  # CONTRIBUTING.md, "Agent adapters"), so the one channel that nudges the router is a
   # rules file Grok scans regardless of folder trust. Write the same one-line
   # nudge a real install needs, then read it straight back through `grok
   # inspect --json`'s own `projectInstructions` array in this same isolated
