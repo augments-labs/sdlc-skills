@@ -99,6 +99,8 @@ case "$harness" in
   # Codex installs only the flat plugin dir, and registers via the marketplace
   # rather than copying a manifest file we could look for.
   codex)       layout='*/skills/*/SKILL.md';   manifest='';;
+  # Devin links the same flat plugin dir in place.
+  devin)       layout='*/skills/*/SKILL.md';   manifest='.devin-plugin/plugin.json';;
   # OpenCode loads the tree in place through the plugin file. The adapter
   # proves the load on 2.x and the inventory on 1.x; a file-exists check on the
   # checkout the test itself pointed at would prove nothing, so there is no

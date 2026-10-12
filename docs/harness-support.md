@@ -29,6 +29,7 @@ An adapter has two jobs:
 | Grok Build | `.claude-plugin/plugin.json` and `hooks/hooks.json`, read as shipped | It does not. A rules file nudges the agent instead | Not applicable |
 | Muse Code | `.muse-plugin/plugin.json` on a build with plugin support, otherwise `scripts/sh/install-muse-skills.sh` | The manifest's `SessionStart` hook. Never on 1.3.0, which loads no plugin | No. No hook runs |
 | pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` hook, through `appendSystemPrompt` | In the running process only. See [pi](#pi) |
+| Devin | `plugins/sdlc-skills/` with `.devin-plugin/plugin.json`, the Codex plugin directory | The `SessionStart` hook the Codex plugin bundles | Inferred, not observed. See [Devin](#devin) |
 
 This page uses two labels for its claims. **Measured** means the behavior was
 observed on the version named. **Inferred, not observed** means it follows
@@ -355,6 +356,73 @@ No tool bindings file ships with this adapter. pi's tool names have not been
 measured against a running session, so the dispatch and role-binding tables
 below have no row for pi.
 
+## Devin
+
+Devin 3000.11.3 installs a plugin from a directory holding
+`.devin-plugin/plugin.json`. The adapter is the Codex plugin directory,
+`plugins/sdlc-skills/`, with a Devin manifest added beside the Codex one. The
+two harnesses share its flat skill mirror, its hooks file, and its copy of the
+injector.
+
+### Why not the repository root
+
+Two things rule the root out:
+
+- Devin loads skills one level deep, as `skills/<name>/SKILL.md`. Measured: a
+  skill nested a level further is not listed. The canonical tree nests every
+  skill under its phase, so the root would load none of them, while the
+  Codex mirror is already flat.
+- Devin injects an `AGENTS.md`, `AGENT.md`, or `.windsurfrules` found at the
+  plugin root into every session as an always-on rule. At the repository root
+  that is the contributor guide, which would reach every user's session.
+
+`scripts/sh/validate-skills.sh` fails if the Devin manifest declares a
+`skills` field, which would replace the mirror, or if one of those rule files
+appears in the plugin directory.
+
+### The router
+
+Devin reads `hooks/hooks.json` from the plugin, so the Codex `SessionStart`
+hook runs on Devin unchanged. Devin exports `CLAUDE_PLUGIN_ROOT` and
+`DEVIN_PLUGIN_ROOT` to plugin hooks, not `PLUGIN_ROOT`, so the command
+resolves `${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}`. Devin documents
+`hookSpecificOutput.additionalContext` for `SessionStart`, the envelope the
+injector already prints.
+
+Devin's plugin hooks fail open: a hook that cannot run is skipped and the
+session continues without the router. `tests/run-session-start.sh` therefore
+runs the shipped command with Devin's variables and no `PLUGIN_ROOT`.
+
+### Compaction
+
+Inferred, not observed. Devin does not document the `source` values of
+`SessionStart`. The hook has no matcher, so a compaction reported as a
+`SessionStart` would reach the injector. Devin's own `post_compaction` event
+receives the summary but is not documented to add context, so the adapter
+does not register it.
+
+### Installation
+
+`devin plugins install --local <path> -y` links the directory in place. A
+remote install, `devin plugins install augments-labs/sdlc-skills#plugins/sdlc-skills`,
+is recorded in the account's plugin list on Devin's service and follows the
+user to other machines.
+
+Measured on 3000.11.3: plugin management refuses to run signed out, even for a
+local directory, and the install checks the organisation's plugin policy over
+the network.
+
+### What the tests prove
+
+`tests/harnesses/devin.sh` installs into a throwaway `HOME` holding a copy of
+the credentials file. It isolates `HOME` and not only Devin's own directories,
+because Devin also reads `~/.claude/` hooks and skills.
+
+The inventory step reads `devin plugins info sdlc-skills`, which lists each
+skill as `/sdlc-skills:<name>` and names the `session_start` hook. Measured:
+every canonical skill and the hook are listed. The smoke test runs no model
+turn.
+
 ## Lifecycle policy
 
 Every adapter supplies the full router through a session-start mechanism,
@@ -405,7 +473,9 @@ whether it exists at all.
 | Kimi Code | `Agent` tool | The brief names the file to read, because a subagent may not resolve paths relative to the plugin | One level. A background run adds parallelism, not nesting | Not settable. The tier is stated in the prompt and the harness binds it |
 | OpenCode | 1.x: the `Task` tool, to the `general` and `explore` subagents. 2.x: the `subagent` tool, with the same role names as its `agent` argument | Yes, for the whole session, through the plugin's skill registration | Not declared by the build. Treat a worker's own dispatch as prohibited | Settable through the agent's `model`. A subagent without one inherits the invoking agent's. The tier is stated in the prompt and the harness binds it |
 
-Grok Build, Muse Code, and pi have no row. No tool binding ships for them.
+Grok Build, Muse Code, pi, and Devin have no row. No tool binding ships for
+them. Devin documents `run_subagent` and `read_subagent`, but they have not
+been measured against a running session.
 
 ### Where the tool names live
 

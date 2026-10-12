@@ -217,6 +217,18 @@ else
       *'Catch one and stop'*) ok "SessionStart source=compact re-injects the entry-skill body" ;;
       *)                      bad "SessionStart source=compact injected no body (the router would be lost after every compaction)" ;;
     esac
+
+    # Devin installs this same directory and runs the same hooks file, but it
+    # exports CLAUDE_PLUGIN_ROOT and DEVIN_PLUGIN_ROOT, never PLUGIN_ROOT. A
+    # command that resolves only PLUGIN_ROOT runs `bash /scripts/sh/...`
+    # there, and Devin's hooks fail open, so routing would stop silently.
+    devin_out="$(cd "$elsewhere" && printf '%s' "$startup_input" | \
+      env -u PLUGIN_ROOT CLAUDE_PLUGIN_ROOT="$pkg_abs" DEVIN_PLUGIN_ROOT="$pkg_abs" bash -c "$cmd" 2>/dev/null)"
+    devin_body="$(printf '%s' "$devin_out" | jq -r '.hookSpecificOutput.additionalContext // empty' 2>/dev/null)"
+    case "$devin_body" in
+      *'Catch one and stop'*) ok "the same command injects the body under Devin's plugin-root variables" ;;
+      *)                      bad "the plugin hook injected no body under Devin's variables (CLAUDE_PLUGIN_ROOT, no PLUGIN_ROOT)" ;;
+    esac
   fi
   rm -rf "$elsewhere"
 fi

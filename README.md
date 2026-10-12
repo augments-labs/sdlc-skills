@@ -188,6 +188,22 @@ pi install /path/to/sdlc-skills
 
 Add `-l` to register it for the current project only.
 
+### Devin
+
+Devin installs the plugin directory inside this repository, not the repository
+root. Sign in first (`devin auth login`), then run:
+
+```bash
+devin plugins install augments-labs/sdlc-skills#plugins/sdlc-skills
+```
+
+This adds the plugin to your personal plugins, which follow your account to
+other machines. To install from a local clone on this machine only:
+
+```bash
+devin plugins install --local /path/to/sdlc-skills/plugins/sdlc-skills
+```
+
 ### Other agents
 
 Every skill follows the open Agent Skills format: a directory with a `SKILL.md`

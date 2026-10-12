@@ -11,6 +11,7 @@ none of them decides anything — judging an observation belongs to the runner.
 tests/harnesses/
   claude-code.sh
   codex.sh
+  devin.sh
   grok.sh
   kimi-code.sh
   muse.sh

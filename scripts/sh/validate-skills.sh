@@ -413,6 +413,29 @@ check_manifest_skills .muse-plugin/plugin.json \
 echo "• Codex adapter"
 if ! bash scripts/sh/validate-codex-plugin.sh; then fail=1; fi
 
+# Devin installs the Codex plugin directory, not the repository root: it loads
+# skills one level deep, which the flat mirror satisfies, and it injects any
+# AGENTS.md, AGENT.md, or .windsurfrules at the plugin root into every user
+# session as an always-on rule — at the repository root that would ship the
+# contributor guide to users. A `skills` field would replace the default
+# `skills/` directory, so none is allowed: the mirror the Codex gate checks is
+# exactly what Devin loads.
+echo "• Devin adapter"
+devin_manifest="plugins/sdlc-skills/.devin-plugin/plugin.json"
+if [ ! -f "$devin_manifest" ]; then
+  err "missing $devin_manifest"
+elif ! jq -e . "$devin_manifest" >/dev/null 2>&1; then
+  err "$devin_manifest does not parse as JSON"
+else
+  [ "$(jq -r '.name // ""' "$devin_manifest")" = "sdlc-skills" ] || err "$devin_manifest: name is not sdlc-skills"
+  jq -e 'has("skills") | not' "$devin_manifest" >/dev/null ||
+    err "$devin_manifest: a skills field replaces the flat skills/ mirror Devin loads"
+fi
+for rule in AGENTS.md AGENT.md .windsurfrules; do
+  [ ! -e "plugins/sdlc-skills/$rule" ] ||
+    err "plugins/sdlc-skills/$rule: Devin would inject it into every session as an always-on rule"
+done
+
 echo "• Kimi adapter"
 if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
 
@@ -424,7 +447,8 @@ if ! bash scripts/sh/validate-opencode-plugin.sh; then fail=1; fi
 # disagreeing versions, so any disagreement fails.
 echo "• manifest versions agree"
 versions=""
-for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json .muse-plugin/plugin.json; do
+for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi-plugin/plugin.json .muse-plugin/plugin.json \
+                plugins/sdlc-skills/.devin-plugin/plugin.json; do
   if [ ! -f "$manifest" ]; then err "missing $manifest"; continue; fi
   v=$(grep -m1 -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' "$manifest" | sed -E 's/.*"([^"]+)"$/\1/')
   if [ -z "$v" ]; then err "$manifest: no \"version\" field"; continue; fi
