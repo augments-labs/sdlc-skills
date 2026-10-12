@@ -7,15 +7,15 @@ the rules require is carried. The evidence slots — the header's Candidate and
 Review verdict, How it was verified, Review, and Not verified — come only from
 the bound verification ledger and review verdict for the one candidate in the
 header; the rest come from the request and the diff. Never write a secret, an
-evidence claim the ledger does not carry, or evidence from another revision. An
-evidence section with no row is not posted until it is filled, or until `none`
-is written after checking. The filled copy becomes the PR body at the
-transition the user chose; it never goes into the candidate.
+evidence claim the ledger does not carry, or evidence from another revision. A
+section with no content is not posted until it is filled, or until `none` is
+written after checking. The filled copy becomes the PR body at the transition
+the user chose; it never goes into the candidate.
 
 ```markdown
 # {{what changes, in one line}}
 
-- Candidate: {{full revision; or the working-tree digest with, beside it, the head revision of the commit set that reproduces it, so the reviewer can match the PR head}}
+- Candidate: {{full revision; or the working-tree digest, plus the head revision the materialization rerun reported, filled once that rerun confirms the match}}
 - Base: {{base ref at revision}}
 - Requested by: {{who asked and where the request lives, or none recorded}}
 - Supersedes: {{earlier PR or round this replaces, or none}}
