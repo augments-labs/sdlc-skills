@@ -2,23 +2,23 @@
 
 `working-from-a-ticket` fills this after reading the ticket and before any
 other work on it. Write the filled copy to
-`.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{identifier}}-ticket.md` or the user-set
-path; no other skill writes that name, and a successor gets its own new file.
+`.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{identifier slug}}-ticket.md` or the
+user-set path; no other skill writes that name, and a successor gets its own
+new file (`-{{n}}` before `-ticket` when the path exists).
 Only text that was read goes in: nothing is paraphrased, completed from
 memory, or taken from a similar ticket. A section with nothing to hold carries
 the exact phrase given under it, and a slot that cannot be filled means the
 ticket was not read far enough; read it, or record it under `## Not readable`.
 
 ```markdown
-# Ticket: {{identifier}} — {{title as written}}
+# Ticket: {{identifier, or none}} — {{title as written}}
 
 - **Status:** {{captured; lifecycle stays external}}
 - **Identity:** recorded in the ledger row, never here: this file's identity
-  under the Identity rule of the artifact layout reference
-  (`using-sdlc-skills`)
+  under the artifact layout's captured-ticket rule (the whole file)
 - **Predecessor:** {{identity of the capture this one replaces, or none}}
 - **Source:** {{the tracker as the user named it, or "pasted by the user";
-  the identifier; the link as given}}
+  the identifier, or none; the link as given}}
 - **Read:** {{date and time}} through {{the user's paste | the tool used}}
 - **Decision owner:** {{who answers the unclear points; the user unless the
   ticket names another}}

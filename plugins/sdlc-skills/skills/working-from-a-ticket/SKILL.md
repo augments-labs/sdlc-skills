@@ -68,10 +68,12 @@ recorded text instead of a memory of it.
    not settle: which component, where a boundary sits, a criterion with no
    observable, a comment that contradicts the description.
 4. Write the capture to
-   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{identifier}}-ticket.md` or the
-   user-set path. No other skill writes that name, and a successor always
-   gets its own new file, never the predecessor's path. Take its identity
-   under the Identity rule of the artifact layout reference
+   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{slug}}-ticket.md` or the user-set
+   path: the slug is the identifier lowercased, each run of other characters
+   `-`, or a short topic slug when there is none; the H1 keeps the identifier
+   as written. The path exists → add `-{{n}}` before `-ticket`; a successor
+   never takes the predecessor's path. No other skill writes that name. Take
+   its identity under the artifact layout's captured-ticket rule
    (`using-sdlc-skills`), and append one row to its ledger (append-only,
    `.ledger.md` in place of `.md`): that identity, state `captured`, and
    the source and read time as bound evidence. Never edit the capture
@@ -86,7 +88,7 @@ recorded text instead of a memory of it.
    guess to an acceptance criterion.
 2. The ticket describes a new project or initiative rather than one change →
    **REQUIRED SUB-SKILL:** invoke `define-goals`, which writes its own brief
-   file with the capture's identity as an input, and stop here.
+   file naming the capture's identity, and stop here.
 3. The ticket reports behavior that is broken, cause unknown →
    **REQUIRED SUB-SKILL:** invoke `debugging` before any fix; the acceptance
    criteria stay the done condition.
@@ -99,7 +101,8 @@ recorded text instead of a memory of it.
 5. Otherwise → **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`, then
    `test-driven-development` and `yagni` before the first edit. The first
    test comes from the first acceptance criterion, or, when the capture says
-   `none stated`, from the done condition `clarifying-intent` recorded.
+   `none stated`, from the done condition `clarifying-intent` settled,
+   recorded as one of its Decisions.
 
 ## Step 4: Before the work is called done
 
@@ -125,7 +128,7 @@ recorded text instead of a memory of it.
   what tell a later reader which version of the ticket it was — shows when a
   ticket is edited between capture and review.
 - A criterion written as "should" or "ideally" still binds; dropping it as
-  optional ships a change the ticket's owner rejects — shows when a ticket's
+  optional can ship a change the ticket's owner rejects — shows when a ticket's
   only latency requirement is phrased as "ideally".
 
 ## Common mistakes

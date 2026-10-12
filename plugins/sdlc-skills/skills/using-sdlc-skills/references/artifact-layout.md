@@ -73,7 +73,8 @@ over the exact text the artifact owns:
 - **A brief's own text:** from the top of the file down to its first `##`
   heading outside a fenced code block; the goals, scope, and feasibility
   sections are other artifacts.
-- **A captured ticket:** the whole file; nothing else is written into it.
+- **A captured ticket** (a `briefs/` file whose H1 begins `# Ticket:`): the
+  whole file; nothing else is written into it.
 - **A plan:** its index, with every task checkbox and state label normalized to
   `[ ]` and `todo`, followed by every task file in index order.
 
