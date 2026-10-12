@@ -14,6 +14,7 @@ tests/harnesses/
   codex.sh
   devin.sh
   grok.sh
+  hermes.sh
   kimi-code.sh
   muse.sh
   opencode.sh

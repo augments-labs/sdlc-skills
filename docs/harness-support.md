@@ -31,6 +31,7 @@ An adapter has two jobs:
 | pi | `.pi/extensions/sdlc-skills.js`, registered through the `pi` key in `package.json` | `before_agent_start` hook, through `appendSystemPrompt` | In the running process only. See [pi](#pi) |
 | Devin | `plugins/sdlc-skills/` with `.devin-plugin/plugin.json`, the Codex plugin directory | The `SessionStart` hook the Codex plugin bundles | Inferred, not observed. See [Devin](#devin) |
 | Antigravity | `plugins/sdlc-skills/` with `.antigravity-plugin/plugin.json`, the Codex plugin directory | It does not. The plugin's always-on `rules/AGENTS.md` nudges the agent instead | Not applicable |
+| Hermes | `.hermes-plugin/plugin.yaml` and `.hermes-plugin/__init__.py` | Plugin system-prompt sections, rendered once per session | Yes. Compression rebuilds the system prompt, which renders the sections again |
 
 This page uses two labels for its claims. **Measured** means the behavior was
 observed on the version named. **Inferred, not observed** means it follows
@@ -477,6 +478,78 @@ rules file did not reach the copy. The smoke test runs no model turn.
 Antigravity's subagent tools have not been measured against a running
 session, so the dispatch and role-binding tables below have no row for it.
 
+## Hermes
+
+Hermes Agent 0.21.7 installs a plugin by cloning a git repository. The clone's
+root has no Hermes manifest, so Hermes looks one level down, finds
+`.hermes-plugin/plugin.yaml`, and loads `.hermes-plugin/__init__.py` as the
+plugin `sdlc-skills/.hermes-plugin`. The entry point does both jobs in Python,
+from the canonical tree, with the standard library only. A `plugin.yaml`,
+`plugin.yml`, or `plugin.json` at the repository root would stop that search,
+so the gate rejects one.
+
+On the same pass Hermes also tries `.muse-plugin/plugin.json`, which is not a
+Hermes manifest, and logs a warning that it could not parse it. The warning is
+harmless: Hermes skips that folder and loads the plugin as usual.
+
+### Discovery
+
+`register()` registers each canonical `SKILL.md` by its directory name, so
+Hermes lists it as `sdlc-skills:<name>`; the `name` in `plugin.yaml` sets that
+prefix. Registration is per file, so the
+phase level costs nothing. Hermes does not read a registered skill's
+description from its frontmatter, so the adapter parses the `description:`
+field itself.
+
+### The router
+
+The router reaches the model as plugin system-prompt sections. Hermes builds
+the system prompt once per session and rebuilds it only after context
+compression, so the sections arrive at every boundary the lifecycle policy
+names and at no other time.
+
+A `pre_llm_call` hook was rejected. It runs before every turn, which the
+lifecycle policy forbids, and text it adds on the first turn is lost at the
+first compression. `on_session_start` cannot add context: Hermes ignores its
+return value.
+
+Hermes skips, whole, any section longer than 4,000 characters, and all plugins
+share 8,000. The router is longer than one section, so the adapter splits it at
+its own `## ` headings, reading the canonical file each time a section renders.
+The ids are zero-padded because Hermes renders sections in id order. If other
+enabled plugins use up the shared budget, Hermes skips a section and logs a
+warning.
+
+### Installation
+
+`hermes plugins install` takes a catalog name, a git URL, or `owner/repo`, and
+refuses a local path. It clones the default branch, names the install after the
+repository, writes it to `$HERMES_HOME/plugins/sdlc-skills`, and with
+`--enable` adds it to `plugins.enabled`. Measured: the repository passes the install-time security
+scan without `--force`.
+
+### What the tests prove
+
+`tests/run-hermes-plugin.sh` loads the entry point with a stub context. It
+checks that exactly the canonical skills register, each with its own
+`SKILL.md` and a description, that no hook registers, and that the sections
+carry the router body verbatim, in order, each within the cap and together
+within the shared budget.
+
+`tests/harnesses/hermes.sh` snapshots the working tree into a throwaway git
+repository, because Hermes clones a commit and not a working tree, and
+installs it into a throwaway `HERMES_HOME`. `hermes prompt-size` then builds a
+session's system prompt without a model call. The binding requires every
+router section to render with none skipped, and reads the skill index from the
+same output. The first launch in a new `HERMES_HOME` downloads a Python
+environment, so this smoke test needs the network once.
+
+### No tool bindings yet
+
+Hermes' subagent tool, `delegate_task`, has not been measured against a
+running session, and its model is set globally rather than per call. The
+dispatch and role-binding tables below have no row for it.
+
 ## Lifecycle policy
 
 Every adapter supplies the full router through a session-start mechanism,
@@ -527,8 +600,8 @@ whether it exists at all.
 | Kimi Code | `Agent` tool | The brief names the file to read, because a subagent may not resolve paths relative to the plugin | One level. A background run adds parallelism, not nesting | Not settable. The tier is stated in the prompt and the harness binds it |
 | OpenCode | 1.x: the `Task` tool, to the `general` and `explore` subagents. 2.x: the `subagent` tool, with the same role names as its `agent` argument | Yes, for the whole session, through the plugin's skill registration | Not declared by the build. Treat a worker's own dispatch as prohibited | Settable through the agent's `model`. A subagent without one inherits the invoking agent's. The tier is stated in the prompt and the harness binds it |
 
-Grok Build, Muse Code, pi, Devin, and Antigravity have no row. No tool binding
-ships for them. Devin documents `run_subagent` and `read_subagent`, but they have not
+Grok Build, Muse Code, pi, Devin, Antigravity, and Hermes have no row. No tool
+binding ships for them. Devin documents `run_subagent` and `read_subagent`, but they have not
 been measured against a running session.
 
 ### Where the tool names live

@@ -222,6 +222,15 @@ agy plugin install /path/to/sdlc-skills/plugins/sdlc-skills
 Antigravity runs no session-start hook from a plugin, so the plugin ships a
 rule telling the agent to invoke `using-sdlc-skills` before acting.
 
+### Hermes
+
+```bash
+hermes plugins install augments-labs/sdlc-skills --enable
+```
+
+During the install, Hermes asks whether to install Node dependencies because
+the repository has a `package.json`. Answer no: the plugin needs none.
+
 ### Other agents
 
 Every skill follows the open Agent Skills format: a directory with a `SKILL.md`

@@ -113,6 +113,9 @@ case "$harness" in
   # Muse installs skill by skill into its config dir, one flat directory per
   # skill and no phase level; that route copies files and writes no manifest.
   muse)        layout='*/muse/skills/*/SKILL.md'; manifest='';;
+  # Hermes clones a snapshot of the checkout into its plugins dir; the root
+  # manifest registers the phase-nested canonical tree.
+  hermes)      layout='*/skills/*/*/SKILL.md'; manifest='.hermes-plugin/plugin.yaml';;
   # pi installs a local-path source by reference, not a copy, so the tree
   # stays at the checkout the `pi` key in package.json names.
   pi)          layout='*/skills/*/*/SKILL.md'; manifest='.pi/extensions/sdlc-skills.js';;

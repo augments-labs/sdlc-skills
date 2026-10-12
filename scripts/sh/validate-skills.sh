@@ -451,6 +451,24 @@ else
   [ "$(head -n 1 "$agy_rule")" != "---" ] || err "$agy_rule carries frontmatter; Antigravity rules take none"
 fi
 
+# Hermes finds no manifest at the root of the clone, so it looks one level
+# down and loads .hermes-plugin/, whose entry point registers the canonical
+# tree and the router itself. tests/run-hermes-plugin.sh checks what
+# register() does; this checks that the files it needs ship, and that no root
+# manifest stops Hermes before it looks one level down.
+echo "• Hermes adapter"
+hermes_manifest=".hermes-plugin/plugin.yaml"
+if [ ! -f "$hermes_manifest" ]; then
+  err "missing $hermes_manifest"
+else
+  grep -qxE 'name:[[:space:]]*"?sdlc-skills"?' "$hermes_manifest" || err "$hermes_manifest: name is not sdlc-skills"
+fi
+[ -f .hermes-plugin/__init__.py ] || err "missing .hermes-plugin/__init__.py — Hermes would install a plugin that registers nothing"
+for path in plugin.yaml plugin.yml plugin.json; do
+  [ ! -e "$path" ] ||
+    err "$path at the repository root: Hermes would read it as the plugin and never load .hermes-plugin/"
+done
+
 echo "• Kimi adapter"
 if ! bash scripts/sh/validate-kimi-plugin.sh; then fail=1; fi
 
@@ -469,6 +487,11 @@ for manifest in .claude-plugin/plugin.json .claude-plugin/marketplace.json .kimi
   if [ -z "$v" ]; then err "$manifest: no \"version\" field"; continue; fi
   versions="$versions$v"$'\n'
 done
+# Hermes' manifest is YAML, so its version is read by key rather than as JSON.
+if [ -f .hermes-plugin/plugin.yaml ]; then
+  v=$(sed -nE 's/^version:[[:space:]]*"?([^"[:space:]]+)"?.*/\1/p' .hermes-plugin/plugin.yaml | head -n 1)
+  if [ -z "$v" ]; then err ".hermes-plugin/plugin.yaml: no version field"; else versions="$versions$v"$'\n'; fi
+fi
 distinct=$(printf '%s' "$versions" | sort -u | grep -c .)
 [ "$distinct" -gt 1 ] && err "manifest versions disagree: $(printf '%s' "$versions" | sort -u | tr '\n' ' ')"
 
