@@ -2,6 +2,17 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [10.5.0] — 2026-10-12
+
+Devin, Antigravity, Hermes Agent and Cursor are now supported harnesses, each
+installing the same skills and bringing in the `using-sdlc-skills` router at
+session start (Antigravity, which has no session-start hook, through an
+always-on rule).
+
+The pages under `docs/` are now written for people who use the library: task
+guides, short concepts and reference pages. Maintainer material moves into
+the contributing guide.
+
 ## [10.4.2] — 2026-10-06
 
 A plan run no longer grows from its own findings: a defect outside a task is
