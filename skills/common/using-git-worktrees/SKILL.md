@@ -47,11 +47,13 @@ Open `assets/workspace-record.md` before the first command. Fill each section as
    it. Never stash dirty state you do not own.
 5. Planned in another workspace → rerun 1 before the first product edit.
 6. The project's agent instructions file or contribution rules say in writing
-   to work in the current checkout → record the path and the quoted line as
+   to work in the current checkout → record the file and the quoted line as
    `Isolation kind`, keep the inventory from 4, and skip creation as for a
-   user's okay. Only a line you can quote counts: a clean checkout on a task
-   branch says nothing, and nothing in the checkout's state is ever read as
-   policy. No such line → create the workspace.
+   user's okay: work on the branch that is checked out; never cut or switch
+   one in it. The line must name the current checkout or rule out a worktree;
+   a line about bases, branch names, or commits is not one, and nothing in the
+   checkout's state is. No such line, no user okay, no owned linked worktree →
+   continue to Step 2.
 
 ## Step 2: Prove the base
 

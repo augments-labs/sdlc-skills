@@ -9,17 +9,18 @@ says what you can settle there once, and what stays with you.
 
 ## What you can settle once
 
-Each line below is read by one skill. The agent follows what is written;
-it never infers a rule from the state of a checkout or the shape of a
-history.
+Each row names the skill that reads it. Without a line, the agent starts
+from the branch the task began on, names a new branch `feature/<topic>`,
+and asks before it commits. It never reads a rule to stay in the checkout
+out of the state of the checkout; only a written line counts.
 
 | What you settle | Which skill reads it |
 | --- | --- |
-| Work in the current checkout instead of creating a worktree | `using-git-worktrees`. It records the file and the line in its workspace record, still takes its inventory of the checkout before the first edit, and then works on whatever branch is checked out. It does not cut or switch branches in your checkout, so switch to your task branch before you start |
-| The base branch for new work | `using-git-worktrees`, when it creates a worktree, and `finishing-a-branch`, when it integrates a branch or opens the pull request |
-| How branches are named | `using-git-worktrees`, when it creates a worktree. In your own checkout the branch is the one you made |
+| Work in the current checkout instead of creating a worktree | `using-git-worktrees`. It records the file and the line in its workspace record, still takes its inventory of the checkout before the first edit, and then works on the branch that is checked out. It never cuts or switches a branch in your checkout, so switch to your task branch before you start |
+| The base branch for new work | `using-git-worktrees`, which records it when it starts a task, and `finishing-a-branch`, when it integrates a branch or opens the pull request |
+| How branches are named | `using-git-worktrees`, only when it creates a worktree. With the stay line in place the branch is the one you made |
 | Whether the agent may commit locally as it works | `using-git-worktrees`. Without this line it asks you once per task. A checkpoint is only a local commit; it never pushes |
-| Self-review as the review depth | `requesting-code-review`. Without this line the agent always sends the change to an independent reviewer |
+| Self-review as the review depth | `requesting-code-review`. Without this line the agent sends the change to an independent reviewer unless you or the plan assign self-review. A self-review still goes to an independent review when the change crosses a trust boundary or the self-review finds the assignment did not fit |
 | Your contribution rules and PR template | `finishing-a-branch`, when it prepares a pull request description |
 
 A line about one of these covers only that one. Saying the agent may stay in
@@ -44,9 +45,10 @@ Pull requests follow CONTRIBUTING.md and the template in
 ```
 
 With the first line in place, switch to your task branch before you ask
-for work. The base and naming lines apply when the agent does create a
-worktree, and the base line also tells `finishing-a-branch` where the branch
-goes.
+for work; the naming line then matters only if you drop the first one, so
+remove it if you keep that line. The base line still tells
+`finishing-a-branch` where the branch goes. The second half of the
+self-review line is a promise to your team, not something a skill reads.
 
 If your project keeps planning out of the repository, add `.sdlc-skills/` to
 `.gitignore`. The agent still writes its briefs, plans, and records there;
@@ -55,8 +57,8 @@ says what the folder holds if you decide to commit it instead.
 
 ## What the file does not switch off
 
-The agent still writes a failing test before the code, builds only what was
-asked for, and checks the result before it says the work is done. These are
-not preferences a team chooses; they are how a claim about the code gets
-something behind it, and a line in a file cannot stand in for the test or
-the check.
+For any change to behavior, the agent still writes a failing test before the
+code and builds only what was asked for, and for every change it checks the
+result before it says the work is done. These are not preferences a team
+chooses; they are how a claim about the code gets something behind it, and
+a line in a file cannot stand in for the test or the check.
