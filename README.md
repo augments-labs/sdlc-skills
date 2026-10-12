@@ -276,7 +276,8 @@ A large project may touch every phase. Most tasks use a few skills.
    change tested and no larger than it needs to be.
 5. **Testing.** `verification-before-completion` runs the checks before any
    claim that work is done. `requesting-code-review` and
-   `receiving-code-review` handle the review.
+   `receiving-code-review` handle the review. `reviewing-a-pr` reviews a
+   pull request someone else opened.
 6. **Deployment.** `finishing-a-branch` asks what to do with the branch: push,
    open a PR, merge, keep, or discard. `release-readiness` decides whether a
    build is safe to ship.
