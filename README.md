@@ -1,17 +1,18 @@
 # SDLC skills
 
 A ticket lands in your queue and you hand it to your coding agent. With the
-library installed, the skills walk the agent through it: read the ticket as
-written, record the acceptance criteria, and ask about the one thing the
-ticket leaves open. Work where your team's rules say, write a failing test
-before the code, replace an integer column on a live table with a timestamp
-in phases so both versions of your service keep working through the deploy,
-and put the new behavior behind a flag because your release policy asks for
-one. Run your checks, read the output, get the change reviewed, and ask you
-what to do with the branch. Later, review a teammate's pull request without
-posting a word until you say so, judge whether the build is safe to ship,
-and, when something breaks for customers, contain it first, find the cause
-second, and write up how it got past the checks.
+library installed, the skills walk the agent through it. It reads the ticket
+as written, records the acceptance criteria, and asks about the one thing
+the ticket leaves open. It works where your team's rules say, writes a
+failing test before the code, replaces an integer column on a live table
+with a timestamp in phases so both versions of your service keep working
+through the deploy, and puts the new behavior behind a flag because your
+release policy asks for one. It runs your checks, reads the output, gets the
+change reviewed, and asks you what to do with the branch. Later it reviews a
+teammate's pull request without posting a word until you say so, judges
+whether the build is safe to ship, and, when something breaks for customers,
+contains it first, finds the cause second, and writes up how it got past the
+checks.
 
 That is the whole software development life cycle as you live it at work,
 from the first ticket to the post-mortem, and it is what SDLC skills is for.
@@ -21,10 +22,10 @@ phase from the first conversation about goals to debugging in production.
 You install it once, it works with several agents from one set of files, and
 the agent picks the skills that fit the task in front of it.
 
-Each skill tells the agent to stop at a decision that is yours, such as the
-data owner's acceptance of a drop, the rollout terms, the branch menu, the
-review it would post, the release, the lever pulled in an incident, and the
-actions a post-mortem proposes.
+The skills tell the agent to stop at the decisions that are yours, such as
+the data owner's acceptance of a drop, the rollout terms, the branch menu,
+the review it would post, the release, the lever pulled in an incident, and
+the actions a post-mortem proposes.
 [A change at work, from ticket to post-mortem](docs/guides/a-change-at-work.md)
 walks through the story above stage by stage.
 

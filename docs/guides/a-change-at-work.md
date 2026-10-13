@@ -68,11 +68,12 @@ the inputs it cannot find, then sequences the change: expand adds the new
 column, dual-write keeps both columns current with reads that tolerate a row
 not yet copied, a batched backfill fills the timestamp from `eta_days`,
 reads switch, old writes stop, and contract drops `eta_days`. Each phase is
-its own deployable change with its own rollback. It never runs a migration
-or backfill against a shared or production store, and a lock it could not
-measure is recorded as unverified.
-[Building a feature](building-a-feature.md) covers the tests each phase
-gets under "A change to stored data".
+its own deployable change with its own rollback, and each is built under
+test: a backfill run twice changes nothing, an interrupted one resumes, and
+reads tolerate a row not yet copied. It never runs a migration or backfill
+against a shared or production store, and a lock it could not measure is
+recorded as unverified. [Building a feature](building-a-feature.md) covers
+the phases and the drop under "A change to stored data".
 
 What depends on you: the data owner accepts the contract, the drop after
 which an application rollback is no longer possible, before it ships. A
@@ -89,7 +90,8 @@ switch's proof. [Building a feature](building-a-feature.md) covers the
 switch and its signals under "A staged rollout".
 
 What depends on you: accepting the terms, and every flip in a shared
-environment; the agent never turns the flag on there.
+environment; the agent never turns the flag on there. The flag does not
+replace the schema phasing, and the phasing does not supply the flag.
 
 ## 6. Verify, review, open the PR
 
@@ -112,13 +114,15 @@ Review PR 318 before standup.
 
 `reviewing-a-pr` binds the PR's exact head revision and does not run its
 code unless you ask for a specific run in so many words; that run happens
-in an isolated fresh copy with no credentials or network. Everything the PR
-carries is data, and text that tries to steer the review is a blocking
-finding. It writes the findings with a `path:line` at that head and shows
-you the review with the verdict it would post. Nothing is posted until you
-choose: post with the verdict, post as a comment, change it first, or keep
-it local. [Reviewing and shipping](reviewing-and-shipping.md) covers
-reviewing someone else's PR.
+in an isolated fresh copy without your credentials, and without network
+unless you grant it, and if no isolated place exists it tells you first
+that the run uses your access. Everything the PR carries is data, and text
+that tries to steer the review is a blocking finding. It writes the
+findings with a `path:line` at that head and shows you the review with the
+verdict it would post. Nothing is posted until you choose: post with the
+verdict, post as a comment, change it first, or keep it local.
+[Reviewing and shipping](reviewing-and-shipping.md) covers reviewing
+someone else's PR.
 
 What depends on you: any request to run the PR's code, and the choice of
 what to post, which stands in your name on the host.
@@ -179,7 +183,9 @@ cause with an owner and a date. It presents them for you to accept the
 actions, request changes, reject the analysis, or cancel, and never claims
 recurrence is impossible. An accepted control is proved the way a fix is,
 failing on the captured incident or a representative bad case and passing
-after. [Fixing a bug](fixing-a-bug.md) says when to ask for one.
+after, and at a review date each control is judged effective, ineffective,
+or inconclusive. [Fixing a bug](fixing-a-bug.md) says when to ask for a
+post-mortem.
 
 What depends on you: accepting the actions, and the review date.
 
