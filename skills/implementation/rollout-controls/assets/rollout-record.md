@@ -5,9 +5,9 @@ exist in code and their tests pass, or in its first step with Status `declined`
 when the owner declines a draft; `release-readiness` reads it to bind the
 rollout policy and its signals. Write it to
 `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-rollout.md` unless the user names
-another place; drafted terms get their acceptance as a row in the ledger beside
-it, naming who accepted, when, and the terms they saw, while terms copied from
-an existing policy need no row. No secret value, token, or personal data goes
+another place; drafted terms get their acceptance or decline as a row in the
+ledger beside it, naming who decided, when, and the terms they saw, while terms
+copied from an existing policy need no row. No secret value, token, or personal data goes
 in it. A section left empty means the thing was not built or not found: say
 which, and the release decision treats it as missing rather than fine.
 
@@ -17,13 +17,13 @@ which, and the release decision treats it as missing rather than fine.
 - **Change:** {{branch or revision the switch and signals are built into}}
 - **Predecessor:** {{earlier rollout record for the same change, or none}}
 - **Inputs:** {{release policy document and version, plan task, or the request that asked for the rollout}}
-- **Owner:** {{the release or decision owner who accepts the terms}}
+- **Owner:** {{the owner who accepted or declined the drafted terms; for terms from policy, the policy's owner}}
 - **Status:** `{{terms from policy | terms accepted | declined}}`
-- **Decision ledger:** {{the ledger path beside this record and the row naming who accepted the drafted terms, when, and the terms they saw; terms from policy and declined have no row}}
+- **Decision ledger:** {{the ledger path beside this record and the row naming who accepted or declined the drafted terms, when, and the terms they saw; only terms from policy have no row}}
 
 ## Policy
 
-- **Source:** {{the project's policy, document and version, or "drafted here" with the acceptor and date}}
+- **Source:** {{the project's policy, document and version, or "drafted here" with who accepted or declined it, and the date}}
 - **Mechanism:** {{flag | canary | partition | staged publication | phased rollout}}
 - **Target state:** {{what full rollout looks like}}
 - **Authority:** {{who may expand a stage; who may abort}}

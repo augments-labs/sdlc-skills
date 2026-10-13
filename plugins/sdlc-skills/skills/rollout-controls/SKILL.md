@@ -59,14 +59,15 @@ switch in a shared environment, or expands a rollout.
 
    Offer option 3 only when no policy requires staging. Under a policy that
    does, or after a release block, drop it: shipping without the rollout is a
-   deviation its owner dispositions through `release-readiness` as not
-   applicable with an approved disposition, never here. Ask through the
-   harness's user-input action when one exists, else print this block; end
-   the turn; `clarifying-intent` owns what closes it.
+   deviation that only `release-readiness` may accept, when the release
+   contract permits that exception, never here. Ask through the harness's
+   user-input action when one exists, else print this block; end the turn;
+   `clarifying-intent` owns what closes it.
 4. Option 2 → revise, keep the earlier terms visible, and re-present. Option
    3 → fill `assets/rollout-record.md` before stopping, with Status
-   `declined` and only its Policy and Next action sections; this skill ends
-   here. An unaccepted draft is not a policy: build nothing against it.
+   `declined` and only its Policy and Next action sections, and append the
+   ledger row beside it naming who declined and when; this skill ends here.
+   An unaccepted draft is not a policy: build nothing against it.
 
 ## Step 2: Build the switch
 
