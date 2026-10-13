@@ -130,6 +130,15 @@ step in more detail.
 - **No test framework.** The agent still looks for the smallest executable
   check that can fail. If none is possible, it says so instead of claiming
   the change is tested.
+- **A staged rollout.** If your release policy, the plan, or you ask for a
+  feature flag, kill switch, canary, or staged rollout, `rollout-controls`
+  builds the switch (off by default, in front of every path the change adds)
+  and the signals the rollout's thresholds read, under your release policy's
+  terms. Where there is no policy, or a term is missing, it drafts the terms
+  and asks the release or decision owner to accept them before building
+  anything. This is not the flag `yagni` stops:
+  someone asked for it. `release-readiness` later binds those terms instead
+  of inventing them.
 - **A change to stored data.** If the feature adds, renames, or drops a
   column or field, adds an index or constraint, or backfills data on a store
   your running system reads, `changing-a-live-schema` builds it in phases:

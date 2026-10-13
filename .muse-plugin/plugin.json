@@ -107,6 +107,10 @@
         "path": "skills/implementation/executing-plans/SKILL.md"
       },
       {
+        "id": "rollout-controls",
+        "path": "skills/implementation/rollout-controls/SKILL.md"
+      },
+      {
         "id": "subagent-driven-development",
         "path": "skills/implementation/subagent-driven-development/SKILL.md"
       },
@@ -157,6 +161,10 @@
       {
         "id": "requesting-code-review",
         "path": "skills/testing/requesting-code-review/SKILL.md"
+      },
+      {
+        "id": "reviewing-a-pr",
+        "path": "skills/testing/reviewing-a-pr/SKILL.md"
       },
       {
         "id": "security-audits",
