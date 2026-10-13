@@ -56,9 +56,12 @@ mutation.
    separate direct permission for each of squash, rebase, amend. Never
    force-push as repair. After any history change, rerun the script; content
    moved → back to `requesting-code-review`.
-9. For PR creation/update, prepare the description from the contribution rules
-   and base-bound template, with evidence obtained. Prepare other actions'
-   applicable fields without inventing a PR.
+9. For PR creation/update, prepare the description from the project's
+   contribution rules and base-bound template; none exists → open
+   `assets/pr-description.md` before writing it. Fill evidence fields only
+   from the bound ledger and verdict; add gate results, review verdict, and
+   what was not verified when the project's template has no place for them.
+   Prepare other actions' applicable fields without inventing a PR.
 
 ## Step 2: Present the choices
 

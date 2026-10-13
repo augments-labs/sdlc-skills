@@ -98,7 +98,10 @@ Things to know about this menu:
 - If a pull request already exists, only the transitions that PR's state
   permits are offered.
 - When opening a PR, the agent prepares the description from your project's
-  contribution rules and PR template, with the verification evidence.
+  contribution rules and PR template, with the verification evidence. A
+  project with no template gets the skill's own: what changes and why, the
+  checks run on that exact candidate, the review verdict, risk and rollback,
+  and what is left for the reviewer to decide.
 
 ## Discarding work
 
