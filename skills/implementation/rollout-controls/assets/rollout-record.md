@@ -1,13 +1,15 @@
 # Rollout record template
 
 `rollout-controls` fills this in its last step, once the switch and the signals
-exist in code and their tests pass, and `release-readiness` reads it to bind
-the rollout policy and its signals. Write it to
-`.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-rollout.md`, with the owner's
-acceptance of the terms as a row in its ledger beside it, unless the user names
-another place. No secret value, token, or personal data goes in it. A section
-left empty means the thing was not built or not found: say which, and the
-release decision treats it as missing rather than fine.
+exist in code and their tests pass, or in its first step with Status `declined`
+when the owner declines a draft; `release-readiness` reads it to bind the
+rollout policy and its signals. Write it to
+`.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-rollout.md` unless the user names
+another place; drafted terms get their acceptance as a row in the ledger beside
+it, naming who accepted, when, and the terms they saw, while terms copied from
+an existing policy need no row. No secret value, token, or personal data goes
+in it. A section left empty means the thing was not built or not found: say
+which, and the release decision treats it as missing rather than fine.
 
 ```markdown
 # Rollout record — {{change-short-name}}
@@ -16,8 +18,8 @@ release decision treats it as missing rather than fine.
 - **Predecessor:** {{earlier rollout record for the same change, or none}}
 - **Inputs:** {{release policy document and version, plan task, or the request that asked for the rollout}}
 - **Owner:** {{the release or decision owner who accepts the terms}}
-- **Status:** `{{terms accepted | draft pending | declined}}`
-- **Decision ledger:** {{the ledger path and the row that records acceptance; a draft has no such row}}
+- **Status:** `{{terms from policy | terms accepted | declined}}`
+- **Decision ledger:** {{the ledger path beside this record and the row naming who accepted the drafted terms, when, and the terms they saw; terms from policy and declined have no row}}
 
 ## Policy
 
@@ -47,16 +49,16 @@ release decision treats it as missing rather than fine.
 
 | Signal | Measures | Threshold it serves | Carries switch state | Test |
 | --- | --- | --- | --- | --- |
-| {{name under the project's convention}} | {{correctness or error, latency or resource, business or operational outcome}} | {{the success or abort threshold from the terms}} | {{label or field}} | {{path and test name}} |
+| {{name under the project's convention}} | {{correctness or error; safety: data integrity, security or privacy; latency or resource; business or operational outcome}} | {{the success or failure threshold from the terms}} | {{label or field}} | {{path and test name}} |
 
 - **Emitted through:** {{the project's existing telemetry facility}}
 - **Baseline source:** {{where the prior behaviour is already measured, or "the off cohort", or "none"}}
 
-## Stages, thresholds, and abort
+## Stages, thresholds, and kill action
 
-| Stage | Cohort | Minimum observation | Success threshold | Abort threshold |
+| Stage | Cohort | Minimum observation | Success threshold | Failure threshold |
 | --- | --- | --- | --- | --- |
-| {{1 … n}} | {{selection rule}} | {{duration or volume}} | {{per signal}} | {{per signal}} |
+| {{1 … n}} | {{selection rule}} | {{duration or volume}} | {{per signal}} | {{per signal; the abort threshold the release decision binds}} |
 
 - **Kill or rollback action:** {{the exact action}}
 - **Who may pull it:** {{role or person the terms name}}
@@ -74,6 +76,5 @@ change, and why. "Nothing" is a valid entry.}}
 ## Next action
 
 {{The single next step and its owner: the release decision through
-`release-readiness`, a term still pending with the owner, or the decline
-recorded above.}}
+`release-readiness`, or, when declined, nothing further from this skill.}}
 ```

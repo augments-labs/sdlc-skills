@@ -29,5 +29,5 @@ budget_words = 4081
 
 [release]
 skills = ["using-sdlc-skills", "verification-before-completion", "requesting-code-review", "release-readiness", "finishing-a-branch"]
-recorded_words = 4419
-budget_words = 4469
+recorded_words = 4453
+budget_words = 4503

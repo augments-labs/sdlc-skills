@@ -133,7 +133,9 @@ step in more detail.
 - **A staged rollout.** If your release policy, the plan, or you ask for a
   feature flag, kill switch, canary, or staged rollout, `rollout-controls`
   builds the switch (off by default, in front of every path the change adds)
-  and the signals the rollout's thresholds read, and puts the rollout terms
-  to the owner you name for acceptance. This is not the flag `yagni` stops:
+  and the signals the rollout's thresholds read, under your release policy's
+  terms. Where there is no policy, or a term is missing, it drafts the terms
+  and asks the release or decision owner to accept them before building
+  anything. This is not the flag `yagni` stops:
   someone asked for it. `release-readiness` later binds those terms instead
   of inventing them.

@@ -32,7 +32,7 @@ switch in a shared environment, or expands a rollout.
    its conventions: the flag facility, metric names, dashboards, cohort
    definitions. Record the document and version you read.
 2. A policy exists → copy its terms for this change: mechanism, target state,
-   cohort stages, baseline source, success and abort thresholds, minimum
+   cohort stages, baseline source, success and failure thresholds, minimum
    observation, kill or rollback action, authority. A term it leaves unsaid
    is a question for its owner, not a value to fill in.
 3. No policy, or a term unsaid → draft the missing terms from the change's
@@ -45,7 +45,7 @@ switch in a shared environment, or expands a rollout.
    Target state: {{what full rollout looks like}}
    Cohorts: {{stage 1 → stage n, each with its selection rule}}
    Baseline: {{the signal source and window the cohorts compare against}}
-   Success / abort thresholds: {{one line per signal}}
+   Success / failure thresholds: {{one line per signal: correctness, safety, latency or resources, outcome}}
    Minimum observation: {{duration or volume per stage}}
    Kill / rollback action: {{the exact action and who may take it}}
    Authority: {{who may expand a stage; who may abort}}
@@ -57,11 +57,16 @@ switch in a shared environment, or expands a rollout.
    Recommendation: 1 — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print
-   this block; end the turn; `clarifying-intent` owns what closes it.
+   Offer option 3 only when no policy requires staging. Under a policy that
+   does, or after a release block, drop it: shipping without the rollout is a
+   deviation its owner dispositions through `release-readiness` as not
+   applicable with an approved disposition, never here. Ask through the
+   harness's user-input action when one exists, else print this block; end
+   the turn; `clarifying-intent` owns what closes it.
 4. Option 2 → revise, keep the earlier terms visible, and re-present. Option
-   3 → record the decline and stop; this skill ends here. An unaccepted draft
-   is not a policy: build nothing against it.
+   3 → fill `assets/rollout-record.md` before stopping, with Status
+   `declined` and only its Policy and Next action sections; this skill ends
+   here. An unaccepted draft is not a policy: build nothing against it.
 
 ## Step 2: Build the switch
 
@@ -74,9 +79,10 @@ switch in a shared environment, or expands a rollout.
    consumer, scheduled work, migration step, retry, cache fill. Put the
    switch in front of each. A path the switch does not guard is a rollout the
    policy cannot stop.
-4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for both states:
-   one test that the on state does the new work, one that the off state
-   restores the prior behaviour, each failing first. The off-state test is
+4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` in this order:
+   the on-state test, failing, then the new path that passes it; then the
+   off-state test, which fails because the path still runs; then the switch,
+   which passes it by restoring the prior behaviour. The off-state test is
    the kill switch's proof.
 5. Turning it off changes behaviour without a deploy: a runtime read, not a
    build-time constant. Record the exact off action.
@@ -86,9 +92,9 @@ switch in a shared environment, or expands a rollout.
 ## Step 3: Build the signals
 
 1. For each new path, emit the signals the accepted thresholds read: the
-   correctness or error outcome, latency or resource use, and the business or
-   operational outcome the change exists to move. Liveness serves no
-   threshold.
+   correctness or error outcome, safety (data integrity, security or privacy
+   violations), latency or resource use, and the business or operational
+   outcome the change exists to move. Liveness serves no threshold.
 2. Emit through the project's existing telemetry facility, under its naming
    convention. Add no vendor, library, or dashboard tool.
 3. Carry the switch state or cohort on every signal, so the on and off
@@ -104,14 +110,16 @@ switch in a shared environment, or expands a rollout.
 ## Step 4: Record and hand off
 
 1. Open `assets/rollout-record.md` before filling it, and fill every section:
-   policy source and acceptance, switch, guarded paths, signals, baseline,
-   abort and kill action with who may pull it, removal follow-up.
+   policy source, switch, guarded paths, signals, baseline, kill action with
+   who may pull it, removal follow-up. Drafted terms → append the acceptance
+   row to the ledger beside the record: who accepted, when, and the terms
+   they saw. Terms copied from a policy need no row.
 2. Report three lines and decide nothing:
 
    ```text
    Switch: {{name}}, default {{state}}, guards {{n}} paths, off-state test {{path}}
    Signals: {{n}} emitted, {{n}} thresholds served, baseline {{source | none}}
-   Policy: {{accepted by whom, when | draft declined}}
+   Policy: {{from policy, source | accepted by whom, when | declined}}
    ```
 
 3. Continue the ordinary chain to verification, review, and the branch
