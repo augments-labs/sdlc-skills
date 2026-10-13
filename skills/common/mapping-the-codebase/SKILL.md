@@ -17,8 +17,8 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 ## Step 1: Set the boundary
 
 1. Before reading anything, write the intended change, how far it could
-   reach, and why the boundary you picked holds that reach. Compatibility-
-   sensitive change → never stop at direct callers.
+   reach, and why the boundary you picked holds that reach. For a
+   compatibility-sensitive change, never stop at direct callers.
 2. Pin the repository or working state and the identity of every external
    input the reading depends on. Write what makes the reading stale.
 
@@ -29,11 +29,12 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
 2. As risk warrants, trace: generated code and build inputs; persistent
    state and migrations; public contracts and consumers; configuration,
    deployment, operational paths; tests, CI, proof surfaces; ownership and
-   change history. Per surface excluded from that list → an evidence-based
-   reason.
+   change history. Give an evidence-based reason for each surface on that
+   list you leave out.
 3. Use the domain's vocabulary, never "service / handler / util".
 4. Attach each conclusion to current files, symbols, searches, commands, or
-   revisions. Separate observed from inferred. Mark stale or unavailable.
+   revisions. Separate what you observed from what you inferred. Mark what
+   is stale or unavailable.
 
 ## Step 3: State the boundaries
 
@@ -41,10 +42,10 @@ Before you touch unfamiliar code, understand its shape. The failure this prevent
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/boundary-record.md` unless
    the user names another path: what the region owns, what it delegates,
    where its seams are, which downstream obligations a change must preserve.
-2. Set a freshness limit. Past it, or a pinned input changed → revalidate
-   affected claims before relying on them.
-3. Implementation finds a caller or surface the map never covered → stop and
-   reorient. Never extend the map from memory.
+2. Set a freshness limit. Once it has passed, or a pinned input has changed,
+   revalidate the affected claims before relying on them.
+3. If implementation finds a caller or surface the map never covered, stop
+   and reorient. Never extend the map from memory.
 
 ## Gotchas
 
