@@ -159,6 +159,10 @@
         "path": "skills/testing/requesting-code-review/SKILL.md"
       },
       {
+        "id": "reviewing-a-pr",
+        "path": "skills/testing/reviewing-a-pr/SKILL.md"
+      },
+      {
         "id": "security-audits",
         "path": "skills/testing/security-audits/SKILL.md"
       },

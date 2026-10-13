@@ -56,6 +56,7 @@
     "./skills/planning/scoping",
     "./skills/testing/receiving-code-review",
     "./skills/testing/requesting-code-review",
+    "./skills/testing/reviewing-a-pr",
     "./skills/testing/security-audits",
     "./skills/testing/verification-strategy",
     "./skills/testing/visual-ui-verification",

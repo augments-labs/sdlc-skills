@@ -53,6 +53,7 @@ a few skills.
 | `verification-before-completion` | Runs the checks and reads their output before any claim that work is done |
 | `requesting-code-review` | Gets an independent review of a change before it is pushed or merged |
 | `receiving-code-review` | Checks review feedback on its merits before acting on it |
+| `reviewing-a-pr` | Reviews a pull request someone else wrote and writes the findings for its author; you choose what gets posted |
 | `security-audits` | Audits what an attacker could make a change do |
 | `verification-strategy` | Designs which checks a project runs, what each catches, and when |
 | `visual-ui-verification` | Checks a running interface across states, screen sizes, and themes |
