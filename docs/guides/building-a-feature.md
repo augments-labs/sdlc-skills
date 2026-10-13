@@ -12,7 +12,9 @@ should get a 401 instead of being served.
 ```
 
 For work that needs a design or a plan first, see
-[Planning larger work](planning-larger-work.md). The steps below are what
+[Planning larger work](planning-larger-work.md). For a change followed
+through a company's whole lifecycle, from the ticket to the post-mortem,
+see [A change at work](a-change-at-work.md). The steps below are what
 happens for a change the agent can start on directly.
 
 If the work is already written up as a ticket, hand the agent the ticket:
