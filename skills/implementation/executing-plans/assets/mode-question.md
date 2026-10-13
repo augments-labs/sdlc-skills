@@ -11,9 +11,7 @@ keeping them out of this session's context is worth every fresh worker
 re-reading the brief, the skills, and the code before its first edit; else
 option 1.
 `executing-plans` owns the inline loop and `subagent-driven-development` the
-delegated one; the answer picks which is invoked. Ask through the harness's
-user-input action when one exists, else print the block as text; end the
-turn. Rendering the question collects an answer — never infer one;
+delegated one; the answer picks which is invoked. Ask this and end the turn;
 `clarifying-intent` owns a reply that names no option. Record the answer on
 the exact version's ledger row as `mode: inline`, `mode: delegated`, or, for
 option 3, `mode: delegated` plus `waves: yes`; a row for another version

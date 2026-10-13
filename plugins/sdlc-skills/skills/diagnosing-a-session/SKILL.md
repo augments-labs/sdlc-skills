@@ -74,8 +74,7 @@ writing.
    3. What did you expect to happen instead?
    ```
 
-   Ask through the harness's user-input action when one exists; otherwise
-   print the block as text.
+   Print them and end the turn.
 4. "Everything went wrong" is not a symptom. Ask for the first thing the
    user noticed, and diagnose that.
 5. The user wants the sequence of events and names nothing wrong → record
