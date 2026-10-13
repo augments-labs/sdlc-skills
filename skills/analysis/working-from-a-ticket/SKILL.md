@@ -40,8 +40,7 @@ recorded text instead of a memory of it.
    Recommendation: 1 — the work binds to the text read, so a partial read binds partial work.
    ```
 
-   Ask through the harness's user-input action when one exists, else print
-   this block; end the turn.
+   Ask your human partner and end the turn.
 4. Linked tickets, attachments, and comments that carry criteria or
    constraints → read them the same way. The rest are listed, not read.
 5. Never fill a gap from memory, from a similar ticket, or from the title.

@@ -30,8 +30,7 @@ store; that runs under the project's deploy process and authority.
 
 Open `assets/schema-change-record.md` before the actions below: they fill
 its Inputs section and the data-model identity in its header. A missing
-input is a question for its owner, asked through the harness's user-input
-action when one exists and printed otherwise, never a value to assume.
+input is a question for its owner, never a value to assume.
 
 1. The settled `data-model` section and the storage-mapping rows this change
    touches. Record its identity and the route its classification block
@@ -93,10 +92,9 @@ in its Phases row, its own section, and its rows in Tests, never left empty.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print
-   this block; end the turn; `clarifying-intent` owns what closes it. Record
-   the answer as a ledger row beside the record. No row → the contract does
-   not ship.
+   Ask your human partner and end the turn; `clarifying-intent` owns what
+   closes it. Record the answer as a ledger row beside the record. No row →
+   the contract does not ship.
 7. A rename or a type change is add, copy, switch, drop, never in place.
 8. A new constraint is added in the form the engine offers that does not
    validate existing rows under a lock, then validated as a separate step.

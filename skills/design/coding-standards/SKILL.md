@@ -61,7 +61,8 @@ Open `assets/standards-template.md` before starting; each step fills its section
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+   Ask your human partner and end the turn; `clarifying-intent` owns what
+   closes it.
 3. On option 1, claim adoption only after enforcement and the exemplar gate run. Record
    `in force / suspended / superseded` externally with fresh evidence.
 

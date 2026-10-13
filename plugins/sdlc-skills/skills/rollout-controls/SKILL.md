@@ -60,9 +60,8 @@ switch in a shared environment, or expands a rollout.
    Offer option 3 only when no policy requires staging. Under a policy that
    does, or after a release block, drop it: shipping without the rollout is a
    deviation that only `release-readiness` may accept, when the release
-   contract permits that exception, never here. Ask through the harness's
-   user-input action when one exists, else print this block; end the turn;
-   `clarifying-intent` owns what closes it.
+   contract permits that exception, never here. Ask your human partner and
+   end the turn; `clarifying-intent` owns what closes it.
 4. Option 2 → revise, keep the earlier terms visible, and re-present. Option
    3 → fill `assets/rollout-record.md` before stopping, with Status
    `declined` and only its Policy and Next action sections, and append the

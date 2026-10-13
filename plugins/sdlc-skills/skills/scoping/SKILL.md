@@ -55,7 +55,8 @@ Open `assets/scope-section.md` before starting; each step fills its section.
    Recommendation: {{thinnest answer that reaches the goal}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+   Ask your human partner and end the turn; `clarifying-intent` owns what
+   closes it.
 3. **REQUIRED SUB-SKILL:** on option 1, invoke `writing-specs` when detailed
    requirements are the next missing input. Never impose a phase already
    complete.

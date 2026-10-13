@@ -38,8 +38,8 @@ This skill never edits the plan, approves it, or starts an executor.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print
-   this block; end the turn; `clarifying-intent` owns what closes it.
+   Ask your human partner and end the turn; `clarifying-intent` owns what
+   closes it.
 3. Option 1 → Step 1. Option 2 → return to the caller, which presents the
    plan without a review.
 

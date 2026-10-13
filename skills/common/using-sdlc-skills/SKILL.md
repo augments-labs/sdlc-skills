@@ -53,9 +53,12 @@ invoking it.
    means the gate accepted, not confidence.**
 
 8. **A decision put to the user stays open until a direct answer, cancel, or
-   supersede;** `clarifying-intent` owns what closes it. Ask one question at a time
-   through the harness's user-input action when it has one, else print it;
-   rendering collects an answer, it never infers one.
+   supersede;** `clarifying-intent` owns what closes it. Ask one question at a
+   time. When your harness has a tool for asking your human partner a question
+   with choices, use it. Put the summary in the question, each numbered entry
+   as an option, and the recommended one first, marked (Recommended).
+   Otherwise, or when the tool cannot offer every entry, print the block.
+   Rendering collects an answer, it never infers one.
 9. **A retry needs new evidence or a new intervention inside a finite bound;**
    `receiving-code-review` owns the bound.
 

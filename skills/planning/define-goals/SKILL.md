@@ -55,7 +55,8 @@ Open `assets/goals-section.md` before starting; each step fills its section.
    Recommendation: {{option the open assumptions support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+   Ask your human partner and end the turn; `clarifying-intent` owns what
+   closes it.
 3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` when
    viability is unresolved; otherwise `scoping` when the boundary is next.
    Never impose a phase already complete.

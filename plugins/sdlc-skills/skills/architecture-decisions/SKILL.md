@@ -64,7 +64,8 @@ Open `assets/adr-template.md` before Step 1's actions; it owns the fields. Read 
    Recommendation: {{option the recorded trade-offs support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+   Ask your human partner and end the turn; `clarifying-intent` owns what
+   closes it.
 2. Track decision and conformance separately. Acceptance puts nothing `in
    force`; conformance does. Retirement needs owner action and absence of the
    governed surface. Contradiction → reopen every affected owner.

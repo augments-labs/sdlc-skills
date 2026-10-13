@@ -109,7 +109,8 @@ the section it names.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+   Ask your human partner and end the turn; `clarifying-intent` owns what
+   closes it.
 5. Only an approved exact version, with predecessor-bound consumers
    reconciled, proceeds to `writing-plans`.
 
