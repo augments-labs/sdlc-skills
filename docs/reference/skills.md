@@ -44,6 +44,7 @@ a few skills.
 | `test-driven-development` | Makes a test fail for the right reason, then makes it pass |
 | `executing-plans` | Runs an approved plan task by task in the current session |
 | `subagent-driven-development` | Runs an approved plan through fresh subagents, with a reviewer on each task |
+| `rollout-controls` | Builds the flag or kill switch and the rollout signals a staged release needs, under terms its owner accepts |
 
 ## Testing
 
