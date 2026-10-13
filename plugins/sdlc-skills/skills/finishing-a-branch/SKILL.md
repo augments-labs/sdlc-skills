@@ -112,7 +112,8 @@ unwanted.
 
 1. Rerun `bash scripts/branch-state.sh` before filling the block. `base.resolved`
    false → get the base from the user or project, rerun with
-   `--base`, and fill nothing until it resolves. Then fill it from the output:
+   `--base`, and fill nothing until it resolves. Then fill it from the output
+   and print it:
 
    ```text
    This will permanently delete:
