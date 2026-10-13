@@ -3,15 +3,16 @@
 `changing-a-live-schema` opens this in its first step, writes the Inputs and
 every phase before the first one ships, and completes the Tests, evidence,
 and Status once the phase's tests are green; `release-readiness` receives it
-as evidence for its recovery and compatibility checks. Write it to
+as evidence for its checks on recovery, the rollback target, and downtime.
+Write it to
 `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-schema-change-{{phase}}.md`
 unless the user names another place; the data owner's acceptance of the
 contract phase is a row in the ledger beside it, and nowhere else. No secret
 value, credential, or row of personal data goes in it. A phase this change
-does not need reads `not needed` with its reason, which is distinct from
-empty: a section left empty means the thing was not bound, not built, or not
-verified, so say which, and the release decision treats it as missing rather
-than fine.
+does not need reads `not needed` with its reason in its Phases row, its own
+section, and its rows in Tests, which is distinct from empty: a section left
+empty means the thing was not bound, not built, or not verified, so say
+which, and the release decision treats it as missing rather than fine.
 
 ```markdown
 # Schema change record — {{change-short-name}}
@@ -41,7 +42,7 @@ than fine.
 | Expand | {{the additive change, or not needed: reason}} | {{migration before code}} | {{old version runs against it; compatibility test}} | {{revert code; expansion stays}} |
 | Dual-write and tolerant reads | {{what writes both, what reads either, or not needed: reason}} | {{code only}} | {{tests in Tests}} | {{previous version}} |
 | Backfill | {{the job, or not needed: reason}} | {{job under the deploy process}} | {{remaining rows zero; verification passed}} | {{stop the job; rows already written stay valid}} |
-| Switch reads | {{the read path change, or not needed: reason}} | {{code only}} | {{reads correct on backfilled and unbackfilled rows}} | {{previous change}} |
+| Switch reads | {{the read path change, or not needed: reason}} | {{code only}} | {{reads correct on backfilled and unbackfilled rows}} | {{previous change, which reads either shape}} |
 | Stop old writes | {{the write path change, or not needed: reason}} | {{code only}} | {{no old-shape writes observed for the stated period}} | {{previous change, which writes both}} |
 | Contract | {{the drop, or not needed: reason}} | {{code before migration}} | {{the conditions in Point of no return}} | {{restore from backup, with its recovery time; application rollback to the target ends here}} |
 
@@ -72,9 +73,9 @@ New behaviour, each red before its code existed:
 
 Preserved behaviour, under the preserved-behaviour cycle:
 
-| Test | Suite and version it ran | Seen green on | Deliberate red: divergence and revision | Green again on |
-| --- | --- | --- | --- | --- |
-| Previous code version passes against the expanded schema | {{suite, and the version}} | {{revision}} | {{the expansion the old version cannot tolerate, and the revision}} | {{revision}} |
+| Test | Suite and version it ran | Accepted as covering the contract by | Seen green on | Deliberate red: divergence and revision | Green again on |
+| --- | --- | --- | --- | --- | --- |
+| Previous code version passes against the expanded schema | {{suite, and the version}} | {{the plan or task that accepts the suite}} | {{revision}} | {{the expansion the old version cannot tolerate, and the revision}} | {{revision}} |
 
 ## Point of no return
 

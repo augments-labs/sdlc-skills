@@ -53,8 +53,8 @@ action when one exists and printed otherwise, never a value to assume.
 Each phase is its own deployable change with a stated gate to advance and a
 stated rollback. Write every phase into the record's Phases section now;
 ship them one at a time, in this order. A phase this change does not need
-(an index alone, one constraint, a standalone backfill) is recorded
-`not needed: {{reason}}`, which is distinct from empty.
+(an index alone, a standalone backfill) is recorded `not needed: {{reason}}`
+in its Phases row, its own section, and its rows in Tests, never left empty.
 
 1. **Expand.** Add the new column, table, index, or field so the previous
    code version runs against it untouched: additive, nullable or defaulted
@@ -71,7 +71,7 @@ ship them one at a time, in this order. A phase this change does not need
    shapes by count or checksum and goes in the record. Gate to advance:
    remaining rows zero and verification passed. Never one transaction over
    the table.
-4. **Switch reads.** Rollback: the previous change, which reads the old
+4. **Switch reads.** Rollback: the previous change, which reads either
    shape.
 5. **Stop old writes.** Rollback: the previous change, which still writes
    both shapes.
@@ -104,17 +104,17 @@ ship them one at a time, in this order. A phase this change does not need
 
 ## Step 3: Build each phase under test
 
-1. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each phase.
-   Four tests are new behaviour, each failing before its code exists:
+1. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each phase
+   this change needs. Four tests are new behaviour, each red before its code:
    - the migration applies to the previous schema version;
    - the backfill run twice changes nothing the second time;
-   - the backfill interrupted mid-run resumes and reaches the same end
-     state;
+   - the backfill interrupted mid-run resumes to the same end state;
    - reads handle a row not yet backfilled.
 
    The compatibility test, the previous code version's suite against the
-   expanded schema, is preserved behaviour and runs under that skill's
-   preserved-behaviour cycle: seen green, one controlled divergence (an
+   expanded schema, is preserved behaviour: the plan or task accepts that
+   suite as covering its contract, and it runs under that skill's
+   preserved-behaviour cycle, seen green, one controlled divergence (an
    expansion the old version cannot tolerate, such as a required column
    with no default) watched red, restored, green again.
 2. For every operation that may lock or rewrite (index build, default, type
@@ -143,7 +143,7 @@ ship them one at a time, in this order. A phase this change does not need
    Schema change: {{what}}, phase {{n}} of {{n}} ({{expand | dual-write | backfill | switch-reads | stop-old-writes | contract}}), engine {{name and version}}
    Order: {{migration before code | code only | job under the deploy process | code before migration}}; rollback: {{target}} against {{store state it will meet}}
    Lock and rewrite: {{measured on a production-sized copy | unverified}}
-   Point of no return: {{not reached | contract, accepted in the ledger row named here}}
+   Point of no return: {{not reached | contract}}; acceptance: {{ledger row identity, or "no row"}}
    ```
 
 3. Continue the ordinary chain to verification, review, and the branch
