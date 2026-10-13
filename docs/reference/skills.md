@@ -44,7 +44,7 @@ a few skills.
 | `test-driven-development` | Makes a test fail for the right reason, then makes it pass |
 | `executing-plans` | Runs an approved plan task by task in the current session |
 | `subagent-driven-development` | Runs an approved plan through fresh subagents, with a reviewer on each task |
-| `changing-a-live-schema` | Builds an ordinary schema change or backfill in phases so a live store keeps working for both code versions during a deploy and after a rollback |
+| `changing-a-live-schema` | Builds an ordinary schema change or backfill in phases so a live store keeps working for both code versions during a deploy and after a rollback, until the contract phase |
 
 ## Testing
 

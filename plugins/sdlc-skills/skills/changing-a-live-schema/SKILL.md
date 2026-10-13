@@ -1,21 +1,21 @@
 ---
 name: changing-a-live-schema
-description: "Builds an ordinary schema change in phases so a live store serves both code versions during a deploy and after a rollback: expand, backfill, switch, then contract, each its own deploy with its own rollback. Use when adding, renaming, dropping, or retyping a column or field, adding an index or constraint, splitting a table, changing a stored document shape, or backfilling or fixing data on a store a running system reads. Skip a store nothing live reads yet or whose owner has recorded accepted downtime, and a rewrite or whole-store migration, which migration-strategy owns."
+description: "Builds an ordinary schema change in phases so a live store serves both code versions during a deploy and after a rollback, until the contract phase ends that. Use when adding, renaming, dropping, or retyping a column or field, adding an index or constraint, splitting a table, changing a stored document shape, or backfilling data on a store a running system reads. Skip a store nothing live reads yet or whose owner has recorded accepted downtime, and a rewrite or whole-store migration, which migration-strategy owns."
 ---
 
 # Changing a Live Schema
 
 The store outlives every deploy. During a rolling deploy, and again after a
 rollback, two versions of the code read and write it at once, so every phase
-has to leave the store in a shape both versions can use. This skill never
-runs a migration or backfill against a shared or production store; that runs
-under the project's deploy process and authority.
+before contract has to leave the store in a shape both versions can use. This
+skill never runs a migration or backfill against a shared or production
+store; that runs under the project's deploy process and authority.
 
 ## When to use
 
 - A change to a persisted schema that a running system reads or writes while
   the change deploys: a table, column, index, constraint, or a stored
-  document or record shape. A backfill or a data fix on such a store counts.
+  document or record shape. A backfill on such a store counts.
 - **Skip** a store nothing live reads yet (pre-release, development only), or
   one whose owner has accepted downtime for this change. Acceptance is a
   record you can point at: who accepted, when, and the window. Assumed
@@ -28,13 +28,16 @@ under the project's deploy process and authority.
 
 ## Step 1: Bind the inputs
 
-Open `assets/schema-change-record.md` before the actions below; each fills
-the section it names. A missing input is a question for its owner, asked
-through the harness's user-input action when one exists and printed
-otherwise, never a value to assume.
+Open `assets/schema-change-record.md` before the actions below: they fill
+its Inputs section and the data-model identity in its header. A missing
+input is a question for its owner, asked through the harness's user-input
+action when one exists and printed otherwise, never a value to assume.
 
-1. The settled `data-model` section on the ordinary route, and the
-   storage-mapping rows this change touches. Record its identity.
+1. The settled `data-model` section and the storage-mapping rows this change
+   touches. Record its identity and the route its classification block
+   records, or "new model" when there is no existing one. Semantics
+   unchanged, as for an index or a backfill → record "no data-model
+   section" with the reason.
 2. The project's migration tool and conventions: where migrations live, how
    they are versioned, and at which deploy step they run.
 3. The deploy model: how many code versions run against the store at once
@@ -48,8 +51,10 @@ otherwise, never a value to assume.
 ## Step 2: Sequence as expand → migrate → contract
 
 Each phase is its own deployable change with a stated gate to advance and a
-stated rollback. Write every phase into the record now; ship them one at a
-time, in this order.
+stated rollback. Write every phase into the record's Phases section now;
+ship them one at a time, in this order. A phase this change does not need
+(an index alone, one constraint, a standalone backfill) is recorded
+`not needed: {{reason}}`, which is distinct from empty.
 
 1. **Expand.** Add the new column, table, index, or field so the previous
    code version runs against it untouched: additive, nullable or defaulted
@@ -66,17 +71,21 @@ time, in this order.
    shapes by count or checksum and goes in the record. Gate to advance:
    remaining rows zero and verification passed. Never one transaction over
    the table.
-4. **Switch reads**, then **stop the old writes**, each its own change.
-   Rollback: the previous change, which still writes both shapes.
-5. **Contract.** Drop the old column, table, or field. Code stops using it
+4. **Switch reads.** Rollback: the previous change, which reads the old
+   shape.
+5. **Stop old writes.** Rollback: the previous change, which still writes
+   both shapes.
+6. **Contract.** Drop the old column, table, or field. Code stops using it
    in one deploy; the drop ships in a later one, and only when no live
    version reads the old shape, the rollback target does not read it
-   either, verification passed, and retention allows. This is the point of
-   no return. Name it in the record and put it to the data owner:
+   either, verification has been re-run after old writes stopped and
+   passed, and retention allows. This is the point of no return: its
+   rollback is a restore from the retained backup or snapshot, never an
+   application rollback. Name it in the record and put it to the data owner:
 
    ```text
-   Contract for {{change}}: drops {{old column, table, or field}}; no live version or rollback target reads it as of {{evidence}}; retention {{satisfied how}}.
-   After this ships, rolling the application back to {{rollback target}} is no longer possible without {{restore path, or "a restore from backup"}}.
+   Contract for {{change}}: drops {{old column, table, or field}}; no live version or rollback target reads it as of {{evidence}}; verification re-run {{date, result}}; retention {{satisfied how}}.
+   After this ships, rolling the application back to {{rollback target}} is no longer possible; recovery is {{restore path and its recovery time}}.
 
    1. Accept: ship the contract
    2. Hold: keep both shapes until {{condition}}
@@ -88,29 +97,34 @@ time, in this order.
    this block; end the turn; `clarifying-intent` owns what closes it. Record
    the answer as a ledger row beside the record. No row → the contract does
    not ship.
-6. A rename or a type change is add, copy, switch, drop, never in place.
-7. A new constraint is added in the form the engine offers that does not
+7. A rename or a type change is add, copy, switch, drop, never in place.
+8. A new constraint is added in the form the engine offers that does not
    validate existing rows under a lock, then validated as a separate step.
    The engine offers no such form → the lock is measured in Step 3.
 
 ## Step 3: Build each phase under test
 
-1. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each phase,
-   with these tests, each failing before its code exists:
+1. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each phase.
+   Four tests are new behaviour, each failing before its code exists:
    - the migration applies to the previous schema version;
-   - the previous code version's suite passes against the expanded schema
-     (the compatibility test);
    - the backfill run twice changes nothing the second time;
    - the backfill interrupted mid-run resumes and reaches the same end
      state;
    - reads handle a row not yet backfilled.
+
+   The compatibility test, the previous code version's suite against the
+   expanded schema, is preserved behaviour and runs under that skill's
+   preserved-behaviour cycle: seen green, one controlled divergence (an
+   expansion the old version cannot tolerate, such as a required column
+   with no default) watched red, restored, green again.
 2. For every operation that may lock or rewrite (index build, default, type
    change, constraint, drop): read the engine's documentation for that exact
    operation on the exact version and record what it says. A
    production-sized copy exists → run the operation on it and record the
    duration, the lock held, and whether the table was rewritten. None →
-   record the operation as **unverified** in the record. `release-readiness`
-   reads that line; never leave it blank.
+   record the operation as **unverified**, in its evidence row and in the
+   record's Not verified section, which goes to `release-readiness` as it
+   stands. Never leave it blank.
 3. Write the deploy-versus-migration order for this phase where the deploy
    process reads it, matching Step 2.
 4. A migration already applied anywhere, including a shared test store, is
@@ -118,24 +132,26 @@ time, in this order.
 
 ## Step 4: Record and hand off
 
-1. Fill every section of `assets/schema-change-record.md` after the phase's
-   tests are green, written to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-schema-change.md` unless
-   the user names another place. A later phase names this record as its
-   predecessor.
+1. Complete `assets/schema-change-record.md` after the phase's tests are
+   green: update Tests, lock evidence, and Status, at
+   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-schema-change-{{phase}}.md`
+   unless the user names another place. A later phase names this record as
+   its predecessor.
 2. Report four lines and decide nothing:
 
    ```text
-   Schema change: {{what}}, phase {{n}} of {{n}} ({{expand | dual-write | backfill | switch | contract}}), engine {{name and version}}
-   Order: {{migration before code | code before migration}}; rollback: {{target}} against {{store state it will meet}}
-   Lock and rewrite: {{measured on a production-sized copy | documented, not measured | unverified}}
-   Point of no return: {{not reached | contract, accepted by whom and when}}
+   Schema change: {{what}}, phase {{n}} of {{n}} ({{expand | dual-write | backfill | switch-reads | stop-old-writes | contract}}), engine {{name and version}}
+   Order: {{migration before code | code only | job under the deploy process | code before migration}}; rollback: {{target}} against {{store state it will meet}}
+   Lock and rewrite: {{measured on a production-sized copy | unverified}}
+   Point of no return: {{not reached | contract, accepted in the ledger row named here}}
    ```
 
 3. Continue the ordinary chain to verification, review, and the branch
    decision unchanged. **REQUIRED SUB-SKILL:** at the release step, invoke
-   `release-readiness` with the record; it exercises the recovery and binds
-   the rollback target.
+   `release-readiness` and hand it the record as evidence for its checks
+   that migrations have exercised recovery, that the rollback target is
+   named, and that downtime is none or scheduled. An unverified lock line is
+   listed there as unverified.
 4. Each later phase, contract above all, is its own change through the same
    chain, from Step 1, with the record's predecessor line filled.
 5. A feature flag or staged rollout is also requested → that is a separate
@@ -184,4 +200,4 @@ time, in this order.
   where the operator reads them.
 - Treating a passing compatibility test as proof that contract is safe →
   the test proves the old version tolerates the expanded store; only the
-  conditions in Step 2.5 make the drop safe.
+  conditions in Step 2.6 make the drop safe.
