@@ -4,8 +4,8 @@
 finding carries a disposition, and writes the filled copy under
 `.sdlc-skills/evidence/{{YYYY-MM-DD}}-pr-{{number}}/`; the fenced document is
 what gets posted when the user chooses to post it. It is written for the
-PR's author, so it carries no internal identity beyond the head revision, no
-reviewer dispatch ID, and never a secret. A finding without a `path:line` at
+PR's author, so it carries no descriptor, review-input, or dispatch identity,
+no evidence path, and never a secret. A finding without a `path:line` at
 the head revision, or a recommendation the findings do not support, means the
 review is not ready to show.
 
