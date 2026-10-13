@@ -102,8 +102,7 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
    not run, or no answer, leaves a verdict resting on no verified finding.
    Its verdict joins the review; approve needs `security clear` on this head.
 5. Re-read the head revision. Moved → the verdict covers the old head only:
-   say so, keep the reports as history, and ask through the harness's
-   user-input action when one exists, else print this block; end the turn:
+   say so, keep the reports as history, and ask this; end the turn:
 
    ```text
    PR {{number}} moved from {{old head}} to {{new head}}.
@@ -144,8 +143,7 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
 
 ## Step 4: Ask before posting
 
-1. Show the filled review. Ask through the harness's user-input action when
-   one exists, else print this block; end the turn:
+1. Show the filled review. Ask this and end the turn:
 
    ```text
    PR {{number}} at {{head revision}} → {{base ref}}: {{n}} blocking, {{m}} non-blocking.

@@ -60,10 +60,10 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
 
    Put the exact text of a question to the user, and the right-versus-wrong
    shape of an output, in a fenced block; put a command in a `bash` block only
-   where running it is the act. The body asks a fenced question through the
-   harness's user-input action when one exists and prints it as text otherwise;
-   it never assumes the action exists, and rendering a question collects an
-   answer — it never infers one.
+   where running it is the act. The body says to ask and end the turn;
+   `using-sdlc-skills` says how to ask through a choice tool, and the fenced
+   block prints when no choice tool exists or the tool cannot offer every
+   entry. A block asking for typed text says to print it.
 
    Every retry names its owner, observable progress, finite attempt/resource
    boundary, and unresolved outcome. Before retrying, apply an evidence-supported

@@ -61,7 +61,7 @@ section.
    Recommendation: {{option}} — {{one sentence of evidence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 4. Go-if → only the named evidence and owner move a condition's external
    state. Expiry, or any change to a bound input, gate, evidence, owner,
    or freshness → condition invalid, decision reopened.
