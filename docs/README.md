@@ -27,6 +27,7 @@ does along the way, with example prompts.
 | --- | --- |
 | [Installing, updating, and removing](guides/installing.md) | The steps for each supported agent, and what each one does with the files |
 | [Your first session](guides/first-session.md) | How to check the skills loaded, how to call one by name, and the folder the agent creates in your project |
+| [A change at work, from ticket to post-mortem](guides/a-change-at-work.md) | One change through a company's whole lifecycle: ticket, team rules, live data, a flag, review, release, incident, post-mortem, and what stays with you at each stage |
 | [Building a feature](guides/building-a-feature.md) | From the request to a reviewed branch: worktree, failing test first, checks, review |
 | [Fixing a bug](guides/fixing-a-bug.md) | How the agent finds the cause before it proposes a fix, and what it asks you for |
 | [Reviewing and shipping](guides/reviewing-and-shipping.md) | Verification, independent review, and the choice of what happens to the branch |

@@ -1,14 +1,31 @@
 # SDLC skills
 
-SDLC skills is a library of engineering skills for coding agents. It covers the
-whole software development life cycle, from the first conversation about goals
-to debugging in production, and it works with several agents from one set of
-files.
+A ticket lands in your queue and you hand it to your coding agent. It reads
+the ticket as written, records the acceptance criteria, and asks about the
+one thing the ticket leaves open. It works where your team's rules say,
+writes a failing test before the code, phases a change to a live table
+so both versions of your service keep working through the deploy, and puts
+the new behavior behind a flag because your release policy asks for one. It
+runs your checks, reads the output, gets the change reviewed, and asks you
+what to do with the branch. Later it reviews a teammate's pull request
+without posting a word until you say so, judges whether the build is safe to
+ship, and, when something breaks for customers, contains it first, finds the
+cause second, and writes up how it got past the checks.
 
-A skill is a short set of instructions your agent loads when a situation calls
-for it: how to write a plan, how to find the cause of a bug, what to check
-before calling work done. You install the library once and the agent picks the
-skills that fit the task in front of it.
+That is the whole software development life cycle as you live it at work,
+from the first ticket to the post-mortem, and it is what SDLC skills is for.
+It is a library of engineering skills for coding agents: short sets of
+instructions the agent loads when a situation calls for them, covering every
+phase from the first conversation about goals to debugging in production.
+You install it once, it works with several agents from one set of files, and
+the agent picks the skills that fit the task in front of it.
+
+At each of those steps the agent stops at a decision that is yours: the open
+question, the plan, the data owner's acceptance of a drop, the rollout terms,
+the branch menu, the review it would post, the release. Nothing is pushed,
+flipped, deployed, or posted because the agent thought it was ready.
+[A change at work, from ticket to post-mortem](docs/guides/a-change-at-work.md)
+walks through the story above stage by stage.
 
 ## Table of contents
 
@@ -273,7 +290,11 @@ A large project may touch every phase. Most tasks use a few skills.
    `executing-plans` runs the plan in the current session, or
    `subagent-driven-development` hands each task to a fresh subagent.
    `test-driven-development` and `yagni`, another common skill, keep each
-   change tested and no larger than it needs to be.
+   change tested and no larger than it needs to be. `rollout-controls`
+   builds the flag or kill switch and the signals a staged release needs,
+   when your release policy, the plan, or you ask for one.
+   `changing-a-live-schema` phases a change to stored data so a live store
+   keeps working for both code versions through a deploy and a rollback.
 5. **Testing.** `verification-before-completion` runs the checks before any
    claim that work is done. `requesting-code-review` and
    `receiving-code-review` handle the review. `reviewing-a-pr` reviews a
@@ -296,6 +317,7 @@ people need first:
 | --- | --- |
 | [Installing, updating, and removing](docs/guides/installing.md) | The steps for each supported agent, and what each one does with the files |
 | [Your first session](docs/guides/first-session.md) | How to check the skills loaded, how to call one by name, and the folder the agent creates |
+| [A change at work, from ticket to post-mortem](docs/guides/a-change-at-work.md) | One change through a company's whole lifecycle, and what stays with you at each stage |
 | [Building a feature](docs/guides/building-a-feature.md) | From the request to a reviewed branch |
 | [Fixing a bug](docs/guides/fixing-a-bug.md) | How the agent finds the cause before it proposes a fix |
 | [When a session goes wrong](docs/guides/when-a-session-goes-wrong.md) | Getting a cited account of what a session did |
@@ -322,6 +344,9 @@ Contributions are welcome. The short version:
 [`CONTRIBUTING.md`](CONTRIBUTING.md) has the full guide, including what each
 check proves, how the agent adapters are built, and the design decisions
 behind the library.
+
+Behaviour tests for the skills live in a separate repository,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
 
 ## License
 

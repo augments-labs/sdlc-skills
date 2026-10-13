@@ -5,7 +5,9 @@ convention, a rule about commits, a pull request template. Several skills
 read that from your project's agent instructions file (`AGENTS.md`,
 `CLAUDE.md`, `GEMINI.md`, or whatever your agent reads) and from your
 contribution rules, so nobody has to repeat it in every session. This page
-says what you can settle there once, and what stays with you.
+says what you can settle there once, and what stays with you. To see these
+rules at work across one change, from the ticket to the post-mortem, read
+[A change at work](a-change-at-work.md).
 
 ## What you can settle once
 
