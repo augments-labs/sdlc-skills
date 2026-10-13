@@ -44,7 +44,9 @@ the descriptor's approver rule), or **blocking**.
 4. Check the target: configuration, secrets, capacity, dependencies, step
    ordering (row 6). Verify shape and presence; never print values.
 5. Bind rollout control to the owning assurance, migration, or release policy
-   (rows 5, 12). Missing policy: blocking. Do not invent or lower one.
+   (rows 5, 12). Missing policy: blocking; for a bounded feature
+   `rollout-controls` drafts one for its owner to accept. Do not invent or
+   lower one.
 6. Expansion or full release: attach observed evidence from the prior stage.
 7. Account for consumers (rows 7, 8, 15). Package: install the packed
    artifact into a clean representative consumer before publishing anything.
