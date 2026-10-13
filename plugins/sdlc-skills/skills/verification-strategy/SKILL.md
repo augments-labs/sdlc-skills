@@ -78,8 +78,7 @@ reading the code, a coverage number, or the builder's opinion.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 4. Approve nothing yourself. Authority to draft gates is not authority to
    accept unseen risks, thresholds, omissions, or exceptions.
 5. Keep the matrix file at `proposed`.

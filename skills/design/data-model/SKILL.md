@@ -66,8 +66,7 @@ Open `assets/data-model-section.md` before the steps below fill it in.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
 

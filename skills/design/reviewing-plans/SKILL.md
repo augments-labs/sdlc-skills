@@ -38,8 +38,7 @@ This skill never edits the plan, approves it, or starts an executor.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. Option 1 → Step 1. Option 2 → return to the caller, which presents the
    plan without a review.
 

@@ -99,8 +99,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 5. A successor's delta includes the selected visual references.
 6. Option 1, and every design section the work needs is approved →
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.

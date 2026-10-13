@@ -109,8 +109,7 @@ the section it names.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 5. Only an approved exact version, with predecessor-bound consumers
    reconciled, proceeds to `writing-plans`.
 

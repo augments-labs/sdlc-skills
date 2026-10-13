@@ -115,8 +115,7 @@ how that is judged, not the code.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 2. Do not invoke either executor, create a workspace, or write code in this
    turn.
 3. Standing order → proceed unpaused only when its scope, owner, constraints,

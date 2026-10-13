@@ -71,8 +71,7 @@ Open `assets/spec-template.md` before starting; each step fills its section.
    Recommendation: {{option the open-question state supports}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 4. **REQUIRED SUB-SKILL:** on option 1, invoke the next missing precondition:
    `ui-ux-design`, `system-architecture`, or `data-model` for unresolved
    non-trivial shape; otherwise `writing-plans`. Never impose a phase already

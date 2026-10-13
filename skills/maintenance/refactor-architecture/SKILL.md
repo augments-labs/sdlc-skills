@@ -61,8 +61,7 @@ term below reads unfamiliar.
    Recommendation: {{option the friction and recovery evidence support}} — {{one sentence}}.
    ```
 
-   Ask your human partner and end the turn; `clarifying-intent` owns what
-   closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
 6. Input drift, or a change to what was approved → an approved successor;
    affected slices invalid.
 
