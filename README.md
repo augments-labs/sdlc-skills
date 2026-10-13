@@ -263,7 +263,8 @@ A large project may touch every phase. Most tasks use a few skills.
    idea into a project brief: what it is for, what is in and out, and whether
    it can be delivered.
 2. **Analysis.** `writing-specs` turns settled intent into requirements and
-   acceptance criteria.
+   acceptance criteria. `working-from-a-ticket` captures a ticket you hand
+   over, criteria as written, so the work binds to it.
 3. **Design.** `system-architecture`, `data-model`, and `ui-ux-design` shape
    the solution. `writing-plans` breaks it into tasks, and `reviewing-plans`
    gets a second opinion on a risky plan before you approve it.

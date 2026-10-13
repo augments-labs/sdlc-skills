@@ -21,6 +21,7 @@ a few skills.
 
 | Skill | What it does |
 | --- | --- |
+| `working-from-a-ticket` | Captures a ticket as read, with its acceptance criteria and what it leaves unclear, so the plan and the tests bind to it |
 | `writing-specs` | Writes requirements, acceptance criteria, and edge cases for settled intent |
 
 ## Design
