@@ -1,16 +1,17 @@
 # SDLC skills
 
-A ticket lands in your queue and you hand it to your coding agent. It reads
-the ticket as written, records the acceptance criteria, and asks about the
-one thing the ticket leaves open. It works where your team's rules say,
-writes a failing test before the code, phases a change to a live table
-so both versions of your service keep working through the deploy, and puts
-the new behavior behind a flag because your release policy asks for one. It
-runs your checks, reads the output, gets the change reviewed, and asks you
-what to do with the branch. Later it reviews a teammate's pull request
-without posting a word until you say so, judges whether the build is safe to
-ship, and, when something breaks for customers, contains it first, finds the
-cause second, and writes up how it got past the checks.
+A ticket lands in your queue and you hand it to your coding agent. With the
+library installed, the skills walk the agent through it: read the ticket as
+written, record the acceptance criteria, and ask about the one thing the
+ticket leaves open. Work where your team's rules say, write a failing test
+before the code, replace an integer column on a live table with a timestamp
+in phases so both versions of your service keep working through the deploy,
+and put the new behavior behind a flag because your release policy asks for
+one. Run your checks, read the output, get the change reviewed, and ask you
+what to do with the branch. Later, review a teammate's pull request without
+posting a word until you say so, judge whether the build is safe to ship,
+and, when something breaks for customers, contain it first, find the cause
+second, and write up how it got past the checks.
 
 That is the whole software development life cycle as you live it at work,
 from the first ticket to the post-mortem, and it is what SDLC skills is for.
@@ -20,10 +21,10 @@ phase from the first conversation about goals to debugging in production.
 You install it once, it works with several agents from one set of files, and
 the agent picks the skills that fit the task in front of it.
 
-At each of those steps the agent stops at a decision that is yours: the open
-question, the plan, the data owner's acceptance of a drop, the rollout terms,
-the branch menu, the review it would post, the release. Nothing is pushed,
-flipped, deployed, or posted because the agent thought it was ready.
+Each skill tells the agent to stop at a decision that is yours, such as the
+data owner's acceptance of a drop, the rollout terms, the branch menu, the
+review it would post, the release, the lever pulled in an incident, and the
+actions a post-mortem proposes.
 [A change at work, from ticket to post-mortem](docs/guides/a-change-at-work.md)
 walks through the story above stage by stage.
 
@@ -294,7 +295,8 @@ A large project may touch every phase. Most tasks use a few skills.
    builds the flag or kill switch and the signals a staged release needs,
    when your release policy, the plan, or you ask for one.
    `changing-a-live-schema` phases a change to stored data so a live store
-   keeps working for both code versions through a deploy and a rollback.
+   keeps working for both code versions through a deploy and a rollback,
+   until the final phase drops the old shape.
 5. **Testing.** `verification-before-completion` runs the checks before any
    claim that work is done. `requesting-code-review` and
    `receiving-code-review` handle the review. `reviewing-a-pr` reviews a
@@ -345,7 +347,7 @@ Contributions are welcome. The short version:
 check proves, how the agent adapters are built, and the design decisions
 behind the library.
 
-Behaviour tests for the skills live in a separate repository,
+Behavior tests for the skills live in a separate repository,
 [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
 
 ## License
