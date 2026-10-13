@@ -41,6 +41,7 @@
     "./skills/design/system-architecture",
     "./skills/design/ui-ux-design",
     "./skills/design/writing-plans",
+    "./skills/implementation/changing-a-live-schema",
     "./skills/implementation/executing-plans",
     "./skills/implementation/rollout-controls",
     "./skills/implementation/subagent-driven-development",

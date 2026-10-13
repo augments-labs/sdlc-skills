@@ -139,3 +139,12 @@ step in more detail.
   anything. This is not the flag `yagni` stops:
   someone asked for it. `release-readiness` later binds those terms instead
   of inventing them.
+- **A change to stored data.** If the feature adds, renames, or drops a
+  column or field, adds an index or constraint, or backfills data on a store
+  your running system reads, `changing-a-live-schema` builds it in phases:
+  expand first, then backfill in batches, then switch, and only later drop
+  the old shape. Each phase is its own deploy with its own rollback, so the
+  old and new versions of your code both keep working during the deploy and
+  after a rollback. The drop is the point of no return; the agent asks the
+  data owner to accept it before it ships. A whole-store migration or a
+  rewrite goes through `migration-strategy` instead.

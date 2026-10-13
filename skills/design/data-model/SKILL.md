@@ -36,9 +36,10 @@ Open `assets/data-model-section.md` before the steps below fill it in.
    as "inapplicable" without it.
 2. Anything persists → note denormalized or cached data with source of truth,
    update boundary, drift repair. Existing-model change → fill the classification block.
-   On the ordinary route → define migration, mixed-version, rollback. Any
-   answer off the ordinary route → record domain constraints;
-   `migration-strategy` owns the contract.
+   On the ordinary route → define migration, mixed-version, rollback
+   (`changing-a-live-schema` builds them). Any answer off the ordinary
+   route → record domain constraints; `migration-strategy` owns the
+   contract.
 3. Trace representative reads, writes, transitions, concurrent operations,
    deletion, existing-data migration. Record the runnable query and result
    when one exists. Otherwise name the future gate and owner; never

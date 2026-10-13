@@ -99,6 +99,10 @@
         "path": "skills/design/writing-plans/SKILL.md"
       },
       {
+        "id": "changing-a-live-schema",
+        "path": "skills/implementation/changing-a-live-schema/SKILL.md"
+      },
+      {
         "id": "executing-plans",
         "path": "skills/implementation/executing-plans/SKILL.md"
       },
