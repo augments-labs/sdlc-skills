@@ -62,7 +62,8 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    shape of an output, in a fenced block; put a command in a `bash` block only
    where running it is the act. The body says to ask and end the turn;
    `using-sdlc-skills` says how to ask through a choice tool, and the fenced
-   block is what prints when the harness has none.
+   block prints when none exists or it cannot offer every entry. A block
+   asking for typed text says to print it.
 
    Every retry names its owner, observable progress, finite attempt/resource
    boundary, and unresolved outcome. Before retrying, apply an evidence-supported

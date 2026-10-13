@@ -92,8 +92,9 @@ in its Phases row, its own section, and its rows in Tests, never left empty.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask this and end the turn; `clarifying-intent` owns what closes it. Record the answer as a ledger row beside the record. No row →
-   the contract does not ship.
+   Ask this and end the turn; `clarifying-intent` owns what closes it. Record
+   the answer as a ledger row beside the record. No row → the contract does
+   not ship.
 7. A rename or a type change is add, copy, switch, drop, never in place.
 8. A new constraint is added in the form the engine offers that does not
    validate existing rows under a lock, then validated as a separate step.

@@ -126,8 +126,8 @@ unwanted.
    Type `discard {{candidate.id}}` to confirm.
    ```
 
-2. Stop. "yes", "go ahead", "get rid of it", a numbered choice → nothing is
-   touched.
+2. Stop. "yes", "go ahead", "get rid of it", a numbered or clicked choice →
+   nothing is touched.
 3. Only after that exact token: rerun with the same `--base`. A changed
    `candidate.id`, a non-zero exit, or no `candidate.id` voids the token.
    Otherwise close or delete the listed task-owned resources, and nothing else.

@@ -74,7 +74,7 @@ writing.
    3. What did you expect to happen instead?
    ```
 
-   Ask them.
+   Print them and wait.
 4. "Everything went wrong" is not a symptom. Ask for the first thing the
    user noticed, and diagnose that.
 5. The user wants the sequence of events and names nothing wrong → record
