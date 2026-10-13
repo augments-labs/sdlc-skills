@@ -65,15 +65,15 @@ Replacing `eta_days` with `estimated_delivery_at` is a type change on a
 store the running system reads, so `changing-a-live-schema` applies, and a
 type change is add, copy, switch, drop, never in place. The agent asks for
 the inputs it cannot find, then sequences the change: expand adds the new
-column, dual-write keeps both columns current with reads that tolerate a row
-not yet copied, a batched backfill fills the timestamp from `eta_days`,
-reads switch, old writes stop, and contract drops `eta_days`. Each phase is
-its own deployable change with its own rollback, and each is built under
-test: a backfill run twice changes nothing, an interrupted one resumes, and
-reads tolerate a row not yet copied. It never runs a migration or backfill
-against a shared or production store, and a lock it could not measure is
-recorded as unverified. [Building a feature](building-a-feature.md) covers
-the phases and the drop under "A change to stored data".
+column, dual-write keeps both columns current, a batched backfill fills the
+timestamp from `eta_days`, reads switch, old writes stop, and contract drops
+`eta_days`. Each phase is its own deployable change with its own rollback,
+and each is built under test: a backfill run twice changes nothing, an
+interrupted one resumes, and reads tolerate a row not yet copied. It never
+runs a migration or backfill against a shared or production store, and a
+lock it could not measure is recorded as unverified.
+[Building a feature](building-a-feature.md) covers the phases and the drop
+under "A change to stored data".
 
 What depends on you: the data owner accepts the contract, the drop after
 which an application rollback is no longer possible, before it ships. A
@@ -87,11 +87,11 @@ puts it to the release owner, and builds nothing against an unaccepted
 draft. The flag uses the facility your project already has, off by default,
 in front of every path the change adds, with an off-state test as the kill
 switch's proof. [Building a feature](building-a-feature.md) covers the
-switch and its signals under "A staged rollout".
+switch and its signals under "A staged rollout". The flag does not replace
+the schema phasing, and the phasing does not supply the flag.
 
 What depends on you: accepting the terms, and every flip in a shared
-environment; the agent never turns the flag on there. The flag does not
-replace the schema phasing, and the phasing does not supply the flag.
+environment; the agent never turns the flag on there.
 
 ## 6. Verify, review, open the PR
 
