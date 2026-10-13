@@ -25,13 +25,14 @@ description: "Runs the checks and reads their output before any claim that work 
    and record a decision for each: delivered, pending, blocked, or declined
    with a reason.
 2. Keep an evidence record (the ledger): add to it, never rewrite it, and
-   keep it outside the state under check. One task with one required check:
-   one row in your reply holds the claim, the check, the state identity, and
-   the raw result. An integration, a release, or more than one check: open
-   the full record, `assets/evidence-ledger.md`, before the first check runs
-   and fill every field.
-3. Add one `Results` row per check the task, the plan, or the project's
-   schedule of required checks requires here. A required check that is
+   keep it outside the state under check (anything its state identity
+   covers). One task with one required check: one row in your reply holds
+   the claim, the check, the state identity, and the raw result. An
+   integration, a release, or more than one check: open the full record,
+   `assets/evidence-ledger.md`, before the first check runs and fill every
+   field.
+3. Add one `Results` row per check that the task, the plan, or the project's
+   standing schedule of checks requires here. A required check that is
    missing, only planned, blocked, or unexplained makes the claim pending
    before anything runs. If the requirement names a person who must accept
    the work, read `references/manual-acceptance.md` before its row.
@@ -106,8 +107,7 @@ description: "Runs the checks and reads their output before any claim that work 
   was restored after the failing run.
 - Never turn a worker's "success" report into evidence; inspect its diff,
   state, and raw output.
-- Never change the state under check (anything its state identity covers)
-  with the bookkeeping meant to prove it.
+- Never change the state under check with the bookkeeping meant to prove it.
 - A check never seen to fail for the defect it guards is suspect. Read
   `references/hollow-verification.md` before citing its green.
 - A check silenced is not a check passed. Suppressing a finding, lowering a
