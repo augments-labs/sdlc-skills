@@ -32,7 +32,7 @@ review is not ready to show.
 ### {{finding title}}
 
 - Blocking: {{yes | no}}
-- Where: `{{path}}:{{line}}`
+- Where: `{{repository-relative path}}:{{line}}` at the head revision
 - What fails: {{the observable failure, or the contract it breaks}}
 - Why: {{the evidence read or traced}}
 - Suggested fix: {{the smallest change that closes it}}
