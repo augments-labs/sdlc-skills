@@ -26,8 +26,9 @@ reconcile every diff yourself before anything integrates.
    - **Writes** — exclusive paths, including generated outputs, manifests,
      lockfiles, shared fixtures, tests. A truly shared file gets one later
      integration owner and no concurrent editor.
-   - **State** — disjoint ports, databases, fixtures. If a task runs a server
-     or migrations, invoke `using-git-worktrees` for each such task.
+   - **State** — disjoint ports, databases, fixtures. If either task runs a
+     server or migrations, invoke `using-git-worktrees` for each task in the
+     pair.
    - **Order** — neither consumes the other's output. A dependency is a
      sequence.
 
@@ -35,7 +36,7 @@ reconcile every diff yourself before anything integrates.
    measure one run's memory and cores, dispatch what fits, and sequence the
    rest.
 2. Pick each agent's tier from the Model selection table below and write it
-   in the packet's `TIER` field: the lowest tier sufficient for the decisions
+   in the packet's `Tier` field: the lowest tier sufficient for the decisions
    that remain and the cost of an error. Supply missing context before moving
    up a tier.
 3. Fill one `assets/dispatch-packet.md` per agent, every field, before its
@@ -74,10 +75,11 @@ user's main-session model and any model reserved for orchestration untouched.
 
 ## Step 2: Dispatch
 
-1. Dispatch through the real callable action. Work is dispatched only when
-   the action has returned a non-empty tool-issued ID; record each ID in
-   `DISPATCH RECEIPT`. Naming an agent or writing a prompt is not dispatch.
-2. If the action is unavailable, refused, or returns nothing, write
+1. Dispatch through the real callable action. Work is dispatched only when the
+   action has returned a non-empty tool-issued ID; record each ID in the
+   packet's `Dispatch receipt` field. Naming an agent or writing a prompt is
+   not dispatch.
+2. If the action is unavailable, refused, or returns no tool-issued ID, write
    `not dispatched`, and name the action tried and what would make it
    callable. Never describe a fan-out that has no tool-issued IDs behind it,
    and never quietly do the work yourself instead.

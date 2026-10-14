@@ -84,8 +84,8 @@ as its step runs.
    git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" && echo "remote branch exists"
    ```
 
-   If anything prints, pick another name. Never overwrite or reuse an
-   existing branch.
+   If either `echo` line prints, or `git check-ref-format` fails, pick another
+   name. Never overwrite or reuse an existing branch.
 2. Pick the mechanism, taking the first that applies: a user instruction; then
    project guidance; then a harness-native worktree command, run with the name
    above and HEAD at the proven base, after which skip to Step 4; then the

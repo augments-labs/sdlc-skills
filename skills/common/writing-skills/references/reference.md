@@ -42,8 +42,8 @@ Link references only **one level deep** from SKILL.md. A deeper chain, where SKI
 ## Complexity gate
 
 State applicability and scale-down conditions so small work gets proportionate
-guidance. A skill that is a required check may have no skip; use its smallest
-meaningful check.
+guidance. A required check, or a skill that is one, may have no skip; use its
+smallest meaningful check.
 Line count alone does not establish the risk or scope of a configuration change.
 
 ## How much to write
@@ -52,8 +52,8 @@ Match instruction density to how constrained the task is:
 
 - For **one correct sequence** (a fragile path), bundle a tested script; prose drifts.
 - For **a preferred pattern**, give pseudocode or a worked shape, but allow variation.
-- For **open-ended or exploratory** work, state the objective and a useful
-  method, then stop; allow judgment where several approaches satisfy them.
+- For **open-ended or exploratory** work, state the objective, a useful
+  method, and when to stop; allow judgment where several approaches satisfy them.
 
 ## Prose hygiene
 

@@ -15,8 +15,8 @@ skill already selected owns asking for the inputs still open, leave that to it.
 
 - A request is vague ("add auth", "make it faster") or has more than one reasonable reading.
 - Assumptions are piling up before a plan or feature.
-- A decision already put to the user came back with information but no
-  answer that settles it.
+- A named decision still pending received information but no answer that
+  settles it.
 - **Skip** when the current phase skill owns the uncertainty: new-initiative
   outcomes and measures belong to `define-goals`; open interface flow, state,
   hierarchy, accessibility, and visual direction belong to `ui-ux-design`.
@@ -38,7 +38,7 @@ skill already selected owns asking for the inputs still open, leave that to it.
 1. Read the request. Search the codebase and context for what is already
    decided: conventions, similar features, libraries in use, naming.
 2. Never ask what the code already answers.
-3. If another skill invoked this one to settle a decision it named, keep that
+3. If a caller invoked this one to settle a decision it named, keep that
    decision and the step waiting on it. When a direct answer settles it
    without changing the approved scope, record the answer and return to that
    step; do not write another alignment brief or run another approval round.
@@ -119,7 +119,7 @@ this did.
 
 ## When an artifact carries the pending decision
 
-Write the facts or constraints the user supplied into it only when the
+Write supplied facts or constraints into it only when the
 authority you hold now covers changing it. While its identity is not yet
 issued, update the draft. Never edit an artifact once its identity is issued,
 whether its decision is pending or closed: every change to what downstream

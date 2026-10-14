@@ -35,9 +35,9 @@ detail a form needs:
 2. **House limits: at most 500 body lines and under 5000 estimated tokens.**
    These enforce the concise-body recommendations. Most capability skills land
    near 80–120 lines; a body past ~200 should justify itself. Intent and
-   procedure only; cut marketing ("why this matters"). A worked example earns
-   its place only where it shows a judgment the rules alone do not: three to
-   six lines, generic, with no real project names.
+   procedure only; cut marketing ("why this matters"). A worked example in the
+   body earns its place only where it shows a judgment the rules alone do not:
+   three to six lines, generic, with no real project names.
 
    Aim under the target by **removing content**, never by compressing prose.
    Dropping articles and verbs until a sentence reads as a noun stack — `Bind
@@ -47,22 +47,22 @@ detail a form needs:
    Use everyday words wherever they carry the same meaning. Keep a term this
    library defines only where its distinction matters, and then define it in
    the sentence that uses it; `using-sdlc-skills`' `control-vocabulary.md`
-   maps each older term to its plain form, so read it when a body you edit
-   uses one. Name the person only where the person matters to the
-   instruction, as "your human partner", at most two or three times in a body
-   and often never; prefer a sentence that needs to name no one.
+   maps the older terms candidate, gate, receipt, and disposition to their
+   plain forms, so read it when a body you edit uses one. Use "your human
+   partner" sparingly, at most two or three times in a body and often never;
+   prefer a sentence that needs to name no one.
 3. **Progressive disclosure**, split by what the agent does with the file. A file
    it fills in and emits — a document template — goes to `assets/`. A file it
    reads to decide or check — a rubric, a checklist, a reviewer brief, a worked
-   example, a lookup table — goes to `references/`. Bundled executable code goes
-   to `scripts/`. A body invokes a bundled script as `bash scripts/{{name}}.sh`;
+   example that rule 2 keeps out of the body, a lookup table — goes to
+   `references/`. Bundled executable code goes to `scripts/`. A body invokes a bundled script as `bash scripts/{{name}}.sh`;
    the bare path appears only in `## Available scripts` listings. Keep short
    questions or response examples inline when their exact shape matters at that
    step. Read references/template-format.md before writing or editing a file
    under assets/.
 4. **Scope and scale-down up top.** State applicability and any skip conditions.
-   A skill that is a mandatory check may have no skip; define its smallest
-   useful check instead.
+   A mandatory check, or a skill that is one, may have no skip; define its
+   smallest useful check instead.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
 6. **Instructions, not facts.** An agent can obey an instruction; it cannot obey
    a fact. Use `## Step N:` sections with numbered actions and readable conditions.
@@ -85,7 +85,9 @@ detail a form needs:
 7. **Cut by judgement, not word caps.** Ask of every section:
    "would the agent get this wrong without this?" If no, cut it. If unsure, run
    a throwaway probe; read `references/testing.md` before writing it up. Never
-   cut a hard stop or a destructive-action guard.
+   cut a hard stop or a destructive-action guard. Reword a hard stop, a guard,
+   or a rationalization row only so that the new words cover everything the
+   old ones did, and nothing more.
 8. **Prescribe exactly only where the operation is fragile** — git mutations,
    dispatch, binding evidence to a state, destructive actions. Everywhere else
    state the goal and its reason in one sentence. Give one default and one
@@ -102,7 +104,7 @@ A few skills exist to hold an agent to a discipline it is tempted to skip under
 pressure—for example routing, TDD, YAGNI, verifying completion, systematic
 debugging, and receiving review. For these only:
 
-- Keep the **rationalization table** (each tempting excuse and its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. You cannot lazy-load willpower. Keep only the rows an agent actually falls for. Reword a row or a hard stop only so that the new words cover everything the old ones did, and nothing more.
+- Keep the **rationalization table** (each tempting excuse and its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. You cannot lazy-load willpower. Keep only the rows an agent actually falls for.
 - They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test; read `references/testing.md` before claiming one passed.
 - Everything else (capability, template, reference, meta) has no temptation to counter — keep it lean.
 - `containing-an-incident` is this library's exemplar of the form: read its

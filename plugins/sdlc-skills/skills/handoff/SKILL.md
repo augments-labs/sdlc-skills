@@ -48,7 +48,7 @@ Read `references/handoff-example.md` when the first draft is written and needs c
    suggested skills, references.
 2. In `Handoff identity`, name the predecessor record and add this note after
    it as its successor. If more than one successor already ends the
-   predecessor's lineage, or the predecessor file's record (the ledger) holds
+   predecessor's lineage, or the predecessor file's ledger holds
    no hash for it, or one the file no longer matches, stop and resolve the
    lineage.
 3. In `Decisions and authority`, give for each decision the direct answer or

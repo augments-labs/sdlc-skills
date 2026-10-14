@@ -60,5 +60,5 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 
 ## Common mistakes
 
-- If {{a failure mode the steps do not already forbid}}, {{what to do instead}}.
+- Instead of {{a failure mode the steps do not already forbid}}, {{what to do}}.
 ````

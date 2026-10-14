@@ -8,9 +8,9 @@ description: "Challenges scope so only what the task needs gets built, and built
 Cut scope, never correctness. "Needed" means: satisfies the accepted task and
 every commitment it inherits (preserved behavior, durable data, public
 compatibility, supported environments, security, privacy, accessibility,
-observability, recovery, rollback, and the assurance checks the project
-accepted) and runs. Those commitments bind even when the latest prompt does
-not repeat them.
+observability, recovery, rollback, and the accepted assurance checks) and
+runs. Those commitments bind even when the latest prompt does not repeat
+them.
 
 ## When to use
 
@@ -67,11 +67,11 @@ not repeat them.
    names another); wait for that. `inconclusive` is not clearance.
 
    The task says "add a retry to the upload call". The draft also adds a
-   `maxRetries` setting and a hook for a custom backoff. Nobody asked for
-   either, so each is a speculative knob or extension point: rung 1, skip it
-   and say so. Had the task said "make the retry count configurable", that one
-   setting would be requested surface with the request as its owner, and the
-   backoff hook would still be speculative.
+   `maxRetries` setting and a hook for a custom backoff. Neither the task nor
+   any commitment it inherits needs either, so each is a speculative knob or
+   extension point: rung 1, skip it and say so. Had the user asked to "make the
+   retry count configurable", that one setting would be requested surface with
+   the request as its owner, and the backoff hook would still be speculative.
 
 ## Step 2: Before calling it ready
 
@@ -116,7 +116,8 @@ not repeat them.
   security, accessibility, or scope the user explicitly asked for.
 - **Never minimise away:** preservation, compatibility or parity, durable-data
   safety, observability, recovery or rollback, or a required migration or
-  assurance check. The contract that owns each one defines the guarantee;
+  assurance check (a command or an accountable decision that must accept the
+  change). The contract that owns each one defines the guarantee;
   YAGNI cannot silently weaken it.
 - Minimise only ceremony that owns no guarantee: duplicate checks, speculative
   abstractions, and platforms or knobs nobody committed to.

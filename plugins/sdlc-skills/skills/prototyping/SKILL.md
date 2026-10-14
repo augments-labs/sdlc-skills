@@ -41,8 +41,8 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 
 ## Step 3: Retain the result, dispose of the code
 
-1. Store the question, the evidence, the limitations, and what the result
-   decides. If a caller is waiting on the answer, return these for the
+1. Store the question, the evidence, the limitations, and which decision the
+   result changes. If a caller is waiting on the answer, return these for the
    caller's artifact's ledger: the add-only record kept outside that
    artifact. If no caller is waiting, write them to
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/prototype.md` unless the
@@ -54,12 +54,12 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
    implementation. Before scratch cleanup, retain any frame or artifact the
    approved design binds as immutable evidence. Product implementation, when
    authorized, rebuilds behavior under its normal gates; never lift prototype code.
-3. Remove only the scratch artifacts registered in Step 1, inside the
+3. Remove only the scratch artifacts registered in Step 1 inside the
    disposable boundary, and only under current authority for those exact
-   targets. Disposing of a repository branch, worktree, ref, or workspace
-   belongs to `finishing-a-branch`. External or destructive cleanup needs its
+   targets. To dispose of a repository branch, worktree, ref, or workspace,
+   invoke `finishing-a-branch`; never do it from this skill. External or destructive cleanup needs its
    own decision, current and scoped to that cleanup. Otherwise preserve
-   everything and report cleanup as pending.
+   what remains and report cleanup as pending.
 4. Never delete pre-existing, shared, user-owned, or ownership-uncertain
    state.
 

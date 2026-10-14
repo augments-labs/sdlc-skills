@@ -6,9 +6,9 @@ when a term below appears in a template, a reference, or a review prompt and its
 exact sense matters. An always-loaded body defines its own terms where it uses
 them; none of them depends on this file.
 
-Each entry leads with the plain term the skills now use. Where older skills,
-templates, and scripts still say another word, that word follows in italics;
-the two mean exactly the same thing.
+Each entry leads with the plain term rewritten skill bodies use. Where older
+skills, templates, and scripts still say another word, that word follows in
+italics; the two mean exactly the same thing.
 
 ## Identity
 
@@ -19,14 +19,16 @@ ID survives reassignment, and a retry gets a new attempt ID.
 
 - **State identity** — the value that identifies the exact state a check ran
   on: a hash of the working-tree content, or with `--committed`, the commit.
+  `scripts/state-identity.sh` reports it as `source.digest`.
   A result is bound to the state identity it ran on.
 
 ## What is being judged
 
 - **State under check** (older skills say *candidate*) — the one exact frozen
-  state under judgment right now: anything its state identity covers. In a
-  review, the exact version under review. It has a hash; anything that changes
-  it makes a new state under check and voids verdicts bound to the old one.
+  state under judgment right now. For a working tree, that is anything its
+  state identity covers. In a review, the exact version under review. It has a
+  hash; anything that changes it makes a new state under check and voids
+  verdicts bound to the old one.
 - **Artifact** — any produced output: source, document, build output, evidence
   record. A state under check is an artifact that has been frozen for a
   decision.
@@ -35,10 +37,11 @@ ID survives reassignment, and a retry gets a new attempt ID.
 
 - **Check** (older skills say *gate*) — anything that must accept a result
   before it may advance. The umbrella term; every item below is a kind of
-  check.
-- **Evaluator** — the specific check a task or plan names: an executable
-  command, or a rubric with explicit criteria, an accountable judge, and
-  recorded observations. Never the judge itself.
+  check. The router, `using-sdlc-skills`, keeps *gate* for this umbrella and
+  calls an executable check one kind of gate.
+- **Evaluator** — the specific check a task or plan names as the one that must
+  accept its result: an executable command, or a rubric with explicit criteria,
+  an accountable judge, and recorded observations. Never the judge itself.
 - **Oracle** — the thing that says what the *right* answer is, independent of the
   implementation under test. A characterization or differential baseline is an
   oracle; the implementation's current output is not.
