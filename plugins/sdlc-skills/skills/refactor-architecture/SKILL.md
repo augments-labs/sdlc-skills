@@ -47,7 +47,7 @@ interface, depth, seam, adapter, leverage, and the deletion test.
    relocate, collapse it.
 2. Add a seam only for repeated behavior with a stable owner and measured
    change friction, or for one real volatile or external boundary with
-   measured impedance (the translation it needs), a failure policy, or test
+   measured impedance (the translation it needs), failure policy, or test
    isolation. Never add one for count (how many implementations there are)
    or for hypothetical variation.
 3. Fill `assets/structural-proposal.md` before presenting it: the distinct
@@ -82,9 +82,10 @@ interface, depth, seam, adapter, leverage, and the deletion test.
    answer names the executor (the skill that runs the plan).
 2. For each slice: migrate its callers, run the bound gate and the project
    gate (the checks its row of the slice table names), compare against the
-   accepted floors, and retain the known-green state. Checkpoint under `using-git-worktrees`.
-3. If a behavior delta appears, stop. Return to its
-   requirement or to a new-behavior cycle.
+   accepted floors, and retain the known-green state. Checkpoint under
+   `using-git-worktrees`.
+3. If a behavior delta appears, stop. Return to its requirement or to a
+   new-behavior cycle.
 4. Before removing a surface, inventory every path that could still reach
    it: static calls, dynamic registration, reflection, configuration,
    generated inputs, tests, and external consumers. If unsure, it stays, or

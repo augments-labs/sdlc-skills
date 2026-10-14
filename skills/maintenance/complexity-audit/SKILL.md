@@ -84,7 +84,7 @@ diagnosis, not permission to change code.
 - “One implementation”: a seam containing real impedance, policy, or test
   isolation may be justified; apply the deletion test, not a slogan.
 - “Tests and rollback are overhead”: a current assurance or recovery guarantee
-  owns them; duplicate machinery with no distinct guarantee is the candidate to
-  examine.
+  owns them; duplicate machinery with no distinct guarantee is the candidate for
+  removal.
 - Editing during the audit freezes neither evidence nor conclusions; report
   first, then obtain separate implementation authority.

@@ -76,9 +76,10 @@ enter this skill.
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. Move an action out of `proposed` only on a complete trusted receipt (proof,
-   from a source outside the analysis, that the decision was really given)
-   for the exact scope and dates. Record a rejection, cancellation, or
-   supersession with its residual risk and replacement.
+   from a trusted source outside the state under check, that the action or
+   decision really happened) for the exact scope and dates. Record a
+   rejection, cancellation, or supersession with its residual risk and
+   replacement.
 
 ## Step 4: Prove and track the controls
 

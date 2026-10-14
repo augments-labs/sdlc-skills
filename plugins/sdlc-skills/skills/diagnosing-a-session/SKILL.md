@@ -98,8 +98,8 @@ writing.
    - If several files are plausible, list them for the user with their
      times and first user prompt, clipped to one line with sensitive values
      replaced, and ask which one. Never diagnose a file you are guessing at.
-3. If a name-based lookup returned nothing, that encoding did not match; it
-   never means that no store exists. Run the reference's content-confirmed
+3. If a name-based lookup returned nothing, that encoding did not match,
+   never that no store exists; run the reference's content-confirmed
    fallback before you say anything about an absent record.
 4. If there is no store, no readable file, or no file that matches, say so
    and stop. Name what you looked for and where. An absent record is a

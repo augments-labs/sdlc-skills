@@ -46,11 +46,10 @@ a minute you chose to spend.
 4. Pull the narrowest lever that works. If its effect cannot be stated in one
    sentence, do not pull it.
 
-   Checkout fails for every user since the 11:20 deploy. Three levers could
-   stop it in minutes: blocking the tenant whose orders first showed the
-   error, a flag that turns off the new discount-code path, and rolling
-   back the release. The tenant block is narrower but does not work, since
-   every user is failing; the rollback works but is wide. The flag is the
+   Checkout fails for every user since a deploy that, the deploy log shows,
+   put a new discount-code path behind a flag. Blocking the tenant that first
+   reported it is the narrowest scope but does not work, since every user is
+   failing; a rollback works but is wide. Turning the flag off is the
    narrowest lever that works, and its effect fits one sentence: checkout
    runs without discount codes. Pull it if Step 2.3 makes it yours.
 
