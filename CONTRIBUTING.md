@@ -571,7 +571,7 @@ bash skills/common/writing-skills/scripts/check-skill.sh path/to/skill
 
 | Command | What it does |
 | --- | --- |
-| `validate-skills.sh` | Checks the library and its adapters. With `--strict` it also fails on the policy checks it otherwise reports as warnings, `reference-load-condition` included |
+| `validate-skills.sh` | Checks the library and its adapters. With `--strict` it also fails on the policy checks it otherwise reports as warnings, `reference-load-condition` and `prose-arrows` included. A skill listed in `scripts/sh/data/prose-arrows-pending.txt` may still use arrows; an entry whose skill has none left fails |
 | `validate-skill-graph.sh` | Reports pairs of skills that hand off to each other. A pair listed in `scripts/sh/data/allowed-cycles.txt` prints as allowed, and `--strict` fails on any other |
 | `token-budget.sh --chain` | Adds up the body words of one chain in `scripts/sh/data/chains.toml` and fails when the chain is over budget |
 | `validate-trigger-collisions.sh` | Reports each description clause of two or more words that more than one skill shares. `--strict` fails on any |

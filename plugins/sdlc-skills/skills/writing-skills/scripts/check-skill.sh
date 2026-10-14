@@ -42,6 +42,9 @@ Policy checks (`warn` by default, `fail` with --strict):
   description-rules         the description carries no `Fires on` list and none of
                             exact candidate, material intent, owning phase
                             skill, normative
+  prose-arrows              the body states no outcome as `condition → act`:
+                            a `→` outside a fenced block or an inline code
+                            span fails; write "If X, do Y" instead
   reference-depth           a file under references/ or assets/ names another
                             support file SKILL.md does not also name (always
                             `warn`: keep them one level deep)
@@ -262,6 +265,29 @@ KEYS
   done <<HITS
 $hits
 HITS
+
+  # --- arrows in prose ---------------------------------------------------------
+  # An outcome written as `condition → act` makes the reader unpack a rule from
+  # shorthand; the format asks for a sentence. Fenced blocks and inline code
+  # spans are exempt: there an arrow can be the exact text shown or copied.
+  arrows="$(awk -v e="${fm_end:-0}" -v arrow="→" '
+    NR<=e { next }
+    /^[[:space:]]*```/ { fence = !fence; next }
+    fence { next }
+    {
+      line = $0; gsub(/`[^`]*`/, "", line)
+      if (index(line, arrow)) {
+        snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
+        print NR ":" snippet
+      }
+    }
+  ' "$skill")"
+  while IFS= read -r hit; do
+    [ -n "$hit" ] || continue
+    policy prose-arrows "line ${hit%%:*} states an outcome with an arrow; write it as a sentence, \"If X, do Y\": ${hit#*:}"
+  done <<ARROWS
+$arrows
+ARROWS
 
   # --- references resolve ------------------------------------------------------
   # Every relative link target must exist, and must sit inside the skill.

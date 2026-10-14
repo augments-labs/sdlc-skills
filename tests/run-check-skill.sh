@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Offline test for check-skill.sh's reference-depth policy check.
+# Offline test for check-skill.sh's reference-depth and prose-arrows policy
+# checks.
 #
 # What this guards: a support file under references/ or assets/ that names a
 # third file is exactly the chain (SKILL.md -> support file -> support file)
@@ -20,13 +21,15 @@ case "${1-}" in
   -h|--help)
     cat <<'EOF'
 tests/run-check-skill.sh — offline check for check-skill.sh's reference-depth
-rule.
+and prose-arrows rules.
 
 Takes no arguments; builds a minimal fixture skill under a temporary
 directory in two variants (SKILL.md hides the third file / SKILL.md names it
 too) and asserts
 skills/common/writing-skills/scripts/check-skill.sh --strict warns in the
-first and stays silent in the second. Never mutates the checkout.
+first and stays silent in the second; then builds an arrows fixture with an
+arrow in prose (must fail) and one with arrows only in code (must pass).
+Never mutates the checkout.
 
   --help    this text
 
@@ -97,6 +100,47 @@ if grep -q 'reference-depth' "$out_named"; then
   bad "reference-depth still fired even though SKILL.md names the third file too"
 else
   ok "reference-depth is suppressed once SKILL.md names the third file too"
+fi
+
+# prose-arrows: an arrow in prose fails --strict; one in a fenced block or an
+# inline code span is exact text and passes.
+build_arrows() {  # <dir> <prose-arrow: 0|1>
+  dir="$1"; prose="$2"
+  mkdir -p "$dir"
+  {
+    printf -- '---\n'
+    printf 'name: arrows-fixture\n'
+    printf 'description: Use this when testing that check-skill.sh fails an arrow in prose and passes one in code.\n'
+    printf -- '---\n\n'
+    printf '# Arrows fixture\n\n'
+    if [ "$prose" = 1 ]; then
+      printf -- '- Tests fail \342\206\222 fix the cause.\n\n'
+    else
+      printf -- '- If tests fail, fix the cause. The log shows `a \342\206\222 b`.\n\n'
+    fi
+    printf '```text\n'
+    printf 'step 1 \342\206\222 step 2\n'
+    printf '```\n\n'
+    printf '## Gotchas\n\n'
+    printf -- '- None; this is a fixture, not real guidance.\n'
+  } > "$dir/SKILL.md"
+}
+
+echo "--- check-skill.sh: prose-arrows fails an arrow in prose"
+build_arrows "$tmp/prose/arrows-fixture" 1
+bash "$CHECK" --strict "$tmp/prose/arrows-fixture" >"$tmp/prose.out" 2>&1
+if grep -q 'prose-arrows.*line 8' "$tmp/prose.out"; then
+  ok "prose-arrows names the line of an arrow in prose"
+else
+  bad "prose-arrows did not fire on an arrow in prose"
+fi
+
+echo "--- check-skill.sh: prose-arrows passes arrows in fenced blocks and inline code"
+build_arrows "$tmp/code/arrows-fixture" 0
+if bash "$CHECK" --strict "$tmp/code/arrows-fixture" >"$tmp/code.out" 2>&1; then
+  ok "no finding for arrows inside a fence or an inline code span"
+else
+  bad "check-skill.sh failed on arrows that sit only in code: $(head -1 "$tmp/code.out")"
 fi
 
 echo "---"

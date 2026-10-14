@@ -1,0 +1,37 @@
+# Skills whose bodies still state outcomes as `condition → act`, the shorthand
+# the plain-language rewrite replaces with "If X, do Y" sentences. For a skill
+# listed here, validate-skills.sh drops check-skill.sh's prose-arrows finding;
+# every other skill fails --strict on one. Each phase folder's rewrite removes
+# its skills, and validate-skills.sh fails on an entry whose body has no arrow
+# left, so this list only shrinks. Delete the file once it is empty.
+architecture-decisions
+changing-a-live-schema
+coding-standards
+complexity-audit
+containing-an-incident
+data-model
+debugging
+define-goals
+diagnosing-a-session
+executing-plans
+feasibility-check
+finishing-a-branch
+migration-strategy
+post-mortem
+receiving-code-review
+refactor-architecture
+requesting-code-review
+reviewing-a-pr
+reviewing-plans
+rollout-controls
+scoping
+security-audits
+subagent-driven-development
+system-architecture
+test-driven-development
+ui-ux-design
+verification-strategy
+visual-ui-verification
+working-from-a-ticket
+writing-plans
+writing-specs

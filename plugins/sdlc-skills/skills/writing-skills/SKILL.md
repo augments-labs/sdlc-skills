@@ -147,7 +147,8 @@ debugging, and receiving review. For these only:
 - **`scripts/check-skill.sh`** — checks a skill directory with the library's
   format and policy profile: required fields, names, sizes, selected paths,
   presentation, bundled script help, and the policy checks (`## Gotchas`, load
-  conditions, description YAML, frontmatter fields, compatibility length) —
+  conditions, description YAML, frontmatter fields, compatibility length,
+  arrows in prose) —
   warnings by default,
   failures with `--strict`. Its field extraction is not a complete
   YAML parser and does not validate all optional metadata. It executes the
