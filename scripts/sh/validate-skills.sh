@@ -19,7 +19,7 @@ and that each plugin manifest parses as JSON and registers every skill. CI runs
 this on every push and PR.
 
   --strict  fail on the policy checks check-skill.sh otherwise reports as
-            warnings, reference-load-condition included
+            warnings, reference-load-condition and prose-arrows included
   --help    this text
 
 Exit codes: 0 every skill passed · 1 violations printed above the summary
@@ -51,7 +51,7 @@ mapfile -t skills < <(find skills -name SKILL.md | sort)
 
 # Shared format and policy checks are delegated to the checker this library
 # ships (see the per-skill loop). It has to exist and answer --help here. In the
-# loop, a non-zero exit that reports no fail row is itself a FAIL naming the
+# loop, an exit above 1, or 1 with no fail row, is itself a FAIL naming the
 # checker, the skill, the exit code, and the first diagnostic, so a checker that
 # crashes fails the gate instead of passing every skill in silence.
 CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh
@@ -59,6 +59,19 @@ CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh
 bash "$CONFORMANCE" --help >/dev/null 2>&1 || { echo "$CONFORMANCE does not run"; exit 2; }
 conformance_err=$(mktemp) || { echo "could not create a file for $CONFORMANCE diagnostics"; exit 2; }
 trap 'rm -f "$conformance_err"' EXIT
+
+# Skills not yet rewritten in plain words may still state outcomes as arrows
+# (see the list's header). Their prose-arrows findings are dropped below; an
+# entry that names no skill, or whose body has no arrow left, fails, so the list
+# can only shrink.
+ARROWS_PENDING=scripts/sh/data/prose-arrows-pending.txt
+arrows_pending=""
+[ -f "$ARROWS_PENDING" ] && arrows_pending=$(grep -vE '^[[:space:]]*(#|$)' "$ARROWS_PENDING")
+while IFS= read -r pending; do
+  [ -n "$pending" ] || continue
+  printf '%s\n' "${skills[@]}" | grep -q "/$pending/SKILL.md$" || \
+    err "$ARROWS_PENDING lists $pending, which is not a skill under skills/"
+done <<<"$arrows_pending"
 
 for skill in "${skills[@]}"; do
   dir=$(dirname "$skill")
@@ -68,20 +81,34 @@ for skill in "${skills[@]}"; do
   # Delegate the shared format and policy profile: required field extraction,
   # names, sizes, links, presentation, and executable script help. This is not
   # full YAML/optional-metadata validation. Preserve warnings as well as errors,
-  # and the checker's exit status: non-zero with no fail row is a crash.
+  # and the checker's exit status: it exits 1 exactly when it printed a fail
+  # row, so 1 with none, or any status above 1, is a crash.
   conformance_rows=$(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>"$conformance_err")
   conformance_status=$?
-  conformance_fails=0
+  conformance_fails=0; conformance_rows_failed=0
+  arrows_listed=0; arrows_seen=0
+  grep -qxF -- "$name_dir" <<<"$arrows_pending" && arrows_listed=1
   while IFS=$'\t' read -r level check detail; do
+    [ "$level" = fail ] && conformance_rows_failed=1
+    if [ "$check" = prose-arrows ]; then
+      arrows_seen=1
+      [ "$arrows_listed" = 1 ] && continue
+    fi
     case "$level" in
       fail) err  "$check: $detail"; conformance_fails=1 ;;
       warn) note "warn: $check: $detail" ;;
     esac
   done <<<"$conformance_rows"
-  if [ "$conformance_status" -ne 0 ] && [ "$conformance_fails" = 0 ]; then
+  conformance_crashed=0
+  if [ "$conformance_status" -gt 1 ] || { [ "$conformance_status" = 1 ] && [ "$conformance_rows_failed" = 0 ]; }; then
+    conformance_crashed=1
     conformance_diag=$(grep -m1 . "$conformance_err" || printf '%s\n' "$conformance_rows" | grep -m1 .)
-    err "$CONFORMANCE exited $conformance_status on $dir with no fail row: ${conformance_diag:-no output}"
+    err "$CONFORMANCE exited $conformance_status on $dir: ${conformance_diag:-no output}"
   fi
+
+  # A crash reports no arrows, so it says nothing about the list.
+  [ "$conformance_crashed" = 0 ] && [ "$arrows_listed" = 1 ] && [ "$arrows_seen" = 0 ] && \
+    err "$name_dir is listed in $ARROWS_PENDING but its body has no arrow left; remove it from the list"
 
   fname=$(awk -F': ' '/^name:/{print $2; exit}' "$skill")
 

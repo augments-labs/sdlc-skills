@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Offline tests for scripts/sh/validate-skills.sh's "every assets/ template
-# has the house shape" check.
+# has the house shape" check and its prose-arrows pending list.
 #
 # What this guards: template-format.md's Shape rules 1-5 (H1, a preamble
 # line before the fence, exactly one outer fence with a markdown/text
@@ -12,8 +12,12 @@
 # disallowed fence language, no fenced block at all, an empty file, and two
 # outer fence pairs — get their own fixtures alongside the five above.
 #
+# A third copy checks the prose-arrows pending list both ways: an unlisted
+# skill with arrows fails, and a listed skill with none, or a listed name that
+# is no skill, fails the list.
+#
 # Deterministic on purpose: file in, file out, exit code out. No model runs,
-# no network. Both copies of the tree live under a temporary directory and
+# no network. The copies of the tree live under a temporary directory and
 # are removed on exit; the checkout itself is never mutated.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 2
@@ -22,14 +26,15 @@ case "${1-}" in
   -h|--help)
     cat <<'EOF'
 tests/run-validate-skills.sh — offline check for the "every assets/ template
-has the house shape" gate in scripts/sh/validate-skills.sh.
+has the house shape" gate and the prose-arrows pending list in
+scripts/sh/validate-skills.sh.
 
 Takes no arguments; copies the repository tree into a temporary directory
-twice (once to break one or more fixtures per Shape rule, once left
-untouched), runs
+three times (once to break one or more fixtures per Shape rule, once left
+untouched, once to edit the prose-arrows pending list), runs
 scripts/sh/validate-skills.sh against each copy, and asserts the check names
-the broken file and stays silent on the untouched tree. Never mutates the
-checkout.
+the broken file or list entry and stays silent on the untouched tree. Never
+mutates the checkout.
 
   --help    this text
 
@@ -257,6 +262,31 @@ if grep -qF "skill-template.md" "$clean_out"; then
 else
   ok "skill-template.md's known code-span case is not flagged"
 fi
+
+# ---------------------------------------------------------------------------
+# Copy 3: the prose-arrows pending list. Unlisting a skill that still has
+# arrows fails it under --strict; listing a skill with none, or a name that is
+# no skill, fails the list.
+# ---------------------------------------------------------------------------
+arrows="$tmp/arrows"
+copy_tree "$arrows"
+pending="$arrows/scripts/sh/data/prose-arrows-pending.txt"
+unlisted=$(grep -vE '^[[:space:]]*(#|$)' "$pending" | head -1)
+sed -i.bak "/^${unlisted}\$/d" "$pending" && rm -f "$pending.bak"
+printf 'yagni\nno-such-skill\n' >>"$pending"
+
+echo "--- validate-skills.sh: the prose-arrows pending list is enforced both ways"
+arrows_out="$tmp/arrows.out"
+( cd "$arrows" && bash scripts/sh/validate-skills.sh --strict ) >"$arrows_out" 2>&1
+grep -qE "FAIL: prose-arrows: line [0-9]+" "$arrows_out" && grep -B1000 'FAIL: prose-arrows' "$arrows_out" | grep '^•' | tail -1 | grep -q "/$unlisted/" \
+  && ok "an unlisted skill with arrows fails ($unlisted)" \
+  || bad "unlisting $unlisted did not fail it on prose-arrows"
+grep -q "yagni is listed in .*prose-arrows-pending.txt but its body has no arrow left" "$arrows_out" \
+  && ok "a listed skill with no arrow left fails the list" \
+  || bad "listing yagni, which has no arrows, did not fail"
+grep -q "prose-arrows-pending.txt lists no-such-skill, which is not a skill" "$arrows_out" \
+  && ok "a listed name that is no skill fails the list" \
+  || bad "listing no-such-skill did not fail"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "validate-skills.sh tests: PASS"; exit 0; }

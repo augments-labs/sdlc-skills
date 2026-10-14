@@ -42,6 +42,9 @@ Policy checks (`warn` by default, `fail` with --strict):
   description-rules         the description carries no `Fires on` list and none of
                             exact candidate, material intent, owning phase
                             skill, normative
+  prose-arrows              the body states no outcome as `condition → act`:
+                            a `→` outside a fenced block or an inline code
+                            span fails; write "If X, do Y" instead
   reference-depth           a file under references/ or assets/ names another
                             support file SKILL.md does not also name (always
                             `warn`: keep them one level deep)
@@ -232,26 +235,30 @@ KEYS
     END { exit !found }
   ' "$skill" || policy gotchas-present "the body has no \`## Gotchas\` section"
 
+  # A finding quotes the first 100 bytes of its line. Where awk counts bytes,
+  # [[:cntrl:]] misses UTF-8 C1 controls and the cut can split a character, so
+  # strip those bytes and a split tail there. A character-counting awk rejects
+  # these ranges, even in a /regex/ it never runs, hence the strings.
+  awk_snippet='
+    function snippet(text,   out) {
+      out = substr(text, 1, 100); gsub(/[[:cntrl:]]/, " ", out)
+      if (length("\302\233") == 2) {
+        gsub("\302[\200-\237]", " ", out)
+        sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", out)
+      }
+      return out
+    }'
+
   # An agent loads a support file only when the body says when to: a bare path
   # is a file it either reads every time or never.
-  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" '
+  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" "$awk_snippet"'
     NR<=e { next }
     {
       # A condition after the last named file also follows every earlier one, so
       # one split tests the whole line in linear time.
       n = split($0, parts, pat)
-      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
-        snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
-        # Where awk counts bytes, [[:cntrl:]] misses UTF-8 C1 controls and the cut
-        # can split a character, so strip those bytes and a split tail there. A
-        # character-counting awk rejects these ranges, even in a /regex/ it never
-        # runs, hence the strings.
-        if (length("\302\233") == 2) {
-          gsub("\302[\200-\237]", " ", snippet)
-          sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", snippet)
-        }
-        print NR ":" snippet
-      }
+      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/)
+        print NR ":" snippet($0)
     }
   ' "$skill")"; then
     policy reference-load-condition "the load-condition scan could not run"
@@ -262,6 +269,40 @@ KEYS
   done <<HITS
 $hits
 HITS
+
+  # --- arrows in prose ---------------------------------------------------------
+  # An outcome written as `condition → act` makes the reader unpack a rule from
+  # shorthand; the format asks for a sentence. Fenced blocks and inline code
+  # spans are exempt: there an arrow can be the exact text shown or copied. A
+  # span can wrap onto the next line, so each paragraph (up to a blank line or a
+  # fence) is scanned whole; a backtick with no partner in it is a literal one.
+  arrows="$(awk -v e="${fm_end:-0}" -v arrow="→" "$awk_snippet"'
+    function flush(   text, out, rest, span, p, q, i, n) {
+      text = buf; out = ""
+      while ((p = index(text, "`")) > 0) {
+        rest = substr(text, p + 1); q = index(rest, "`")
+        if (q == 0) { out = out substr(text, 1, p); text = rest; continue }
+        # Drop the span but keep its line breaks, so line numbers still match.
+        span = substr(rest, 1, q - 1); gsub(/[^\n]/, "", span)
+        out = out substr(text, 1, p - 1) span; text = substr(rest, q + 1)
+      }
+      n = split(out text, lines, "\n")
+      for (i = 1; i <= n; i++) if (index(lines[i], arrow)) print start + i - 1 ":" snippet(orig[i])
+      buf = ""; cnt = 0
+    }
+    NR<=e { next }
+    /^[[:space:]]*```/ { flush(); fence = !fence; next }
+    fence { next }
+    /^[[:space:]]*$/ { flush(); next }
+    { if (cnt++ == 0) start = NR; orig[cnt] = $0; buf = (cnt > 1 ? buf "\n" : "") $0 }
+    END { flush() }
+  ' "$skill")"
+  while IFS= read -r hit; do
+    [ -n "$hit" ] || continue
+    policy prose-arrows "line ${hit%%:*} uses an arrow in prose; write a sentence (an outcome as \"If X, do Y\"): ${hit#*:}"
+  done <<ARROWS
+$arrows
+ARROWS
 
   # --- references resolve ------------------------------------------------------
   # Every relative link target must exist, and must sit inside the skill.

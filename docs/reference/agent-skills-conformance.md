@@ -54,6 +54,7 @@ valid against the standard and still fail a house rule here.
 | Description wording | `description-rules` policy check: no `Fires on` list, and none of four internal terms |
 | Support-file depth | `reference-depth` warning: a support file names another support file that `SKILL.md` does not name itself |
 | Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
+| Outcomes as sentences | `prose-arrows` policy check: no `→` in body prose outside a fenced block or an inline code span |
 | Fill-in templates | They go in `assets/`. Explanatory guidance goes in `references/` |
 | Template shape | Every `assets/*.md` template has the same house shape, checked by the repository gate |
 
