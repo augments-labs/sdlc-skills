@@ -56,19 +56,17 @@ each task must make true and how that is judged, not the code.
 ## Step 2: Write the tasks
 
 1. Slice vertically: one evaluable capability per task. Split only at a real
-   check boundary, where one check must accept its piece before the next
-   piece starts. For high-risk target work, read
+   check boundary: a place where each piece has its own check that can
+   accept it. For high-risk target work, read
    `references/scalable-transformation.md` before slicing, and copy the
    transition policy from the migration contract.
 
-   A request: let the existing `report` command also write CSV. Two tasks,
-   T-001 "add a CSV serializer" and T-002 "wire a `--csv` flag to it", cut
-   one capability at a line no check marks: T-001 alone yields nothing a
-   user can observe, and T-002 cannot be judged apart from it. One task,
-   "`report --csv` writes the report as CSV", with a test that runs the
-   command and parses the file as its Evaluator, is the slice. A second task
-   earns its place where a second check does: "`--csv` honours the `--since`
-   filter", judged by its own test, depends on the first.
+   A request: let the existing `report` command also write CSV. Splitting it
+   into "add a CSV serializer" and "wire a `--csv` flag" cuts one capability
+   in two: neither half is the requested behavior its own Evaluator could
+   accept. One task, "`report --csv` writes the report as CSV", judged by a
+   test that runs the command and parses the file, is the slice. "`--csv`
+   honours the `--since` filter" earns a second task: it has its own check.
 
 2. Open `assets/task-template.md` before writing each task. Fill `Task ID`,
    `Depends on`, `Files`, `Exclusive ownership/effects`, `Context` as paths.

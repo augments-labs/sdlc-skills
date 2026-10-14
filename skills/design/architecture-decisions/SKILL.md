@@ -60,10 +60,12 @@ comparing against a filled example.
    Otherwise, write the strongest counter-case yourself, against that same
    contract, and label it **self-challenge**. A self-challenge never
    issues the verdict `clear`, so the risk it leaves open goes to the decision
-   owner in Step 3. Approval waits for `clear` on this ADR identity, or for
-   the decision owner accepting a labelled self-challenge. Skip both the
-   dispatched challenge and the self-challenge only when a current
-   independent design review covers this exact ADR identity.
+   owner in Step 3.
+
+   Approval waits for `clear` on this ADR identity, or for the decision
+   owner accepting a labelled self-challenge. Skip both the dispatched
+   challenge and the self-challenge only when a current independent design
+   review covers this exact ADR identity.
 
 ## Step 3: Present and track
 

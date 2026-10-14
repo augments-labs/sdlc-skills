@@ -38,7 +38,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    where the source of truth changes hands.
 4. For each dependency and each asynchronous path, write its timeout, its
    retry and idempotency, what still works when it is degraded, how it
-   recovers, and how each of these is exercised (the test, fault injection,
+   recovers, and how each is exercised (the test, fault injection,
    or drill).
 
 ## Step 2: Operational views and seams
@@ -47,7 +47,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    scale and resource budgets, observability, and the capabilities that make
    rollout and compatibility possible. The transition procedure belongs to the
    migration contract; do not restate it here.
-2. If you leave a view out, write a skip record with the fields the template's
+2. If a view is left out, write a skip record with the fields the template's
    operational-views table lists. Never drop a view as "inapplicable" without
    one.
 3. Place a seam only for repeated behavior with a stable owner and measured

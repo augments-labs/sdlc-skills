@@ -22,7 +22,7 @@ explicitly calls for change.
 ## Available scripts
 
 - **`scripts/start-server.sh`** and **`scripts/stop-server.sh`** — start and
-  stop the key-gated local preview of a comparison surface (a per-session key,
+  stop the key-gated localhost preview of a comparison surface (a per-session key,
   an owner watchdog, and an idle timeout). They wrap `scripts/serve.py`; read
   [visual-decisions.md](references/visual-decisions.md) before starting or
   stopping a preview; it owns the details.
@@ -66,8 +66,8 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    screenshots, or wireframes), then build it on the first medium in the
    reference's order that fits. A self-contained local page starts from
    `assets/comparison-template.html` before its first variant is written.
-   Write 2–4 controlled, meaningfully different variants (everything but the
-   axis under decision held the same). Give every version block and every
+   Write 2–4 controlled, meaningfully different variants (requirements,
+   content, data, device, and baseline accessibility held the same). Give every version block and every
    variant a stable ID.
 3. Deliver the file path and offer to serve the surface. Start the preview
    only after the user accepts, then present its URL:
@@ -89,14 +89,14 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 
 ## Step 4: Classify evidence, compile, present
 
-1. Tag every claim in the template's *Evidence* table with its kind. A
+1. Tag every claim with its kind in the template's *Evidence* table. A
    stakeholder's preference selects a direction; it never proves that users
    can complete the flow. If a usability risk is open, record it as open with
    a named check (the template's *Future evaluator*: what would settle it)
    and an owner.
 2. If preferences selected rendered variants, freeze the keyed **Selected
    visual references** collection exactly as `visual-decisions.md` defines it
-   before compiling. Memory, a path, or a label binds nothing.
+   before compiling. Memory, a path, or a label is not a contract.
 3. Write the whole section to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`
    or the user-set path, preserving approved sections around it. Selected
    screens, a chosen variant, or an agreed flow are inputs to the section,
@@ -125,7 +125,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 
 - One open question can have a conceptual half and a visual half: whether an
   error should block submission, and separately whether that error should
-  look alarming or subtle. Step 3.4 skips the surface only when every open
+  look alarming or subtle. The skip test in Step 3.4 asks whether every open
   question is conceptual, so settling the conceptual half in prose does not
   release the visual half from being rendered and compared.
 - Step 1.3 sorts into two buckets, a deliberate constraint or an

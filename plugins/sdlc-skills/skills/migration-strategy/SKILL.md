@@ -12,7 +12,7 @@ that contract approved before any work on the target starts.
 ## When to use
 
 - The transformation is too broad, too split into parts, too heavy in what it
-  must preserve, or too risky to operate for ordinary feature planning and
+  must preserve, or too risky operationally for ordinary feature planning and
   line-by-line review.
 - Classify the change before implementing anything, from evidence of risk,
   not from the line count. Answer four questions: can independent people or
@@ -24,8 +24,8 @@ that contract approved before any work on the target starts.
   reviewable and recoverable, hold work on the target until this contract
   is approved and `verification-strategy`'s entry gates have passed (a gate
   is a check that must accept a result before the work may advance). If the
-  answers are uncertain, record the change as pending classification, and
-  classify it again when the inputs change.
+  answers are uncertain, record the change as pending classification.
+  Classify it again whenever the inputs change.
 - **Skip** a bounded change whose behavior and diff can still be reviewed
   directly; such work stays on its ordinary route.
 - Write the facts about the source and the strategy for the transition here.
@@ -48,8 +48,8 @@ the section of it that the step names.
    `Unknown contract`, as one of: a preserved invariant, an intentional
    deviation, or an unknown.
 4. For each deviation, attach the approved requirement or decision that owns
-   it. If you discover a new choice, send it back to that owner; never settle
-   it here.
+   it. A newly discovered choice goes back to that owner; never settle it
+   here.
 5. Each unknown blocks until it is proved irrelevant or approved with a
    compensating gate (a check that covers the risk of carrying it
    unresolved).
@@ -62,8 +62,8 @@ the section of it that the step names.
    unmapped or invalid input.
 2. Fill `Representative trial slice`: the riskiest paths at a useful scale,
    drawn from a stable coverage inventory (the fixed list of cells the slice
-   is chosen from); a recorded decision for every cell left out (the template
-   calls it a disposition); the outcome, the expansion decision, and the
+   is chosen from); a recorded decision for every cell left out (the template's
+   `Uncovered cells`); the outcome, the expansion decision, and the
    failure response. Commands and thresholds belong to the assurance matrix.
 3. Fill `Partitions and ownership`: a stable inventory of shards (the parts
    the work is split into) and the rules for who owns each. Attempts, owners,
@@ -75,18 +75,17 @@ the section of it that the step names.
 1. Fill `Source evolution during migration`: either freeze the source, or run
    one versioned change-intake contract (a versioned rule for how later source
    changes enter the migration) and an external queue. Every source change
-   after the baseline gets an identity and an exact terminal disposition (a
-   final recorded decision).
+   after the baseline gets an identity and an exact terminal disposition (the
+   final state it reaches, with its evidence).
 2. Fill `Mutable live-state catch-up` wherever data or work keeps moving:
    from how the boundary is bound through to the maximum permitted lag and
-   the gate that owns that limit (the check that must accept the lag). Every
-   write after the snapshot lands in exactly one terminal disposition (one
-   final recorded decision). "Probably applied" is not reconciled and blocks
+   the gate that owns that limit. Every write after the snapshot lands in
+   exactly one terminal disposition (one final state, with its evidence). "Probably applied" is not reconciled and blocks
    cutover.
 3. Fill `Convergence and failure queue`: reconcile the external ledgers, and
    give every skip an approved recorded decision. If one *class* of failure
    repeats, pause the affected work, fix the shared rule, and re-audit every
-   shard it affected.
+   impacted shard.
 4. Fill `Pause, abort, cutover, and rollback`, `Retained artifacts`, and
    `Decommission and retained-source retirement` before anyone needs them:
    when to pause and when to abort, who holds authority for cutover, the
@@ -136,8 +135,7 @@ the section of it that the step names.
 
 ## Gotchas
 
-- Code review judges one exact state under check (the exact version under
-  review) against an approved contract. Before approval neither exists, so a
+- Code review judges the exact version under review against an approved contract. Before approval neither exists, so a
   challenge sent to code review has nothing to bind to and returns no
   verdict.
 - The trial slice's coverage inventory (Step 2) is only as stable as the

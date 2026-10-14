@@ -103,7 +103,7 @@ an executor.
 2. Print the plan's version again. If it changed during the review, the
    review is void; report the edit to the caller and keep the review
    pending.
-3. Record one decision for every finding (the report calls these its
+3. Give every finding one recorded decision (the report calls these its
    dispositions):
    - `accepted`: the author corrects it in a successor version.
    - `rejected`: record the evidence that refutes it.
