@@ -10,8 +10,8 @@ Name the boundary before anyone starts building.
 ## When to use
 
 - After the goals are approved, whether they were already present or
-  `define-goals` produced them, and before any later work takes a project
-  boundary that is still unresolved as its input.
+  `define-goals` produced them, and before a project boundary that is still
+  unresolved is used as an input.
 - When scope is unclear, or growing, part-way through a project.
 - **Skip** for a single feature. Use `clarifying-intent` only when the
   feature's intent or boundary is ambiguous; `writing-specs` owns its detailed
@@ -19,8 +19,7 @@ Name the boundary before anyone starts building.
 
 ## Step 1: Cut the scope
 
-Open `assets/scope-section.md` before starting; each step below fills one of
-its sections.
+Open `assets/scope-section.md` before starting; each step fills its section.
 
 1. Carry the non-negotiables forward first: goal guardrails, existing
    contracts, preserved behavior and data, security, accessibility,
@@ -47,8 +46,8 @@ its sections.
 
 1. Write the `## Scope` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
-   keeping the approved sections around it as they are. Once written, the
-   section is never edited.
+   keeping the approved sections around it as they are. Once its identity is
+   issued, the section is never edited.
 2. Present:
 
    ```text

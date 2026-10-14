@@ -13,16 +13,15 @@ it.
 - Starting a new project, product, or substantial initiative with a fuzzy
   "why".
 - **Skip** for a single feature or task. Use `clarifying-intent` only for
-  genuine ambiguity about which initiative or procedure is intended; for
-  settled, detailed feature requirements, use `writing-specs`.
+  genuine ambiguity about which initiative or procedure is intended;
+  `writing-specs` owns settled, detailed feature requirements.
 - **Skip** when a drafted goal or brief is awaiting a direct answer. If the
   reply informs but does not answer, handle it with `clarifying-intent`, not
   with a new goal pass.
 
 ## Step 1: Find the objective
 
-Open `assets/goals-section.md` before starting; each step below fills its own
-section of it.
+Open `assets/goals-section.md` before starting; each step fills its section.
 
 1. Ask "why this, why now?" until the answer is what the world does
    differently afterward, not code that exists.
@@ -43,9 +42,9 @@ section of it.
 
 ## Step 2: Write and present
 
-1. Write the `## Goals` section, which is never changed once written, to
-   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
-   leaving the approved sections around it untouched.
+1. Write the `## Goals` section, which is never edited once its identity is
+   issued, to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the
+   user-set path, leaving the approved sections around it untouched.
 2. Present:
 
    ```text
