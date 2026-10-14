@@ -19,7 +19,7 @@ and that each plugin manifest parses as JSON and registers every skill. CI runs
 this on every push and PR.
 
   --strict  fail on the policy checks check-skill.sh otherwise reports as
-            warnings, reference-load-condition included
+            warnings, reference-load-condition and prose-arrows included
   --help    this text
 
 Exit codes: 0 every skill passed · 1 violations printed above the summary
@@ -81,7 +81,8 @@ for skill in "${skills[@]}"; do
   # Delegate the shared format and policy profile: required field extraction,
   # names, sizes, links, presentation, and executable script help. This is not
   # full YAML/optional-metadata validation. Preserve warnings as well as errors,
-  # and the checker's exit status: non-zero with no fail row is a crash.
+  # and the checker's exit status: it exits 1 exactly when it printed a fail
+  # row, so 1 with none, or any status above 1, is a crash.
   conformance_rows=$(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>"$conformance_err")
   conformance_status=$?
   conformance_fails=0; conformance_rows_failed=0
@@ -98,12 +99,15 @@ for skill in "${skills[@]}"; do
       warn) note "warn: $check: $detail" ;;
     esac
   done <<<"$conformance_rows"
-  if [ "$conformance_status" -ne 0 ] && [ "$conformance_rows_failed" = 0 ]; then
+  conformance_crashed=0
+  if [ "$conformance_status" -gt 1 ] || { [ "$conformance_status" = 1 ] && [ "$conformance_rows_failed" = 0 ]; }; then
+    conformance_crashed=1
     conformance_diag=$(grep -m1 . "$conformance_err" || printf '%s\n' "$conformance_rows" | grep -m1 .)
-    err "$CONFORMANCE exited $conformance_status on $dir with no fail row: ${conformance_diag:-no output}"
+    err "$CONFORMANCE exited $conformance_status on $dir: ${conformance_diag:-no output}"
   fi
 
-  [ "$arrows_listed" = 1 ] && [ "$arrows_seen" = 0 ] && \
+  # A crash reports no arrows, so it says nothing about the list.
+  [ "$conformance_crashed" = 0 ] && [ "$arrows_listed" = 1 ] && [ "$arrows_seen" = 0 ] && \
     err "$name_dir is listed in $ARROWS_PENDING but its body has no arrow left; remove it from the list"
 
   fname=$(awk -F': ' '/^name:/{print $2; exit}' "$skill")

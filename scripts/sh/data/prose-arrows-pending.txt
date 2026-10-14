@@ -3,7 +3,9 @@
 # listed here, validate-skills.sh drops check-skill.sh's prose-arrows finding;
 # every other skill fails --strict on one. Each phase folder's rewrite removes
 # its skills, and validate-skills.sh fails on an entry whose body has no arrow
-# left, so this list only shrinks. Delete the file once it is empty.
+# left, so entries leave as skills are rewritten. Never add one: a new skill
+# or an edit writes sentences, and review rejects an addition. Delete the file
+# once it is empty.
 architecture-decisions
 changing-a-live-schema
 coding-standards

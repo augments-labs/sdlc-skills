@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Offline tests for scripts/sh/validate-skills.sh's "every assets/ template
-# has the house shape" check.
+# has the house shape" check and its prose-arrows pending list.
 #
 # What this guards: template-format.md's Shape rules 1-5 (H1, a preamble
 # line before the fence, exactly one outer fence with a markdown/text
@@ -17,7 +17,7 @@
 # is no skill, fails the list.
 #
 # Deterministic on purpose: file in, file out, exit code out. No model runs,
-# no network. Both copies of the tree live under a temporary directory and
+# no network. The copies of the tree live under a temporary directory and
 # are removed on exit; the checkout itself is never mutated.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 2
@@ -26,14 +26,15 @@ case "${1-}" in
   -h|--help)
     cat <<'EOF'
 tests/run-validate-skills.sh — offline check for the "every assets/ template
-has the house shape" gate in scripts/sh/validate-skills.sh.
+has the house shape" gate and the prose-arrows pending list in
+scripts/sh/validate-skills.sh.
 
 Takes no arguments; copies the repository tree into a temporary directory
-twice (once to break one or more fixtures per Shape rule, once left
-untouched), runs
+three times (once to break one or more fixtures per Shape rule, once left
+untouched, once to edit the prose-arrows pending list), runs
 scripts/sh/validate-skills.sh against each copy, and asserts the check names
-the broken file and stays silent on the untouched tree. Never mutates the
-checkout.
+the broken file or list entry and stays silent on the untouched tree. Never
+mutates the checkout.
 
   --help    this text
 

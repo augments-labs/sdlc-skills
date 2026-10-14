@@ -235,26 +235,30 @@ KEYS
     END { exit !found }
   ' "$skill" || policy gotchas-present "the body has no \`## Gotchas\` section"
 
+  # A finding quotes the first 100 bytes of its line. Where awk counts bytes,
+  # [[:cntrl:]] misses UTF-8 C1 controls and the cut can split a character, so
+  # strip those bytes and a split tail there. A character-counting awk rejects
+  # these ranges, even in a /regex/ it never runs, hence the strings.
+  awk_snippet='
+    function snippet(text,   out) {
+      out = substr(text, 1, 100); gsub(/[[:cntrl:]]/, " ", out)
+      if (length("\302\233") == 2) {
+        gsub("\302[\200-\237]", " ", out)
+        sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", out)
+      }
+      return out
+    }'
+
   # An agent loads a support file only when the body says when to: a bare path
   # is a file it either reads every time or never.
-  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" '
+  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" "$awk_snippet"'
     NR<=e { next }
     {
       # A condition after the last named file also follows every earlier one, so
       # one split tests the whole line in linear time.
       n = split($0, parts, pat)
-      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
-        snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
-        # Where awk counts bytes, [[:cntrl:]] misses UTF-8 C1 controls and the cut
-        # can split a character, so strip those bytes and a split tail there. A
-        # character-counting awk rejects these ranges, even in a /regex/ it never
-        # runs, hence the strings.
-        if (length("\302\233") == 2) {
-          gsub("\302[\200-\237]", " ", snippet)
-          sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", snippet)
-        }
-        print NR ":" snippet
-      }
+      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/)
+        print NR ":" snippet($0)
     }
   ' "$skill")"; then
     policy reference-load-condition "the load-condition scan could not run"
@@ -269,22 +273,24 @@ HITS
   # --- arrows in prose ---------------------------------------------------------
   # An outcome written as `condition → act` makes the reader unpack a rule from
   # shorthand; the format asks for a sentence. Fenced blocks and inline code
-  # spans are exempt: there an arrow can be the exact text shown or copied.
-  arrows="$(awk -v e="${fm_end:-0}" -v arrow="→" '
+  # spans are exempt: there an arrow can be the exact text shown or copied. A
+  # span can wrap onto the next line, so an unclosed backtick carries over until
+  # it closes, a blank line, or a fence.
+  arrows="$(awk -v e="${fm_end:-0}" -v arrow="→" "$awk_snippet"'
     NR<=e { next }
-    /^[[:space:]]*```/ { fence = !fence; next }
+    /^[[:space:]]*```/ { fence = !fence; open = 0; next }
     fence { next }
+    /^[[:space:]]*$/ { open = 0; next }
     {
-      line = $0; gsub(/`[^`]*`/, "", line)
-      if (index(line, arrow)) {
-        snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
-        print NR ":" snippet
-      }
+      line = (open ? "`" : "") $0; gsub(/`[^`]*`/, "", line)
+      open = index(line, "`") > 0
+      if (open) line = substr(line, 1, index(line, "`") - 1)
+      if (index(line, arrow)) print NR ":" snippet($0)
     }
   ' "$skill")"
   while IFS= read -r hit; do
     [ -n "$hit" ] || continue
-    policy prose-arrows "line ${hit%%:*} states an outcome with an arrow; write it as a sentence, \"If X, do Y\": ${hit#*:}"
+    policy prose-arrows "line ${hit%%:*} uses an arrow in prose; write a sentence (an outcome as \"If X, do Y\"): ${hit#*:}"
   done <<ARROWS
 $arrows
 ARROWS

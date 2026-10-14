@@ -63,7 +63,7 @@ bash scripts/sh/token-budget.sh --chain NAME
 Run the last one for each chain listed in `scripts/sh/data/chains.toml`.
 
 The first three report some findings as warnings. Add `--strict` to turn those
-warnings into failures, `reference-load-condition` included. CI runs them with
+warnings into failures, `reference-load-condition` and `prose-arrows` included. CI runs them with
 `--strict`, so a change that passes without it can still fail in CI.
 
 For each skill you edited, also run the strict check:
