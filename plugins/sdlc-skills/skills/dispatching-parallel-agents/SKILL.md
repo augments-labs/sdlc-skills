@@ -6,16 +6,16 @@ description: "Splits independent work across parallel agents, each with its own 
 # Dispatching Parallel Agents
 
 Prove the pieces are independent, hand each agent a complete packet, dispatch
-through a callable action that returns a receipt, and reconcile every diff
-yourself before anything integrates.
+through a callable action that returns a tool-issued ID as proof, and
+reconcile every diff yourself before anything integrates.
 
 ## When to use
 
 - Two or more independent tasks: exclusive writes and mutable resources, with
   no task needing another's output. Overlapping reads of frozen inputs are safe.
-- **Skip** overlapping writes, shared mutable state, dependent outputs, and work that is
-  quicker done inline. Sequence it in the current task or plan; the plan executors
-  are for an approved plan only.
+- **Skip** overlapping writes, shared mutable state, dependent outputs, and
+  work that is quicker done inline. Sequence it in the current task or plan;
+  the plan executors are for an approved plan only.
 
 ## Step 1: Before fan-out
 
@@ -26,27 +26,30 @@ yourself before anything integrates.
    - **Writes** — exclusive paths, including generated outputs, manifests,
      lockfiles, shared fixtures, tests. A truly shared file gets one later
      integration owner and no concurrent editor.
-   - **State** — disjoint ports, databases, fixtures. A server or migrations
-     → invoke `using-git-worktrees` for each.
+   - **State** — disjoint ports, databases, fixtures. If either task runs a
+     server or migrations, invoke `using-git-worktrees` for each task in the
+     pair.
    - **Order** — neither consumes the other's output. A dependency is a
      sequence.
 
-   Then cap the wave at what the machine runs at once. A heavy build →
+   Then cap the wave at what the machine can run at once. For a heavy build,
    measure one run's memory and cores, dispatch what fits, and sequence the
    rest.
-2. Pick each agent's tier from the table below. Write it in the packet's
-   `TIER` field. Lowest tier sufficient for the remaining decisions and the
-   cost of an error. Supply missing context before moving up a tier.
+2. Pick each agent's tier from the Model selection table below and write it
+   in the packet's `Tier` field: the lowest tier sufficient for the decisions
+   that remain and the cost of an error. Supply missing context before moving
+   up a tier.
 3. Fill one `assets/dispatch-packet.md` per agent, every field, before its
    dispatch. Read `references/brief-examples.md` before writing the first one.
    Never paste session history.
-   - Read `assets/dispatch-packet-controlled.md` when the plan is high-risk or uses phase queues;
-     it adds the ten controlled fields.
-   - Sub-dispatch stays prohibited and data bounded until those fields say otherwise.
-4. Freeze the expected packet IDs and count, the terminal deadline, and the
-   timeout and cancel action with its owner, before the first dispatch.
-   Deadline: the user's, else the harness's agent timeout. Neither → ask the
-   user once, and dispatch nothing until answered.
+   - Read `assets/dispatch-packet-controlled.md` when the plan is high-risk or
+     uses phase queues; it adds the ten controlled fields.
+   - Until those fields say otherwise, a worker may not dispatch anyone, and
+     the data it may reach stays bounded.
+4. Before the first dispatch, freeze the expected packet IDs and their count,
+   the final deadline, and the timeout and cancel action with its owner. The
+   deadline is the user's; without one, the harness's agent timeout. With
+   neither, ask the user once, and dispatch nothing until answered.
 
 ## Model selection
 
@@ -72,12 +75,14 @@ user's main-session model and any model reserved for orchestration untouched.
 
 ## Step 2: Dispatch
 
-1. Dispatch through the real callable action. Dispatched = the action returned
-   a non-empty tool-issued ID; record each one in `DISPATCH RECEIPT`. A name or
-   a prompt is not dispatch.
-2. Action unavailable, refused, or empty → write `not dispatched`, and name
-   the action tried and what would make it callable. Never describe a fan-out
-   without receipts, and never quietly do the work yourself instead.
+1. Dispatch through the real callable action. Work is dispatched only when the
+   action has returned a non-empty tool-issued ID; record each ID in the
+   packet's `Dispatch receipt` field. Naming an agent or writing a prompt is
+   not dispatch.
+2. If the action is unavailable, refused, or returns no tool-issued ID, write
+   `not dispatched`, and name the action tried and what would make it
+   callable. Never describe a fan-out that has no tool-issued IDs behind it,
+   and never quietly do the work yourself instead.
    Ask the user once per work item; the answer covers only that work:
 
    ```text
@@ -90,37 +95,40 @@ user's main-session model and any model reserved for orchestration untouched.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Independence required (`security clear`, a role the calling skill's contract
-   requires to be independent, or an audit the user asked to be independent) →
-   omit option 1 and say why.
+   When independence is required (`security clear`, a role the calling
+   skill's contract requires to be independent, or an audit the user asked to
+   be independent), omit option 1 and say why.
    Ask this and end the turn; `clarifying-intent` owns what closes it.
    Record the answer as the written assignment and continue under it. A named
    reviewer's report counts only when it arrives from outside this session,
-   bound to the exact identities; the recorded answer replaces the receipt. No
-   answer keeps the work pending.
-3. Poll the exact IDs to the frozen deadline. Never poll a target that was
-   not dispatched. Success = exactly one current result for each packet.
-4. Failure or deadline → write `cancellation requested`. Wait until the
-   worker, its descendants, and its effects are quiescent. Quarantine partial
-   output. Only then write failed, timed out, or cancelled.
-5. Reassign through a linked successor attempt that rejects every late result
-   or mutation from its predecessor.
-6. A writer reports a shared generator, file, state, dependency, or scope
-   outside its packet → pause the affected work, preserve the diffs,
-   reclassify, assign one owner or a sequence, issue revised packets. "Small
-   overlap" is overlap.
+   bound to the exact identities; the recorded answer stands in for the
+   tool-issued ID. With no answer, the work stays pending.
+3. Poll exactly those IDs until the frozen deadline. Never poll a target that
+   was not dispatched. Success means exactly one current result for each
+   packet.
+4. On a failure or at the deadline, write `cancellation requested`. Wait
+   until the worker, everything it spawned, and every effect it started have
+   all stopped (quiescent). Set partial output aside, unused (quarantine).
+   Only then write failed, timed out, or cancelled.
+5. Reassign the work as a new attempt linked to the one it replaces, and
+   reject every late result or change that arrives from the replaced attempt.
+6. If a writer reports a shared generator, file, state, dependency, or scope
+   outside its packet, pause the affected work, preserve the diffs,
+   reclassify the pieces, assign one owner or a sequence, and issue revised
+   packets. A "small overlap" is overlap.
 
 ## Step 3: Reconcile
 
 1. Inspect every returned diff yourself against its declared base, ownership
-   set, authorized checkpoints, and raw gate evidence. Reject a scope
-   leak, a mixed change, or missing evidence even under a green suite.
-2. Advance required scope only when every packet has an accepted success
+   set, authorized checkpoints, and the raw output of its checks. Reject a
+   scope leak, a mixed change, or missing evidence, even when the suite is
+   green.
+2. Advance the required scope only when every packet has an accepted success
    report, or a directly approved scope change or reassignment.
 3. Integrate through the named owner. Run the combined checks on the exact
    result.
-4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for that combined
-   state before anything downstream treats it as done.
+4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for that
+   combined state before anything downstream treats it as done.
 
 ## Gotchas
 

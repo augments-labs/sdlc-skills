@@ -15,7 +15,8 @@ in context and load supporting material only when needed.
 
 ## Skill types
 
-Match the form to the need. Read `references/reference.md` when unsure how much detail a form needs:
+Match the form to the need. Read `references/reference.md` when unsure how much
+detail a form needs:
 
 - **Instruction** — a prose procedure. Most skills.
 - **Template** — ships a `{{placeholder}}` file the agent copies when it produces that document.
@@ -33,30 +34,42 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    rewrite it to this shape when you edit that skill.
 2. **House limits: at most 500 body lines and under 5000 estimated tokens.**
    These enforce the concise-body recommendations. Most capability skills land
-   near 80–120 lines; a body past ~200 should justify itself. Intent + procedure only; cut
-   marketing ("why this matters") and long worked examples.
+   near 80–120 lines; a body past ~200 should justify itself. Intent and
+   procedure only; cut marketing ("why this matters"). A worked example in the
+   body earns its place only where it shows a judgment the rules alone do not:
+   three to six lines, generic, with no real project names.
 
    Aim under the target by **removing content**, never by compressing prose.
    Dropping articles and verbs until a sentence reads as a noun stack — `Bind
    exact source/contracts/external inputs and a stable-ID surface` — buys line
    count and costs comprehension. If a body needs 140 clear lines, take them.
+
+   Use everyday words wherever they carry the same meaning. Keep a term this
+   library defines only where its distinction matters, and then define it in
+   the sentence that uses it; `using-sdlc-skills`' `control-vocabulary.md`
+   maps the older terms candidate, gate, receipt, and disposition to their
+   plain forms, so read it when a body you edit uses one. Use "your human
+   partner" sparingly, at most two or three times in a body and often never;
+   prefer a sentence that needs to name no one.
 3. **Progressive disclosure**, split by what the agent does with the file. A file
    it fills in and emits — a document template — goes to `assets/`. A file it
    reads to decide or check — a rubric, a checklist, a reviewer brief, a worked
-   example, a lookup table — goes to `references/`. Bundled executable code goes
-   to `scripts/`. A body invokes a bundled script as `bash scripts/{{name}}.sh`;
-   the bare path appears only in `## Available scripts` listings. Keep short
-   questions or response examples inline when their exact shape matters at that
-   step. Read references/template-format.md before writing or editing a file
-   under assets/.
+   example that rule 2 keeps out of the body, a lookup table — goes to
+   `references/`. Bundled executable code goes to `scripts/`. A body invokes a
+   bundled script as `bash scripts/{{name}}.sh`; the bare path appears only in
+   `## Available scripts` listings. Keep short questions or response examples
+   inline when their exact shape matters at that step. Read
+   references/template-format.md before writing or editing a file under
+   assets/.
 4. **Scope and scale-down up top.** State applicability and any skip conditions.
-   A mandatory gate may have no skip; define its smallest useful check instead.
+   A mandatory check, or a skill that is one, may have no skip; define its
+   smallest useful check instead.
 5. **Lint-clean markdown.** Fill-in placeholders use `{{double-curly}}` — `<angle>` brackets render as HTML and trip linters. Fence code blocks with a language. Blank lines around lists.
 6. **Instructions, not facts.** An agent can obey an instruction; it cannot obey
    a fact. Use `## Step N:` sections with numbered actions and readable conditions.
-   Put each outcome on its own line as `condition → act`. Mark every handoff with a bold
-   `REQUIRED SUB-SKILL:` naming the skill to invoke, at the step where the flow
-   reaches it, and say what this skill never does itself.
+   Put each outcome on its own line as a sentence, "If X, do Y". Mark every
+   handoff with a bold `REQUIRED SUB-SKILL:` naming the skill to invoke, at the
+   step where the flow reaches it, and say what this skill never does itself.
 
    Put the exact text of a question to the user, and the right-versus-wrong
    shape of an output, in a fenced block; put a command in a `bash` block only
@@ -71,13 +84,15 @@ Match the form to the need. Read `references/reference.md` when unsure how much 
    not applying it. Preserve history across revisions and return to a pending
    caller instead of invoking it recursively.
 7. **Cut by judgement, not word caps.** Ask of every section:
-   "would the agent get this wrong without this?" No → cut it. Unsure → run a
-   throwaway probe; read `references/testing.md` before writing it up. Never cut
-   a hard stop or a destructive-action guard.
+   "would the agent get this wrong without this?" If no, cut it. If unsure, run
+   a throwaway probe; read `references/testing.md` before writing it up. Never
+   cut a hard stop or a destructive-action guard. Reword a hard stop, a guard,
+   or a rationalization or red-flag row only so that the new words cover
+   everything the old ones did, and nothing more.
 8. **Prescribe exactly only where the operation is fragile** — git mutations,
-   dispatch, evidence binding, destructive actions. Everywhere else state the
-   goal and its reason in one sentence. Give one default and one escape hatch;
-   keep a menu only for a decision that belongs to the user.
+   dispatch, binding evidence to a state, destructive actions. Everywhere else
+   state the goal and its reason in one sentence. Give one default and one
+   escape hatch; keep a menu only for a decision that belongs to the user.
 9. **Gotchas over rules.** Every body carries `## Gotchas`: facts the agent gets
    wrong when untold, each naming the failure it prevents and citing only the
    probe or scenario that reproduces it. Name every support file with its load
@@ -90,7 +105,7 @@ A few skills exist to hold an agent to a discipline it is tempted to skip under
 pressure—for example routing, TDD, YAGNI, verifying completion, systematic
 debugging, and receiving review. For these only:
 
-- Keep the **rationalization table** (each tempting excuse → its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. You cannot lazy-load willpower. Keep only the rows an agent actually falls for.
+- Keep the **rationalization table** (each tempting excuse and its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. You cannot lazy-load willpower. Keep only the rows an agent actually falls for.
 - They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test; read `references/testing.md` before claiming one passed.
 - Everything else (capability, template, reference, meta) has no temptation to counter — keep it lean.
 - `containing-an-incident` is this library's exemplar of the form: read its
@@ -100,13 +115,14 @@ debugging, and receiving review. For these only:
 ## Step 1: Decide it is a skill
 
 1. Identify the recurring task and the observed failure, contract gap, or
-   reusable reference it addresses. Plain prompt text or a one-off → do not.
-   Passing samples limit a behavior claim; they do not erase reported failures.
+   reusable reference it addresses. If plain prompt text would do, or the task
+   is a one-off, do not write a skill. Passing samples limit a behavior claim;
+   they do not erase reported failures.
 2. Start from real expertise: extract the procedure from a task done by hand,
    or synthesize it from project artifacts — runbooks, review comments, fixes.
    Before editing a heavily used skill, run it on three real tasks, read the
    transcripts, and cut or clarify the steps agents wasted first.
-3. An exact fragile sequence → a tested script, not prose.
+3. If the sequence is exact and fragile, write a tested script, not prose.
 4. Split activities only when each is independently invokable. Otherwise one
    cohesive skill.
 
@@ -116,7 +132,7 @@ debugging, and receiving review. For these only:
    `skills/<phase>/<name>/`, copying the fenced block of
    `assets/skill-template.md` when you start the file.
 2. Write `description` as a trigger. Test it: does it say **when**, not
-   **how**? Lists steps → rewrite.
+   **how**? If it lists steps, rewrite it.
 3. Write the body: **When to use** (incl. Skip), `## Step N:` sections of
    actions (format rule 6), `## Gotchas` (format rule 9), and **Common
    mistakes** for the mistakes the steps do not already forbid.
@@ -134,8 +150,9 @@ debugging, and receiving review. For these only:
   conditions, description YAML, frontmatter fields, compatibility length) —
   warnings by default,
   failures with `--strict`. Its field extraction is not a complete
-  YAML parser and does not validate all optional metadata. It executes candidate
-  scripts with `--help`; inspect untrusted scripts or isolate them first.
+  YAML parser and does not validate all optional metadata. It executes the
+  checked skill's scripts with `--help`; inspect untrusted scripts or isolate
+  them first.
 
 ## Verify before done
 

@@ -6,65 +6,79 @@ description: "Challenges scope so only what the task needs gets built, and built
 # YAGNI — build only what's needed, and make it work
 
 Cut scope, never correctness. "Needed" means: satisfies the accepted task and
-every commitment it inherits — preserved behavior, durable data, public
+every commitment it inherits (preserved behavior, durable data, public
 compatibility, supported environments, security, privacy, accessibility,
-observability, recovery, rollback, accepted assurance gates — and runs. The
-latest prompt need not repeat those for them to bind.
+observability, recovery, rollback, and the accepted assurance checks) and
+runs. Those commitments bind even when the latest prompt does not repeat
+them.
 
 ## When to use
 
 - Code, files, flags, or dependencies are being removed as unused, dead, or
   legacy.
-- Scope drifts toward a speculative addition or an incomplete delivery — "we
+- Scope drifts toward a speculative addition or an incomplete delivery: "we
   might need this later".
 - A proposal needs a strict pre-edit challenge.
-- A skill that hands off here invokes it directly, and its own trigger governs:
-  the router, `debugging`, and `receiving-code-review` send a change that
-  affects behavior through `test-driven-development` and this skill before the
-  first edit.
+- A skill that hands off to this one invokes it directly, and that skill's own
+  trigger decides when: the router (`using-sdlc-skills`), `debugging`, and
+  `receiving-code-review` send a change that affects behavior through
+  `test-driven-development` and this skill before the first edit.
 - **Skip** a throwaway spike answering one question, and non-behavioral config
   or content.
 
 ## Step 1: Before the first edit
 
 1. Write the completion checklist from the accepted task, the commitments
-   above, and the project's `coding-standards` exemplar. No exemplar → the
-   nearest file in the codebase that does the same kind of thing. List names,
-   structure, idioms, where a non-obvious why is explained.
+   above, and the project's `coding-standards` exemplar. Without an exemplar,
+   use the nearest file in the codebase that does the same kind of thing. List
+   names, structure, idioms, and where a non-obvious why is explained.
 2. Trace the real flow. Change the owner of the behavior, not the first path
-   that shows the symptom. Unknown cause → invoke `debugging` first.
+   that shows the symptom. If the cause is unknown, invoke `debugging` first.
 3. For each piece of the change, walk the ladder and stop at the first rung
    that holds:
-   1. Speculative need → skip it and say so.
-   2. Something in the codebase fits, same semantics, owner, dependency,
-      lifecycle → reuse it.
-   3. Standard library → use it.
-   4. A native feature or constraint → use it over owned machinery.
-   5. An installed dependency → use it. Add none for a few lines.
-   6. One line → one line.
+   1. If the need is speculative, skip it and say so.
+   2. If something in the codebase fits, with the same semantics, owner,
+      dependency, and lifecycle, reuse it.
+   3. If the standard library does it, use it.
+   4. If a native feature or constraint does it, use it over machinery you
+      would own.
+   5. If an installed dependency does it, use it. Add no new dependency for
+      what a few lines would do.
+   6. If one line does it, write one line.
    7. Only then, the minimum code that fully works.
 
-   Arguable rung → read `references/yagni-in-depth.md` before choosing.
-4. Add no abstraction for hypothetical variation. One real volatile or
-   external boundary earns a seam only for measured impedance, a failure
-   policy, or test isolation.
-5. Lasting surface (new dependency, service or process, generalized
-   abstraction, public extension point or config knob, verification system)
-   the user explicitly asked for → the request is its owner; dispatch nothing.
-   Any other, or a strict challenge requested → fill
+   Read `references/yagni-in-depth.md` before choosing when a rung is arguable.
+4. Add no abstraction for variation that is only hypothetical. One real
+   boundary, volatile or external, earns a seam only for a measured mismatch
+   across it, a failure policy, or test isolation.
+5. Lasting surface is a new dependency, a service or process, a generalized
+   abstraction, a public extension point or config knob, or a verification
+   system. If the user explicitly asked for it, the request is its owner;
+   dispatch nothing. For any other lasting surface, or when a strict challenge
+   was requested, fill the challenger prompt,
    `assets/yagni-challenger.md` with `assets/challenge-report.md` before
-   dispatching it read-only per `dispatching-parallel-agents` Step 2; wait. Read the
-   report; match Proposal and Challenge inputs to the request. Missing,
-   mismatched, conflicting, or invalid verdict → inconclusive. `revise` →
-   blocked as written. `decision` → its accountable owner decides (the user,
-   unless a plan names another); wait. `inconclusive` → not clearance.
+   dispatching it read-only as `dispatching-parallel-agents` Step 2 says, and
+   wait.
+
+   Read the report; match its Proposal and Challenge inputs to the request. A
+   verdict that is missing, mismatched, conflicting, or invalid counts as
+   `inconclusive`. `revise` means the proposal is blocked as written.
+   `decision` means its accountable owner decides (the user, unless a plan
+   names another); wait for that. `inconclusive` is not clearance.
+
+   The task says "add a retry to the upload call". The draft also adds a
+   `maxRetries` setting and a hook for a custom backoff. Neither the task nor
+   any commitment it inherits needs either, so each is a speculative knob or
+   extension point: rung 1, skip it and say so. Had the user asked to "make the
+   retry count configurable", that one setting would be requested surface with
+   the request as its owner, and the backoff hook would still be speculative.
 
 ## Step 2: Before calling it ready
 
 1. Read every changed line against the Step 1 checklist. A green test waives
-   no convention visible in the file. A neighbour already drifted → report it;
-   do not migrate it.
-2. Sort every candidate cut into two lists. Cut only from the first.
+   no convention visible in the file. If a neighbour has already drifted from
+   one, report that; do not migrate it.
+2. Sort every cut you are considering into two lists. Cut only from the first.
    - *Minimal:* removes abstractions, files, dependencies, or lines while
      every guarantee holds.
    - *Unfinished:* removes behavior or an inherited commitment, or leaves a
@@ -73,8 +87,8 @@ latest prompt need not repeat those for them to bind.
    generated, or external consumer, or a completed deprecation. A search
    proves unused only when its scope is known: a tool skipping ignored,
    binary, generated, or vendored paths yields "not searched", not proof;
-   state the scope or rerun without the skips. Unknown → stays, or goes to
-   migration or refactor ownership.
+   state the scope or rerun without the skips. What stays unknown stays in
+   place, or goes to migration or refactor ownership.
 4. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` before the claim
    leaves this skill.
 
@@ -93,26 +107,30 @@ latest prompt need not repeat those for them to bind.
 
 ## Hard stops
 
-- **Minimal ≠ incomplete.** Smaller breaks ties only between solutions that both
-  solve the task and run.
-- Before done: real checks pass, implied inputs work, and no required path has a
-  stub/TODO/placeholder; confirm through `verification-before-completion`.
-- Never cut trust-boundary validation, data-loss prevention, security,
-  accessibility, or explicit user scope.
-- **Never minimise away:** preservation, compatibility/parity, durable-data
-  safety, observability, recovery/rollback, or a required migration/assurance
-  gate. Their owning contracts define the guarantee; YAGNI cannot silently
-  weaken it.
-- Minimise only ceremony owning no guarantee: duplicate gates, speculative
-  abstractions, and uncommitted platforms/knobs.
-- Never compress domain names, non-obvious why, or governing conventions.
-- Never delete by confidence. Prove static/runtime/reflection/config/generated/
-  external consumer absence or completed deprecation; unknowns stay or route to
-  migration/refactor ownership.
+- **Minimal never means incomplete.** Smaller breaks ties only between
+  solutions that both solve the task and run.
+- Before calling it done: the real checks pass, the inputs the task implies
+  work, and no required path has a stub, TODO, or placeholder; confirm this
+  through `verification-before-completion`.
+- Never cut validation at a trust boundary, protection against data loss,
+  security, accessibility, or scope the user explicitly asked for.
+- **Never minimise away:** preservation, compatibility or parity, durable-data
+  safety, observability, recovery or rollback, or a required migration or
+  assurance check (a command, a rubric, or an accountable decision that must
+  accept the change). The contract that owns each one defines the guarantee;
+  YAGNI cannot silently weaken it.
+- Minimise only ceremony that owns no guarantee: duplicate checks, speculative
+  abstractions, and platforms or knobs nobody committed to.
+- Never compress domain names, a non-obvious why, or the conventions that
+  govern the file.
+- Never delete by confidence. Prove there is no static, runtime, reflection,
+  config, generated, or external consumer, or that a deprecation completed;
+  what stays unknown stays in place, or goes to migration or refactor
+  ownership.
 
 ## Gotchas
 
-- Only a requested strict challenge with no dispatch action goes to
-  `dispatching-parallel-agents` Step 2's question. Answering `inconclusive`
-  yourself blocks a surface the user explicitly asked for.
-
+- Only a strict challenge that was requested, with no action available to
+  dispatch it, goes to the question `dispatching-parallel-agents` Step 2 asks.
+  Answering `inconclusive` yourself blocks a surface the user explicitly asked
+  for.

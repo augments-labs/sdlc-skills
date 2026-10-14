@@ -16,46 +16,50 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 ## Step 1: Pre-register
 
 1. Write one question, the falsifiable pass/fail observation, the time-box
-   and size-box, and what decision each result changes. Vague → do not build.
+   and size-box, and what decision each result changes. If any of these is
+   vague, do not build.
 2. Name the workspace and artifacts this probe owns, its environment, the
    data class it touches. Prefer isolated synthetic data.
-3. Bind disposal before building: allowed access and effects, evidence
-   retention, exact cleanup targets and their recoverability, cleanup owner,
-   current authority for creating and removing.
-4. Production-like data, real services, live traffic, running systems,
-   destructive cleanup → explicit authorization each, protections
-   proportional to risk.
+3. Before building, settle how the probe will be disposed of: what it may
+   access and affect, what evidence is kept, the exact cleanup targets and
+   whether each can be recovered, who cleans up, and the current authority
+   for creating and removing them.
+4. Production-like data, real services, live traffic, running systems, and
+   destructive cleanup each need explicit authorization, with protections
+   proportional to the risk.
 
 ## Step 2: Build and observe
 
 1. Build the smallest disposable probe: driver, fixtures, instrumentation
    only. No reusable abstraction, production integration, or generality.
-2. Logic → a tiny driver or executable assertion on the uncertain behavior.
-   UI → only the structurally different populated variants the registered
-   question needs.
+2. For a logic question, build a tiny driver or an executable assertion on
+   the uncertain behavior. For a UI question, build only the structurally
+   different, populated variants the registered question needs.
 3. Stop at the declared boundary. Record raw observations, environment,
    limitations, and `passed / failed / inconclusive` against the predeclared
    criterion. Never move the threshold after seeing the result.
 
 ## Step 3: Retain the result, dispose of the code
 
-1. Store the question, evidence, limitations and decision consequences. With a
-   pending caller → return them for its artifact's ledger (append-only,
-   outside that artifact). With none → write
-   them to `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/prototype.md` unless
-   the user names another path. A settled load-bearing choice with no pending
-   caller → **REQUIRED SUB-SKILL:** invoke `architecture-decisions` and apply
-   its entry conditions.
+1. Store the question, the evidence, the limitations, and which decision the
+   result changes. If a caller is waiting on the answer, return these for the
+   caller's artifact's ledger: the add-only record kept outside that
+   artifact. If no caller is waiting, write them to
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/prototype.md` unless the
+   user names another path. If the result settles a load-bearing choice and
+   no caller is waiting, **REQUIRED SUB-SKILL:** invoke
+   `architecture-decisions` and apply its entry conditions.
 2. Return observations to the caller's pending decision. A UI experiment informs
    `ui-ux-design`; it does not select the product direction or authorize its
    implementation. Before scratch cleanup, retain any frame or artifact the
    approved design binds as immutable evidence. Product implementation, when
    authorized, rebuilds behavior under its normal gates; never lift prototype code.
-3. Remove only pre-registered scratch artifacts inside the disposable
-   boundary, under current authority for those exact targets. Repository
-   branch, worktree, ref, or workspace disposal → `finishing-a-branch`.
-   External or destructive cleanup → its own current scoped choice.
-   Otherwise preserve and report cleanup pending.
+3. Remove only the scratch artifacts registered in Step 1 inside the
+   disposable boundary, and only under current authority for those exact
+   targets. To dispose of a repository branch, worktree, ref, or workspace,
+   invoke `finishing-a-branch`; never do it from this skill. External or
+   destructive cleanup needs its own decision, current and scoped to that
+   cleanup. Otherwise preserve what remains and report cleanup as pending.
 4. Never delete pre-existing, shared, user-owned, or ownership-uncertain
    state.
 
