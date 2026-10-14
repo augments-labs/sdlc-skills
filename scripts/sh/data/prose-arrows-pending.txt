@@ -17,7 +17,6 @@ define-goals
 diagnosing-a-session
 executing-plans
 feasibility-check
-finishing-a-branch
 migration-strategy
 post-mortem
 receiving-code-review
