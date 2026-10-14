@@ -10,56 +10,69 @@ to the user. This skill never deploys or publishes.
 
 ## When to use
 
-- An integrated candidate is approaching an initial or later release promotion.
+- Integrated work is approaching an initial or later release promotion.
 - **Skip** internal work with no release surface. A library or package release
-  is not a skip merely because it has no running production service.
+  has a release surface; do not skip it merely because it has no running
+  production service.
 
-## Step 1: Fix what is being released
+## Step 1: Pin down what is being released
 
-Open `assets/release-candidate.md` before Step 1's actions; each step fills its
-sections. Read `references/gate-details.md` when a step below cites a row
-number and you need that row's concrete check.
+Open `assets/release-candidate.md` before this step's first action; each step
+fills its sections. Read `references/gate-details.md` when a step below cites
+a row number and you need that row's concrete check.
 
-1. Fill the `Immutable release-input descriptor`: promotion, source, contracts,
-   expected artifacts and gate cells, who may approve. No secret values.
-2. Write attempts and evidence in the `External attempt and evidence ledger` —
-   a ledger (append-only) — never in the descriptor.
-3. Freeze the artifact set: one terminal successful build per required member,
-   from the recorded source. Record its identity (row 10).
-4. Test and promote *that* set. Reject a later rebuild, however equivalent.
+1. Fill the `Immutable release-input descriptor`: the promotion, the source,
+   the contracts, the expected artifacts and check cells (each combination of
+   platform, packaging, build mode, and so on that a check must cover), and
+   who may approve. Write no secret values into it.
+2. Write every attempt and its evidence in the `External attempt and evidence
+   ledger` (the ledger: add to it, never rewrite it), never in the descriptor.
+3. Freeze the artifact set: one finished, successful build per required
+   member, from the recorded source. Record the set's identity (row 10).
+4. Test and promote *that* set and no other. A later rebuild is a different
+   set, however equivalent it looks; reject it.
 
 ## Step 2: Judge it
 
-Work every `Readiness rows` entry to **evidenced**, **not applicable with an
-approved disposition** (the row's owner accepts the rationale, recorded under
-the descriptor's approver rule), or **blocking**.
+Work every `Readiness rows` entry until it is **evidenced** (its evidence is
+recorded in the ledger), **not applicable with an approved disposition** (the
+row's owner accepts the reason it does not apply, and that acceptance is
+recorded under the descriptor's approver rule), or **blocking**.
 
 1. Install, start, or load each member through the paths a real consumer
-   uses. A green source tree is not artifact evidence.
-2. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`. Run every gate
-   protecting this promotion over its expected inventory; reconcile against
-   what actually ran (row 11).
-3. Exercise cutover and recovery by observation, including the claimed
-   RPO/RTO (rows 3, 13). Fill `Rollout and recovery`.
-4. Check the target: configuration, secrets, capacity, dependencies, step
-   ordering (row 6). Verify shape and presence; never print values.
-5. Bind rollout control to the owning assurance, migration, or release policy
-   (rows 5, 12). Missing policy: blocking; for a bounded feature
-   `rollout-controls` drafts one for its owner to accept. Do not invent or
-   lower one.
-6. Expansion or full release: attach observed evidence from the prior stage.
-7. Account for consumers (rows 7, 8, 15). Package: install the packed
-   artifact into a clean representative consumer before publishing anything.
+   uses. Passing checks on the source tree are not evidence about the
+   artifact.
+2. **REQUIRED SUB-SKILL:** invoke `verification-before-completion`. Run every
+   check that protects this promotion over its expected inventory, then
+   compare that inventory with what actually ran and account for every
+   difference (row 11).
+3. Exercise the cutover and the recovery and observe what happens; do not
+   infer it. Include the claimed RPO (how much data may be lost) and RTO (how
+   long recovery may take) (rows 3, 13). Fill `Rollout and recovery`.
+4. Check the target: configuration, secrets, capacity, dependencies, and the
+   order of the steps (row 6). Verify that each is present and has the
+   expected shape; never print a value.
+5. Tie the rollout control to the assurance, migration, or release policy
+   that owns it (rows 5, 12). If there is no such policy, the row is blocking;
+   for a bounded feature, `rollout-controls` drafts one for its owner to
+   accept. Never invent a policy or lower one yourself.
+6. If the promotion is an expansion or a full release, attach the evidence
+   observed in the prior stage.
+7. Account for the consumers (rows 7, 8, 15: release notes, breaking changes,
+   and package obligations). If the release is a package, install the packed
+   artifact into a clean, representative consumer before publishing anything.
 
 ## Step 3: Decide
 
-1. Disposition every deviation in `Deviations` (row 14). Lowering a gate so
-   the candidate passes is a new assurance decision, not a release fix.
-2. Write the `Verdict` bound to the release-input, artifact-set,
-   terminal-evidence, approval, and freshness identities.
-3. Recompute every identity immediately before any decision. On drift, reopen
-   the decision.
-4. Present the decision and stop:
+1. Record a decision for every deviation in `Deviations` (row 14). Lowering a
+   check so the frozen set passes is a new assurance decision, not a release
+   fix.
+2. Write the `Verdict`, naming the identities it is bound to: release input,
+   artifact set, terminal evidence (the complete ledger), approval, and
+   evidence freshness.
+3. Recompute every identity immediately before any decision. If any has
+   changed, reopen the decision.
+4. Present the verdict and the choice, then end the turn:
 
    ```text
    Release candidate {{artifact-set identity}} → {{target}}
@@ -72,8 +85,9 @@ the descriptor's approver rule), or **blocking**.
    Recommendation: {{1 only when ready, otherwise 2}} — {{one sentence}}.
    ```
 
-5. Promote nothing until the user names one. The promotion then runs under its
-   own authorized action, never on the strength of the verdict.
+5. Promote nothing until the user names one of the three. Even then, the
+   promotion runs as its own authorized action, never on the strength of the
+   verdict.
 
 ## Gotchas
 
@@ -81,23 +95,29 @@ the descriptor's approver rule), or **blocking**.
   live. A rollout that expands on its own schedule — a percentage ramp, a
   timed cohort — has already moved by the time anyone looks, and the
   expansion is then approved against evidence nobody observed.
-- A row dispositioned **not applicable** counts identically to an evidenced
-  one in a bare gate tally, which is why Step 3.4 presents gates evidenced
-  and deviations owned as separate numbers. Collapsing them into one hides
-  how much of the release nobody checked.
+- A row recorded as **not applicable** counts the same as an evidenced one in
+  a bare tally of checks, which is why Step 3.4 presents "gates evidenced" and
+  "deviations owned" as separate numbers. Collapsing them into one hides how
+  much of the release nobody checked.
 
 ## Hard stops
 
-- Release tests ran on source or a different/incomplete artifact set.
-- Release-input, artifact-set, terminal-evidence, or verdict identity is missing,
-  stale, incomplete, or changed.
-- Any required cell/evidence/change is missing, duplicated, generically skipped/
-  rejected, unresolved, unowned, misordered, or beyond its bound.
-- Decommission is partial, failed, awaiting/failed validation, or unresolved.
-- Rollback names only source, not a restorable artifact and data/config state.
-- The fixer, builder, or deployer self-accepts an unapproved deviation.
+- The release tests ran on the source tree, or on a different or incomplete
+  artifact set.
+- The release-input, artifact-set, terminal-evidence, or verdict identity is
+  missing, stale, incomplete, or changed.
+- Any required cell, evidence, or change is missing, duplicated, skipped or
+  rejected with only a generic reason, unresolved, unowned, out of order, or
+  beyond its bound.
+- A decommission is partial, failed, awaiting validation, failed validation,
+  or unresolved.
+- The rollback names only a source revision, not a restorable artifact
+  together with the data and config state to restore.
+- The fixer, builder, or deployer accepts a deviation on their own, without
+  approval under the approver rule.
 - “Ready” is treated as authority to deploy or publish.
 
 ## Common mistakes
 
-- Calling a bare flag a rollout plan, or an unbounded recovery promise rollback.
+- Calling a bare feature flag a rollout plan, or calling an open-ended promise
+  to recover a rollback.
