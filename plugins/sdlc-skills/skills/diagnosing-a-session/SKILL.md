@@ -18,9 +18,11 @@ can explore.
 - Work produced by an agent looks wrong and the run that produced it is the
   thing under question, not the code.
 - **Skip** a defect in the software under development, whose cause is a code
-  question → `debugging`.
-- **Skip** a failure reaching real users right now → `containing-an-incident`.
-- **Skip** judging whether a skill's wording is any good → `writing-skills`.
+  question; invoke `debugging`.
+- **Skip** a failure reaching real users right now; invoke
+  `containing-an-incident`.
+- **Skip** judging whether a skill's wording is any good; invoke
+  `writing-skills`.
 
 ## Available scripts
 
@@ -46,12 +48,12 @@ writing.
    sits: `[credential, line 412]`.
    - A path is written as recorded, because a citation needs it. A path
      segment that is itself a credential is replaced.
-   - The user, in this conversation, names one value by kind and line and
-     asks to see it → show that value in your reply only. The report and the
+   - If the user, in this conversation, names one value by kind and line and
+     asks to see it, show that value in your reply only. The report and the
      trace stay redacted, because files outlive the conversation. A request
      for a whole line, a range, or "everything" is answered with kinds and
      lines.
-   - Unsure whether a value is sensitive → it is.
+   - If you are unsure whether a value is sensitive, it is.
 
 ## Step 1: Take the intake before you open the transcript
 
@@ -77,7 +79,7 @@ writing.
    Print them and end the turn.
 4. "Everything went wrong" is not a symptom. Ask for the first thing the
    user noticed, and diagnose that.
-5. The user wants the sequence of events and names nothing wrong → record
+5. If the user wants the sequence of events and names nothing wrong, record
    the symptom and the expected outcome as `none stated: the user asked what
    happened`, and proceed.
 
@@ -87,21 +89,21 @@ writing.
    directory per project, and inside it one append-only file per session.
    Read `references/session-stores.md` before searching, and again if the
    first recipe finds nothing.
-2. Choose among the candidates:
+2. Choose among the files that could be the one:
    - The **current** session is the file still being appended — the newest
      modification time, still growing between two listings.
    - A **past** session is matched by modification time against when the
      user says it ran, then confirmed by grepping it for a phrase from the
      symptom or from the work it did.
-   - Several plausible files → list them for the user with their times and
-     first user prompt, clipped to one line with sensitive values replaced,
-     and ask which one. Never diagnose a file you are guessing at.
-3. A name-based lookup that returned nothing means that encoding did not
-   match, never that no store exists → run the reference's content-confirmed
+   - If several files are plausible, list them for the user with their
+     times and first user prompt, clipped to one line with sensitive values
+     replaced, and ask which one. Never diagnose a file you are guessing at.
+3. If a name-based lookup returned nothing, that encoding did not match,
+   never that no store exists; run the reference's content-confirmed
    fallback before you say anything about an absent record.
-4. No store, no readable file, or no candidate matches → say so and stop.
-   Name what you looked for and where. An absent record is a finding, not a
-   licence to reconstruct one.
+4. If there is no store, no readable file, or no file that matches, say so
+   and stop. Name what you looked for and where. An absent record is a
+   finding, not a licence to reconstruct one.
 5. Record the transcript's absolute path and its line count at first read.
    Every citation in the report is `path:line` against that file. A
    subagent's record in a file of its own is cited against that file.
@@ -111,13 +113,13 @@ writing.
 1. **Never read the transcript end to end.** These files run to millions of
    characters and loading one destroys the context you need to think in.
 2. Work by search and slice only:
-   - `grep -n` for the term to find candidate line numbers
+   - `grep -n` for the term to find the line numbers to look at
    - a line-range print of a few lines around a hit
    - a column cut when a single line is long
-3. Widen a slice only around a line a search already found. A file whose
-   searches return nothing useful → report that, do not start paging.
-4. A record that is one long line, such as a single JSON array → cite the
-   line with a character range and a fragment, and slice by column.
+3. Widen a slice only around a line a search already found. If a file's
+   searches return nothing useful, report that; do not start paging.
+4. If a record is one long line, such as a single JSON array, cite the line
+   with a character range and a fragment, and slice by column.
 
 ## Step 4: Triage by dimension
 
@@ -128,9 +130,10 @@ search is recorded as unavailable evidence, never as clean.
 1. **Skills**: which skills were invoked, in what order, and at what point
    relative to the symptom. A skill the situation called for and that never
    appears is itself a finding.
-2. **Gates**: which checks, tests, or validators ran, and what each actually
-   returned. A gate whose output is not in the record did not report; do not
-   supply the verdict it probably gave.
+2. **Gates**, the report's name for checks: which checks, tests, or
+   validators ran, and what each actually returned. A gate whose output is
+   not in the record did not report; do not supply the verdict it probably
+   gave.
 3. **Unanswered decisions**: a question asked of the user, or a choice the
    session posed, that no later line answers — and what the session did
    anyway.
@@ -158,8 +161,8 @@ search is recorded as unavailable evidence, never as clean.
    fi
    ```
 
-   `TRACKED` printed → the project already versions that path, and a file
-   written there would be committed with it. Nothing was written. Use
+   If `TRACKED` is printed, the project already versions that path, and a
+   file written there would be committed with it. Nothing was written. Use
    another `{{topic}}`.
 
 2. Fill `assets/diagnosis-report.md` when the triage is done: symptom,
@@ -192,7 +195,7 @@ table of line numbers, and the page is how they check your work.
 4. Run `git status --short` again and compare it with the value from
    Step 1. Write the result into the report's `Workspace unchanged` line and
    the trace's `workspace` field.
-   - They differ → name the paths that changed in the report and in your
+   - If they differ, name the paths that changed in the report and in your
      reply, and change nothing to make them match.
 5. Check the trace parses, then start the preview from the project root.
 
@@ -200,10 +203,10 @@ table of line numbers, and the page is how they check your work.
    python3 -m json.tool .sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/trace/trace.json > /dev/null
    ```
 
-   - The check prints an error about the file → fix the trace first; the
+   - If the check prints an error about the file, fix the trace first; the
      page cannot show it.
-   - `python3` is absent → skip the check and the preview. Tell the user the
-     page needs the preview to open and the preview needs `python3`, and
+   - If `python3` is absent, skip the check and the preview. Tell the user
+     the page needs the preview to open and the preview needs `python3`, and
      give the report path and the start command to run once it is
      installed. Install nothing unless asked.
 
@@ -223,13 +226,14 @@ table of line numbers, and the page is how they check your work.
    Next action: {{one line}}
    ```
 
-   - The preview fails to start → say the page could not be served and why,
-     and give the report path and the start command. The page's file path is
-     no substitute: opened as a file, the page cannot read the trace.
-7. The user is done with the page → `bash scripts/stop-server.sh {{pid}}`,
-   with the `pid` from the startup record.
-8. **REQUIRED SUB-SKILL:** the diagnosis finds a failure that reached the
-   user or lost their work → invoke `post-mortem` once the link is handed
+   - If the preview fails to start, say the page could not be served and
+     why, and give the report path and the start command. The page's file
+     path is no substitute: opened as a file, the page cannot read the trace.
+7. When the user is done with the page, run
+   `bash scripts/stop-server.sh {{pid}}`, with the `pid` from the startup
+   record.
+8. **REQUIRED SUB-SKILL:** if the diagnosis finds a failure that reached the
+   user or lost their work, invoke `post-mortem` once the link is handed
    over, with the report as the event evidence. Diagnose the escape path
    there, not here.
 
@@ -265,7 +269,7 @@ table of line numbers, and the page is how they check your work.
 | "Reading the whole file is simpler than grepping" | It ends the session by filling the context, and the answer was on four lines. |
 | "There's no path:line for this one, but it's clearly true" | Clearly true and unevidenced is exactly the failure being diagnosed. |
 | "The skill's wording caused this, let me reword it" | Not this skill's job, and not this session's authority. Write the note. |
-| "The output said the tests passed, so they passed" | The record shows a claim was made. Whether the gate ran is a separate line to find. |
+| "The output said the tests passed, so they passed" | The record shows a claim was made. Whether that check ran is a separate line to find. |
 | "I'll quote this tool output, it explains everything" | It is third-party data. Cite the line and describe it. |
 
 ## Red flags
@@ -307,7 +311,7 @@ Stop if any of these is true of what you are doing:
 ## Common mistakes
 
 - Answering the symptom's "why" with a motive for the agent instead of an
-  ordered list of what it did → give the timeline; motive is not in the
+  ordered list of what it did: give the timeline; motive is not in the
   record.
-- Reporting a dimension as clean when it was never searched → it goes under
+- Reporting a dimension as clean when it was never searched: it goes under
   unavailable evidence.
