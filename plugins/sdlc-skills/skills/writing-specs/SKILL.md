@@ -5,58 +5,75 @@ description: "Writes a specification: detailed requirements and acceptance crite
 
 # Writing Specs
 
-Turn an intent into a requirements spec (SRS): gather and analyze what the software must do, how each requirement is verified, and the assumptions, dependencies, and risks involved. Requirements are the *what* — keep the *how* (architecture, schemas, code) for design.
+Turn an intent into a requirements spec (an SRS): what the software must do,
+how each requirement will be checked, and the assumptions, dependencies, and
+risks around it. Requirements are the *what*; leave the *how* (architecture,
+schemas, code) to design.
 
 ## When to use
 
-- You have a goal, brief, or feature request and need its detailed requirements before designing or building.
-- **Skip** for a trivial change whose single requirement is obvious — just state it and go.
-- If the intent itself is unclear, grill it first with `clarifying-intent`; this skill assumes you roughly know what you want.
-- A reply that has not directly closed a pending decision routes to
-  `clarifying-intent`; this skill cannot convert it into approved requirements.
+- You have a goal, brief, or feature request and need its detailed
+  requirements before designing or building.
+- **Skip** a trivial change whose single requirement is obvious: state it and
+  go.
+- If the intent itself is unclear, invoke `clarifying-intent` first; this
+  skill assumes what is wanted is roughly known.
+- If a reply has not directly closed a pending decision, invoke
+  `clarifying-intent`; this skill cannot turn that reply into approved
+  requirements.
 
 ## Step 1: Gather and state
 
-1. Pull the goal or brief. Read the relevant existing code. Genuine gap →
-   invoke `clarifying-intent`. Invent nothing you could have found.
-2. State the problem in a line or two. Link the goal it serves.
+1. Pull the goal or brief, and read the relevant existing code. If a genuine
+   gap is left, invoke `clarifying-intent`. Invent nothing you could have
+   found.
+2. State the problem in a line or two, and link the goal it serves.
 
 ## Step 2: Write the requirements
 
-Open `assets/spec-template.md` before starting; each step fills its section.
+Open `assets/spec-template.md` before you start; each step below fills one of
+its sections.
 
 1. Write each functional requirement as an observable behavior with a stable
-   ID that successors never recycle:
+   ID that no successor spec ever gives to a different requirement:
 
    ```text
    Right: R-07 rejects an expired token with a 401
    Wrong: R-07 good auth
    ```
 
-2. Carry every applicable guardrail and obligation: trust and data, security,
-   accessibility, compatibility, operational and recovery, performance and
-   resource, supported platforms and modes. No generic NFR list.
+2. Carry every guardrail and obligation that applies: trust and data,
+   security, accessibility, compatibility, operational and recovery,
+   performance and resource, supported platforms and modes. Do not add a
+   generic list of non-functional requirements.
 3. Read `references/reference-forms.md` before choosing the first acceptance
-   form. Per requirement, choose the cheapest honest form: executable gate,
-   disposable mockup, source-fact contract, rubric, or prose.
-4. Executable gate → write it as a proposed file beside the spec, never into
-   the project; `test-driven-development` lands and runs it inside the task
-   workspace. Interface or mutation authority open → write the observable,
-   intended gate, owner, handoff. Never invent an interface.
+   form. For each requirement, choose the cheapest form that can honestly
+   judge it: an executable gate (a check file that the project's own test or
+   check command can run once it lands in the project), a disposable mockup,
+   a source-fact contract, a rubric, or prose.
+4. If the form is an executable gate, write it as a proposed file beside the
+   spec, never into the project; `test-driven-development` lands and runs it
+   inside the task workspace. If the interface, or the authority to change
+   the project, is still open, write the observable (what would be observed
+   to decide the requirement), the intended gate, its owner, and the handoff.
+   Never invent an interface.
 5. List the edge cases and scenarios that break a naive build: empty input,
    concurrency, unhappy paths.
-6. Fill every column of the template's assumptions-and-dependencies table, one
-   row per assumption or dependency.
-7. List open questions, requirement-level risks, and what is out of scope
-   this round.
+6. Fill every column of the template's assumptions-and-dependencies table,
+   one row per assumption or dependency.
+7. List the open questions, the requirement-level risks, and what is out of
+   scope this round.
 
 ## Step 3: Write and present
 
-1. Write the immutable spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md`
-   or the user-set path.
-2. Fill the classification block. Any answer off the ordinary route, or the
-   user marks the work high-risk → run `assets/spec-review.md` before
-   presenting, with a reviewer who is not the sole author. Blocking.
+1. Write the spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md` or the
+   user-set path. The spec is immutable: a change to it is a new spec that
+   names this one as its predecessor, never an edit.
+2. Fill the template's high-risk classification section. If any answer there
+   is off the ordinary route, or the user marks the work high-risk, run the
+   review in `assets/spec-review.md` before presenting, with a reviewer who is
+   not the spec's sole author. That review is blocking: do not present the
+   spec (Step 3.3) before it is done.
 3. Present:
 
    ```text
@@ -73,13 +90,14 @@ Open `assets/spec-template.md` before starting; each step fills its section.
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 4. **REQUIRED SUB-SKILL:** on option 1, invoke the next missing precondition:
-   `ui-ux-design`, `system-architecture`, or `data-model` for unresolved
-   non-trivial shape; otherwise `writing-plans`. Never impose a phase already
-   complete.
+   `ui-ux-design`, `system-architecture`, or `data-model` when a non-trivial
+   shape is still unresolved; otherwise `writing-plans`. Never impose a phase
+   that is already complete.
 
 ## Gotchas
 
-- A retired requirement ID reused for new work silently repoints every earlier
-  citation of it: test names, review comments, out-of-scope links.
-- A gate written into the project while specifying lands in whichever checkout
-  is open, before any task workspace exists.
+- A retired requirement ID reused for new work silently makes every earlier
+  citation of it (test names, review comments, out-of-scope links) point at
+  the new work.
+- An executable gate written into the project while you are still specifying
+  lands in whichever checkout is open, before any task workspace exists.
