@@ -22,22 +22,22 @@ switch in a shared environment, or expands a rollout.
   for, and a change that reaches users in one ordinary deploy needs none.
 - **Skip** a rewrite, migration, or other high-risk transformation:
   `migration-strategy` owns its cutover, pause, abort, and rollback, and
-  `verification-strategy` owns the gates its stages pass. Say which one owns
-  it. A bounded feature built inside that work still comes here for its own
-  switch.
+  `verification-strategy` owns the checks its stages pass. Say which one
+  owns it. A bounded feature built inside that work still comes here for its
+  own switch.
 
 ## Step 1: Find the policy, or draft one for its owner
 
 1. Read the project's release or rollout policy, its instructions file, and
    its conventions: the flag facility, metric names, dashboards, cohort
    definitions. Record the document and version you read.
-2. A policy exists → copy its terms for this change: mechanism, target state,
-   cohort stages, baseline source, success and failure thresholds, minimum
-   observation, kill or rollback action, authority. A term it leaves unsaid
-   is a question for its owner, not a value to fill in.
-3. No policy, or a term unsaid → draft the missing terms from the change's
-   risk and the project's existing telemetry, and put the draft to the
-   release or decision owner:
+2. If a policy exists, copy its terms for this change: mechanism, target
+   state, cohort stages, baseline source, success and failure thresholds,
+   minimum observation, kill or rollback action, authority. A term it leaves
+   unsaid is a question for its owner, not a value to fill in.
+3. If there is no policy, or a term is unsaid, draft the missing terms from
+   the change's risk and the project's existing telemetry, and put the draft
+   to the release or decision owner:
 
    ```text
    Rollout terms for {{change}} — a draft; not policy until accepted
@@ -62,19 +62,21 @@ switch in a shared environment, or expands a rollout.
    deviation that only `release-readiness` may accept, when the release
    contract permits that exception, never here. Ask this and end the turn;
    `clarifying-intent` owns what closes it.
-4. Option 2 → revise, keep the earlier terms visible, and re-present. Option
-   3 → fill `assets/rollout-record.md` before stopping, with Status
-   `declined` and only its Policy and Next action sections, and append the
-   ledger row beside it naming who declined and when; this skill ends here.
-   An unaccepted draft is not a policy: build nothing against it.
+4. If the answer is option 2, revise, keep the earlier terms visible, and
+   present the draft again. If the answer is option 3, fill
+   `assets/rollout-record.md` before stopping, with Status `declined` and
+   only its Policy and Next action sections, and add the row to the decision
+   ledger beside it (the record of who decided what: add to it, never
+   rewrite it), naming who declined and when; this skill ends here. An
+   unaccepted draft is not a policy: build nothing against it.
 
 ## Step 2: Build the switch
 
-1. Use the flag or configuration facility the project already has. None →
-   the smallest runtime configuration read the project already performs, and
-   name it in the record. Add no library.
-2. Default off, or the safe state the accepted terms name. Read the switch
-   before the risky work starts, never after a side effect.
+1. Use the flag or configuration facility the project already has. If it has
+   none, use the smallest runtime configuration read the project already
+   performs, and name it in the record. Add no library.
+2. Default it to off, or to the safe state the accepted terms name. Read the
+   switch before the risky work starts, never after a side effect.
 3. List every path the change adds: request handler, background job, event
    consumer, scheduled work, migration step, retry, cache fill. Put the
    switch in front of each. A path the switch does not guard is a rollout the
@@ -84,8 +86,8 @@ switch in a shared environment, or expands a rollout.
    off-state test, which fails because the path still runs; then the switch,
    which passes it by restoring the prior behaviour. The off-state test is
    the kill switch's proof.
-5. Turning it off changes behaviour without a deploy: a runtime read, not a
-   build-time constant. Record the exact off action.
+5. Make turning it off change behaviour without a deploy: read the switch at
+   runtime, never as a build-time constant. Record the exact off action.
 6. Write the removal follow-up: an owner, and the condition after which the
    switch and the prior path are deleted.
 
@@ -104,16 +106,16 @@ switch in a shared environment, or expands a rollout.
 5. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each signal:
    a test that fails when the signal is missing or carries the wrong state.
 6. Confirm the baseline source exists: the prior behaviour is already
-   measured where the thresholds compare, or the off cohort supplies it. No
-   baseline → write that in the record; do not invent a number.
+   measured where the thresholds compare, or the off cohort supplies it. If
+   there is no baseline, write that in the record; do not invent a number.
 
 ## Step 4: Record and hand off
 
 1. Open `assets/rollout-record.md` before filling it, and fill every section:
    policy source, switch, guarded paths, signals, baseline, kill action with
-   who may pull it, removal follow-up. Drafted terms → append the acceptance
-   row to the ledger beside the record: who accepted, when, and the terms
-   they saw. Terms copied from a policy need no row.
+   who may pull it, removal follow-up. If the terms were drafted, add the
+   acceptance row to the ledger beside the record: who accepted, when, and
+   the terms they saw. Terms copied from a policy need no row.
 2. Report three lines and decide nothing:
 
    ```text
@@ -147,11 +149,11 @@ switch in a shared environment, or expands a rollout.
 
 ## Common mistakes
 
-- Refactoring or deleting the prior path while adding the switch, so off no
-  longer means before → keep the prior path reachable, unchanged, until the
-  removal follow-up runs.
-- Lowering a draft threshold so the first stage can pass → thresholds are the
+- Refactoring or deleting the prior path while adding the switch, so that
+  off no longer means before: keep the prior path reachable, unchanged,
+  until the removal follow-up runs.
+- Lowering a draft threshold so the first stage can pass: thresholds are the
   owner's; a stage that cannot meet them is a finding for the owner.
-- Flipping the switch on in a shared environment to see it work → the test
+- Flipping the switch on in a shared environment to see it work: the test
   suite and a local run are where it is exercised; the first shared flip is
   the owner's action after the release decision.

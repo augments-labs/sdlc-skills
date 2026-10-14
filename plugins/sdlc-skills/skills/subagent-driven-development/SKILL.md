@@ -6,19 +6,20 @@ description: "Runs an approved plan's tasks through fresh subagents: one impleme
 # Subagent-Driven Development
 
 You are the controller. Fresh workers build and review one task, or one
-approved wave, at a time; you hold the plan, the ledger, and every decision
-they may not take. This skill never decides what happens to the branch.
+approved wave, at a time; you hold the plan, the ledger (this run's record),
+and every decision they may not take. This skill never decides what happens
+to the branch.
 
 ## When to use
 
 - An approved plan is about to be built by dispatched workers rather than
   here: the user asked for workers, or answered the execution-mode question
   with delegated.
-- **Skip** building the tasks in this session — `executing-plans` owns that
-  — and a lone task with no plan directory.
+- **Skip** building the tasks in this session (`executing-plans` owns that)
+  and a lone task with no plan directory.
 - **Skip** a plan whose index holds phases or shards: its queues, leases, and
   capacity envelope run inline through `executing-plans`, never through a
-  slim brief. Its row says delegated → Step 1.5 first.
+  slim brief. If its row says delegated, go to Step 1.5 first.
 
 ## Available scripts
 
@@ -34,24 +35,25 @@ they may not take. This skill never decides what happens to the branch.
 ## Step 1: Verify approval and mode
 
 1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
-   `External decision ledger`, a ledger (append-only). Read every row for this
-   index whose `Identity` is the printed version, in ledger order. The last of
-   them must be the row whose `Bound evidence` names the `Approval rule`
-   owner's approval; a later row that rejects, cancels, or supersedes this
-   version closes it. The index cannot approve itself.
-2. No such row, a later row closed the version, or the script fails → stop and
-   name the missing version, the row that closed it, or the script's error;
-   never substitute a version read from the index.
-3. No mode in that row → ask `assets/mode-question.md` before any workspace
-   action, and stop. A request for workers made before approval is not the
-   answer; rendering the question collects it.
-4. `mode: inline` in that row → stop; `executing-plans` owns it, and only the
-   user's direct answer changes the mode.
-5. `mode: delegated` on an index with phases or shards → this skill cannot
-   run it and `executing-plans` will not: ask the `Approval rule` owner for a
-   direct inline answer, append it as a new approved row for this version in
-   the shape `writing-plans` Step 4.5 gives, with `mode: inline`, and stop.
-   The last row's mode is the one 1.1 reads.
+   `External decision ledger` (a ledger: add to it, never rewrite it). Read
+   every row for this index whose `Identity` is the printed version, in
+   ledger order. The last of them must be the row whose `Bound evidence`
+   names the `Approval rule` owner's approval; a later row that rejects,
+   cancels, or supersedes this version closes it. The index cannot approve
+   itself.
+2. If there is no such row, if a later row closed the version, or if the
+   script fails, stop and name the missing version, the row that closed it,
+   or the script's error; never substitute a version read from the index.
+3. If that row records no mode, ask `assets/mode-question.md` before any
+   workspace action, and stop. A request for workers made before approval is
+   not the answer; rendering the question collects it.
+4. If that row says `mode: inline`, stop; `executing-plans` owns it, and only
+   the user's direct answer changes the mode.
+5. If that row says `mode: delegated` and the index has phases or shards,
+   this skill cannot run it and `executing-plans` will not: ask the
+   `Approval rule` owner for a direct inline answer, append it as a new
+   approved row for this version in the shape `writing-plans` Step 4.5 gives,
+   with `mode: inline`, and stop. The last row's mode is the one 1.1 reads.
 
 ## Step 2: Open the run
 
@@ -77,10 +79,11 @@ they may not take. This skill never decides what happens to the branch.
    identity/owner` permits the exact change; `Implementation disciplines` is
    filled; a UI task's `Applicable visual references` match the index's
    `Selected visual references` field for field, and each freshness evaluator
-   runs now. Any failure → report the field and task; dispatch nothing under
-   an invalid contract.
-5. High-risk task: blocked until its migration and assurance contracts are
-   approved and their entry gates passed. Report it; dispatch nothing for it.
+   runs now. If any of these fails, report the field and task; dispatch
+   nothing under an invalid contract.
+5. A high-risk task is blocked until its migration and assurance contracts
+   are approved and their entry gates (the checks that must pass before
+   work on it starts) have passed. Report it; dispatch nothing for it.
 6. Scan for conflicts. List the files each task claims, and write every pair
    claiming the same file into the ledger as an ordering.
 7. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
@@ -104,14 +107,14 @@ reapproval, end the turn.
 
 ## Step 4: Dispatch one task
 
-1. Take the next task whose dependencies are done. `waves: yes` on the
-   approval row → take every ready task that passes the independence test of
+1. Take the next task whose dependencies are done. If the approval row says
+   `waves: yes`, take every ready task that passes the independence test of
    `dispatching-parallel-agents` Step 1. Before each dispatch row, cut that
    task a branch and worktree from the plan worktree's HEAD yourself under
    the plan worktree's commit authority; `using-git-worktrees` run by the
-   worker would reuse yours. Dispatch them together through its Step 2;
-   sequence a failing pair.
-2. Batch tasks into one dispatch only when they are small and the same shape —
+   worker would reuse yours. Dispatch them together through
+   `dispatching-parallel-agents` Step 2; sequence a failing pair.
+2. Batch tasks into one dispatch only when they are small and the same shape:
    same kind of file, same act.
 3. Fill `assets/implementer.md` when dispatching an implementer, rendering it
    with `bash scripts/task-brief.sh`, which pastes the task contract and
@@ -129,8 +132,9 @@ reapproval, end the turn.
    the adapters, never here.
 6. Write the dispatch row before dispatching: task ID, attempt, base
    revision, evaluator identity, tier. Then dispatch per
-   `dispatching-parallel-agents` Step 2 — it owns the receipt, the
-   not-dispatched rule, and cancellation.
+   `dispatching-parallel-agents` Step 2. It owns the dispatch receipt (the
+   tool-issued ID that proves the dispatch happened), the not-dispatched
+   rule, and cancellation.
 
 ## Step 5: Review the diff, then fix
 
@@ -145,44 +149,50 @@ reapproval, end the turn.
      removes it, unless a ruling names the contract clause that needs it.
    - a defect or gap outside the contract, in code the diff does not touch,
      in the review or under the implementer report's `Defects noticed and
-     not edited` line and `## Gaps outside this task` → *Findings outside
-     the task*. It never enters a round.
-   - `blocking` → a fix round.
-   - `advisory` → one ledger disposition: accepted as it stands, folded into
-     a round a blocking finding opened, or ruled blocking with the failure it
-     causes. It never opens a round or a task by itself.
+     not edited` line and `## Gaps outside this task`, goes to *Findings
+     outside the task*. It never enters a round.
+   - a `blocking` finding opens a fix round.
+   - an `advisory` finding gets one recorded decision in the ledger:
+     accepted as it stands, folded into a round a blocking finding opened,
+     or ruled blocking with the failure it causes. It never opens a round or
+     a task by itself.
 
    Rounds 1 to 3 go back to the same implementer, which still holds the
    task. Rounds 4 and 5 go to a fresh implementer one tier up, briefed from
-   the findings file — it has read nothing.
+   the findings file; it has read nothing.
 3. Fill `assets/re-reviewer.md` when a fix round returns, so the second look
    judges the fix and its blast radius rather than the task again, rendering it
    with `bash scripts/task-brief.sh`, which inserts
    `assets/re-reviewer-report.md` before dispatch.
-4. Five rounds without convergence trips the breaker. Stop dispatching, write
-   the adjudication in the ledger — the finding, what each round changed, why it
-   did not converge — and then either decide it yourself under Step 3 or hand
+4. After five rounds without convergence, stop dispatching, write the
+   adjudication in the ledger (the finding, what each round changed, why it
+   did not converge), and then either decide it yourself under Step 3 or hand
    the user that row. Never open a sixth round.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
-   `verification-before-completion` on the result revision: the task's
-   `Evaluator`, every `VCONF` row, `visual-ui-verification` for an integrated
-   UI. A wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
-   those branches into the plan worktree (a blocked task's stays out) and run
-   this on the merged HEAD before any wave task is `done`; a red merged gate
-   opens a fix round in the plan worktree on the task it names, then merge and
-   gate again; the wave worktrees and branches are task-owned resources in the
-   workspace record for `finishing-a-branch`. Then record its state: done,
-   done with concerns, blocked, or needs context. Mirror only the task row's
-   checkbox and adjacent label. **Do not change the index's `Status` header or
-   normalize it out of the plan's identity.**
-6. `per task` cadence only — **REQUIRED SUB-SKILLS:** invoke
+   `verification-before-completion` on the result revision, with the task's
+   `Evaluator`, every `VCONF` row, and `visual-ui-verification` for an
+   integrated UI.
+
+   For a wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
+   those branches into the plan worktree (a blocked task's branch stays out)
+   and run this check on the merged HEAD before any wave task is `done`. If
+   that check on the merged HEAD is red, open a fix round in the plan
+   worktree on the task it names, then merge and check again. The wave
+   worktrees and branches are task-owned resources in the workspace record
+   for `finishing-a-branch`.
+
+   Then record the task's state: done, done with concerns, blocked, or needs
+   context. Mirror only the task row's checkbox and adjacent label. **Do not
+   change the index's `Status` header or normalize it out of the plan's
+   identity.**
+6. Under `per task` cadence only, **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then `finishing-a-branch`.
    Return after it records its decision.
 7. Go to Step 4 with the next ready task. Do not report, ask, or pause at
-   `done`. Every task `done`, or `cancelled`/`superseded` with its approved
-   ledger decision → Step 6. No ready task can advance, or a high-risk entry
-   gate has not passed → report the unresolved states and their blockers, end
-   the turn.
+   `done`. When every task is `done`, or `cancelled`/`superseded` with its
+   approved ledger decision, go to Step 6. If no ready task can advance, or a
+   high-risk entry gate has not passed, report the unresolved states and
+   their blockers and end the turn.
 
 ## Step 6: Finish the plan
 
@@ -204,7 +214,7 @@ In the worktree from Step 2, in order:
 | Thought | Reality |
 | --- | --- |
 | "Every worker returned DONE, so the plan is done" | DONE is a claim per task. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
-| "The reviewer subagent passed it, so review is covered" | That reviewed one task's diff against its contract. The branch review is a separate gate on the integrated state. |
+| "The reviewer subagent passed it, so review is covered" | That reviewed one task's diff against its contract. The branch review is a separate check on the integrated state. |
 
 ## Findings outside the task
 
@@ -213,14 +223,14 @@ task. One a later listed task's contract covers is left to that task. Any
 other, whoever reports it, is a `finding` row in the ledger: where, what,
 the evidence. It is never a task because someone wrote it down.
 
-1. The index's `Out-of-task findings` field says `log and report`, or is
-   absent → every finding waits for Step 6.4.
-2. `fix when admitted` → admit only an observed failure: wrong output, a
-   crash, a shipped statement that is false, a test that passes on broken
-   code. Write the admitted finding a task file shaped like the plan's own
-   under `{{plan-dir}}/added/`, unlisted in the index so the plan's identity
-   holds, and append an `admitted` row that repeats the finding row's
-   where-text and names that file.
+1. If the index's `Out-of-task findings` field says `log and report`, or is
+   absent, every finding waits for Step 6.4.
+2. If it says `fix when admitted`, admit only an observed failure: wrong
+   output, a crash, a shipped statement that is false, a test that passes on
+   broken code. Write the admitted finding a task file shaped like the plan's
+   own under `{{plan-dir}}/added/`, unlisted in the index so the plan's
+   identity holds, and append an `admitted` row that repeats the finding
+   row's where-text and names that file.
 3. The approved field authorizes an added task inside its budget, and
    nothing else. Its `Evaluator` reproduces the observed failure and is red
    before the fix; its `Depends on` names every listed task that owns a file
@@ -232,9 +242,9 @@ the evidence. It is never a task because someone wrote it down.
 5. A finding raised while building or reviewing an added task, or by the
    Step 6.2 review outside every task's contract, waits for Step 6.4. It
    never becomes another task.
-6. Added tasks reach the field's budget → admit nothing more; the rest wait
-   for Step 6.4. No budget recorded → a quarter of the listed tasks, rounded
-   up.
+6. When added tasks reach the field's budget, admit nothing more; the rest
+   wait for Step 6.4. If no budget is recorded, the budget is a quarter of
+   the listed tasks, rounded up.
 
 ## Gotchas
 
@@ -248,15 +258,16 @@ the evidence. It is never a task because someone wrote it down.
 - A fresh implementer in round 4 has read nothing. "Fix the findings" names a
   file it does not have; give it the findings path and the task path.
 - A worker that dispatches its own workers returns a diff nobody reconciled and
-  receipts you never held. Every brief here prohibits subdispatch; keep it.
+  dispatch receipts you never held. Every brief here prohibits subdispatch;
+  keep it.
 - The controller never edits, so `test-driven-development` and `yagni` load in
   the implementer, where the brief requires them; loading them here proves
   nothing about the worker's session.
 
 ## Stopping and resuming
 
-- Remaining work will not fit this session: finish the current ledger row,
-  then invoke `handoff`.
+- If the remaining work will not fit this session, finish the current ledger
+  row, then invoke `handoff`.
 - On resume, rerun `bash scripts/plan-version.sh` and re-read the latest decision
   ledger row for the printed version before `--check` on the run ledger: the
   run ledger detects an amended plan, not a row that closed the version.

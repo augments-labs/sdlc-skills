@@ -19,9 +19,9 @@ store; that runs under the project's deploy process and authority.
 - **Skip** a store nothing live reads yet (pre-release, development only), or
   one whose owner has accepted downtime for this change. Acceptance is a
   record you can point at: who accepted, when, and the window. Assumed
-  acceptance is none; ask the owner and wait.
+  acceptance counts as no acceptance; ask the owner and wait.
 - **Skip** a rewrite, a migration of a whole store or system, or any change
-  `data-model`'s classification put off the ordinary route:
+  that `data-model`'s classification took off the ordinary route:
   `migration-strategy` owns its contract, cutover, and rollback. Say so.
 - **Skip** while the domain semantics are unsettled. `data-model` decides
   what the data means before anything decides how it moves.
@@ -34,8 +34,8 @@ input is a question for its owner, never a value to assume.
 
 1. The settled `data-model` section and the storage-mapping rows this change
    touches. Record its identity and the route its classification block
-   records, or "new model" when there is no existing one. Semantics
-   unchanged, as for an index or a backfill → record "no data-model
+   records, or "new model" when there is no existing one. If the semantics
+   are unchanged, as for an index or a backfill, record "no data-model
    section" with the reason.
 2. The project's migration tool and conventions: where migrations live, how
    they are versioned, and at which deploy step they run.
@@ -47,25 +47,28 @@ input is a question for its owner, never a value to assume.
 5. The size of the affected data: rows or volume, write rate, and whether
    replicas follow the store.
 
-## Step 2: Sequence as expand → migrate → contract
+## Step 2: Sequence as expand, migrate, contract
 
-Each phase is its own deployable change with a stated gate to advance and a
-stated rollback. Write every phase into the record's Phases section now;
-ship them one at a time, in this order. A phase this change does not need
-(an index alone, a standalone backfill) is recorded `not needed: {{reason}}`
-in its Phases row, its own section, and its rows in Tests, never left empty.
+Each phase is its own deployable change with a stated gate to advance (a
+gate is a check that must accept a result before the work advances; the
+record's Phases table has a `Gate to advance` column for it) and a stated
+rollback. Write every phase into the record's Phases section now; ship them
+one at a time, in this order. Record a phase this change does not need (an
+index alone, a standalone backfill) as `not needed: {{reason}}` in its
+Phases row, its own section, and its rows in Tests; never leave one empty.
 
 1. **Expand.** Add the new column, table, index, or field so the previous
-   code version runs against it untouched: additive, nullable or defaulted
+   code version runs against it unchanged: additive, nullable or defaulted
    in a form the engine applies without rewriting the table, and no
-   constraint the old version's writes would violate. Migration runs before
-   the code. Rollback: revert the code; the expansion stays and is harmless.
+   constraint the old version's writes would violate. The migration runs
+   before the code. Rollback: revert the code; the expansion stays and is
+   harmless.
 2. **Dual-write and tolerant reads.** The new code writes both shapes and
    reads either, treating a row not yet backfilled as old-shape. Rollback:
    the previous version, which still reads and writes the old shape alone.
-3. **Backfill.** Batched over a key the store indexes; idempotent, so a
-   batch applied twice leaves the same rows; resumable from a recorded
-   cursor; throttled against replication lag and lock wait; observable
+3. **Backfill.** Batch it over a key the store indexes. Make it idempotent,
+   so a batch applied twice leaves the same rows; resumable from a recorded
+   cursor; throttled against replication lag and lock wait; and observable
    through remaining rows, rate, and errors. Verification compares the two
    shapes by count or checksum and goes in the record. Gate to advance:
    remaining rows zero and verification passed. Never one transaction over
@@ -93,12 +96,14 @@ in its Phases row, its own section, and its rows in Tests, never left empty.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it. Record
-   the answer as a ledger row beside the record. No row → the contract does
-   not ship.
-7. A rename or a type change is add, copy, switch, drop, never in place.
-8. A new constraint is added in the form the engine offers that does not
-   validate existing rows under a lock, then validated as a separate step.
-   The engine offers no such form → the lock is measured in Step 3.
+   the answer as a row in the ledger beside the record (the decision ledger:
+   add to it, never rewrite it). If there is no row, the contract does not
+   ship.
+7. A rename or a type change is done as add, copy, switch, drop, never in
+   place.
+8. Add a new constraint in the form the engine offers that does not validate
+   existing rows under a lock, then validate it as a separate step. If the
+   engine offers no such form, the lock is measured in Step 3.
 
 ## Step 3: Build each phase under test
 
@@ -112,17 +117,18 @@ in its Phases row, its own section, and its rows in Tests, never left empty.
    The compatibility test, the previous code version's suite against the
    expanded schema, is preserved behaviour: the plan or task accepts that
    suite as covering its contract, and it runs under that skill's
-   preserved-behaviour cycle, seen green, one controlled divergence (an
-   expansion the old version cannot tolerate, such as a required column
-   with no default) watched red, restored, green again.
+   preserved-behaviour cycle: the suite is seen green, one controlled
+   divergence (an expansion the old version cannot tolerate, such as a
+   required column with no default) is watched red, and after it is restored
+   the suite is seen green again.
 2. For every operation that may lock or rewrite (index build, default, type
    change, constraint, drop): read the engine's documentation for that exact
-   operation on the exact version and record what it says. A
-   production-sized copy exists → run the operation on it and record the
-   duration, the lock held, and whether the table was rewritten. None →
-   record the operation as **unverified**, in its evidence row and in the
-   record's Not verified section, which goes to `release-readiness` as it
-   stands. Never leave it blank.
+   operation on the exact version and record what it says. If a
+   production-sized copy exists, run the operation on it and record the
+   duration, the lock held, and whether the table was rewritten. If there is
+   none, record the operation as **unverified**, in its evidence row and in
+   the record's Not verified section, which goes to `release-readiness` as
+   it stands. Never leave it blank.
 3. Write the deploy-versus-migration order for this phase where the deploy
    process reads it, matching Step 2.
 4. A migration already applied anywhere, including a shared test store, is
@@ -152,7 +158,7 @@ in its Phases row, its own section, and its rows in Tests, never left empty.
    listed there as unverified.
 4. Each later phase, contract above all, is its own change through the same
    chain, from Step 1, with the record's predecessor line filled.
-5. A feature flag or staged rollout is also requested → that is a separate
+5. If a feature flag or staged rollout is also requested, that is a separate
    concern under the project's release policy. It does not replace the
    phasing here, and the phasing does not supply it.
 
@@ -190,12 +196,12 @@ in its Phases row, its own section, and its rows in Tests, never left empty.
 
 ## Common mistakes
 
-- Expanding and contracting in one migration because the change "is small"
-  → split it; the old version has to run against the result of every
+- Expanding and contracting in one migration because the change "is small":
+  split it; the old version has to run against the result of every
   migration that ships with the new version.
-- Backfilling from the deploy session by hand to finish faster → the
+- Backfilling from the deploy session by hand to finish faster: the
   backfill is a job the deploy process runs, with its cursor and progress
   where the operator reads them.
-- Treating a passing compatibility test as proof that contract is safe →
-  the test proves the old version tolerates the expanded store; only the
+- Treating a passing compatibility test as proof that contract is safe: the
+  test proves the old version tolerates the expanded store; only the
   conditions in Step 2.6 make the drop safe.
