@@ -22,8 +22,8 @@ explicitly calls for change.
 ## Available scripts
 
 - **`scripts/start-server.sh`** and **`scripts/stop-server.sh`** — start and
-  stop the key-gated localhost preview of a comparison surface (a per-session key,
-  an owner watchdog, and an idle timeout). They wrap `scripts/serve.py`; read
+  stop the key-gated localhost preview of a comparison surface (a
+  per-session key, an owner watchdog, and an idle timeout). They wrap `scripts/serve.py`; read
   [visual-decisions.md](references/visual-decisions.md) before starting or
   stopping a preview; it owns the details.
 
@@ -67,8 +67,8 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    reference's order that fits. A self-contained local page starts from
    `assets/comparison-template.html` before its first variant is written.
    Write 2–4 controlled, meaningfully different variants (requirements,
-   content, data, device, and baseline accessibility held the same). Give every version block and every
-   variant a stable ID.
+   content, data, device, and baseline accessibility held the same). Give
+   every version block and every variant a stable ID.
 3. Deliver the file path and offer to serve the surface. Start the preview
    only after the user accepts, then present its URL:
 

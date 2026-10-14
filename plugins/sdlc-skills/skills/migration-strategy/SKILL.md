@@ -80,8 +80,8 @@ the section of it that the step names.
 2. Fill `Mutable live-state catch-up` wherever data or work keeps moving:
    from how the boundary is bound through to the maximum permitted lag and
    the gate that owns that limit. Every write after the snapshot lands in
-   exactly one terminal disposition (one final state, with its evidence). "Probably applied" is not reconciled and blocks
-   cutover.
+   exactly one terminal disposition (one final state, with its evidence).
+   "Probably applied" is not reconciled and blocks cutover.
 3. Fill `Convergence and failure queue`: reconcile the external ledgers, and
    give every skip an approved recorded decision. If one *class* of failure
    repeats, pause the affected work, fix the shared rule, and re-audit every
@@ -135,9 +135,9 @@ the section of it that the step names.
 
 ## Gotchas
 
-- Code review judges the exact version under review against an approved contract. Before approval neither exists, so a
-  challenge sent to code review has nothing to bind to and returns no
-  verdict.
+- Code review judges the exact version under review against an approved
+  contract. Before approval neither exists, so a challenge sent to code
+  review has nothing to bind to and returns no verdict.
 - The trial slice's coverage inventory (Step 2) is only as stable as the
   source is frozen or its changes are taken in under control (Step 3). A new
   consumer, platform, or path that lands in the middle of the migration
