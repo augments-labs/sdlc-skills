@@ -6,12 +6,9 @@
 # left, so entries leave as skills are rewritten. Never add one: a new skill
 # or an edit writes sentences, and review rejects an addition. Delete the file
 # once it is empty.
-define-goals
-feasibility-check
 receiving-code-review
 requesting-code-review
 reviewing-a-pr
-scoping
 security-audits
 verification-strategy
 visual-ui-verification
