@@ -5,8 +5,8 @@ description: "Makes a test fail for the right reason before the code exists, the
 
 # Test-Driven Development
 
-Make an executable gate fail for the right reason before the code exists, or
-make an existing gate fail on purpose before you preserve behavior through a
+Make an executable check fail for the right reason before the code exists, or
+make an existing check fail on purpose before you preserve behavior through a
 change. Watch it happen; keep the output.
 
 ## When to use
@@ -14,28 +14,39 @@ change. Watch it happen; keep the output.
 - Any feature, fix, refactor, migration, generator, or config that changes
   behavior.
 - **Skip** disposable spikes and non-behavioral content or config. Behavior
-  from a spike that is then accepted gets rebuilt under a gate.
+  from a spike that is then accepted gets rebuilt under a check.
 - High-risk target code waits for its approved migration and assurance
-  contracts and their entry gates. Work authorized only to build a gate
-  cannot edit the target or satisfy entry on its own.
+  contracts and their entry gates (the checks that must pass before work on
+  the target starts). Work authorized only to build a check cannot edit the
+  target or satisfy entry on its own.
 
 ## Step 1: Before the first test command
 
-1. The test command reaches outside the repository — a shared service, a real
-   database, the network, a path outside the worktree → write down what it
-   touches: environment and data, effects, time and resources, cleanup, and
-   your authority for each. Never aim a test at a shared or production
-   surface not written here. Entirely inside the repository → no record.
-2. Pin the public interface and the behavior it promises from the task, spec,
-   or approved design. Unresolved meaning → `clarifying-intent`. Never guess it
-   into a test.
+1. If the test command reaches outside the repository (a shared service, a
+   real database, the network, a path outside the worktree), write down what
+   it touches: the environment and data, the effects, the time and resources,
+   the cleanup, and your authority for each. Never aim a test at a shared or
+   production surface not written here. If it stays entirely inside the
+   repository, write no record.
+2. Pin down the public interface and the behavior it promises, from the task,
+   the spec, or the approved design. If the meaning is unresolved, invoke
+   `clarifying-intent`. Never guess it into a test.
 3. Pick the cycle:
-   - new or intentionally changed behavior → Step 2
-   - behavior that must survive a change unchanged → Step 3
-   - bugfix → Step 2, starting from its runnable reproduction
+   - For new or intentionally changed behavior, go to Step 2.
+   - For behavior that must survive a change unchanged, go to Step 3.
+   - For a bugfix, go to Step 2, starting from its runnable reproduction.
+
    Never invent a failure for behavior that already works.
 
-## Step 2: New behavior — RED → GREEN
+   A task: move `parse_price` into the `money` module, keeping its old import
+   working, and make it reject a negative amount, which it accepts today.
+   That is two cycles. The move is behavior that must survive unchanged:
+   Step 3, with the existing green tests as the check once they are accepted
+   as Step 3.1 requires. The rejection is new behavior: Step 2, with its own
+   RED first. One test that fails because the import path moved proves
+   neither.
+
+## Step 2: New behavior, RED then GREEN
 
 1. Write one test for the next approved behavior.
 2. Run it through the project's real test command.
@@ -48,54 +59,59 @@ change. Watch it happen; keep the output.
    Not RED:             1 skipped, 0 failed
    ```
 
-   Wrong reason or unexplained → invoke `debugging` before any product code,
-   passing back the attempt count `debugging` handed it, when this cycle
-   came from `debugging`.
+   On a wrong reason or an unexplained result, invoke `debugging` before any
+   product code, passing back the attempt count `debugging` handed this cycle
+   when the cycle came from `debugging`.
 4. Keep the output.
-5. Record the test's identity, the identity of the evaluator — the check that
-   decides pass or fail — and the expected observable as of this RED, under
-   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`. Any of the three changes
-   later → the cycle is invalid; restart and reach RED again.
+5. Record the test's identity, the identity of the evaluator (the check that
+   decides pass or fail), and the expected observable as of this RED, under
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`. If any of the three
+   changes later, the cycle is invalid: restart and reach RED again.
 6. Write only the code that makes this test pass.
-7. Run the new test, then the project's whole test command. Both green.
-   Report every failing test by name, including unrelated ones; stop, don't
-   filter.
+7. Run the new test, then the project's whole test command. Both must be
+   green. Report every failing test by name, unrelated ones included; stop,
+   and do not filter.
 8. Refactor under green. Rerun both. An intended behavior change is a new RED
    cycle under the approval that owns it.
 
-## Step 3: Preserved behavior — GREEN → deliberate RED → GREEN
+## Step 3: Preserved behavior, GREEN, then a deliberate RED, then GREEN
 
-1. Take the characterization gate the task or plan accepted; high-risk work
-   uses the assurance matrix's differential gate. An inherited green suite
-   counts only once accepted as covering the preservation contract
-   independently of the target. Strengthen smoke-only coverage before the
-   first checkpoint.
+1. Take the characterization check the task or plan accepted (the references
+   call such a check a gate); for high-risk work, use the differential check
+   from the assurance matrix. An inherited green suite counts only once it
+   has been accepted as covering the preservation contract independently of
+   the target. Strengthen smoke-only coverage before the first checkpoint.
 2. Run it on the current behavior. See it green. Keep the output.
-3. Introduce one controlled, representative divergence. Run the same gate.
+3. Introduce one controlled, representative divergence. Run the same check.
    Watch it go red the way you intended. Keep the output.
 4. Restore the exact state. Watch it go green again.
-5. Transform one slice, keeping that gate green. Read
-   `references/preservation-cycle.md` when you pick the oracle, meet the
-   generator or config case, or decide the evidence to keep.
+5. Transform one slice, keeping that check green. Read
+   `references/preservation-cycle.md` when you pick the oracle (what says
+   which answer is right, independent of the implementation under test),
+   when you meet the generator or config case, or when you decide which
+   evidence to keep.
 
 ## Step 4: Close the cycle
 
-1. Chronology part of the claim → use an external observer or immutable
-   checkpoints the evaluator reruns. Logs the candidate wrote are not
-   evidence. Never write checkpoint history after the fact.
+1. If chronology is part of the claim, use an external observer or immutable
+   checkpoints that the evaluator reruns. Logs written by the state under
+   check (the exact state being judged) are not evidence. Never write
+   checkpoint history after the fact.
 2. Restore only the mutations this task made whose pre-state you recorded.
    Leave anything else pending for `finishing-a-branch`. Never delete
    inherited, shared, or user state to manufacture a cycle.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on the exact state
-   you are about to call done. This cycle's gate is one row of its
-   ledger (append-only, outside the candidate), not the ledger.
+   you are about to call done. This cycle's check is one row of that skill's
+   evidence record (the ledger: add to it, never rewrite it, and keep it
+   outside the state under check), not the whole record.
 4. Return to whatever invoked this skill: a plan task, a worktree checkpoint,
    or a fix under `debugging`. Run no commit, push, or PR here.
 
 ## Gotchas
 
 - A `debugging` detour does not reset its attempt count. Handing the count back
-  on every wrong-reason RED is what lets the breaker trip at all.
+  on every wrong-reason RED is what lets `debugging`'s circuit breaker trip at
+  all.
 
 ## Hard stops
 
@@ -106,19 +122,19 @@ change. Watch it happen; keep the output.
   divergence, or derives expected results from the target it judges.
 - A preservation checkpoint contains no new oracle even though inherited tests
   were never accepted as covering the preservation contract.
-- A behavioral generator/config change tests only text presence or generated
-  file existence.
-- A test/evaluator, expected observable, corpus, or oracle changed after its RED/
-  falsification without invalidating and restarting that cycle.
-- A command/divergence lacks environment/data/effect/cleanup authority or
-  verified restoration.
+- A behavioral generator or config change tests only text presence or
+  generated file existence.
+- A test or evaluator, expected observable, corpus, or oracle changed after
+  its RED or falsification without invalidating and restarting that cycle.
+- A command or divergence lacks authority for its environment, data, effects,
+  or cleanup, or lacks verified restoration.
 - Throwaway or out-of-cycle code is being copied into the product.
 
 ## When you are tempted to skip
 
 | The thought | The reality |
 | --- | --- |
-| "Too simple to test" | Simple behavior still breaks; use the smallest real gate. |
+| "Too simple to test" | Simple behavior still breaks; use the smallest real check. |
 | "I'll write the test after" | For new behavior, that records the implementation instead of leading it. |
 | "The port already works, so I need a fake RED" | No: start green, falsify the independent oracle, restore, then preserve it. |
 | "I tested it by hand" | An unrepeatable observation cannot guard the next change. |
