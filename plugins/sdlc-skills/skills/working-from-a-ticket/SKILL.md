@@ -86,12 +86,12 @@ recorded text instead of a memory of it.
    name.
 
    Compute its identity by the artifact layout's captured-ticket rule
-   in `using-sdlc-skills` (`git hash-object` over the whole file), and add
-   one row to its record (the ledger: add to it, never rewrite it; its path
-   is the capture's with `.ledger.md` in place of `.md`): that identity, the
-   state `captured`, and the source and read time as the evidence bound to
-   it. Never edit the capture afterwards; a changed ticket gets a successor
-   (Step 4).
+   in `using-sdlc-skills` (the first 7 characters of `git hash-object` over
+   the whole file), and add one row to its record (the ledger: add to it,
+   never rewrite it; its path is the capture's with `.ledger.md` in place of
+   `.md`): that identity, the state `captured`, and the source and read time
+   as bound evidence. Never edit the capture afterwards; a changed ticket
+   gets a successor (Step 4).
 
 ## Step 3: Settle what is unclear, then hand on
 

@@ -35,7 +35,7 @@ Open `assets/spec-template.md` before you start; each step below fills one of
 its sections.
 
 1. Write each functional requirement as an observable behavior with a stable
-   ID that no successor spec ever reuses:
+   ID that no successor spec ever gives to a different requirement:
 
    ```text
    Right: R-07 rejects an expired token with a 401
@@ -67,13 +67,13 @@ its sections.
 ## Step 3: Write and present
 
 1. Write the spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md` or the
-   user-set path. The spec is immutable: once written it is never edited, and
-   a revision is a new spec that names this one as its predecessor.
+   user-set path. The spec is immutable: a change to it is a new spec that
+   names this one as its predecessor, never an edit.
 2. Fill the template's high-risk classification section. If any answer there
    is off the ordinary route, or the user marks the work high-risk, run the
    review in `assets/spec-review.md` before presenting, with a reviewer who is
-   not the spec's sole author. That review is blocking: present nothing until
-   it completes.
+   not the spec's sole author. That review is blocking: do not present the
+   spec (Step 3.3) before it is done.
 3. Present:
 
    ```text
