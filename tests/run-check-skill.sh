@@ -32,7 +32,8 @@ too) and asserts
 skills/common/writing-skills/scripts/check-skill.sh --strict warns in the
 first and stays silent in the second; then builds arrows fixtures: an arrow
 in prose (must fail), arrows only in code, one inside a code span that wraps
-(must pass), and an arrow in prose after a wrapped span (must fail).
+(must pass), and an arrow in prose after a wrapped span or a lone backtick
+(must fail).
 Never mutates the checkout.
 
   --help    this text
@@ -127,6 +128,7 @@ build_arrows() {  # <dir> <mode: prose|code|wrapped>
       wrapped)
         printf -- '- Run `make\n'
         printf -- '  check` and tests fail \342\206\222 fix `the` cause.\n\n' ;;
+      stray) printf -- '- A stray ` tick, then tests fail \342\206\222 fix the cause.\n\n' ;;
     esac
     printf '```text\n'
     printf 'step 1 \342\206\222 step 2\n'
@@ -160,6 +162,15 @@ if grep -q 'prose-arrows.*line 9' "$tmp/wrapped.out"; then
   ok "prose-arrows names an arrow in prose after a wrapped code span"
 else
   bad "prose-arrows missed an arrow in prose after a wrapped code span"
+fi
+
+echo "--- check-skill.sh: prose-arrows checks prose after a backtick with no partner"
+build_arrows "$tmp/stray/arrows-fixture" stray
+bash "$CHECK" --strict "$tmp/stray/arrows-fixture" >"$tmp/stray.out" 2>&1
+if grep -q 'prose-arrows.*line 8' "$tmp/stray.out"; then
+  ok "prose-arrows names an arrow in prose after a lone backtick"
+else
+  bad "prose-arrows missed an arrow in prose after a lone backtick"
 fi
 
 echo "---"

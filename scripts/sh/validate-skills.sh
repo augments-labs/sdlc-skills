@@ -51,7 +51,7 @@ mapfile -t skills < <(find skills -name SKILL.md | sort)
 
 # Shared format and policy checks are delegated to the checker this library
 # ships (see the per-skill loop). It has to exist and answer --help here. In the
-# loop, a non-zero exit that reports no fail row is itself a FAIL naming the
+# loop, an exit above 1, or 1 with no fail row, is itself a FAIL naming the
 # checker, the skill, the exit code, and the first diagnostic, so a checker that
 # crashes fails the gate instead of passing every skill in silence.
 CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh

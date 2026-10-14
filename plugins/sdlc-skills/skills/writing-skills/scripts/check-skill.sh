@@ -274,19 +274,28 @@ HITS
   # An outcome written as `condition → act` makes the reader unpack a rule from
   # shorthand; the format asks for a sentence. Fenced blocks and inline code
   # spans are exempt: there an arrow can be the exact text shown or copied. A
-  # span can wrap onto the next line, so an unclosed backtick carries over until
-  # it closes, a blank line, or a fence.
+  # span can wrap onto the next line, so each paragraph (up to a blank line or a
+  # fence) is scanned whole; a backtick with no partner in it is a literal one.
   arrows="$(awk -v e="${fm_end:-0}" -v arrow="→" "$awk_snippet"'
-    NR<=e { next }
-    /^[[:space:]]*```/ { fence = !fence; open = 0; next }
-    fence { next }
-    /^[[:space:]]*$/ { open = 0; next }
-    {
-      line = (open ? "`" : "") $0; gsub(/`[^`]*`/, "", line)
-      open = index(line, "`") > 0
-      if (open) line = substr(line, 1, index(line, "`") - 1)
-      if (index(line, arrow)) print NR ":" snippet($0)
+    function flush(   text, out, rest, span, p, q, i, n) {
+      text = buf; out = ""
+      while ((p = index(text, "`")) > 0) {
+        rest = substr(text, p + 1); q = index(rest, "`")
+        if (q == 0) { out = out substr(text, 1, p); text = rest; continue }
+        # Drop the span but keep its line breaks, so line numbers still match.
+        span = substr(rest, 1, q - 1); gsub(/[^\n]/, "", span)
+        out = out substr(text, 1, p - 1) span; text = substr(rest, q + 1)
+      }
+      n = split(out text, lines, "\n")
+      for (i = 1; i <= n; i++) if (index(lines[i], arrow)) print start + i - 1 ":" snippet(orig[i])
+      buf = ""; cnt = 0
     }
+    NR<=e { next }
+    /^[[:space:]]*```/ { flush(); fence = !fence; next }
+    fence { next }
+    /^[[:space:]]*$/ { flush(); next }
+    { if (cnt++ == 0) start = NR; orig[cnt] = $0; buf = (cnt > 1 ? buf "\n" : "") $0 }
+    END { flush() }
   ' "$skill")"
   while IFS= read -r hit; do
     [ -n "$hit" ] || continue
