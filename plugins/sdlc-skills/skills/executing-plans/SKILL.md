@@ -42,8 +42,8 @@ This skill never decides what happens to the branch.
 
 If every task's `Files` lies outside any git-tracked project, or the index says
 the deliverable is not a repository change, record `workspace: not applicable`
-in the ledger and skip 2.2. If one task is inside a repository, Step 2.2 and
-Step 5.3 apply to the whole plan.
+in the ledger and skip 2.2. If even one task is inside a repository, Step 2.2
+and Step 5.3 apply to the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -89,10 +89,10 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - If the approval row records `waves: yes` and the ready set passes the
-     independence test of `dispatching-parallel-agents` Step 1, invoke
-     `dispatching-parallel-agents` for that set; otherwise run one task at a
-     time.
+   - If the approval row records `waves: yes`, invoke
+     `dispatching-parallel-agents` for the ready set that passes the
+     independence test of `dispatching-parallel-agents` Step 1; otherwise run
+     one task at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. For a dispatched task, read
    its raw diff, result revision, and evaluator output, never its summary. A
@@ -109,7 +109,7 @@ mode; switching needs the user's direct answer.
      check
    Mirror only the task row's checkbox and adjacent label. **Do not change the
    index's `Status` header or normalize it out of the plan's identity.**
-7. After parallel work, rerun the combined gate on the merged state before any
+7. After parallel work, rerun the combined check on the merged state before any
    of its tasks is `done`.
 8. Under `per task` cadence only, **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then

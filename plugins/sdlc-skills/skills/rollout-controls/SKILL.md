@@ -149,8 +149,8 @@ switch in a shared environment, or expands a rollout.
 
 ## Common mistakes
 
-- Refactoring or deleting the prior path while adding the switch, so that
-  off no longer means before: keep the prior path reachable, unchanged,
+- Refactoring or deleting the prior path while adding the switch, so off
+  no longer means before: keep the prior path reachable, unchanged,
   until the removal follow-up runs.
 - Lowering a draft threshold so the first stage can pass: thresholds are the
   owner's; a stage that cannot meet them is a finding for the owner.

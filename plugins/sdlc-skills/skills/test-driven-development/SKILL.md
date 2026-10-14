@@ -38,12 +38,13 @@ change. Watch it happen; keep the output.
 
    Never invent a failure for behavior that already works.
 
-   A task: move `parse_price` into the `money` module and make it reject a
-   negative amount, which it accepts today. That is two cycles. The move is
-   behavior that must survive unchanged: Step 3, with the existing green
-   tests as the check once they are accepted as covering it. The rejection is
-   new behavior: Step 2, with its own RED first. One test that fails because
-   the import path moved proves neither.
+   A task: move `parse_price` into the `money` module, keeping its old import
+   working, and make it reject a negative amount, which it accepts today.
+   That is two cycles. The move is behavior that must survive unchanged:
+   Step 3, with the existing green tests as the check once they are accepted
+   as Step 3.1 requires. The rejection is new behavior: Step 2, with its own
+   RED first. One test that fails because the import path moved proves
+   neither.
 
 ## Step 2: New behavior, RED then GREEN
 
@@ -58,9 +59,9 @@ change. Watch it happen; keep the output.
    Not RED:             1 skipped, 0 failed
    ```
 
-   If it failed for the wrong reason, or the failure is unexplained, invoke
-   `debugging` before any product code, passing back the attempt count
-   `debugging` handed this cycle when the cycle came from `debugging`.
+   On a wrong reason or an unexplained result, invoke `debugging` before any
+   product code, passing back the attempt count `debugging` handed this cycle
+   when the cycle came from `debugging`.
 4. Keep the output.
 5. Record the test's identity, the identity of the evaluator (the check that
    decides pass or fail), and the expected observable as of this RED, under
@@ -94,9 +95,9 @@ change. Watch it happen; keep the output.
 
 1. If chronology is part of the claim, use an external observer or immutable
    checkpoints that the evaluator reruns. Logs written by the state under
-   check (the exact tree being judged) are not evidence. Never write
+   check (the exact state being judged) are not evidence. Never write
    checkpoint history after the fact.
-2. Restore only the changes this task made whose pre-state you recorded.
+2. Restore only the mutations this task made whose pre-state you recorded.
    Leave anything else pending for `finishing-a-branch`. Never delete
    inherited, shared, or user state to manufacture a cycle.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on the exact state
