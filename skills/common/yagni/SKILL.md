@@ -116,8 +116,8 @@ them.
   security, accessibility, or scope the user explicitly asked for.
 - **Never minimise away:** preservation, compatibility or parity, durable-data
   safety, observability, recovery or rollback, or a required migration or
-  assurance check (a command or an accountable decision that must accept the
-  change). The contract that owns each one defines the guarantee;
+  assurance check (a command, a rubric, or an accountable decision that must
+  accept the change). The contract that owns each one defines the guarantee;
   YAGNI cannot silently weaken it.
 - Minimise only ceremony that owns no guarantee: duplicate checks, speculative
   abstractions, and platforms or knobs nobody committed to.

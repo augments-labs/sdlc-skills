@@ -57,9 +57,9 @@ A prototype answers one question and dies. Its only job is to turn an uncertaint
 3. Remove only the scratch artifacts registered in Step 1 inside the
    disposable boundary, and only under current authority for those exact
    targets. To dispose of a repository branch, worktree, ref, or workspace,
-   invoke `finishing-a-branch`; never do it from this skill. External or destructive cleanup needs its
-   own decision, current and scoped to that cleanup. Otherwise preserve
-   what remains and report cleanup as pending.
+   invoke `finishing-a-branch`; never do it from this skill. External or
+   destructive cleanup needs its own decision, current and scoped to that
+   cleanup. Otherwise preserve what remains and report cleanup as pending.
 4. Never delete pre-existing, shared, user-owned, or ownership-uncertain
    state.
 

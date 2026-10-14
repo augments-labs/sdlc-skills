@@ -55,11 +55,12 @@ detail a form needs:
    it fills in and emits — a document template — goes to `assets/`. A file it
    reads to decide or check — a rubric, a checklist, a reviewer brief, a worked
    example that rule 2 keeps out of the body, a lookup table — goes to
-   `references/`. Bundled executable code goes to `scripts/`. A body invokes a bundled script as `bash scripts/{{name}}.sh`;
-   the bare path appears only in `## Available scripts` listings. Keep short
-   questions or response examples inline when their exact shape matters at that
-   step. Read references/template-format.md before writing or editing a file
-   under assets/.
+   `references/`. Bundled executable code goes to `scripts/`. A body invokes a
+   bundled script as `bash scripts/{{name}}.sh`; the bare path appears only in
+   `## Available scripts` listings. Keep short questions or response examples
+   inline when their exact shape matters at that step. Read
+   references/template-format.md before writing or editing a file under
+   assets/.
 4. **Scope and scale-down up top.** State applicability and any skip conditions.
    A mandatory check, or a skill that is one, may have no skip; define its
    smallest useful check instead.
@@ -86,8 +87,8 @@ detail a form needs:
    "would the agent get this wrong without this?" If no, cut it. If unsure, run
    a throwaway probe; read `references/testing.md` before writing it up. Never
    cut a hard stop or a destructive-action guard. Reword a hard stop, a guard,
-   or a rationalization row only so that the new words cover everything the
-   old ones did, and nothing more.
+   or a rationalization or red-flag row only so that the new words cover
+   everything the old ones did, and nothing more.
 8. **Prescribe exactly only where the operation is fragile** — git mutations,
    dispatch, binding evidence to a state, destructive actions. Everywhere else
    state the goal and its reason in one sentence. Give one default and one

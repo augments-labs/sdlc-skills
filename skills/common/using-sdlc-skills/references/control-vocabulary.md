@@ -6,9 +6,10 @@ when a term below appears in a template, a reference, or a review prompt and its
 exact sense matters. An always-loaded body defines its own terms where it uses
 them; none of them depends on this file.
 
-Each entry leads with the plain term rewritten skill bodies use. Where older
-skills, templates, and scripts still say another word, that word follows in
-italics; the two mean exactly the same thing.
+Each entry leads with the plain term a rewritten skill body uses unless it
+defines another, as the router does for *gate*. Where older skills,
+templates, and scripts still say another word, that word follows in italics;
+the two mean exactly the same thing.
 
 ## Identity
 
@@ -19,7 +20,8 @@ ID survives reassignment, and a retry gets a new attempt ID.
 
 - **State identity** — the value that identifies the exact state a check ran
   on: a hash of the working-tree content, or with `--committed`, the commit.
-  `scripts/state-identity.sh` reports it as `source.digest`.
+  `verification-before-completion`'s `scripts/state-identity.sh` reports the
+  content hash as `source.digest`, and the commit as `source.head`.
   A result is bound to the state identity it ran on.
 
 ## What is being judged
