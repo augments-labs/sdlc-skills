@@ -41,9 +41,9 @@ or to a remote, and no discard or cleanup.
    verdict (shallow `self-reviewed: ready`, or the required independent review
    with no blocker) to one identity for the state under check: the full
    revision when the script reports `dirty.clean: true`, the working-tree
-   hash otherwise. Bind the live remote or PR state as well.
+   hash (`dirty.digest`) otherwise. Bind the live remote or PR state as well.
 4. If a required readiness verdict is missing, keep the requested action
-   pending; offer keep-as-is, or obtain the missing review under current
+   pending; offer keep-as-is or obtain the missing review under current
    authority.
 5. For a PR-only close or reopen, record the live PR, its head and base refs,
    and the resources that stay in place.
@@ -64,20 +64,20 @@ or to a remote, and no discard or cleanup.
 9. For PR creation or update, prepare the description from the project's
    contribution rules and the template the base branch carries; if there is
    none, open `assets/pr-description.md` before writing it. Fill the evidence
-   fields only from the bound ledger and verdict; if the project's template
-   has no place for the check results, the review verdict, or what was not
-   verified, add them. For other actions, prepare the fields that apply
+   fields only from the bound ledger and verdict; add whichever of the check
+   results, the review verdict, and what was not verified the project's
+   template has no place for. For other actions, prepare the fields that apply
    without inventing a PR.
 
 ## Step 2: Present the choices
 
 1. Read `references/branch-state.md` before preparing the transition
-   descriptor that applies (the reference's record of exactly what one
-   transition will do). If a direct instruction, or proof it happened from a
-   trusted source (the reference calls it a receipt), already covers the
-   descriptor's current targets, action, and payload, record that choice and
-   go on to Step 3. If no choice exists yet, offer only the entries the state
-   permits, then stop (`Gates:` summarizes the checks bound in Step 1.3):
+   descriptor that applies (the record, defined in the reference, of exactly
+   what one transition will do). If a direct instruction, or a trusted receipt
+   (proof that the choice was given), already covers the descriptor's current
+   targets, action, and payload, record that choice and go on to Step 3.
+   Otherwise, offer only the entries the state permits, then stop (`Gates:`
+   summarizes the checks bound in Step 1.3):
 
    ```text
    Branch {{branch}} → {{base}}. Gates: {{summary}}. Review: {{verdict}}.
@@ -112,8 +112,8 @@ or to a remote, and no discard or cleanup.
    follow the reference's recovery for it.
 3. Remove an owned worktree only after confirmed integration. Leave detached,
    shared, user-owned, and host-owned resources in place.
-4. **REQUIRED SUB-SKILL:** if the result is a releasable or running
-   artifact, invoke `release-readiness`. Canary, deploy, publish, and
+4. **REQUIRED SUB-SKILL:** if a releasable or running artifact is
+   involved, invoke `release-readiness`. Canary, deploy, publish, and
    distribute are its verdict, not this skill's.
 
 ## Discard is a separate destructive path
