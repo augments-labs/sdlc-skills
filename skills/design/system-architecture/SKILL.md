@@ -5,62 +5,70 @@ description: "Designs the target system for approved requirements: components, b
 
 # System Architecture
 
-Design the shape of the solution before anyone builds it: what the pieces are, how they fit, and where the seams go. Aim for **deep modules**, not a sprawl of shallow ones.
+Design the shape of the solution before anyone builds it: what the pieces are,
+how they fit, and where the seams go. Aim for **deep modules** (a small
+interface hiding a lot of behavior), not a sprawl of shallow ones.
 
 ## When to use
 
-- You have approved requirements and the work is non-trivial — a new subsystem, several components, real integration.
-- **Skip** for a small feature; keep its structure in the bounded task or plan
-  rather than creating a separate architecture artifact.
-- This skill owns the target system's structure. `migration-strategy` owns how an
-  existing system reaches that target; `verification-strategy` owns the
-  initiative-wide proof battery.
+- You have approved requirements and the work is not trivial: a new subsystem,
+  several components, real integration.
+- **Skip** a small feature; keep its structure in its own task or plan rather
+  than writing a separate architecture document.
+- This skill owns the target system's structure. `migration-strategy` owns how
+  an existing system reaches that target; `verification-strategy` owns the set
+  of checks the whole initiative runs.
 
 ## Step 1: Trace and structure
 
 Open `assets/architecture-section.md` before the steps below fill it in.
 
 1. Map every requirement, preserved obligation, and significant risk to the
-   component, interface, and owning gate reference covering it. Define no
-   assurance gates here. Look each gate reference up where its owner
-   keeps it: a placeholder, an invented ID, or a gate that does not exist
-   there leaves its row unmapped.
-   Unmapped row → approval blocked.
-2. Name each module by what it does and does not do. Removing it would spread
-   its complexity across callers → it stays. Complexity merely relocates →
-   merge it.
-3. Follow request, response, event, and sensitive-data paths from entry to
-   effect. Mark ownership, authorization boundaries, source-of-truth
-   transitions.
-4. Per dependency and asynchronous path, write timeouts, retry and
-   idempotency, degraded operation, recovery, how each is exercised.
+   component, the interface, and the owning gate reference that cover it. A
+   gate here is a check that must accept the result and that its owner
+   defines elsewhere; define no assurance gates here. Look each gate reference
+   up where its owner keeps it: a placeholder, an invented ID, or a gate that
+   does not exist there leaves its row unmapped. If a row is unmapped,
+   approval is blocked.
+2. Name each module by what it does and by what it does not do. If removing it
+   would spread its complexity across its callers, it stays. If the complexity
+   would merely move elsewhere, merge it.
+3. Follow each request, response, event, and sensitive-data path from entry to
+   effect. Mark who owns it, where it crosses an authorization boundary, and
+   where the source of truth changes hands.
+4. For each dependency and each asynchronous path, write its timeout, its
+   retry and idempotency, what still works when it is degraded, how it
+   recovers, and how each of these is exercised (the test, fault injection,
+   or drill).
 
 ## Step 2: Operational views and seams
 
 1. Cover each view that affects correctness: deployment and runtime topology,
-   scale and resource budgets, observability, rollout and compatibility
-   capabilities. Transition procedure belongs to the migration contract; do
-   not restate it.
-2. Omitted view → a skip record with the fields in the template's
-   operational-views table. Never drop one as "inapplicable" without it.
+   scale and resource budgets, observability, and the capabilities that make
+   rollout and compatibility possible. The transition procedure belongs to the
+   migration contract; do not restate it here.
+2. If you leave a view out, write a skip record with the fields the template's
+   operational-views table lists. Never drop a view as "inapplicable" without
+   one.
 3. Place a seam only for repeated behavior with a stable owner and measured
-   change friction, or one real volatile or external boundary with measured
-   impedance, failure policy, or test isolation. Hypothetical variation earns
-   none.
-4. Hard-to-reverse choice → invoke `architecture-decisions`. Unresolved
-   design-changing choice → invoke `clarifying-intent`. Use the domain's language
-   throughout.
+   change friction, or for one real volatile or external boundary with
+   measured impedance (a mismatch across it), a failure policy, or test
+   isolation. Variation that is only hypothetical earns none.
+4. If a choice is hard to reverse, invoke `architecture-decisions`. If a
+   choice that would change the design is unresolved, invoke
+   `clarifying-intent`. Use the domain's language throughout.
 
 ## Step 3: Write, review, present
 
-1. Write the immutable section to
+1. Write the section, which is never edited once its identity is issued, to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
-   preserving approved sections around it. Fill the header: identity,
-   predecessor, approval rule, the location of its ledger (append-only,
-   outside the design), stable ID delta.
-2. Fill the classification block. Any answer off the ordinary route, or the
-   user marks the work high-risk → run `assets/design-review.md` before
-   presenting. Blocking.
+   preserving the approved sections around it. Fill the header: identity,
+   predecessor, approval rule, where its decision record lives (the ledger:
+   add to it, never rewrite it, and keep it outside the design), and the
+   stable ID delta (each ID as added, changed, removed, or preserved).
+2. Fill the high-risk classification block. If any answer is off the ordinary
+   route, or the user marks the work high-risk, run
+   `assets/design-review.md` before presenting. That review is blocking.
 3. Present:
 
    ```text
@@ -76,20 +84,20 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
-4. Option 1, and every design section the work needs is approved →
+4. On option 1, if every design section the work needs is approved,
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
 
 ## Gotchas
 
-- Step 1's mapping table needs a real owning gate for every row, but
-  this skill defines no assurance gates itself. A row naming a placeholder or
-  a gate its owner never defined still reads as mapped on the page; only the
-  lookup in Step 1 shows it is unmapped.
+- Step 1's mapping table needs a real owning gate for every row, but this
+  skill defines no assurance gates itself. A row that names a placeholder, or
+  a gate its owner never defined, still reads as mapped on the page; only the
+  lookup in Step 1 shows that it is unmapped.
 - The Skip condition in *When to use* is checked once, at intake. Nothing
-  here re-checks it as scope grows, so a feature that starts small and
-  later crosses into several components can stay embedded in its task plan
-  instead of getting this skill's own architecture record.
+  here re-checks it as scope grows, so a feature that starts small and later
+  crosses into several components can stay embedded in its task plan instead
+  of getting this skill's own architecture record.
 
 ## Common mistakes
 
-- Shallow modules — an interface as wide as the implementation behind it.
+- Shallow modules: an interface as wide as the implementation behind it.
