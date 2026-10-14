@@ -6,31 +6,23 @@
 # left, so entries leave as skills are rewritten. Never add one: a new skill
 # or an edit writes sentences, and review rejects an addition. Delete the file
 # once it is empty.
-architecture-decisions
 changing-a-live-schema
-coding-standards
 complexity-audit
 containing-an-incident
-data-model
 debugging
 define-goals
 diagnosing-a-session
 executing-plans
 feasibility-check
-migration-strategy
 post-mortem
 receiving-code-review
 refactor-architecture
 requesting-code-review
 reviewing-a-pr
-reviewing-plans
 rollout-controls
 scoping
 security-audits
 subagent-driven-development
-system-architecture
 test-driven-development
-ui-ux-design
 verification-strategy
 visual-ui-verification
-writing-plans
