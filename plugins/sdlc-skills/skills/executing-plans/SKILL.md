@@ -89,10 +89,10 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - If the approval row records `waves: yes`, invoke
-     `dispatching-parallel-agents` for the ready set that passes the
-     independence test of `dispatching-parallel-agents` Step 1; otherwise run
-     one task at a time.
+   - If the approval row records `waves: yes` and there is a ready set that
+     passes the independence test of `dispatching-parallel-agents` Step 1,
+     invoke `dispatching-parallel-agents` for that set; otherwise run one task
+     at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. For a dispatched task, read
    its raw diff, result revision, and evaluator output, never its summary. A
