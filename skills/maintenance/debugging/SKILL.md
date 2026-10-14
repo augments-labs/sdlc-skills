@@ -37,8 +37,7 @@ worsened impact or a newly available lever reopens containment.
    ranked list.
 3. If the failure is probabilistic, pre-register the experiment as
    `references/probabilistic-evidence.md` says before the first run: freeze
-   the judge (the rule that decides the result) and issue the
-   completed descriptor.
+   the judge and issue the completed descriptor.
 4. If no meaningful loop is achievable, stop. Say what you tried and ask for
    what would unblock it.
 5. Reproduce. Confirm the loop observes *this* bug, not a neighbouring one.
