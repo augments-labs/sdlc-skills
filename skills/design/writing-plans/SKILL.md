@@ -5,10 +5,8 @@ description: "Writes an executable plan: ordered tasks, their dependencies, and 
 
 # Writing Plans
 
-Write a small durable index plus one thin contract per task, get the exact
-version approved, then hand it to the executor (the skill that runs the plan)
-the chosen mode names. Leave the implementation to the executor: write what
-each task must make true and how that is judged, not the code.
+Leave the implementation to the executor: write what each task must make
+true and how that is judged, not the code.
 
 ## When to use
 
@@ -22,9 +20,9 @@ each task must make true and how that is judged, not the code.
   section). High-risk means any answer there leaves the ordinary route, or
   the user marks the work high-risk. For a high-risk target, read the
   approved migration and assurance contracts before writing a task. If they
-  are missing, plan only the gate that is missing (the check that must accept
-  the work before it may go on), taking the exact proposed contract as its
-  input, and put no target work in the plan; record unsettled facts as
+  are missing, plan only the gate that is missing, taking the exact proposed
+  contract as its input, and put no target work in the plan; record
+  unsettled facts as
   evidence, never as accepted deviations.
 - Write separate plans for independent subsystems unless one cutover or
   rollback makes them one initiative.
@@ -56,8 +54,7 @@ each task must make true and how that is judged, not the code.
 ## Step 2: Write the tasks
 
 1. Slice vertically: one evaluable capability per task. Split only at a real
-   check boundary: a place where each piece has its own check that can
-   accept it. For high-risk target work, read
+   check boundary. For high-risk target work, read
    `references/scalable-transformation.md` before slicing, and copy the
    transition policy from the migration contract.
 
@@ -137,8 +134,7 @@ each task must make true and how that is judged, not the code.
    turn.
 3. Under a standing order, proceed without the pause only when its scope,
    owner, constraints, and mode explicitly cover unseen plan versions. First
-   bind the exact version to that receipt (the trusted record of the
-   standing order).
+   bind the exact version to that receipt.
 4. On approval, in a separate turn, ask the mode question from
    `assets/mode-question.md` when this version's row in the
    `External decision ledger` (the ledger: add to it, never rewrite it; it

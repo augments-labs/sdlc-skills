@@ -5,9 +5,8 @@ description: "Designs a user interface's flow, states, hierarchy, responsive beh
 
 # UI/UX Design
 
-Design the experience and decide its direction before anything is built. In an
-existing product, the current system is evidence: extend it unless the brief
-explicitly calls for change.
+In an existing product, the current system is evidence: extend it unless the
+brief explicitly calls for change.
 
 ## When to use
 
@@ -44,8 +43,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 ## Step 2: Frame, flow, hierarchy
 
 1. Name the user's situation, the interface's single primary job, its primary
-   affordance (the one control or gesture that does that job), and what
-   success and failure each look like.
+   affordance, and what success and failure each look like.
 2. Write each key journey as *given / when / then*, with its entry,
    completion, escape, and recovery.
 3. Cover the hidden states wherever they can occur: empty, loading, partial,
@@ -61,10 +59,8 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    product-specific system. While the hierarchy is unresolved, add no
    decoration around it.
 2. If a visual, spatial, or motion decision is open, read
-   `references/visual-decisions.md` before building the comparison surface
-   (what shows the variants for comparison: a project preview, a page,
-   screenshots, or wireframes), then build it on the first medium in the
-   reference's order that fits. A self-contained local page starts from
+   `references/visual-decisions.md` before building the comparison surface,
+   then build it on the first medium in the reference's order that fits. A self-contained local page starts from
    `assets/comparison-template.html` before its first variant is written.
    Write 2–4 controlled, meaningfully different variants (requirements,
    content, data, device, and baseline accessibility held the same). Give
@@ -81,9 +77,7 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 4. Skip the surface only with a recorded reason, which must be one of these:
    every open question is conceptual (its answer does not depend on seeing
    anything); the scale-down clause under *When to use* applies; or the
-   uncertainty is feasibility, in which case invoke `prototyping`. Answering
-   "what should this look like" in prose alone is the failure this step
-   prevents.
+   uncertainty is feasibility, in which case invoke `prototyping`.
 5. Fill the template's *Conditions* table for all eight families. For each
    family not answered, write a skip record with an accountable owner.
 

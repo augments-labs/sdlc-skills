@@ -39,7 +39,7 @@ The library owns many *copies* of each *book*. A *patron* borrows a copy; a *loa
 - `due_at` — timestamp, required.
 - `returned_at` — timestamp, optional. **Null semantics: null means the loan is still open.** This one column is how "currently held" and "overdue" are answered, so its meaning must be stated, not implied.
 
-Note the deliberate choice: a loan is never deleted and never edited into a new loan. Returning closes it; borrowing again creates a new row. History is free; mutable loans would erase it.
+Note the deliberate choice: a loan is never deleted and never edited into a new loan. Returning closes it; borrowing again creates a new row.
 
 ## Relationships
 
@@ -49,7 +49,7 @@ Note the deliberate choice: a loan is never deleted and never edited into a new 
 
 ## State transitions
 
-`Copy.status` is a lifecycle, not just an enumeration — write down the moves, because a transition you don't draw is one the code will permit by accident:
+`Copy.status` is a lifecycle, not just an enumeration — write down the moves:
 
 - `available → on_loan` — borrow; the only way a copy leaves the shelf legitimately.
 - `on_loan → available` — return closes the open loan and frees the copy in the same transaction.

@@ -5,8 +5,6 @@ description: "Records a significant, hard-to-reverse technical decision and the 
 
 # Architecture Decisions
 
-An ADR (Architecture Decision Record) captures *why*, not just *what*.
-
 ## When to use
 
 - Record a decision only when **all three** hold: it is **hard to reverse**,
@@ -15,8 +13,7 @@ An ADR (Architecture Decision Record) captures *why*, not just *what*.
   boundary, a framework, a public contract, or a security model is such a
   decision.
 - **Skip** when any of the three is missing. A reversible, obvious, or
-  inevitable choice (a variable name; the only option that could work) is
-  noise as an ADR.
+  inevitable choice is noise as an ADR.
 
 ## Step 1: Draft the ADR
 
@@ -37,8 +34,7 @@ comparing against a filled example.
    rejections; never edit them away.
 5. Record the consequences and the reversal path: what the choice commits you
    to, what it means for data and migrations, how to undo it, and what it
-   closes off. If the record lists only upsides, the decision was not
-   examined.
+   closes off.
 
 ## Step 2: Persist, then challenge
 

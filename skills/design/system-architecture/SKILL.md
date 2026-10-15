@@ -5,10 +5,6 @@ description: "Designs the target system for approved requirements: components, b
 
 # System Architecture
 
-Design the shape of the solution before anyone builds it: what the pieces are,
-how they fit, and where the seams go. Aim for **deep modules** (a small
-interface hiding a lot of behavior), not a sprawl of shallow ones.
-
 ## When to use
 
 - You have approved requirements and the work is not trivial: a new subsystem,
@@ -24,9 +20,9 @@ interface hiding a lot of behavior), not a sprawl of shallow ones.
 Open `assets/architecture-section.md` before the steps below fill it in.
 
 1. Map every requirement, preserved obligation, and significant risk to the
-   component, the interface, and the owning gate reference that cover it. A
-   gate here is a check that must accept the result and that its owner
-   defines elsewhere; define no assurance gates here. Look each gate reference
+   component, the interface, and the owning gate reference that cover it.
+   Its owner defines the gate elsewhere; define no assurance gates here.
+   Look each gate reference
    up where its owner keeps it: a placeholder, an invented ID, or a gate that
    does not exist there leaves its row unmapped. If a row is unmapped,
    approval is blocked.
@@ -52,11 +48,11 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    one.
 3. Place a seam only for repeated behavior with a stable owner and measured
    change friction, or for one real volatile or external boundary with
-   measured impedance (a mismatch across it), a failure policy, or test
-   isolation. Variation that is only hypothetical earns none.
+   measured impedance, a failure policy, or test isolation. Variation that
+   is only hypothetical earns none.
 4. If a choice is hard to reverse, invoke `architecture-decisions`. If a
    choice that would change the design is unresolved, invoke
-   `clarifying-intent`. Use the domain's language throughout.
+   `clarifying-intent`.
 
 ## Step 3: Write, review, present
 
@@ -65,7 +61,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    preserving the approved sections around it. Fill the header: identity,
    predecessor, approval rule, where its decision record lives (the ledger:
    add to it, never rewrite it, and keep it outside the design), and the
-   stable ID delta (each ID as added, changed, removed, or preserved).
+   stable ID delta.
 2. Fill the high-risk classification block. If any answer is off the ordinary
    route, or the user marks the work high-risk, run
    `assets/design-review.md` before presenting. That review is blocking.
@@ -97,7 +93,3 @@ Open `assets/architecture-section.md` before the steps below fill it in.
   here re-checks it as scope grows, so a feature that starts small and later
   crosses into several components can stay embedded in its task plan instead
   of getting this skill's own architecture record.
-
-## Common mistakes
-
-- Shallow modules: an interface as wide as the implementation behind it.
