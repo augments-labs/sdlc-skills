@@ -104,6 +104,7 @@ Include gates that held so corrective work does not weaken them.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `{{A-01 + definition digest}}` | `{{cause}}` | `{{control}}` | `{{exact rule + trusted identity-bound receipts/pending}}` | `{{dates}}` | `{{IDs/none}}` | `{{plan}}` | `{{metric/target/window}}` | `{{ledger state and receipt ID}}` |
 
+Receipts and `External state` are `pending` at issue; the ledger holds them.
 Promises rank below enforceable controls. Multiple actions for one cause are
 valid only when they protect distinct layers or outcomes; every action must have
 its own measurable contribution.

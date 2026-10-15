@@ -157,10 +157,12 @@ computing the identity. On mismatch, the external ledger wins.
 
 The external ledger is the single source of truth for progress. Each row binds
 plan version, task ID, attempt/result identity, evaluator evidence, owner/time,
-and one state: `todo / in progress / done / done with concerns / blocked / needs
-context / cancelled / superseded`. `Done` requires green evidence; concerns stay
-durable and cannot count toward a gate until classified as non-blocking evidence
-or accepted by an exact owning deviation/exclusion with compensating gate.
+and one state, in the columns the artifact layout reference (`using-sdlc-skills`)
+gives an execution row: `todo / in progress / done / done with concerns /
+blocked / needs context / cancelled / superseded`. `Done` requires green
+evidence; concerns stay durable and cannot count toward a gate until classified
+as non-blocking evidence or accepted by an exact owning deviation/exclusion
+with compensating gate.
 Blocked/needs-context retains blocker, owner, and next gate. Cancellation
 or supersession requires the approved plan change/decision that removed the task.
 ```

@@ -61,7 +61,11 @@ they may not take. This skill never decides what happens to the branch.
 2. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`. One worktree holds the
    whole plan; a worker writes inside it, or inside the wave worktree the
    controller cut for it from that worktree's HEAD. Never hand a worker the
-   shared checkout.
+   shared checkout. Before the first dispatch, confirm that the workspace
+   record's `Local commit authority` holds a yes; if it holds none, ask the
+   checkpoint question `using-git-worktrees` gives and record the answer. On
+   a no, stop: review packages need commits, so this mode cannot run; hand
+   the mode back to the `Approval rule` owner.
 3. Open the ledger:
 
    ```bash
@@ -70,10 +74,12 @@ they may not take. This skill never decides what happens to the branch.
 
    Line 1 is the plan's identity. After a compaction, read the ledger before
    anything else and re-check it with `--check`: the ledger, not your memory of
-   the conversation, is where the run resumes. It holds this run's
-   dispatches, rulings, and findings; task states go to the index's
-   `External execution ledger`, in the header `executing-plans` writes, and
-   the decision ledger stays where the index points.
+   the conversation, is where the run resumes. It lives at
+   `.sdlc-skills/evidence/{{plan directory name}}/sdd-ledger.md` and holds
+   this run's dispatches, rulings, and findings; task states go to the
+   index's `External execution ledger`, one row per task state as
+   `artifact-layout.md` maps an execution row, and the decision ledger stays
+   where the index points.
 4. Check the plan contract before the first dispatch: every `Consumes` names
    an earlier task's exact `Produces`; every `Depends on` names a task that is
    not cancelled; no task edits its own judge unless its approved `Evaluator
@@ -104,8 +110,9 @@ and ask the user only when the next act would be:
 
 Everything else is a ruling. Write it in the ledger with its reason and carry it
 into the next brief. A change to what was approved — scope, interface, evaluator,
-ownership, mode — is never a ruling: write the proposed successor, ask for
-reapproval, end the turn.
+ownership — is never a ruling: write the proposed successor, ask for
+reapproval, end the turn. A mode change is never a ruling either: it takes the
+`Approval rule` owner's direct answer, as Step 1.4 says.
 
 ## Step 4: Dispatch one task
 
@@ -159,17 +166,20 @@ reapproval, end the turn.
      or ruled blocking with the failure it causes. It never opens a round or
      a task by itself.
 
-   Rounds 1 to 3 go back to the same implementer, which still holds the
-   task. Rounds 4 and 5 go to a fresh implementer one tier up, briefed from
-   the findings file; it has read nothing.
+   The rounds are the task's repair budget from `receiving-code-review`:
+   five unless the user or the plan sets another number, and the `per task`
+   review rounds of 5.6 count against the same budget. All but the last two
+   rounds go back to the same implementer, which still holds the task. The
+   last two go to a fresh implementer one tier up, briefed from the findings
+   file; it has read nothing.
 3. Fill `assets/re-reviewer.md` when a fix round returns, so the second look
    judges the fix and its blast radius rather than the task again, rendering it
    with `bash scripts/task-brief.sh`, which inserts
    `assets/re-reviewer-report.md` before dispatch.
-4. After five rounds without convergence, stop dispatching, write the
+4. When the budget is spent without convergence, stop dispatching, write the
    adjudication in the ledger (the finding, what each round changed, why it
    did not converge), record the task `blocked` as `unconverged`, and hand
-   the user that row. Never open a sixth round.
+   the user that row. Never open a round past the budget.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision, with the task's
    `Evaluator`, every `VCONF` row, and `visual-ui-verification` for an
@@ -179,7 +189,8 @@ reapproval, end the turn.
    those branches into the plan worktree (a blocked task's branch stays out)
    and run this check on the merged HEAD before any wave task is `done`. If
    that check on the merged HEAD is red, open a fix round in the plan
-   worktree on the task it names, then merge and check again. The wave
+   worktree on the task it names, counted against that task's repair budget
+   and ending in 5.4's adjudication, then merge and check again. The wave
    worktrees and branches are task-owned resources in the workspace record
    for `finishing-a-branch`.
 
@@ -206,7 +217,9 @@ In the worktree from Step 2, in order:
    are claims; this is the evidence.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch.
    Its fix rounds run under `receiving-code-review`'s convergence check and
-   budget, as the plan-end review in `executing-plans` does.
+   plan-end budget. You run only the triage and the budget: each fix set
+   goes to a fresh implementer through the Step 4 brief and the Step 5
+   review loop.
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
@@ -258,8 +271,8 @@ the evidence. It is never a task because someone wrote it down.
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
   yourself; that is what Step 5.5 is for.
-- A fresh implementer in round 4 has read nothing. "Fix the findings" names a
-  file it does not have; give it the findings path and the task path.
+- A fresh implementer in a late round has read nothing. "Fix the findings"
+  names a file it does not have; give it the findings path and the task path.
 - A worker that dispatches its own workers returns a diff nobody reconciled and
   dispatch receipts you never held. Every brief here prohibits subdispatch;
   keep it.

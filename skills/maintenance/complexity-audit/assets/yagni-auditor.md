@@ -33,7 +33,7 @@ writes the canonical audit.
 
 Unknown static, dynamic, reflection, registration, configuration, generated,
 or external use is `investigate`. Absence from one search is not deletion proof.
-A deprecation record with the owner's removal row in its ledger, or a completed
+A deprecation record with the owner's `remove` row in its ledger, or a completed
 migration contract, supplies that proof; anything less is `investigate`, and
 confidence never counts. Line or dependency reduction is a consequence, never
 the verdict.

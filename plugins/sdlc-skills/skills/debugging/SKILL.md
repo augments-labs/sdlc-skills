@@ -93,8 +93,9 @@ stop before a fourth: the class is `unconverged`, which means no further patch
 on the current model, not an end to diagnosis.
 Re-examine the reproduction, the causal model, the layer, the environment,
 the effect of the instrumentation itself, the assumptions, and the design;
-treat architecture as one possible finding, not the answer. Update the model
-or escalate with the ledger.
+treat architecture as one possible finding, not the answer. Update the model,
+once per failure class, or escalate with the ledger. If three fixes on the
+updated model also miss, escalate with the ledger.
 
 ## Gotchas
 

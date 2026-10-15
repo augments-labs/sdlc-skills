@@ -40,13 +40,15 @@ enter this skill.
    omission record a decision that someone is accountable for.
 3. Fill every bullet of `Risk-reduction claim` for each action. Never claim
    that recurrence is impossible.
-4. Challenge the draft. Fill `assets/escape-path-challenger.md` before
+4. Fill the `Corrective actions` rows, each mapped to a structural cause;
+   receipts and `External state` stay `pending` and live in the ledger.
+5. Challenge the draft. Fill `assets/escape-path-challenger.md` before
    dispatching it read-only as `dispatching-parallel-agents` Step 2 says. A
    serious incident without a challenger needs the omission the
    `Expected reviewers` field requires. Record a decision on every finding; a
    `findings` verdict blocks issuing the analysis until the corrected draft
    is challenged again.
-5. Issue the analysis, which is never edited after issue, with its
+6. Issue the analysis, which is never edited after issue, with its
    `External lifecycle ledger` (the ledger: add to it, never rewrite it; it
    sits outside the issued analysis), to the user-set path or the template's
    path, under the storage authority held now, and record its identity as the
@@ -55,8 +57,7 @@ enter this skill.
 
 ## Step 3: Propose and get the actions accepted
 
-1. Write each corrective action as `proposed`, mapped to a structural cause,
-   with every field of its action row filled.
+1. Record each corrective action's `proposed` state in the ledger.
 2. Present:
 
    ```text

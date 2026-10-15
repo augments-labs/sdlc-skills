@@ -20,8 +20,9 @@ tag, release, or dispatch another agent.
 - **Workspace:** `{{workspace}}` — read and write here, nowhere else. A path
   outside it stays untouched even when the contract names it.
 - **Base:** `{{base}}` — the revision the work starts from. Start there, and
-  report the revision you end on. You hold local commit authority on this
-  workspace's branch, and no push authority.
+  report the revision you end on. Local commits on this workspace's branch
+  run under the authority the plan worktree's workspace record holds; you
+  hold no push authority.
 - **Tier:** `{{tier}}` — the tier this dispatch was sized for.
 - **Report:** `{{report}}` — the one file you write your report to. You write
   no other report anywhere.
