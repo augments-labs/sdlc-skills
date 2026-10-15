@@ -53,7 +53,8 @@ they may not take. This skill never decides what happens to the branch.
    this skill cannot run it and `executing-plans` will not: ask the
    `Approval rule` owner for a direct inline answer, append it as a new
    approved row for this version in the shape `writing-plans` Step 4.5 gives,
-   with `mode: inline`, and stop. The last row's mode is the one 1.1 reads.
+   with `mode: inline`, and stop. The last decision row's mode is the one 1.1
+   reads.
 
 ## Step 2: Open the run
 

@@ -78,7 +78,9 @@ to `debugging`.
 ## Step 4: Record and hand off
 
 1. Complete the containment record from Step 2.4: cost while it holds, how to
-   reverse, who owns reversal.
+   reverse, who owns reversal. Open `assets/containment-record.md` here when
+   no lever was pulled, because Step 2.3 escalated or Step 2.5 exhausted the
+   options, and put the escalation in its lever table.
 2. Report three things and call nothing resolved:
 
    ```text

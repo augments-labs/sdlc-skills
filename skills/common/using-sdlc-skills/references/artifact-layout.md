@@ -59,7 +59,9 @@ the task state, `Bound evidence` holds the attempt, the result revision and the
 evaluator evidence, and `Updated` holds the owner and the time. The other rows
 `executing-plans` appends (`finding`, `admitted`, `cancellation requested`) use
 the same columns with the kind in `State`; only a row whose `State` is a task
-state sets a task's state.
+state sets a task's state. A row about no single task, such as
+`workspace: not applicable` or a finding outside every task's contract, puts
+`plan` in `Section`, so no reader takes it for a decision row.
 
 A ledger kept anywhere else, or returned instead of written, is recorded in the
 artifact's pointer field.

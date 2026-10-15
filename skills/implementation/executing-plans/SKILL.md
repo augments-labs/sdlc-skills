@@ -44,8 +44,8 @@ what happens to the branch.
 
 If every task's `Files` lies outside any git-tracked project, or the index says
 the deliverable is not a repository change, record `workspace: not applicable`
-in the ledger and skip 2.2. If even one task is inside a repository, Step 2.2
-and Step 5.3 apply to the whole plan.
+in the ledger, with `plan` in `Section`, and skip 2.2. If even one task is
+inside a repository, Step 2.2 and Step 5.3 apply to the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -179,8 +179,8 @@ In the task workspace recorded in Step 2, in order:
 A defect or gap outside the current task's contract is never an edit in this
 task. One a later listed task's contract covers is left to that task. Any
 other, whether you or a review raised it, is a `finding` row in the
-execution ledger: where, what, the evidence. It is never a task because
-someone wrote it down.
+execution ledger, with `plan` in `Section` when no task covers it: where,
+what, the evidence. It is never a task because someone wrote it down.
 
 1. If the index's `Out-of-task findings` field says `log and report`, or is
    absent, every finding waits for Step 5.4.
