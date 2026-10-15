@@ -308,7 +308,7 @@ KEYS
 
   # An agent loads a support file only when the body says when to: a bare path
   # is a file it either reads every time or never.
-  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" "$awk_snippet"'
+  if ! hits="$(LC_ALL=C awk -v e="${fm_end:-0}" -v pat="$support_path" "$awk_snippet"'
     NR<=e { next }
     {
       # A condition after the last named file also follows every earlier one, so
@@ -333,7 +333,7 @@ HITS
   # spans are exempt: there an arrow can be the exact text shown or copied. A
   # span can wrap onto the next line, so each paragraph (up to a blank line or a
   # fence) is scanned whole; a backtick with no partner in it is a literal one.
-  arrows="$(awk -v e="${fm_end:-0}" -v arrow="→" "$awk_snippet"'
+  arrows="$(LC_ALL=C awk -v e="${fm_end:-0}" -v arrow="→" "$awk_snippet"'
     function flush(   text, out, rest, span, p, q, i, n) {
       text = buf; out = ""
       while ((p = index(text, "`")) > 0) {

@@ -177,7 +177,7 @@ echo "--- check-skill.sh: --tokens skips frontmatter, ignores CR, and counts cod
 mkdir -p "$tmp/tokens"
 printf -- '---\nname: x\ndescription: "y"\n---\nRun `bash scripts/check.sh --strict` on 2024 files.\n\n  - \347\274\226\345\206\231\345\256\236\346\226\275\350\256\241\345\210\222\n' >"$tmp/tokens/a.md"
 sed 's/$/\r/' "$tmp/tokens/a.md" >"$tmp/tokens/crlf.md"
-for awk_bin in gawk mawk original-awk nawk; do
+for awk_bin in awk gawk mawk original-awk nawk; do
   command -v "$awk_bin" >/dev/null 2>&1 || continue
   got=$(PATH="$tmp/tokens/bin:$PATH"; mkdir -p "$tmp/tokens/bin"; ln -sf "$(command -v "$awk_bin")" "$tmp/tokens/bin/awk"; bash "$CHECK" --tokens "$tmp/tokens/a.md")
   crlf=$(PATH="$tmp/tokens/bin:$PATH"; bash "$CHECK" --tokens "$tmp/tokens/crlf.md")
