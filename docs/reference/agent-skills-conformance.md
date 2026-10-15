@@ -68,7 +68,7 @@ written, not about what your agent needs to support.
 | Directory | House use |
 | --- | --- |
 | `references/` | 25 skills; rubrics, checklists, worked examples, and lookup guidance |
-| `assets/` | 38 skills; every fill-in template and other static resources |
+| `assets/` | 39 skills; every fill-in template and other static resources |
 | `scripts/` | 10 skills (see below) |
 
 The repository classifies a document by how it is used. A file that is
