@@ -25,8 +25,8 @@ description: "Runs the checks and reads their output before any claim that work 
    and record a decision for each: delivered, pending, blocked, or declined
    with a reason.
 2. Keep an evidence record (the ledger): add to it, never rewrite it, and
-   keep it outside the state under check (anything its state identity
-   covers). One task with one required check: one row in your reply holds
+   keep it outside the state under check. One task with one required check:
+   one row in your reply holds
    the claim, the check, the state identity, and the raw result. An
    integration, a release, or more than one check: open the full record,
    `assets/evidence-ledger.md`, before the first check runs and fill every

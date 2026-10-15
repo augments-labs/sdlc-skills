@@ -5,10 +5,9 @@ description: "Audits what an attacker can make a change do, from attacker-contro
 
 # Security Audits
 
-Trace what an adversary can make the exact version under review (the
-candidate, as the descriptor and the report template call it) do, from every
-attacker-controlled source to the sink it reaches. Never copy a prior finding,
-scanner summary, or comment as a verdict.
+Trace what an adversary can make the exact version under review do, from
+every attacker-controlled source to the sink it reaches. Never copy a prior
+finding, scanner summary, or comment as a verdict.
 
 ## When to use
 
@@ -21,18 +20,17 @@ scanner summary, or comment as a verdict.
 
 ## Step 1: Freeze and model
 
-1. Stop the writers this task started (anything still able to change the
-   workspace); report any other writer to its owner and
-   keep review pending until it stops.
-2. Take as input the review-candidate descriptor its caller passed (the
-   frozen record of the version under review and its review inputs), with
-   the identities of both already frozen. If there is no descriptor, the
+1. Stop the writers this task started; report any other writer to its owner
+   and keep review pending until it stops.
+2. Take as input the review-candidate descriptor its caller passed, with
+   the identities of the version under review and of its review inputs
+   already frozen. If there is no descriptor, the
    audit is pending: ask the caller for one. Never obtain it by invoking a
    review skill; that dispatches a second review and routes this audit back
    here.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the
-   checks on this exact state that apply. Join its state identity (the
-   value that identifies the exact state its checks ran on) byte for byte.
+   checks on this exact state that apply. Join its state identity byte for
+   byte.
 4. Inventory the threat model: protected assets, trusted and untrusted actors,
    entry points, trust boundaries, privileges, assumptions, abuse cases. Give
    each a stable ID and the hash of the source it was taken against.
@@ -52,18 +50,17 @@ scanner summary, or comment as a verdict.
 4. Mark each category covered, or obtain an omission for it through Step 4.
 5. Write each finding in three parts: attacker-controlled source, propagation,
    the sink or effect it actually reaches.
-6. Run the security checks the assurance matrix names (it calls them gates)
-   for every relevant platform, build mode, and environment cell (one
-   combination of the three), under `verification-before-completion`'s effect
-   authority (the authority it records for each check's effects). Never
-   exploit shared or production state without exact, direct authority.
+6. Run the security checks the assurance matrix names for every relevant
+   platform, build mode, and environment cell, under
+   `verification-before-completion`'s effect authority. Never exploit shared
+   or production state without exact, direct authority.
 7. If a check is missing or stale, record a blocker and go to Step 4. Do not
    work around it.
 8. Write each traced finding (source, propagation, sink) to a working note at
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/security-notes.md`, never
    into the report template. Fix means the smallest change that closes the
-   path. Sensitive evidence means a redacted location or hash (the report
-   template says digest), never the value.
+   path. Sensitive evidence means a redacted location or hash, never the
+   value.
 
 ## Step 3: Verdict
 

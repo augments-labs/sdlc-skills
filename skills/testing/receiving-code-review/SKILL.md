@@ -6,9 +6,7 @@ description: "Verifies review feedback on its merits before responding to it or 
 # Receiving Code Review
 
 Feedback is a claim bound to one revision, and it is there to be verified: it
-is not an order to obey or applause to return. Correctness comes from the
-current code, the contracts, a reproduction, and the checks, never from a
-reviewer's confidence.
+is not an order to obey or applause to return.
 
 ## When to use
 
@@ -19,8 +17,8 @@ looks obvious: verify before you agree, edit, reply, or resolve.
 
 1. List every unresolved report, review, top-level item, inline thread, reply,
    and resolution state before acting on any of it.
-2. Give each a stable identity: the state under check (the exact version
-   under review), the reviewer or report, the location, and the content. If
+2. Give each a stable identity: the state under check, the reviewer or
+   report, the location, and the content. If
    there is no source or report identity, no feedback has been received, and
    the review stays pending.
 3. Record the identities of the reviewed state under check and of the review
@@ -29,8 +27,7 @@ looks obvious: verify before you agree, edit, reply, or resolve.
    delivery task, across revisions, reviewers, and skill calls: five repair
    rounds per delivery task unless the user or the plan sets another number.
    Record the budget and each round in the review history. Link each
-   recurring causal finding to its earlier evidence and recorded decisions
-   (what was decided about that finding).
+   recurring causal finding to its earlier evidence and recorded decisions.
 4. If a location is stale, or the state under check, the base, a contract,
    the evidence, or external state has changed, re-evaluate. Never dismiss
    automatically, and never accept automatically.

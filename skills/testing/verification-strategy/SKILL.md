@@ -5,23 +5,17 @@ description: "Designs or repairs a project's correctness battery: which checks c
 
 # Verification Strategy
 
-Map the project's real risks to gates. A gate, the word the matrix and the
-catalogue use for a check, is anything that must come back green before the
-promotion it protects may go ahead; a promotion is a step the work takes, such
-as a change landing, a phase, a trial, a cutover, or a release. Watch each gate
-fail before calling it executable, and wire it to block the promotion it
-protects. Accept no gate on reading the code, a coverage number, or the
-builder's opinion.
+Map the project's real risks to gates. Watch each gate fail before calling it
+executable, and wire it to block the promotion it protects. Accept no gate on
+reading the code, a coverage number, or the builder's opinion.
 
 ## When to use
 
 - The project floor is absent, stale, or cannot catch a real defect.
 - A high-risk initiative introduces preservation, platform, data, security,
-  concurrency, resource, or rollout risks the current battery (the set of
-  gates a project or initiative runs, and the risks each one covers) does
-  not cover.
-- **Skip** a bounded feature: its plan's evaluators (the checks the plan
-  names as the ones that must accept each task's result) and
+  concurrency, resource, or rollout risks the current battery does not
+  cover.
+- **Skip** a bounded feature: its plan's evaluators and
   `test-driven-development` own the local proof. A missing project floor is
   separate scope.
 
@@ -30,15 +24,14 @@ builder's opinion.
 1. Inventory what the project promises and what could break it: committed
    behaviour, platforms and build modes, data and operations, commands and CI
    that already run, existing tests, escaped defects.
-2. For a transformation (a rewrite, a migration, or another broad change that
-   must preserve behavior), add its migration facts, invariants, and approved
+2. For a transformation, add its migration facts, invariants, and approved
    deviations.
 3. Start the matrix from `assets/assurance-matrix.md` before writing any
    gate. Fill `Risk inventory` and `Risk-to-gate matrix`.
 4. Read `references/battery-catalogue.md` before filling `Catalogue
-   disposition` (one recorded decision per category) for every category the
-   catalogue lists: covered, or an accountable expiring approval plus a
-   compensating gate. An N/A needs evidence and an owner.
+   disposition` for every category the catalogue lists: covered, or an
+   accountable expiring approval plus a compensating gate. An N/A needs
+   evidence and an owner.
 
 ## Step 2: Make each gate real
 
@@ -46,13 +39,11 @@ builder's opinion.
    expensive ones protect a phase, trial, cutover, or release.
 2. A "manual" gate gets a procedure, evidence, an owner, and a promotion it
    blocks.
-3. Calibrate each gate (show that it can fail, through the cycle the next
-   step describes) in isolation you are authorized to use: pin down what the
-   gate touches and your authority to mutate, recover, and clean up.
+3. Calibrate each gate in isolation you are authorized to use: pin down what
+   the gate touches and your authority to mutate, recover, and clean up.
 4. Watch the whole cycle: green, then red on an introduced divergence, then
    full restoration, then green. Keep raw results outside the state under
-   check (the exact frozen state under judgment; the templates call it the
-   candidate).
+   check.
 5. If calibrating for real is unsafe, use a known-bad fixture, or mark the
    gate `uncalibrated` and say so.
 6. Record each gate as `executable`, `planned`, or `blocked`. Only
@@ -71,14 +62,14 @@ builder's opinion.
 ## Step 4: Challenge, then hand over the decision
 
 1. Fill `assets/assurance-challenger.md` with `assets/assurance-report.md` before
-   the challenge; the report file is the challenger's report template.
-   **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with this
-   addendum (the filled challenger prompt), before approval. Keep the state
-   under check read-only. Read the returned assurance section. If its Matrix
-   version is missing or mismatched, or its verdict is anything other than
-   `clear`, approval is blocked.
-2. On a blocker, correct a successor (a replacement that names the version
-   it replaces), reverify, and rechallenge until clear or concretely blocked.
+   the challenge.
+   **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with the filled
+   challenger prompt, before approval. Keep the state under check read-only.
+   Read the returned assurance section. If its Matrix version is missing or
+   mismatched, or its verdict is anything other than `clear`, approval is
+   blocked.
+2. On a blocker, correct a successor, reverify, and rechallenge until clear
+   or concretely blocked.
 3. Present the matrix:
 
    ```text

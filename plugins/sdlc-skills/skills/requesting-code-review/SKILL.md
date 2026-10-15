@@ -5,19 +5,16 @@ description: "Gets an independent review of one frozen state before it is called
 
 # Requesting Code Review
 
-Get an independent verdict on one frozen candidate (the exact version under
-review; the templates use that word), in this order: verify, freeze,
-dispatch, poll, receive. Never say a review is running, and never wait on
-one, until the dispatch action has returned a non-empty receipt (the
-tool-issued dispatch ID: proof from outside the candidate that the reviewer
-was actually dispatched).
+Get an independent verdict on one frozen candidate, in this order: verify,
+freeze, dispatch, poll, receive. Never say a review is running, and never
+wait on one, until the dispatch action has returned a non-empty receipt (the
+tool-issued dispatch ID).
 
 ## When to use
 
 - Before you call an exact candidate complete, and before anything is pushed,
   published, or merged. A checkpoint you were authorized to commit is not done.
-- When the user asks for a review of one exact state. That verdict covers the
-  state it was given and does not make an unfinished checkpoint complete.
+- When the user asks for a review of one exact state.
 - **Skip** here, and go through `finishing-a-branch` directly, for keep,
   discard, and PR-only close or reopen: those need its identity and authority
   checks, not a readiness review.
@@ -28,14 +25,13 @@ was actually dispatched).
 
 ## Step 1: Verify and freeze
 
-1. Stop the writers this task started (anything still able to change the
-   workspace); report any other writer to its owner and keep review pending
-   until it stops.
-2. Read the caller's evidence ledger (its evidence record: add to it, never
-   rewrite it; it sits outside the candidate) for the frozen state and its
-   raw results. Reuse each row whose candidate, bound inputs and environment,
-   check requirements, and evidence freshness still match. Never rerun a
-   matching row.
+1. Stop the writers this task started; report any other writer to its owner
+   and keep review pending until it stops.
+2. Read the caller's evidence ledger (add to it, never rewrite it; it sits
+   outside the candidate) for the frozen state and its raw results. Reuse
+   each row whose candidate, bound inputs and environment, check
+   requirements, and evidence freshness still match. Never rerun a matching
+   row.
 3. If there is no ledger, or a row is missing or stale,
    **REQUIRED SUB-SKILL:** invoke `verification-before-completion` to obtain
    evidence for this review, then resume here. Keep failures and pending
@@ -99,9 +95,8 @@ was actually dispatched).
    - If the assurance strategy is hollow or needs challenging, the suggested
      owner is `verification-strategy`.
 
-   Record each such finding in the external review ledger (the record the
-   descriptor names, kept outside it and the candidate, of attempts, receipts,
-   reports, findings, and outcomes). If no caller is recorded, return the
+   Record each such finding in the external review ledger. If no caller is
+   recorded, return the
    finding with the verdict and name its suggested owner as the next skill. If
    the recorded caller owns that activity, add any brief it supplied to the
    Step 3.2 dispatch and return the result to its pending step.
@@ -127,9 +122,7 @@ was actually dispatched).
    returned. Match Candidate, Review inputs, Role, and the role's allowed
    Verdict to the frozen request. If a field is missing, unreadable,
    conflicting, or mismatched, review stays pending. Check the complete
-   inventory and every human-authored change; reject unrelated traversal (a
-   reviewer's reading beyond the change that no recorded evidence makes
-   relevant).
+   inventory and every human-authored change; reject unrelated traversal.
 6. Decide each Declined to judge entry yourself and record it in the ledger;
    an undecided entry keeps review pending.
 7. Block readiness while required current verification or role coverage is
@@ -138,9 +131,8 @@ was actually dispatched).
    record; an accepted successor attempt linked to it can satisfy its current
    role once effects are reconciled. Reconcile each advisory finding's
    recorded decision without adding acceptance criteria.
-8. Record each report's location and its recorded decision in the external
-   review ledger. A report is the reviewer's assessment; keep the tool-issued
-   dispatch ID as the evidence that the reviewer was actually dispatched.
+8. Record each report's location, its recorded decision, and the tool-issued
+   dispatch ID in the external review ledger.
 9. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
    before responding to it, including a `not ready` that asks for no edit.
 10. Before another round, apply `receiving-code-review`'s convergence check.
@@ -174,10 +166,9 @@ was actually dispatched).
 - If there is a trust-boundary finding without an independent `security clear`
   on this hash, write `self-reviewed: not ready`.
 - On `not ready`, do not hand off. Either the assignment did not fit the
-  change: report that to the user, void a no-dispatch answer that assigned it
-  (an answer given when dispatch was not callable), raise the depth to
-  Standard, and restart at Step 2. Or there is a defect: fix it, then restart at
-  Step 1.
+  change: report that to the user, void a no-dispatch answer that assigned it,
+  raise the depth to Standard, and restart at Step 2. Or there is a defect:
+  fix it, then restart at Step 1.
 
 ## Gotchas
 
