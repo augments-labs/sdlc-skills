@@ -96,7 +96,7 @@ function flushr() {
   dg = pn = 0
 }
 {
-  line = $0; n = length(line); i = 1; sp = 0
+  line = $0; sub(/\r$/, "", line); n = length(line); i = 1; sp = 0
   while (i <= n) {
     c = ord[substr(line, i, 1)]
     if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) { flushr(); sp = 0; wa++; i++; continue }

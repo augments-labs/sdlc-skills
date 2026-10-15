@@ -173,16 +173,18 @@ else
   bad "prose-arrows missed an arrow in prose after a lone backtick"
 fi
 
-echo "--- check-skill.sh: --tokens skips frontmatter and counts code, digits, and CJK"
+echo "--- check-skill.sh: --tokens skips frontmatter, ignores CR, and counts code, digits, and CJK"
 mkdir -p "$tmp/tokens"
 printf -- '---\nname: x\ndescription: "y"\n---\nRun `bash scripts/check.sh --strict` on 2024 files.\n\n  - \347\274\226\345\206\231\345\256\236\346\226\275\350\256\241\345\210\222\n' >"$tmp/tokens/a.md"
+sed 's/$/\r/' "$tmp/tokens/a.md" >"$tmp/tokens/crlf.md"
 for awk_bin in gawk mawk original-awk nawk; do
   command -v "$awk_bin" >/dev/null 2>&1 || continue
   got=$(PATH="$tmp/tokens/bin:$PATH"; mkdir -p "$tmp/tokens/bin"; ln -sf "$(command -v "$awk_bin")" "$tmp/tokens/bin/awk"; bash "$CHECK" --tokens "$tmp/tokens/a.md")
-  if [ "$got" = 25 ]; then
-    ok "--tokens gives 25 under $awk_bin"
+  crlf=$(PATH="$tmp/tokens/bin:$PATH"; bash "$CHECK" --tokens "$tmp/tokens/crlf.md")
+  if [ "$got" = 25 ] && [ "$crlf" = 25 ]; then
+    ok "--tokens gives 25 under $awk_bin, with LF or CRLF line endings"
   else
-    bad "--tokens gave '$got' under $awk_bin, expected 25"
+    bad "--tokens gave '$got' (LF) and '$crlf' (CRLF) under $awk_bin, expected 25"
   fi
 done
 
