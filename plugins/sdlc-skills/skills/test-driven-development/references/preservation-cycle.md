@@ -2,9 +2,8 @@
 
 Use this when accepted behavior already exists and the work should preserve it:
 a refactor, port, rewrite, migration, generator change, or behavior-affecting
-configuration change. The goal is not to invent a missing behavior. It is to
-prove an implementation-independent gate can catch divergence before relying on
-it during transformation.
+configuration change. Prove an implementation-independent gate can catch
+divergence before relying on it during transformation.
 
 ## 1. Bind the preservation contract
 

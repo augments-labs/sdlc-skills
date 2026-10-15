@@ -16,6 +16,8 @@ Options:
   --format FORMAT   Output format: tsv, json (default: tsv)
   --strict          Report the policy checks below as `fail` instead of `warn`
   --quiet           Print nothing; report the verdict through the exit code
+  --tokens FILE     Print the token estimate for FILE's body (after any
+                    frontmatter) and exit
   --help            Show this message
 
 Checks:
@@ -42,6 +44,9 @@ Policy checks (`warn` by default, `fail` with --strict):
   description-rules         the description carries no `Fires on` list and none of
                             exact candidate, material intent, owning phase
                             skill, normative
+  prose-arrows              the body states no outcome as `condition → act`:
+                            a `→` outside a fenced block or an inline code
+                            span fails; write "If X, do Y" instead
   reference-depth           a file under references/ or assets/ names another
                             support file SKILL.md does not also name (always
                             `warn`: keep them one level deep)
@@ -64,6 +69,62 @@ Examples:
 EOF
 }
 
+# Token estimate for stdin. A tokenizer first splits text into words, numbers,
+# punctuation, and whitespace, then cuts each piece; this mirrors that split
+# and charges each piece at a fixed rate. Bytes, not characters (LC_ALL=C), so
+# every awk counts alike. An ASCII word is one token, plus one per 6 letters
+# past 10; a word with accented or non-Latin letters is one per 4 letters; a
+# CJK, kana, or Hangul character is 0.7; a symbol such as a dash, a curly
+# quote, or an arrow is 1, and an emoji 2; digits and ASCII punctuation are
+# one per 3; each line break and each indent is 1. Against a published BPE
+# tokenizer it lands within a few percent on this library's bodies and within
+# about 12% on French, Spanish, German, Russian, Arabic, Chinese, Japanese,
+# and Korean text. It is an estimate; no dependency is needed.
+estimate_tokens() {
+  LC_ALL=C awk '
+BEGIN { for (i = 0; i < 256; i++) ord[sprintf("%c", i)] = i; t = 0 }
+function flushw() {
+  if (wa + wu) {
+    if (wu) t += int((wa + wu + 3) / 4)
+    else t += (wa <= 10) ? 1 : 1 + int((wa - 10 + 5) / 6)
+  }
+  wa = wu = 0
+}
+function flushr() {
+  if (dg) t += int((dg + 2) / 3)
+  if (pn) t += int((pn + 2) / 3)
+  dg = pn = 0
+}
+{
+  line = $0; sub(/\r$/, "", line); n = length(line); i = 1; sp = 0
+  while (i <= n) {
+    c = ord[substr(line, i, 1)]
+    if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) { flushr(); sp = 0; wa++; i++; continue }
+    if (c >= 192 && c <= 223) { flushr(); sp = 0; wu++; i += 2; continue }
+    flushw()
+    if (c >= 48 && c <= 57) { if (pn) flushr(); dg++; sp = 0; i++; continue }
+    if (c == 32) { flushr(); sp++; i++; continue }
+    if (sp > 1) t++
+    sp = 0
+    if (c >= 33 && c <= 126) { if (dg) flushr(); pn++; i++; continue }
+    flushr()
+    if (c == 226) { t++; i += 3 }
+    else if (c >= 224 && c <= 239) { u3++; i += 3 }
+    else if (c >= 240) { t += 2; i += 4 }
+    else { t++; i++ }
+  }
+  flushw(); flushr()
+  if (sp > 1) t++
+  nl++
+}
+END { t += nl + int(u3 * 7 / 10 + 0.5); print t }'
+}
+
+# Print FILE's body: everything after a leading frontmatter block, if any.
+body_of() {
+  awk 'NR==1 && /^---[[:space:]]*$/ {fm=1; next} fm && /^---[[:space:]]*$/ {fm=0; next} !fm' "$1"
+}
+
 format=tsv; quiet=0; strict=0; dir=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -73,6 +134,8 @@ while [ "$#" -gt 0 ]; do
               shift 2;;
     --strict) strict=1; shift;;
     --quiet)  quiet=1; shift;;
+    --tokens) [ -f "${2:-}" ] || { echo "Error: --tokens needs a readable FILE. Received: \"${2:-}\"" >&2; exit 2; }
+              body_of "$2" | estimate_tokens; exit 0;;
     --help|-h) usage; exit 0;;
     -*) echo "Error: unknown option \"$1\". Run with --help for usage." >&2; exit 2;;
     *)  [ -z "$dir" ] || { echo "Error: only one SKILL_DIR may be given (got \"$dir\" and \"$1\")." >&2; exit 2; }
@@ -196,10 +259,7 @@ KEYS
   # --- body size --------------------------------------------------------------
   body_lines="$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -l | tr -d ' ')"
   [ "$body_lines" -le 500 ] || finding fail body-lines "body is $body_lines lines; the house ceiling is 500"
-  # Token estimate: words plus punctuation runs, ~1.3x. Deliberately rough — it
-  # only has to catch a body approaching 5000, not price a request.
-  words="$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -w | tr -d ' ')"
-  tokens=$(( words * 13 / 10 ))
+  tokens="$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | estimate_tokens)"
   [ "$tokens" -lt 5000 ] || finding fail body-tokens "body is ~$tokens tokens; the house ceiling is 5000"
 
   # --- presentation -------------------------------------------------------------
@@ -232,26 +292,30 @@ KEYS
     END { exit !found }
   ' "$skill" || policy gotchas-present "the body has no \`## Gotchas\` section"
 
+  # A finding quotes the first 100 bytes of its line. Where awk counts bytes,
+  # [[:cntrl:]] misses UTF-8 C1 controls and the cut can split a character, so
+  # strip those bytes and a split tail there. A character-counting awk rejects
+  # these ranges, even in a /regex/ it never runs, hence the strings.
+  awk_snippet='
+    function snippet(text,   out) {
+      out = substr(text, 1, 100); gsub(/[[:cntrl:]]/, " ", out)
+      if (length("\302\233") == 2) {
+        gsub("\302[\200-\237]", " ", out)
+        sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", out)
+      }
+      return out
+    }'
+
   # An agent loads a support file only when the body says when to: a bare path
   # is a file it either reads every time or never.
-  if ! hits="$(awk -v e="${fm_end:-0}" -v pat="$support_path" '
+  if ! hits="$(LC_ALL=C awk -v e="${fm_end:-0}" -v pat="$support_path" "$awk_snippet"'
     NR<=e { next }
     {
       # A condition after the last named file also follows every earlier one, so
       # one split tests the whole line in linear time.
       n = split($0, parts, pat)
-      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/) {
-        snippet = substr($0, 1, 100); gsub(/[[:cntrl:]]/, " ", snippet)
-        # Where awk counts bytes, [[:cntrl:]] misses UTF-8 C1 controls and the cut
-        # can split a character, so strip those bytes and a split tail there. A
-        # character-counting awk rejects these ranges, even in a /regex/ it never
-        # runs, hence the strings.
-        if (length("\302\233") == 2) {
-          gsub("\302[\200-\237]", " ", snippet)
-          sub("([\300-\367]|[\340-\367][\200-\277]|[\360-\367][\200-\277][\200-\277])$", "", snippet)
-        }
-        print NR ":" snippet
-      }
+      if (n > 1 && tolower(parts[n]) !~ /(^|[^a-z])(when|if|before|after)([^a-z]|$)/)
+        print NR ":" snippet($0)
     }
   ' "$skill")"; then
     policy reference-load-condition "the load-condition scan could not run"
@@ -262,6 +326,40 @@ KEYS
   done <<HITS
 $hits
 HITS
+
+  # --- arrows in prose ---------------------------------------------------------
+  # An outcome written as `condition → act` makes the reader unpack a rule from
+  # shorthand; the format asks for a sentence. Fenced blocks and inline code
+  # spans are exempt: there an arrow can be the exact text shown or copied. A
+  # span can wrap onto the next line, so each paragraph (up to a blank line or a
+  # fence) is scanned whole; a backtick with no partner in it is a literal one.
+  arrows="$(LC_ALL=C awk -v e="${fm_end:-0}" -v arrow="→" "$awk_snippet"'
+    function flush(   text, out, rest, span, p, q, i, n) {
+      text = buf; out = ""
+      while ((p = index(text, "`")) > 0) {
+        rest = substr(text, p + 1); q = index(rest, "`")
+        if (q == 0) { out = out substr(text, 1, p); text = rest; continue }
+        # Drop the span but keep its line breaks, so line numbers still match.
+        span = substr(rest, 1, q - 1); gsub(/[^\n]/, "", span)
+        out = out substr(text, 1, p - 1) span; text = substr(rest, q + 1)
+      }
+      n = split(out text, lines, "\n")
+      for (i = 1; i <= n; i++) if (index(lines[i], arrow)) print start + i - 1 ":" snippet(orig[i])
+      buf = ""; cnt = 0
+    }
+    NR<=e { next }
+    /^[[:space:]]*```/ { flush(); fence = !fence; next }
+    fence { next }
+    /^[[:space:]]*$/ { flush(); next }
+    { if (cnt++ == 0) start = NR; orig[cnt] = $0; buf = (cnt > 1 ? buf "\n" : "") $0 }
+    END { flush() }
+  ' "$skill")"
+  while IFS= read -r hit; do
+    [ -n "$hit" ] || continue
+    policy prose-arrows "line ${hit%%:*} uses an arrow in prose; write a sentence (an outcome as \"If X, do Y\"): ${hit#*:}"
+  done <<ARROWS
+$arrows
+ARROWS
 
   # --- references resolve ------------------------------------------------------
   # Every relative link target must exist, and must sit inside the skill.

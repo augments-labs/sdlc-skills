@@ -1,8 +1,7 @@
 # Post-mortem template
 
 `post-mortem` copies this structure when starting the analysis, replacing
-every placeholder; keep it factual and blameless, since causes describe
-conditions and controls rather than moral judgment. Draft it, challenge it,
+every placeholder; keep it factual and blameless. Draft it, challenge it,
 then issue one immutable version; nothing after issue — action states, proof,
 rollout results, effectiveness verdicts — is ever written back here, and a
 `pending` cell means the ledger has not yet recorded that state. Write the
@@ -20,7 +19,7 @@ version. Keep mutable lifecycle evidence in an append-only external ledger.
 - **Identity:** recorded in the ledger row, never here: the first 7 characters of `git hash-object` over this file as issued
 - **Predecessor/delta:** `{{predecessor identity or none; stable changes}}`
 - **Incident/work-cycle ID:** `{{identity}}`
-- **External lifecycle ledger identity/location:** `{{outside this analysis}}`
+- **External lifecycle ledger:** `{{ledger path: beside this analysis unless the user sets another}}`
 - **Scope and exclusions:** `{{boundary}}`
 - **Expected reviewers:** `{{stable role IDs; independent escape-path challenger;
   approved omission with evidence/owner/expiry/compensation}}`
@@ -105,13 +104,15 @@ Include gates that held so corrective work does not weaken them.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `{{A-01 + definition digest}}` | `{{cause}}` | `{{control}}` | `{{exact rule + trusted identity-bound receipts/pending}}` | `{{dates}}` | `{{IDs/none}}` | `{{plan}}` | `{{metric/target/window}}` | `{{ledger state and receipt ID}}` |
 
+Receipts and `External state` are `pending` at issue; the ledger holds them.
 Promises rank below enforceable controls. Multiple actions for one cause are
 valid only when they protect distinct layers or outcomes; every action must have
 its own measurable contribution.
 
 ## Targeted fail-then-pass proof
 
-For each action:
+For each action (every field stays `pending` at issue; the ledger holds the
+proof):
 
 - **Incident/representative bad case:** `{{sanitized artifact/digest}}`
 - **Good control:** `{{case}}`
@@ -122,6 +123,8 @@ For each action:
 - **Exact revision/environment:** `{{identity}}`
 
 ## Enforcement and rollout
+
+Rollout and effectiveness are `pending` at issue; the ledger holds their state.
 
 | Action | Enforcement surface | Deployed/adopted identity | Rollout evidence | Rollback/disable | Operator/owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |

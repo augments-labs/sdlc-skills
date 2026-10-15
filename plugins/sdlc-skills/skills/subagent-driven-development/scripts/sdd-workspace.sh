@@ -10,8 +10,9 @@ usage() {
   cat <<'EOF'
 Usage: bash scripts/sdd-workspace.sh --plan DIR [OPTIONS]
 
-Open the ledger a subagent-driven run records its dispatches, rulings, and task
-states in, or check that it still binds to the plan it was opened against.
+Open the ledger a subagent-driven run records its dispatches, rulings, and
+findings in, or check that it still binds to the plan it was opened against.
+Task states go to the plan index's execution ledger, not here.
 
 Line 1 carries the plan's identity, the version plan-version.sh computes for it.
 That line is what a session resuming after a compaction reads first: if the
@@ -20,7 +21,10 @@ underneath it, and the rows below describe a plan that no longer exists.
 
 Options:
   --plan DIR     the plan directory; its index is DIR/00-index.md
-  --ledger FILE  use this path instead of DIR/sdd-ledger.md
+  --ledger FILE  use this path instead of the default,
+                 ROOT/.sdlc-skills/evidence/NAME/sdd-ledger.md, where ROOT is
+                 the root of the repository DIR sits in and NAME is DIR's
+                 basename
   --check        compare identities and write nothing
   --help         show this message
 
@@ -30,8 +34,9 @@ a run never truncates what an earlier session recorded.
 Exit codes:
   0  the ledger is present and bound to this plan
   1  the ledger is missing, or its identity is not the plan's (drift)
-  2  bad arguments, no plan index, a plan plan-version.sh rejects, or the ledger
-     cannot be written
+  2  bad arguments, no plan index, a plan plan-version.sh rejects, a plan
+     outside any git repository with no --ledger, or the ledger cannot be
+     written
 EOF
 }
 
@@ -68,7 +73,16 @@ if [ "$rc" -ne 0 ] || [ -z "$identity" ]; then
 fi
 rm -f "$pv_err"
 
-[ -n "$ledger" ] || ledger="$plan/sdd-ledger.md"
+# The default sits under evidence/, the one directory the candidate digest
+# leaves out, so a row appended here never changes the candidate it records.
+if [ -z "$ledger" ]; then
+  root="$(git -C "$plan" rev-parse --show-toplevel 2>/dev/null)"
+  if [ -z "$root" ]; then
+    echo "$plan is not inside a git repository; pass --ledger" >&2
+    exit 2
+  fi
+  ledger="$root/.sdlc-skills/evidence/$(basename "$plan")/sdd-ledger.md"
+fi
 
 if [ "$check" = 1 ]; then
   [ -f "$ledger" ] || { echo "no ledger at $ledger" >&2; exit 1; }
@@ -91,9 +105,10 @@ mkdir -p "$dir" 2>/dev/null || { echo "cannot create $dir" >&2; exit 2; }
 {
   printf '# Subagent-driven run — plan %s, identity %s\n' "$(basename "$plan")" "$identity"
   printf '\n'
-  printf 'Append only. One row per dispatch, ruling, finding, admitted finding,\n'
-  printf 'and task state. Rulings carry their reason, so the next brief can inherit\n'
-  printf 'them and the finish message can list them.\n'
+  printf 'Append only. One row per dispatch, ruling, finding, and admitted finding;\n'
+  printf 'task states go to the execution ledger the plan index names. Rulings\n'
+  printf 'carry their reason, so the next brief can inherit them and the finish\n'
+  printf 'message can list them.\n'
   printf '\n'
   printf '| When | Kind | Task | Detail |\n'
   printf '| --- | --- | --- | --- |\n'

@@ -19,7 +19,7 @@ and that each plugin manifest parses as JSON and registers every skill. CI runs
 this on every push and PR.
 
   --strict  fail on the policy checks check-skill.sh otherwise reports as
-            warnings, reference-load-condition included
+            warnings, reference-load-condition and prose-arrows included
   --help    this text
 
 Exit codes: 0 every skill passed · 1 violations printed above the summary
@@ -51,7 +51,7 @@ mapfile -t skills < <(find skills -name SKILL.md | sort)
 
 # Shared format and policy checks are delegated to the checker this library
 # ships (see the per-skill loop). It has to exist and answer --help here. In the
-# loop, a non-zero exit that reports no fail row is itself a FAIL naming the
+# loop, an exit above 1, or 1 with no fail row, is itself a FAIL naming the
 # checker, the skill, the exit code, and the first diagnostic, so a checker that
 # crashes fails the gate instead of passing every skill in silence.
 CONFORMANCE=skills/common/writing-skills/scripts/check-skill.sh
@@ -68,19 +68,21 @@ for skill in "${skills[@]}"; do
   # Delegate the shared format and policy profile: required field extraction,
   # names, sizes, links, presentation, and executable script help. This is not
   # full YAML/optional-metadata validation. Preserve warnings as well as errors,
-  # and the checker's exit status: non-zero with no fail row is a crash.
+  # and the checker's exit status: it exits 1 exactly when it printed a fail
+  # row, so 1 with none, or any status above 1, is a crash.
   conformance_rows=$(bash "$CONFORMANCE" ${strict:+"$strict"} "$dir" 2>"$conformance_err")
   conformance_status=$?
-  conformance_fails=0
+  conformance_fails=0; conformance_rows_failed=0
   while IFS=$'\t' read -r level check detail; do
+    [ "$level" = fail ] && conformance_rows_failed=1
     case "$level" in
       fail) err  "$check: $detail"; conformance_fails=1 ;;
       warn) note "warn: $check: $detail" ;;
     esac
   done <<<"$conformance_rows"
-  if [ "$conformance_status" -ne 0 ] && [ "$conformance_fails" = 0 ]; then
+  if [ "$conformance_status" -gt 1 ] || { [ "$conformance_status" = 1 ] && [ "$conformance_rows_failed" = 0 ]; }; then
     conformance_diag=$(grep -m1 . "$conformance_err" || printf '%s\n' "$conformance_rows" | grep -m1 .)
-    err "$CONFORMANCE exited $conformance_status on $dir with no fail row: ${conformance_diag:-no output}"
+    err "$CONFORMANCE exited $conformance_status on $dir: ${conformance_diag:-no output}"
   fi
 
   fname=$(awk -F': ' '/^name:/{print $2; exit}' "$skill")
@@ -98,8 +100,7 @@ for skill in "${skills[@]}"; do
   lines=$(wc -l < "$skill")
   [ "$lines" -gt 200 ] && note "warn: $lines lines (>200; well over the house target — is every line earning its place?)"
 
-  words=$(wc -w < "$skill")
-  tokens=$(( words * 13 / 10 ))
+  tokens=$(bash "$CONFORMANCE" --tokens "$skill")
   [ "$tokens" -gt 2500 ] && note "warn: ~$tokens tokens (>2500; over the house target)"
 
   # No external references, vendor model names, or <angle> placeholders — in every
@@ -537,8 +538,7 @@ else
     [ "${#d}" -gt "$max_desc" ] && max_desc=${#d}
     l=$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -l | tr -d ' ')
     [ "$l" -gt "$max_lines" ] && max_lines=$l
-    w=$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -w | tr -d ' ')
-    t=$(( w * 13 / 10 ))
+    t=$(bash "$CONFORMANCE" --tokens "$skill")
     [ "$t" -gt "$max_tokens" ] && max_tokens=$t
   done
   n_refs=$(ls -d skills/*/*/references 2>/dev/null | wc -l | tr -d ' ')

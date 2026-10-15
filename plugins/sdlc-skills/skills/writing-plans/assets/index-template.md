@@ -4,8 +4,9 @@
 exact identity of every approved input, the rule that makes each stale, the
 `Approval rule`, and the `Integration cadence`. Write the filled copy to
 00-index.md in `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`, alongside one
-file per task. No approval, execution state, or evidence goes in this file;
-every later change to what it specifies is a successor file.
+file per task. No approval, execution state, or evidence goes in this file,
+except the task checkbox and its state label, which mirror the execution
+ledger; every later change to what it specifies is a successor file.
 
 ```markdown
 # Plan: {{topic}}
@@ -156,10 +157,12 @@ computing the identity. On mismatch, the external ledger wins.
 
 The external ledger is the single source of truth for progress. Each row binds
 plan version, task ID, attempt/result identity, evaluator evidence, owner/time,
-and one state: `todo / in progress / done / done with concerns / blocked / needs
-context / cancelled / superseded`. `Done` requires green evidence; concerns stay
-durable and cannot count toward a gate until classified as non-blocking evidence
-or accepted by an exact owning deviation/exclusion with compensating gate.
+and one state, in the columns the artifact layout reference (`using-sdlc-skills`)
+gives an execution row: `todo / in progress / done / done with concerns /
+blocked / needs context / cancelled / superseded`. `Done` requires green
+evidence; concerns stay durable and cannot count toward a gate until classified
+as non-blocking evidence or accepted by an exact owning deviation/exclusion
+with compensating gate.
 Blocked/needs-context retains blocker, owner, and next gate. Cancellation
 or supersession requires the approved plan change/decision that removed the task.
 ```

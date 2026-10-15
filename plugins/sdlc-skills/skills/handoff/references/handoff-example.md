@@ -65,18 +65,14 @@ from this handoff alone.
 - TTL work: commit a1b2c3d
 ```
 
-The difference is not length — it's that every line lets the next session *act* without re-deriving.
-
 ## What NOT to include
 
-A handoff is a state transfer, not a transcript. Cut all of these:
-
-- **Narration of the session.** What was tried in what order, who said what, how long it took. The next session needs where things *stand*, not how they got there. A failed approach earns one line under Decisions ("rejected X — because Y") only if it would otherwise be retried.
-- **Duplicated artifacts.** If the plan, spec, or ADR exists on disk, point to it. Copying its content in creates a second version that drifts the moment either changes.
-- **Your working notes verbatim.** Scratch reasoning, dead-end dumps, half-formed ideas. Distill to the decision or the gotcha, delete the journey.
-- **Obvious context.** Anything the next session will read from the repo itself in seconds (file listings, the test command in the project README). Handoffs age; the repo doesn't lie at the time it's read.
+- **Narration of the session.** What was tried in what order, who said what, how long it took. A failed approach earns one line under Decisions ("rejected X — because Y") only if it would otherwise be retried.
+- **Duplicated artifacts.** If the plan, spec, or ADR exists on disk, point to it.
+- **Your working notes verbatim.** Distill to the decision or the gotcha, delete the journey.
+- **Obvious context.** Anything the next session will read from the repo itself in seconds (file listings, the test command in the project README).
 - **Secrets and personal data.** Keys, tokens, passwords, credentials — redact, always. If a secret is *relevant* (e.g. "the API key expired mid-session"), say that it expired, never what it was.
-- **False certainty.** Don't smooth over a half-understood bug with a confident summary. "Root cause not yet found; suspicion is the retry loop, unverified" is a good line. A guessed explanation the next session trusts is worse than none.
+- **False certainty.** "Root cause not yet found; suspicion is the retry loop, unverified" is a good line. A guessed explanation the next session trusts is worse than none.
 
 ## Edge cases
 

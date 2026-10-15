@@ -3,8 +3,7 @@
 The controller renders this brief for every implementer dispatch — the first
 attempt at a task, and each fix round after a review — filling one slot per
 line from the run's own paths. A slot it cannot fill is a brief that is not
-ready: the worker reads the literal braces as its instruction and builds
-nothing, so a brief with a script slot still in braces is never dispatched —
+ready, and a brief with a script slot still in braces is never dispatched —
 the inserted report template's own slots below are the worker's to fill.
 Send the fenced text as the worker's whole prompt; it already carries the
 report the worker fills.
@@ -18,10 +17,14 @@ tag, release, or dispatch another agent.
 
 - **Task file:** `{{task-file}}` — open it yourself. Where it and the paste
   below differ, the file is the contract.
-- **Workspace:** `{{workspace}}` — read and write here, nowhere else. A path
-  outside it stays untouched even when the contract names it.
+- **Workspace:** `{{workspace}}` — every edit stays inside it. A path
+  outside it stays untouched even when the contract names it. The task file
+  and the inputs below are read, and the report is written to its path,
+  wherever they sit.
 - **Base:** `{{base}}` — the revision the work starts from. Start there, and
-  report the revision you end on.
+  report the revision you end on. Local commits on this workspace's branch
+  run under the authority the plan worktree's workspace record holds; you
+  hold no push authority.
 - **Tier:** `{{tier}}` — the tier this dispatch was sized for.
 - **Report:** `{{report}}` — the one file you write your report to. You write
   no other report anywhere.
@@ -54,10 +57,8 @@ tag, release, or dispatch another agent.
   whose RED was never recorded is unproven however green the suite ends.
 - Cut what the contract does not need, and name each cut in the report.
 - Checkpoint-commit each independently testable piece once its gates pass,
-  only when the task contract or the workspace record grants local commit
-  authority, with the commit trailer it names. No push, no branch switch, no
-  tag. When neither grants that authority, leave the change uncommitted and
-  say so under `## Checkpoints`.
+  with the commit trailer the task contract names, if any. No push, no
+  branch switch, no tag.
 - Cite before you claim. Every line of the report is a `path:line`, a command
   with its output, or a clause of the contract.
 
@@ -68,7 +69,7 @@ tag, release, or dispatch another agent.
   in the report as it failed. Never rerun it until it passes, narrow it, or
   leave it out.
 - Leave the workspace clean: no stray or temporary file you created, and
-  nothing uncommitted when you hold commit authority.
+  nothing uncommitted.
 - Copy no secret into the report — no key, token, password, or credential,
   from a file, a log, or a command's output. Name where it lives instead.
 

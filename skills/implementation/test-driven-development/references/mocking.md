@@ -1,7 +1,5 @@
 # Test-Driven Development — Mocking
 
-Most worthless tests come from mocking the wrong thing. The rules:
-
 ## Substitute only at a real boundary
 
 Use a fake, stub, or mock where the test's scope meets a justified seam:
@@ -17,7 +15,7 @@ gate. Ownership alone neither justifies nor forbids the seam.
 
 ## Test the behavior, not the mock
 
-A test that asserts "the mock was called" proves only that you set up a mock. Assert the observable result your caller would see. If removing the real component still makes the test pass, you are testing the mock.
+Assert the observable result your caller would see, never that the mock was called. If removing the real component still makes the test pass, you are testing the mock.
 
 ## Keep mocks honest
 

@@ -10,6 +10,7 @@ do not repeat a header the brief already carries.
 - **Identity:** recorded in the ledger row, never here: this section's identity
   under the Identity rule of the artifact layout reference (`using-sdlc-skills`)
 - **Predecessor:** {{prior normative identity, or none}}
+- **Source:** {{the captured ticket's path and identity, or none}}
 - **External decision ledger:** {{ledger path: the brief's path with .ledger.md
   for .md, rows naming this section, unless the user sets another; holds pending
   / changes requested / approved / rejected / cancelled / superseded, bound to

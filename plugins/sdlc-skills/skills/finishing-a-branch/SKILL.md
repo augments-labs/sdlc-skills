@@ -5,9 +5,9 @@ description: "Takes a branch through the transition the user chooses: push, PR, 
 
 # Finishing a Branch
 
-Take a candidate or named PR through one branch transition the user chooses.
-Green checks and "seems done" authorize no history, remote, discard, or cleanup
-mutation.
+Take the state under check (the script calls it the candidate) or a named PR
+through one branch transition the user chooses. Green checks and "seems done"
+authorize no change to history or to a remote, and no discard or cleanup.
 
 ## When to use
 
@@ -30,43 +30,53 @@ mutation.
    bash scripts/branch-state.sh
    ```
 
-2. Identify the requested transition. Explicit keep-as-is, discard, or PR-only
-   close/reopen → apply its identity, ownership, and authority rules below;
-   readiness evidence is not an entry condition for those actions.
-3. For materialization, publication, or integration, bind the
-   `verification-before-completion` evidence and the `requesting-code-review`
+2. Identify the requested transition. If it is an explicit keep-as-is,
+   discard, or PR-only close or reopen, apply that action's identity,
+   ownership, and authority rules below; readiness evidence is not an entry
+   condition for those actions.
+3. For materialization (committing the reviewed working tree), publication,
+   or integration, bind the `verification-before-completion` evidence record
+   (the ledger: add to it, never rewrite it) and the `requesting-code-review`
    verdict (shallow `self-reviewed: ready`, or the required independent review
-   with no blocker) to one candidate identity: the full revision when the
-   script reports `dirty.clean: true`, the digest otherwise. Bind the live
-   remote or PR state.
-4. Required readiness verdict missing → keep the requested action pending;
-   offer keep-as-is or obtain the missing review under current authority.
-5. PR-only close or reopen → record the live PR, head and base refs, retained
-   resources.
+   with no blocker) to one identity for the state under check: the full
+   revision when the script reports `dirty.clean: true`, the working-tree
+   hash (`dirty.digest`) otherwise. Bind the live remote or PR state as well.
+4. If a required readiness verdict is missing, keep the requested action
+   pending; offer keep-as-is or obtain the missing review under current
+   authority.
+5. For a PR-only close or reopen, record the live PR, its head and base refs,
+   and the resources that stay in place.
 6. List the resources this task created (branch, worktree, remote ref, PR)
    from the `using-git-worktrees` workspace record. Only those may be cleaned
    up. A task-looking path proves nothing.
-7. For integration, read `base.resolved`. `false` → resolve it before acting.
-   A direct instruction or the
-   project's contribution rules override the detected default. Check remote
-   freshness yourself; the script does not fetch. Stale, moved, or ambiguous
-   base → no integration.
-8. Read `candidate.published`. `true` or `null`, or a `false` read from
-   remote-tracking refs not refreshed under current network authority →
-   separate direct permission for each of squash, rebase, amend. Never
-   force-push as repair. After any history change, rerun the script; content
-   moved → back to `requesting-code-review`.
-9. For PR creation/update, prepare the description from the contribution rules
-   and base-bound template, with evidence obtained. Prepare other actions'
-   applicable fields without inventing a PR.
+7. For publication or integration, read `base.resolved`. If it is `false`,
+   resolve the base before acting. A direct instruction, the project's
+   contribution rules, or the base the `using-git-worktrees` workspace record
+   holds override the detected default; pass that base as `--base`, and a PR
+   targets it. Check remote freshness yourself; the script does not fetch. If
+   the base is stale, has moved, or is ambiguous, do not integrate.
+8. Read `candidate.published`. If it is `true` or `null`, or a `false` read
+   from remote-tracking refs that were not refreshed under the network
+   authority you hold now, get separate direct permission for each of squash,
+   rebase, and amend. Never force-push as a repair. After any history change,
+   rerun the script; if the content moved, go back to
+   `requesting-code-review`.
+9. For PR creation or update, prepare the description from the project's
+   contribution rules and the template the base branch carries; if there is
+   none, open `assets/pr-description.md` before writing it. Fill the evidence
+   fields only from the bound ledger and verdict; add whichever of the check
+   results, the review verdict, and what was not verified the project's
+   template has no place for. For other actions, prepare the fields that apply
+   without inventing a PR.
 
 ## Step 2: Present the choices
 
-1. Read `references/branch-state.md` before preparing the applicable transition
-   descriptor.
-   A direct instruction or trusted receipt already covers its current targets,
-   action and payload → record that choice and proceed to Step 3. Missing
-   choice → offer only the state-permitted entries, then stop:
+1. Read `references/branch-state.md` before preparing the transition
+   descriptor that applies. If a direct instruction, or a trusted receipt,
+   already covers the descriptor's current targets, action, and payload,
+   record that choice and go on to Step 3.
+   Otherwise, offer only the entries the state permits, then stop (`Gates:`
+   summarizes the checks bound in Step 1.3):
 
    ```text
    Branch {{branch}} → {{base}}. Gates: {{summary}}. Review: {{verdict}}.
@@ -80,36 +90,41 @@ mutation.
    Recommendation: {{least-mutating option meeting the stated delivery intent}} — {{one sentence}}.
    ```
 
-2. Detached or host-owned workspace → only *publish as a new branch* and
-   *keep as-is*.
-3. Existing PR → only the transitions permitted for the PR's state and its
-   policy. Never conflate, retarget, rewrite, delete, or duplicate a PR.
+2. If the workspace is detached or host-owned, offer only *publish as a new
+   branch* and *keep as-is*.
+3. If a PR already exists, offer only the transitions its state and its
+   policy permit. Never conflate, retarget, rewrite, delete, or duplicate a
+   PR.
 4. Never put discard on this menu.
-5. Wait for one listed entry. Praise, constraints, partial answers, silence,
-   "looks good", an adjacent decision → re-present the menu unchanged.
-6. Bind the answer to the prepared descriptor. Material target or payload
-   change → show the changed choice; do not reuse approval for the old one.
+5. Wait for one listed entry. If the reply is praise, a constraint, a partial
+   answer, silence, "looks good", or a decision about something adjacent,
+   present the menu again unchanged.
+6. Bind the answer to the prepared descriptor. If the target or payload
+   changes materially, show the changed choice; do not reuse the approval
+   given for the old one.
 
 ## Step 3: Execute
 
 1. Read `references/branch-state.md` before executing, and execute through it.
-2. Run the gate on the exact integrated candidate *before* the base
-   advances. Failure after the advance = `integrated-regression`; follow the
-   reference's recovery.
+2. Run the required checks on the exact integrated result *before* the base
+   advances. A failure after the advance is an `integrated-regression`;
+   follow the reference's recovery for it.
 3. Remove an owned worktree only after confirmed integration. Leave detached,
    shared, user-owned, and host-owned resources in place.
-4. **REQUIRED SUB-SKILL:** releasable or running artifact → invoke
-   `release-readiness`. Canary, deploy, publish, and distribute are its
-   verdict, not this skill's.
+4. **REQUIRED SUB-SKILL:** if a releasable or running artifact is
+   involved, invoke `release-readiness`. Canary, deploy, publish, and
+   distribute are its verdict, not this skill's.
 
 ## Discard is a separate destructive path
 
 Enter only on a direct request. Never offer discard because work looks
 unwanted.
 
-1. Rerun `bash scripts/branch-state.sh` before filling the block. `base.resolved`
-   false → get the base from the user or project, rerun with
-   `--base`, and fill nothing until it resolves. Then fill it from the output:
+1. Rerun `bash scripts/branch-state.sh` before filling the block. If
+   `base.resolved` is false, take the base the `using-git-worktrees`
+   workspace record holds, or get it from the user or the project, rerun
+   with `--base`, and fill nothing until it resolves. Then fill the block
+   from the output and print it:
 
    ```text
    This will permanently delete:
@@ -123,9 +138,9 @@ unwanted.
    Type `discard {{candidate.id}}` to confirm.
    ```
 
-2. Stop. "yes", "go ahead", "get rid of it", a numbered choice → nothing is
-   touched.
-3. Only after that exact token: rerun with the same `--base`. A changed
+2. Stop. If the reply is "yes", "go ahead", "get rid of it", or a numbered or
+   clicked choice, touch nothing.
+3. Only after that exact token, rerun with the same `--base`. A changed
    `candidate.id`, a non-zero exit, or no `candidate.id` voids the token.
    Otherwise close or delete the listed task-owned resources, and nothing else.
 

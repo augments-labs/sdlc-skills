@@ -26,7 +26,7 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 ## Step 1: {{name the act}}
 
 1. {{one-line act}}
-2. {{condition}} → {{act}}
+2. If {{condition}}, {{act}}.
 3. Read `references/{{file}}.md` when {{condition}}.
 4. {{When a handoff is needed: REQUIRED SUB-SKILL, its entry condition, input,
    return value, and the caller step that resumes. Omit otherwise.}}
@@ -51,7 +51,7 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 
 1. {{do the work}}.
 2. Run {{the check}} and read what it reports.
-3. It fails → fix the cause, then run it again. Repeat until it passes.
+3. If it fails, fix the cause, then run it again. Repeat until it passes.
 
 ## Gotchas
 
@@ -60,5 +60,5 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 
 ## Common mistakes
 
-- {{a failure mode the steps do not already forbid}} → {{what to do instead}}.
+- Instead of {{a failure mode the steps do not already forbid}}, {{what to do}}.
 ````

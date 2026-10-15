@@ -1,14 +1,11 @@
 # Controlled dispatch packet prompt template
 
 The coordinator fills this template alongside the base packet when the run
-is high-risk or uses phase queues, adding ten fields the slim packet leaves
-to the coordinator: which workspace the worker owns, what it shares,
-whether it may commit, where it routes, when it stops, how it is isolated,
-what data and capacity it may consume, whether it may dispatch anyone, and
-how its attempt terminates. Fill every field; delete one only when it is
-genuinely empty for this task, and say so. Until every field here is
-filled, the worker dispatches nobody, touches only what the base packet
-names, and returns its report to the coordinator alone.
+is high-risk or uses phase queues; it adds ten fields the slim packet leaves
+to the coordinator. Fill every field; delete one only when it is genuinely
+empty for this task, and say so. Until every field here is filled, the
+worker dispatches nobody, touches only what the base packet names, and
+returns its report to the coordinator alone.
 
 ```markdown
 ## Boundary

@@ -14,8 +14,8 @@ closely the library follows it.
 
 The skills name no tool, model, or agent. They refer to models by tier
 (small, medium, large) and to tools by what they do, such as "the
-skill-loading action" or "the user-input action". Your agent supplies the
-real ones.
+skill-loading action" or "a tool for asking a question with choices". Your
+agent supplies the real ones.
 
 ## Step 1: Make the skills visible
 

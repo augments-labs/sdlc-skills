@@ -2,8 +2,6 @@
 
 Expanded checks behind the readiness gate in `../SKILL.md`. Loaded on demand — when a gate item needs a concrete check, a template, or a failure pattern to rule out.
 
-For each item: what *good* looks like, how to check it concretely from the repo, and the most common way it silently fails.
-
 The release-input descriptor supplies the stable expected row inventory and
 effect contract. Run controlled actions through `verification-before-completion`; its
 attempt ledger owns execution, quiescence, raw evidence, and pre/post effects.
@@ -82,7 +80,7 @@ Known gaps: {{what-rollback-does-not-undo}}
 {{version-or-date}} — {{what changed, in one line}}. Action needed: {{none | what, and by whom}}.
 ```
 
-- **Silent failure:** the notes list commit messages — "fix bug," "update deps" — which describe the author's day, not the system's behaviour. The reader learns nothing and stops reading the notes entirely.
+- **Silent failure:** the notes list commit messages — "fix bug," "update deps" — which describe the author's day, not the system's behaviour.
 
 ## 8. Breaking changes flagged to dependents
 

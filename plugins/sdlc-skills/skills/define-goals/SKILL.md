@@ -5,16 +5,19 @@ description: "Pins down what a new project or initiative is for: the objective, 
 
 # Define Goals
 
-Before scope or design, name the outcome — and how you'll know you hit it.
+Before scope or design, name the outcome, and how you will know you reached
+it.
 
 ## When to use
 
-- Starting a new project, product, or substantial initiative with a fuzzy "why".
-- **Skip** for a single feature or task. Use `clarifying-intent` only for genuine
-  ambiguity about which initiative or procedure is intended; `writing-specs` owns
-  settled detailed feature requirements.
-- **Skip** when a drafted goal or brief is awaiting a direct answer; an
-  informative non-answer routes to `clarifying-intent`, not a new goal pass.
+- Starting a new project, product, or substantial initiative with a fuzzy
+  "why".
+- **Skip** for a single feature or task. Use `clarifying-intent` only for
+  genuine ambiguity about which initiative or procedure is intended;
+  `writing-specs` owns settled, detailed feature requirements.
+- **Skip** when a drafted goal or brief is awaiting a direct answer. If the
+  reply informs but does not answer, handle it with `clarifying-intent`, not
+  with a new goal pass.
 
 ## Step 1: Find the objective
 
@@ -22,23 +25,26 @@ Open `assets/goals-section.md` before starting; each step fills its section.
 
 1. Ask "why this, why now?" until the answer is what the world does
    differently afterward, not code that exists.
-2. Name who benefits, who operates or bears risk, what changes for each, who
-   owns the outcome. Competing goals → separate metrics, never one average.
-3. Record one accountable decision owner, or the approvers, conflict
-   resolver, and decision rule. Solo owner — the user is the only
-   stakeholder → they are the decision owner; leave the approver, conflict,
+2. Name who benefits, who operates or bears risk, what changes for each, and
+   who owns the outcome. If goals compete, give each its own metric, never
+   one averaged metric.
+3. Record one accountable decision owner, or else the approvers, the conflict
+   resolver, and the decision rule. If the user is the only stakeholder (a
+   solo owner), the user is the decision owner; leave the approver, conflict,
    and decision-rule fields out.
-4. Per outcome: current baseline, target, time horizon, measurement source,
-   accountable owner. No source or date → cannot be checked → not a goal.
-5. Write the guardrails (what must not degrade) and the failure criterion:
-   the observation meaning the initiative failed even with its metric up.
+4. For each outcome, record its current baseline, target, time horizon,
+   measurement source, and accountable owner. If an outcome has no source or
+   date, it cannot be checked, so it is not a goal.
+5. Write the guardrails and the failure criterion.
 6. Write the value in one sentence.
 
 ## Step 2: Write and present
 
-1. Write the immutable `## Goals` section to
-   `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
-   preserving approved sections around it.
+1. Write the `## Goals` section, which is never edited once its identity is
+   issued, to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the
+   user-set path, leaving the approved sections around it untouched. When
+   the work came from a captured ticket, fill `Source` with the capture's
+   path and identity.
 2. Present:
 
    ```text
@@ -55,18 +61,20 @@ Open `assets/goals-section.md` before starting; each step fills its section.
    Recommendation: {{option the open assumptions support}} — {{one sentence}}.
    ```
 
-   Ask through the harness's user-input action when one exists, else print this block; end the turn; `clarifying-intent` owns what closes it.
-3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` when
-   viability is unresolved; otherwise `scoping` when the boundary is next.
-   Never impose a phase already complete.
+   Ask this and end the turn; `clarifying-intent` owns what closes it.
+3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` unless an
+   existing feasibility section already fills every dimension row from
+   evidence and no row is unknown; then, if the boundary is next, invoke
+   `scoping`. Never impose a phase that is already complete.
 
 ## Gotchas
 
-- A guardrail can look complete just by being written down while staying
-  unfalsifiable. `scoping` treats every goal guardrail as a non-negotiable
-  constraint on each cut, so one with no observable threshold lets a cut
-  violate it with nothing positioned to catch that.
+- A guardrail can look complete just because it is written down while no
+  observation could ever show it broken. `scoping` treats every goal
+  guardrail as a non-negotiable constraint on each cut, so a guardrail with
+  no observable threshold lets a cut violate it with nothing in place to
+  catch that.
 - Naming several approvers for the objective without also naming a conflict
   resolver and a decision rule leaves no way to settle it when they disagree
-  about what the goal actually is — the brief then stalls on a tie nobody is
-  positioned to break.
+  about what the goal actually is; the brief then stalls on a tie nobody is
+  placed to break.

@@ -21,6 +21,7 @@ a few skills.
 
 | Skill | What it does |
 | --- | --- |
+| `working-from-a-ticket` | Captures a ticket as read, with its acceptance criteria and what it leaves unclear, so the plan and the tests bind to it |
 | `writing-specs` | Writes requirements, acceptance criteria, and edge cases for settled intent |
 
 ## Design
@@ -43,6 +44,9 @@ a few skills.
 | `test-driven-development` | Makes a test fail for the right reason, then makes it pass |
 | `executing-plans` | Runs an approved plan task by task in the current session |
 | `subagent-driven-development` | Runs an approved plan through fresh subagents, with a reviewer on each task |
+| `rollout-controls` | Builds the flag or kill switch and the rollout signals a staged release needs, under the release policy's terms or terms drafted for the release owner to accept |
+| `adding-observability` | Instruments a change or a service so its operators can tell whether it works for users and find out why when it does not, through the project's existing facility, with each signal seen before it counts |
+| `changing-a-live-schema` | Builds an ordinary schema change or backfill in phases so a live store keeps working for both code versions during a deploy and after a rollback, until the contract phase |
 
 ## Testing
 
@@ -51,6 +55,7 @@ a few skills.
 | `verification-before-completion` | Runs the checks and reads their output before any claim that work is done |
 | `requesting-code-review` | Gets an independent review of a change before it is pushed or merged |
 | `receiving-code-review` | Checks review feedback on its merits before acting on it |
+| `reviewing-a-pr` | Reviews a pull request someone else wrote and writes the findings for its author; you choose what gets posted |
 | `security-audits` | Audits what an attacker could make a change do |
 | `verification-strategy` | Designs which checks a project runs, what each catches, and when |
 | `visual-ui-verification` | Checks a running interface across states, screen sizes, and themes |
@@ -72,6 +77,8 @@ a few skills.
 | `diagnosing-a-session` | Reconstructs what an agent session did from its transcript, as a report and an interactive trace page |
 | `complexity-audit` | Audits existing code for complexity it does not need |
 | `refactor-architecture` | Restructures code whose shape makes every change expensive |
+| `deprecating-an-api` | Retires an interface others call: the replacement first, a signal callers see, measured use, and the removal as its own change the owner accepts |
+| `large-scale-changes` | Applies one mechanical change across many files, packages, or owners with a script, and splits the result into shards each owner can review, merge, and revert alone |
 
 ## Common
 

@@ -1,8 +1,6 @@
 # Probabilistic and production debugging evidence
 
-Use when a deterministic local reproduction is not yet possible. The goal is a
-bounded experiment that can update confidence without pretending one green run
-proves absence.
+Use when a deterministic local reproduction is not yet possible.
 
 ## Pre-register the loop
 

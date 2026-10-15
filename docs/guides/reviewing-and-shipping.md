@@ -69,6 +69,12 @@ pushed back on with a reason, and a review round that keeps asking for the
 same thing is bounded rather than repeated forever. A finding that a trust
 boundary changed blocks readiness until a security review clears it.
 
+To review a pull request someone else opened, ask for it by number
+(`Review PR 42`): `reviewing-a-pr` reads that PR's exact head, runs the same
+independent review on it without executing its code, writes the findings for
+the author, and posts nothing (no approval, no request for changes, no
+comment) until you choose what to post.
+
 ## What to do with the branch
 
 With verification and review done, `finishing-a-branch` reads the state of
@@ -98,7 +104,10 @@ Things to know about this menu:
 - If a pull request already exists, only the transitions that PR's state
   permits are offered.
 - When opening a PR, the agent prepares the description from your project's
-  contribution rules and PR template, with the verification evidence.
+  contribution rules and PR template, with the verification evidence. A
+  project with no template gets the skill's own: what changes and why, the
+  checks run on that exact candidate, the review verdict, risk and rollback,
+  and what is left for the reviewer to decide.
 
 ## Discarding work
 

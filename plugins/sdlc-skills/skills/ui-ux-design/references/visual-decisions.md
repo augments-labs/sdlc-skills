@@ -48,10 +48,7 @@ The richer medium is not automatically better. Match fidelity to the decision: l
 5. **Iterate visibly.** Change only the axes implicated by feedback, then
    **append** the new version to the same page as an added version block and
    move the selector's default to it. Never edit the content of a version block
-   already issued, and never fork a second file. Keeping prior versions
-   selectable beside the new one is what makes them comparable — separate files
-   defeat the comparison the retention rule exists for, and leave the user
-   guessing which path is current.
+   already issued, and never fork a second file.
 
    Do not silently overwrite the evidence, and prove it rather than intending
    it: a new version's diff on the surface adds a block and changes only which
@@ -85,8 +82,8 @@ The richer medium is not automatically better. Match fidelity to the decision: l
 
    Before compiling that whole, freeze **Selected visual references** as a
    keyed collection, with one reference per independently selected decision.
-   Each record carries its Reference ID, Decision ID, Medium, Approved design
-   artifact version, Artifact locator, Artifact version, Content digest,
+   Each record carries its Reference ID, Decision ID, Medium, Artifact
+   locator, Artifact version, Content digest,
    Selection ID, Rendering-input identity, Freshness evaluator, Normative
    conditions, and Distinguishing invariants. A downstream UI task consumes only
    the applicable references.

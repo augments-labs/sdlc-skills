@@ -37,9 +37,13 @@ check(){ if [ "$2" = "$3" ]; then ok "$1"; else bad "$1 (expected '$3', got '$2'
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-# A plan directory is the input all three scripts start from.
-plan="$tmp/plan"
+# A plan directory is the input all three scripts start from. It sits in a
+# repository of its own: the run ledger's default path is under that
+# repository's .sdlc-skills/evidence/.
+plan_root="$tmp/plan-root"
+plan="$plan_root/plan"
 mkdir -p "$plan"
+git -C "$plan_root" init -q
 printf '# Plan\n\n## Tasks\n\n- [ ] `T-1` — Task one · `01-task.md` · `todo`\n' > "$plan/00-index.md"
 printf '# Task 01\n\n**Task ID:** `T-1`\n**Files:** src/a.txt\n' > "$plan/01-task.md"
 
@@ -75,15 +79,16 @@ for s in sdd-workspace task-brief review-package plan-version; do
 done
 
 echo "--- sdd-workspace.sh: the ledger binds to the plan, and says so on line 1"
-led="$plan/sdd-ledger.md"
+led="$plan_root/.sdlc-skills/evidence/plan/sdd-ledger.md"
 bash "$D/sdd-workspace.sh" --plan "$plan" >"$tmp/ws.out" 2>&1
 rc=$?
 check "creates the ledger (exit 0)" "$rc" "0"
 if [ -f "$led" ]; then
-  ok "ledger written beside the plan"
+  ok "ledger written under the repository's evidence/ directory"
 else
   bad "no ledger at $led"
 fi
+check "prints the ledger path" "$(cat "$tmp/ws.out")" "$led"
 # The identity is the plan's version, computed the way plan-version.sh computes one.
 want="$(bash "$D/plan-version.sh" "$plan")"
 line1="$(head -1 "$led" 2>/dev/null)"
@@ -126,6 +131,18 @@ check "--check reports drift after the plan is amended" "$rc" "1"
 bash "$D/sdd-workspace.sh" --plan "$tmp/nope" >/dev/null 2>&1
 rc=$?
 check "a missing plan index is a usage error" "$rc" "2"
+# Outside a repository there is no root to put the default ledger under.
+norepo_plan="$tmp/norepo-plan"
+mkdir -p "$norepo_plan"
+printf '# Plan\n\n## Tasks\n\n- [ ] `T-1` — Task one · `01-task.md` · `todo`\n' > "$norepo_plan/00-index.md"
+printf '# Task 01\n\n**Task ID:** `T-1`\n' > "$norepo_plan/01-task.md"
+bash "$D/sdd-workspace.sh" --plan "$norepo_plan" >/dev/null 2>"$tmp/norepo.err"
+rc=$?
+check "a plan outside any repository with no --ledger is a usage error (exit 2)" "$rc" "2"
+bash "$D/sdd-workspace.sh" --plan "$norepo_plan" --ledger "$tmp/elsewhere/ledger.md" >/dev/null 2>&1
+rc=$?
+check "--ledger names the path outside a repository (exit 0)" "$rc" "0"
+[ -f "$tmp/elsewhere/ledger.md" ] && ok "--ledger path is written" || bad "no ledger at $tmp/elsewhere/ledger.md"
 
 echo "--- sdd-workspace.sh: a plan plan-version.sh rejects is reported, not silently accepted"
 badplan="$tmp/badplan"
@@ -145,15 +162,17 @@ noexec="$tmp/noexec-scripts"
 mkdir -p "$noexec"
 cp "$D"/*.sh "$noexec/"
 chmod -x "$noexec"/*.sh
-noexec_plan="$tmp/noexec-plan"
+noexec_root="$tmp/noexec-root"
+noexec_plan="$noexec_root/noexec-plan"
 mkdir -p "$noexec_plan"
+git -C "$noexec_root" init -q
 printf '# Plan\n\n## Tasks\n\n- [ ] `T-1` — Task one · `01-task.md` · `todo`\n' > "$noexec_plan/00-index.md"
 printf '# Task 01\n\n**Task ID:** `T-1`\n' > "$noexec_plan/01-task.md"
 bash "$noexec/sdd-workspace.sh" --plan "$noexec_plan" >"$tmp/noexec.out" 2>"$tmp/noexec.err"
 rc=$?
 check "runs with every execute bit cleared (exit 0)" "$rc" "0"
 want_noexec="$(bash "$noexec/plan-version.sh" "$noexec_plan")"
-line1_noexec="$(head -1 "$noexec_plan/sdd-ledger.md" 2>/dev/null)"
+line1_noexec="$(head -1 "$noexec_root/.sdlc-skills/evidence/noexec-plan/sdd-ledger.md" 2>/dev/null)"
 case "$line1_noexec" in
   *"$want_noexec"*) ok "ledger line 1 carries the identity bash plan-version.sh computes ($want_noexec)" ;;
   *)                 bad "ledger line 1 does not match bash plan-version.sh's identity $want_noexec (got: ${line1_noexec:-<empty>})" ;;

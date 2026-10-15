@@ -27,33 +27,50 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
   change in one section does not invalidate an unrelated section's approval.
 - **Execute** derives from the plan's execution ledger (00-index.ledger.md
   beside the index, or the path its pointer names): each task's state is its
-  latest row bound to the plan's current identity, and a task with no such row
-  is `todo`. Only the exact state `done` counts complete; `done with concerns`,
-  `blocked`, `in progress`, `needs context`, `cancelled`, `superseded`, and
-  `todo` each count separately. The index checkbox rows are a navigation
-  mirror, never the source: a task whose mirror disagrees with its ledger state
-  renders the ledger state with a mismatch flag. No readable ledger → Execute
-  unknown, with its cause class.
+  latest task-state row (the task ID in `Section`, a task state in `State`)
+  bound to the plan's current identity (in `Identity`), and a task with no
+  such row is `todo`. A `finding`, `admitted`, or `cancellation requested` row
+  sets no task state. Only the exact state `done` counts complete; `done with
+  concerns`, `blocked`, `in progress`, `needs context`, `cancelled`,
+  `superseded`, and `todo` each count separately. The index checkbox rows are
+  a navigation mirror, never the source: a task whose mirror disagrees with
+  its ledger state renders the ledger state with a mismatch flag. No readable
+  ledger → Execute unknown, with its cause class.
 
 ## Approval comes only from the decision ledger
 
 Follow the section's ledger pointer. A pointer that names no path means the
 ledger beside the artifact: its path with .ledger.md in place of .md, or
-00-index.ledger.md in a plan directory. Preserve the pointer's vocabulary:
+00-index.ledger.md in a plan directory. A plan's approval comes from its
+decision rows only, the rows with an empty `Section`. Preserve the pointer's
+vocabulary:
 
 - `**External decision ledger:**` — pending, changes requested, approved,
-  rejected, cancelled, or superseded.
-- `**External lifecycle ledger:**` on an ADR — pending, accepted, in force,
-  rejected, cancelled, retired, or superseded.
+  rejected, cancelled, or superseded; on a captured ticket — captured, or
+  superseded by a successor capture.
+- `**External adoption ledger:**` on coding standards — pending, in force,
+  suspended, or superseded.
+- `**External lifecycle ledger:**` on an ADR — pending, changes requested,
+  accepted, in force, rejected, cancelled, retired, or superseded.
+- `**External lifecycle ledger:**` on a post-mortem — per action: proposed,
+  owner-accepted, rejected, cancelled, superseded, implemented, falsified,
+  deployed/enforced, effectiveness reviewed, effective, or closed.
 - `**External condition and decision ledger:**` on feasibility — go, go-if,
   no-go, or cancel, plus each condition's pending, satisfied, or failed state.
   Render go-if with its unmet conditions; recording the decision does not
   satisfy them. Unknown conditions stay unknown, not ready.
+- `**Decision ledger:**` on a deprecation record (the sunset date and the
+  removal), a shard manifest (open-all or pilot-first), a schema change record
+  (the contract acceptance), or a rollout record (the drafted terms accepted
+  or declined) — the row's own words; "no row" until decided.
 
 Parse best-effort and only the markdown-table form. The matching row is the one
 whose `Identity` equals the artifact's identity and whose location and section
 identify that content. The same identity on another file or section is a
 different decision. Preserve a missing or ambiguous section match as unknown.
+A deprecation record, shard manifest, schema change record, or rollout record
+is updated in place, so its current decision is the latest row matched by
+location and section, whatever identity it binds.
 
 Any of these renders approval `external/unknown` (pill `pending`, content
 `… unknown`): no ledger file where the pointer, or the artifact's own path,

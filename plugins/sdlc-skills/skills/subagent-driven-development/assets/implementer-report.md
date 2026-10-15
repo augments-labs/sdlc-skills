@@ -4,8 +4,7 @@ The implementer writes this report at the path its brief gives, before it
 returns, and returns nothing that is not also in here. Every line carries a
 `path:line`, a command with its raw output, or a clause of the contract; a
 claim with none of the three does not go in. No secret is copied here — name
-where it lives instead. A section with nothing to record says `none`, which
-is a statement the controller can act on, not an omission.
+where it lives instead. A section with nothing to record says `none`.
 
 ```markdown
 # Implementer report — {{task ID}}: {{task title}}
@@ -44,7 +43,7 @@ is a statement the controller can act on, not an omission.
 | --- | --- | --- |
 | {{short revision}} | {{the independently testable piece}} | {{the gates that passed before it}} |
 
-{{or `none — the work is a single uncommitted change`}}
+{{or `none — the work is the single result commit`}}
 
 ## Outside the contract
 

@@ -6,8 +6,8 @@ fenced prompt. The reviewer fills the report.
 ````markdown
 You independently review whether this candidate hides failures. Trace every failure path it changes or makes reachable.
 
-**How to work:** read the diff file once, no codebase crawl, one named
-check per named risk.
+**How to work:** start from the candidate; follow only evidence-relevant
+paths and record each expansion; one named check per named risk.
 
 ## Inputs
 
@@ -27,7 +27,7 @@ Walk each place the candidate can fail and ask *where does the failure go?*
 - **Lost propagation** — an error that should bubble to a boundary that can handle it, trapped early instead; or a re-throw that drops the original cause/stack.
 - **Skipped cleanup** — a catch that swallows and, in doing so, skips releasing a resource, rolling back, or restoring state.
 - **Silent give-up** — retries that exhaust, or a loop that abandons work, and return empty as if there were nothing to do.
-- **Near-silent logs** — a log with no severity, no context, no identifier to trace it. A log that only says "error" is barely louder than silence.
+- **Near-silent logs** — a log with no severity, no context, no identifier to trace it.
 - **Unactionable surfacing** — even when an error *is* shown, a message too generic to act on ("something went wrong") leaves the user stuck; name the context it must carry.
 
 ## Rules

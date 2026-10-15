@@ -8,14 +8,13 @@ description: "Shows the state of the artifact trail — briefs, specs, designs, 
 One self-contained page answers "what is the state of my SDLC work, and what
 needs attention?" from the `.sdlc-skills/` artifact trail. Every value on it
 is derived from a real marker; where no marker exists the page says unknown.
-A confident guess is fabrication — the failure this skill exists to prevent.
 The page carries state, not documents.
 
 ## When to use
 
 - The user asks for the state, progress, or drift of their SDLC work — what needs attention, how far each initiative is, what changed after a downstream artifact consumed it — or asks to see the trail as a page.
 - **Skip** when a specific artifact must be read, created, or edited: that is the owning skill's work, and this skill never mutates the trail.
-- **Skip** when there is no trail and nobody asked for its state — an unprompted empty page helps nobody.
+- **Skip** when there is no trail and nobody asked for its state.
 
 ## Available scripts
 
@@ -26,7 +25,7 @@ The page carries state, not documents.
 ## Step 1: Read the trail
 
 1. Resolve the project root: the main checkout, even from a linked task
-   worktree, because the trail and its plan mirrors live there. When the
+   worktree. When the
    common git directory is not a checkout's `.git` (a submodule, a separate
    git directory, a bare repository's worktree), the root is the current
    checkout's top.
@@ -43,23 +42,24 @@ The page carries state, not documents.
    ```
 
    Read `$root/.sdlc-skills/`: `briefs/`, `specs/`, `designs/`, `plans/`,
-   `verification/`, `audits/`, `post-mortems/`. Absent folder → unreached
-   phase.
-2. No `.sdlc-skills/` → render the template's empty state naming what
-   produces artifacts. An artifact at a user-set path → read it where its
-   recorded pointer names it: a pointer field, a ledger row's `Location`, or a
-   plan's bound inputs. A recorded path that cannot be read → that artifact's
-   values unknown, and Step 3.3 names the cause class. Never search the
-   filesystem for look-alikes.
+   `verification/`, `audits/`, `post-mortems/`. A folder that is absent means
+   that phase was never reached.
+2. If there is no `.sdlc-skills/`, render the template's empty state, which
+   names what produces artifacts. Read an artifact kept at a user-set path
+   only where a recorded pointer names it: a pointer field, the `Location`
+   of a row in a ledger, or a plan's bound inputs. If a recorded path cannot
+   be read, that artifact's values are unknown, and Step 3.3 names the cause
+   class. Never search the filesystem for look-alikes.
 3. Read `references/state-derivation.md` before deriving a value. Derive
    every value by its rules: slug allowlist, phase artifacts, approval
    sources, drift, attention grouping.
 4. Match each section's approved version and location to its decision
-   ledger (append-only, outside the artifact); preserve its own decision
-   vocabulary. Take task progress from the plan's
-   ledger rows, never the index checkboxes; only the state `done` counts
-   complete. Compare consumed identities for drift; timestamps alone
-   indicate possible staleness, never prove freshness. No value → unknown.
+   ledger, keeping the ledger's own decision vocabulary. Take task progress
+   from the plan's ledger rows, never from the index checkboxes; only the
+   state `done` counts as complete. Find drift by comparing the input
+   identity a downstream artifact recorded with that input as it is now;
+   timestamps alone can indicate possible staleness, never prove freshness.
+   Where no value can be derived, say unknown.
 
 ## Step 2: Render
 
@@ -72,11 +72,11 @@ The page carries state, not documents.
    allowlisted slug; and an open-file `href` or visual `src`, the path of a
    file read in Step 1, relative to `views/index.html` and starting with `../`.
    Never write a URL or a scheme into `href` or `src`.
-3. Before writing, `git check-ignore -q` the view path. Not ignored, and this
-   checkout holds a candidate a verification or review is bound to → ask
-   whether to write it there and stop until the user answers: the write is
-   content, and it moves that candidate's digest. A status question is not
-   consent to that.
+3. Before writing, run `git check-ignore -q` on the view path. If the path is
+   not ignored, and a verification or review is bound to this checkout's
+   state, ask whether to write it there and stop until the user answers: the
+   write is content, and it changes the hash of that state. A status question
+   is not consent to that.
 4. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
    inside a linked task worktree. Create `views/` if missing. No external
    URLs, no JavaScript, no scratch or backup files. Regeneration recomputes
@@ -92,14 +92,17 @@ The page carries state, not documents.
    bash scripts/start-server.sh --root .sdlc-skills --entry views/index.html
    ```
 
-2. Hand over the printed URL. Serving fails or declined → the file path
-   stands. `needs python3` → say so, name the platform's install route,
-   deliver the file path. Install a runtime only on explicit request.
+2. Hand over the printed URL. If serving fails or the user declined, the file
+   path stands. If the script reports `needs python3`, say so, name the
+   platform's install route, and deliver the file path. Install a runtime
+   only on explicit request.
 3. Reply in one short message: path or URL, as-of UTC, every place the page
-   says unknown or omitted a block, whether drift came from file mtimes, and
-   the cause class of any ledger pointer that could not be honored.
-4. No longer needed → `bash scripts/stop-server.sh {{pid}}`, with the `pid`
-   from the startup record.
+   says unknown or omitted a block, whether a drift flag came from file
+   modification times, and the cause class of any ledger pointer that could
+   not be honored.
+4. When the preview is no longer needed, run
+   `bash scripts/stop-server.sh {{pid}}` with the `pid` from the startup
+   record.
 
 ## Gotchas
 
@@ -110,7 +113,8 @@ The page carries state, not documents.
   unasked opens a local port the user never agreed to.
 - From a linked task worktree, the `.sdlc-skills/` beside the worktree's files
   is absent or an older committed copy: reading it shows a false empty trail,
-  and a view written there changes the candidate digest that a pending
+  and a view written there changes the hash of the state that a pending
   verification or review is bound to.
-- In a checkout that is itself the candidate, a view written under a trail the
-  project does not ignore still changes that checkout's digest.
+- In a checkout whose own state is the one under verification or review, a
+  view written under a trail the project does not ignore still changes that
+  checkout's hash.

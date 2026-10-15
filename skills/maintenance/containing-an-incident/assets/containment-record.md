@@ -1,7 +1,6 @@
 # Containment record template
 
-`containing-an-incident` fills this when the lever is pulled, not afterwards —
-its job is to make the mitigation reversible by somebody who was not here.
+`containing-an-incident` fills this when the lever is pulled, not afterwards.
 Write it to `.sdlc-skills/handoffs/{{YYYY-MM-DD}}-{{topic}}-containment.md`
 unless the user or the incident owner names another place, and commit it only
 under the handoff store's rule.

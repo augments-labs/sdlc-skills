@@ -10,8 +10,9 @@ diagnosis, not permission to change code.
 
 ## When to use
 
-- Audit an existing module or repository independently of a current candidate.
-- **Skip** choosing an implementation (`yagni`), reviewing an exact candidate
+- Audit an existing module or repository independently of any state currently
+  under check (the exact state being judged right now).
+- **Skip** choosing an implementation (`yagni`), reviewing a frozen change
   (`requesting-code-review`), or applying known structural work
   (`refactor-architecture`).
 - A whole-repository claim requires explicit whole-repository scope; otherwise
@@ -20,43 +21,46 @@ diagnosis, not permission to change code.
 ## Step 1: Freeze
 
 1. Open `assets/audit-report.md` before the inventory. Fill *What was
-   frozen* first: identity, goal, path boundary, guarantees in force,
-   admissible evidence.
-2. Predeclare the report path
-   `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`, coordinator-owned,
-   outside the audited target's identity. Identify the target by revision.
-   Use a working-tree digest only when the report path is outside the
-   repository or `git check-ignore -q` passes for it: an in-tree, unignored
-   report changes the digest the audit froze. Uncommitted target with an
-   in-tree, unignored report path → stop; ask for a checkpoint or an ignored or
-   out-of-repository report path. Target drifts → stop or restart.
+   frozen* first: identity, goal, path boundary, guarantees in force, and the
+   evidence allowed.
+2. Declare the report path up front:
+   `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`. The coordinator owns
+   it, and it sits outside the audited target's identity. Identify the
+   target by revision. Use a working-tree hash (the template calls it the
+   working-tree digest) only when the report path is outside the repository
+   or `git check-ignore -q` passes for it. If the target is uncommitted and
+   the report path is in-tree and unignored, stop; ask for a checkpoint or an
+   ignored or out-of-repository report path. If the target drifts, stop or
+   restart.
 3. Fill every row of the template's inventory table.
-4. Prefer one bounded audit. Large surface → partitions with stable IDs,
-   exclusive inventories, cross-boundary edges. Invoke
-   `dispatching-parallel-agents` only when read sets, resources, data
-   boundaries, and outputs reconcile independently.
+4. Prefer one bounded audit. If the surface is large, split it into
+   partitions with stable IDs, exclusive inventories, and cross-boundary
+   edges. Invoke `dispatching-parallel-agents` only when read sets,
+   resources, data boundaries, and outputs reconcile independently.
 
 ## Step 2: Challenge read-only
 
 1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` before
-   dispatching each exact partition, then dispatch per `dispatching-parallel-agents` Step 2.
-2. Empty, refused, or unavailable → follow the no-dispatch rule in
-   `dispatching-parallel-agents` Step 2.
+   dispatching each exact partition, then dispatch as
+   `dispatching-parallel-agents` Step 2 says.
+2. If the dispatch is empty, refused, or unavailable, follow the no-dispatch
+   rule in `dispatching-parallel-agents` Step 2.
 3. Fill every line of the template's coverage-reconciliation block before any
    finding.
 4. Read each returned partition report; open its file if only a location was
    returned. Match Target, Audit inputs, Partition, and Verdict to the frozen
-   request and auditor's allowed verdicts. Missing, unreadable, conflicting,
-   or mismatched fields → that partition is inconclusive. Retain the report
-   unchanged; never infer a repository-wide conclusion from partial coverage.
+   request and to the auditor's allowed verdicts. If a field is missing,
+   unreadable, conflicting, or mismatched, that partition is inconclusive.
+   Keep the report unchanged; never infer a repository-wide conclusion from
+   partial coverage.
 
 ## Step 3: Publish decisions
 
 1. Fill every column of the template's findings table, one row per finding.
    Line count is not authority.
-2. Apply or approve nothing. Accepted structural change → `refactor-architecture`.
-   Behavior work → its feature or bug route, producing a new verified
-   candidate.
+2. Apply or approve nothing. If a structural change is accepted, invoke
+   `refactor-architecture` for it. Behavior work goes to its feature or bug
+   route.
 3. Verify the report's coverage, then stop. Review or branch finishing runs
    only if the user separately asks to ship the report.
 
@@ -67,17 +71,15 @@ diagnosis, not permission to change code.
   a removal safe.
 - A reconciliation that lists no failed or inconclusive area reads as full
   coverage. Count what was not examined, or a silent gap passes as clean.
-- A working-tree digest captured before the audit reports DRIFT once the
+- A working-tree hash captured before the audit reports DRIFT once the
   report lands at an unignored path under the audited tree, though no audited
   code changed.
 
 ## Common mistakes
 
-- “No direct caller” → dynamic, configured, generated, or external use remains
+- “No direct caller”: dynamic, configured, generated, or external use remains
   `investigate` until disproved or deprecated.
-- “One implementation” → a seam containing real impedance, policy, or test
+- “One implementation”: a seam containing real impedance, policy, or test
   isolation may be justified; apply the deletion test, not a slogan.
-- “Tests and rollback are overhead” → a current assurance or recovery guarantee
+- “Tests and rollback are overhead”: a current assurance or recovery guarantee
   owns them; duplicate machinery with no distinct guarantee is the candidate.
-- Editing during the audit → freezes neither evidence nor conclusions; report
-  first, then obtain separate implementation authority.

@@ -78,15 +78,14 @@ budgets”—then record:
 - the intended gate form and owner; and
 - the assumption or open question that blocks construction.
 
-An open contract defers an artifact's shape, not the requirement's verification
-obligation. If no observable can be named, return the ambiguity to
-`clarifying-intent`; do not counterfeit precision with code.
+If no observable can be named, return the ambiguity to `clarifying-intent`;
+do not counterfeit precision with code.
 
 ## Prose is correct for
 
 Problem statements, policy, assumptions, dependencies, risks, open questions,
 out-of-scope statements, and requirements whose richer form would add more design
-than clarity. Prose is not second-class when it is the honest present evidence.
+than clarity.
 
 ## Wire every form back to the spec
 

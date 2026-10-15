@@ -1,19 +1,51 @@
 # SDLC skills
 
-SDLC skills is a library of engineering skills for coding agents. It covers the
-whole software development life cycle, from the first conversation about goals
-to debugging in production, and it works with several agents from one set of
-files.
+A ticket lands in your queue and you hand it to your coding agent. With the
+library installed, the skills walk the agent through it. It reads the ticket
+as written, records the acceptance criteria, and asks about the one thing
+the ticket leaves open. It works where your team's rules say, writes a
+failing test before the code, replaces an integer column on a live table
+with a timestamp in phases so both versions of your service keep working
+through the deploy, and puts the new behavior behind a flag because your
+release policy asks for one. It runs your checks, reads the output, gets the
+change reviewed, and asks you what to do with the branch. Later it reviews a
+teammate's pull request without posting a word until you say so, judges
+whether the build is safe to ship, and, when something breaks for customers,
+contains it first, finds the cause second, and writes up how it got past the
+checks.
 
-A skill is a short set of instructions your agent loads when a situation calls
-for it: how to write a plan, how to find the cause of a bug, what to check
-before calling work done. You install the library once and the agent picks the
-skills that fit the task in front of it.
+That is the whole software development life cycle as you live it at work,
+from the first ticket to the post-mortem, and it is what SDLC skills is for.
+It is a library of engineering skills for coding agents: short sets of
+instructions the agent loads when a situation calls for them, covering every
+phase from the first conversation about goals to debugging in production.
+You install it once, it works with several agents from one set of files, and
+the agent picks the skills that fit the task in front of it.
+
+The skills tell the agent to stop at the decisions that are yours, such as
+the data owner's acceptance of a drop, the rollout terms, the branch menu,
+the review it would post, the release, the lever pulled in an incident, and
+the actions a post-mortem proposes.
+[A change at work, from ticket to post-mortem](docs/guides/a-change-at-work.md)
+walks through the story above stage by stage.
 
 ## Table of contents
 
 - [How it works](#how-it-works)
 - [Installation](#installation)
+  - [Claude Code](#claude-code)
+  - [Codex CLI](#codex-cli)
+  - [Kimi Code](#kimi-code)
+  - [OpenCode](#opencode)
+  - [Grok Build](#grok-build)
+  - [Muse Code](#muse-code)
+  - [pi](#pi)
+  - [Devin](#devin)
+  - [Antigravity](#antigravity)
+  - [Hermes](#hermes)
+  - [Cursor](#cursor)
+  - [Other agents](#other-agents)
+  - [Check that it works](#check-that-it-works)
 - [A typical workflow](#a-typical-workflow)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -35,7 +67,10 @@ work is finished, it runs the checks and reads their output before it says so,
 then asks for a review and asks you what to do with the branch.
 
 You do not have to call skills by name, although you can. Every skill is
-addressed as `sdlc-skills:<name>`.
+addressed as `sdlc-skills:<name>`. That name is stable: a skill keeps its name
+in every minor and patch update, so a skill you invoke by name keeps working. A
+rename or removal only comes in a major version, with the
+[changelog](CHANGELOG.md) saying how to update.
 
 Two things are worth knowing up front:
 
@@ -260,7 +295,8 @@ A large project may touch every phase. Most tasks use a few skills.
    idea into a project brief: what it is for, what is in and out, and whether
    it can be delivered.
 2. **Analysis.** `writing-specs` turns settled intent into requirements and
-   acceptance criteria.
+   acceptance criteria. `working-from-a-ticket` captures a ticket you hand
+   over, criteria as written, so the work binds to it.
 3. **Design.** `system-architecture`, `data-model`, and `ui-ux-design` shape
    the solution. `writing-plans` breaks it into tasks, and `reviewing-plans`
    gets a second opinion on a risky plan before you approve it.
@@ -269,15 +305,30 @@ A large project may touch every phase. Most tasks use a few skills.
    `executing-plans` runs the plan in the current session, or
    `subagent-driven-development` hands each task to a fresh subagent.
    `test-driven-development` and `yagni`, another common skill, keep each
-   change tested and no larger than it needs to be.
+   change tested and no larger than it needs to be. `rollout-controls`
+   builds the flag or kill switch and the signals a staged release needs,
+   when your release policy, the plan, or you ask for one.
+   `changing-a-live-schema` phases a change to stored data so a live store
+   keeps working for both code versions through a deploy and a rollback,
+   until the final phase drops the old shape.
+   `adding-observability` instruments a change or a service so its
+   operators can tell whether it works for users and find out why when it
+   does not, through the facility the project already has.
 5. **Testing.** `verification-before-completion` runs the checks before any
    claim that work is done. `requesting-code-review` and
-   `receiving-code-review` handle the review.
+   `receiving-code-review` handle the review. `reviewing-a-pr` reviews a
+   pull request someone else opened.
 6. **Deployment.** `finishing-a-branch` asks what to do with the branch: push,
    open a PR, merge, keep, or discard. `release-readiness` decides whether a
    build is safe to ship.
 7. **Maintenance.** `debugging` finds the cause of a bug before any fix.
    `containing-an-incident` and `post-mortem` handle failures that reach users.
+   `deprecating-an-api` retires an interface others call: the replacement
+   ships first, callers get a signal they see, use is measured, and the
+   removal is a later change you accept. `large-scale-changes` applies one
+   mechanical change (a codemod, a dependency bump, a lint rule) across many
+   files with a script, and splits the result into one shard per owner that
+   you decide once whether to open all or as a pilot first.
 
 The [skill catalogue](docs/reference/skills.md) lists every skill with one
 line on what it does, including the common skills that belong to no phase.
@@ -291,9 +342,11 @@ people need first:
 | --- | --- |
 | [Installing, updating, and removing](docs/guides/installing.md) | The steps for each supported agent, and what each one does with the files |
 | [Your first session](docs/guides/first-session.md) | How to check the skills loaded, how to call one by name, and the folder the agent creates |
+| [A change at work, from ticket to post-mortem](docs/guides/a-change-at-work.md) | One change through a company's whole lifecycle, and what stays with you at each stage |
 | [Building a feature](docs/guides/building-a-feature.md) | From the request to a reviewed branch |
 | [Fixing a bug](docs/guides/fixing-a-bug.md) | How the agent finds the cause before it proposes a fix |
 | [When a session goes wrong](docs/guides/when-a-session-goes-wrong.md) | Getting a cited account of what a session did |
+| [Setting up for a team](docs/guides/setting-up-for-a-team.md) | What a team writes once in its agent instructions file |
 | [Skills guide, your checks decide](docs/concepts/skills-and-gates.md) | Why the library relies on your tests, reviews, and decisions |
 | [Skill catalogue](docs/reference/skills.md) | Every skill, by phase |
 | [Supported agents](docs/reference/agents.md) | What each agent gets and its known limits |
@@ -316,6 +369,9 @@ Contributions are welcome. The short version:
 [`CONTRIBUTING.md`](CONTRIBUTING.md) has the full guide, including what each
 check proves, how the agent adapters are built, and the design decisions
 behind the library.
+
+Behavior tests for the skills live in a separate repository,
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals).
 
 ## License
 

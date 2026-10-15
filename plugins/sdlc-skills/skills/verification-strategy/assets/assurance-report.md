@@ -1,7 +1,7 @@
 # Assurance report section template
 
 Fill this section within the broad review report. Its candidate and review-input
-fields bind this section too; copy the full matrix version from Inputs.
+fields bind this section too; copy the matrix version from Inputs.
 
 ```markdown
 ## Assurance

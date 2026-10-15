@@ -5,21 +5,22 @@ description: "Writes a handoff so a fresh session or another agent can continue 
 
 # Handoff
 
-Write the state the next session resumes from — not a summary of the
-conversation — and write it only where the user or a standing instruction
+Write the state the next session resumes from, not a summary of the
+conversation, and write it only where the user or a standing instruction
 says it may go.
 
 ## When to use
 
 - A conversation is ending mid-work, or responsibility for continuing it passes
   to a fresh session or a different agent.
-- **Skip** when the task is finished and self-contained — there's nothing to resume.
+- **Skip** when the task is finished and self-contained.
 - **Skip** bounded worker assignments while the coordinator retains the task;
-  use the dispatch packet and return contract for those.
+  those use the dispatch packet and return contract instead.
 
 ## Step 1: Settle the destination
 
-1. An instruction or standing authority names it → write there. Do not ask.
+1. If an instruction or a standing authority names the destination, write
+   there. Do not ask.
 2. Otherwise ask one question and end the turn:
 
    ```text
@@ -32,11 +33,11 @@ says it may go.
    Recommendation: {{least-disclosing option that reaches the recipient}} — {{one sentence}}.
    ```
 
-3. "Wherever is easiest", approval of the content, silence → no destination.
-   Re-ask.
-4. Scratch path outside the workspace → fill `Storage controls`: data class,
-   readers, lifetime, exact cleanup target and owner, cleanup pending or not.
-   Write nothing into the repository.
+3. "Wherever is easiest", approval of the content, or silence names no
+   destination. Ask again.
+4. For a scratch path outside the workspace, fill `Storage controls`: data
+   class, readers, lifetime, exact cleanup target and owner, and whether
+   cleanup is still pending. Write nothing into the repository.
 
 ## Step 2: Fill `assets/handoff-template.md` before writing
 
@@ -45,31 +46,35 @@ Read `references/handoff-example.md` when the first draft is written and needs c
 1. Fill every section: identity, goal, state identity, decisions and
    authority, evidence, gotchas and permissions, resume first action,
    suggested skills, references.
-2. `Handoff identity` → name the predecessor record and append. Several
-   terminal successors, or a predecessor file whose ledger records no digest or
-   one it no longer matches → stop and resolve the lineage.
-3. `Decisions and authority` → for each decision, the direct answer or the
-   standing default that authorized it. Every open decision listed as open.
+2. In `Handoff identity`, name the predecessor record and add this note after
+   it as its successor. If more than one successor already ends the
+   predecessor's lineage, or the predecessor file's ledger holds
+   no hash for it, or one the file no longer matches, stop and resolve the
+   lineage.
+3. In `Decisions and authority`, give for each decision the direct answer or
+   the standing default that authorized it. List every open decision as open.
    Never write an assumption as approval.
-4. `Evidence` → for each gate: command, where it ran, tree, when, result.
-   Stale or never run → say so. Leave no weak result out.
-5. `Suggested skills` → candidates only. Not proof of invocation, not a
-   sequence.
-6. `References` → paths or URLs to specs, plans, ADRs, issues, commits. Copy
-   nothing in.
-7. `Resume first action` → one concrete step the next session verifies
-   before executing.
+4. In `Evidence`, give for each check: the command, where it ran, the tree,
+   when, and the result. If a result is stale or the check never ran, say so.
+   Leave no weak result out.
+5. `Suggested skills` lists possibilities only. It is not proof that any was
+   invoked, and not a sequence to follow.
+6. `References` holds paths or URLs to specs, plans, ADRs, issues, commits.
+   Copy nothing in.
+7. `Resume first action` is one concrete step, which the next session
+   verifies before executing it.
 8. Before writing, remove every key, token, password, and piece of personal
    data.
 9. After writing a note to a file, record the first 7 characters of
-   `git hash-object` of that file in its ledger (append-only, outside the
-   note; `.ledger.md` in place of `.md`), never in the note.
+   `git hash-object` of that file in its record (the ledger: add to it, never
+   rewrite it; it sits outside the note, at the note's path with `.ledger.md`
+   in place of `.md`), never in the note.
 
 ## Gotchas
 
 - Session state can hold credentials, customer data, or unreviewed findings. A
   store the session invents discloses it to readers nobody chose.
-- A digest written inside the note changes the bytes it names, so the note
+- A hash written inside the note changes the bytes it names, so the note
   never matches it and every later handoff stops on its lineage.
 
 ## Common mistakes

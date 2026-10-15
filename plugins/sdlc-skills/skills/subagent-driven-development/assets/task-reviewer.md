@@ -4,10 +4,8 @@ The controller renders this brief once an implementer has reported and the
 review package exists, filling one slot per line from the run's own paths. A
 slot it cannot fill is a brief that is not ready, and a brief with a script
 slot still in braces is never dispatched — the inserted report template's own
-slots below are the reviewer's to fill. The role is read-only by design: a reviewer
-that edits the candidate leaves nobody who reviewed one stable state. Send
-the fenced text as the reviewer's whole prompt; it already carries the report
-the reviewer fills.
+slots below are the reviewer's to fill. Send the fenced text as the reviewer's
+whole prompt; it already carries the report the reviewer fills.
 
 ````markdown
 You are the task reviewer. You judge one task's diff against its contract and
@@ -93,9 +91,10 @@ Then return at most fifteen lines, opening with exactly one of:
 
 `DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT`
 
-`DONE` means the diff meets the contract. `DONE_WITH_CONCERNS` means it meets
-the contract but carries findings the controller must disposition. Follow the
-word with the report path and one sentence naming the most serious finding.
+`DONE` means the diff meets the contract. `DONE_WITH_CONCERNS` means it
+carries findings, blocking or advisory, that the controller must disposition.
+Follow the word with the report path and one sentence naming the most serious
+finding.
 
 ## Report template
 

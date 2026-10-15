@@ -12,8 +12,16 @@ should get a 401 instead of being served.
 ```
 
 For work that needs a design or a plan first, see
-[Planning larger work](planning-larger-work.md). The steps below are what
+[Planning larger work](planning-larger-work.md). For a change followed
+through a company's whole lifecycle, from the ticket to the post-mortem,
+see [A change at work](a-change-at-work.md). The steps below are what
 happens for a change the agent can start on directly.
+
+If the work is already written up as a ticket, hand the agent the ticket:
+paste it, or give the link or identifier if the agent has a tool to read it.
+`working-from-a-ticket` records the ticket and its acceptance criteria as
+written, so the plan and the tests bind to that record rather than to a
+summary, and the agent re-reads the ticket before it calls the work done.
 
 ## 1. It settles what you mean, if anything is open
 
@@ -42,6 +50,10 @@ If you would rather the agent stayed in the current checkout, say so:
 ```text
 Stay in this checkout, no worktree.
 ```
+
+If your team always works this way, write it once in your project's agent
+instructions file instead; [Setting up for a team](setting-up-for-a-team.md)
+shows the line.
 
 ## 3. It writes a failing test first
 
@@ -120,3 +132,21 @@ step in more detail.
 - **No test framework.** The agent still looks for the smallest executable
   check that can fail. If none is possible, it says so instead of claiming
   the change is tested.
+- **A staged rollout.** If your release policy, the plan, or you ask for a
+  feature flag, kill switch, canary, or staged rollout, `rollout-controls`
+  builds the switch (off by default, in front of every path the change adds)
+  and the signals the rollout's thresholds read, under your release policy's
+  terms. Where there is no policy, or a term is missing, it drafts the terms
+  and asks the release or decision owner to accept them before building
+  anything. This is not the flag `yagni` stops:
+  someone asked for it. `release-readiness` later binds those terms instead
+  of inventing them.
+- **A change to stored data.** If the feature adds, renames, or drops a
+  column or field, adds an index or constraint, or backfills data on a store
+  your running system reads, `changing-a-live-schema` builds it in phases:
+  expand first, then backfill in batches, then switch, and only later drop
+  the old shape. Each phase is its own deploy with its own rollback, so the
+  old and new versions of your code both keep working during the deploy and
+  after a rollback. The drop is the point of no return; the agent asks the
+  data owner to accept it before it ships. A whole-store migration or a
+  rewrite goes through `migration-strategy` instead.

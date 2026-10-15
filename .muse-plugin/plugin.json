@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "name": "sdlc-skills",
   "displayName": "SDLC Skills",
-  "version": "10.5.0",
+  "version": "11.0.0",
   "description": "A cross-platform SDLC skills library for coding agents: planning, design, TDD, debugging, review, and delivery workflows.",
   "compat": {
     "source": "native",
@@ -10,6 +10,10 @@
   },
   "capabilities": {
     "skills": [
+      {
+        "id": "working-from-a-ticket",
+        "path": "skills/analysis/working-from-a-ticket/SKILL.md"
+      },
       {
         "id": "writing-specs",
         "path": "skills/analysis/writing-specs/SKILL.md"
@@ -95,8 +99,20 @@
         "path": "skills/design/writing-plans/SKILL.md"
       },
       {
+        "id": "adding-observability",
+        "path": "skills/implementation/adding-observability/SKILL.md"
+      },
+      {
+        "id": "changing-a-live-schema",
+        "path": "skills/implementation/changing-a-live-schema/SKILL.md"
+      },
+      {
         "id": "executing-plans",
         "path": "skills/implementation/executing-plans/SKILL.md"
+      },
+      {
+        "id": "rollout-controls",
+        "path": "skills/implementation/rollout-controls/SKILL.md"
       },
       {
         "id": "subagent-driven-development",
@@ -119,8 +135,16 @@
         "path": "skills/maintenance/debugging/SKILL.md"
       },
       {
+        "id": "deprecating-an-api",
+        "path": "skills/maintenance/deprecating-an-api/SKILL.md"
+      },
+      {
         "id": "diagnosing-a-session",
         "path": "skills/maintenance/diagnosing-a-session/SKILL.md"
+      },
+      {
+        "id": "large-scale-changes",
+        "path": "skills/maintenance/large-scale-changes/SKILL.md"
       },
       {
         "id": "post-mortem",
@@ -149,6 +173,10 @@
       {
         "id": "requesting-code-review",
         "path": "skills/testing/requesting-code-review/SKILL.md"
+      },
+      {
+        "id": "reviewing-a-pr",
+        "path": "skills/testing/reviewing-a-pr/SKILL.md"
       },
       {
         "id": "security-audits",

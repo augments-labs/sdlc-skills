@@ -1,35 +1,6 @@
 # Dispatch briefs in depth
 
-Worked examples behind `../SKILL.md` — loaded on demand. Each pair shows a weak brief and the strong one for the same task. The difference is never length; it's that the strong one is self-contained: a subagent with zero shared session can start cold and finish to a reconcilable "done."
-
-The packet you fill in is `../assets/dispatch-packet.md`. What follows is why its
-fields are shaped that way, and what a filled one looks like. The examples show
-the slim packet; a high-risk run or a phase queue fills
-`../assets/dispatch-packet-controlled.md` as well, and the last four rules below
-are about those fields.
-
-## The rules behind the template
-
-- **Paste what defines the task, point at what informs it.** The failing assertion, the acceptance criterion — paste. The full log, the diff, the fixture — give a path.
-- **Bound the agent's reach.** Without "DO NOT TOUCH" + "report out-of-scope rather than reaching," a helpful agent fixes the neighbouring thing too — and now two agents are editing the same file.
-- **Subdispatch is opt-in.** A child lacks the coordinator's global ownership and
-  capacity view. Prohibit it unless the packet suballocates every boundary and
-  names who reconciles the grandchildren.
-- **Bound data and effects as well as files.** A path is not permission to expose
-  every value inside it to any worker, provider, log, or retained report.
-- **Stop on newly discovered overlap.** The packet is invalid when a hidden
-  generator, manifest, fixture, or dependency joins two ownership sets. Preserve
-  work and let the coordinator re-partition it.
-- **Prove the host can hold the fan-out.** File independence does not create
-  CPU, memory, disk, process, socket, time, or cost capacity. Bound each worker
-  and the aggregate with operating headroom, or keep dispatch blocked until
-  measurement and enforceable isolation exist.
-- **Never invent dispatch state.** A packet or coordinator-assigned name is only
-  intent. The action's returned receipt creates a live worker. Poll only those
-  attempt IDs until the deadline; an empty target stops as not-dispatched.
-  Failure/timeout/cancel is not terminal until quiescence is proved. Quarantine
-  partial output, reject predecessor results after linked reassignment, and
-  retain every expected packet outcome.
+Worked examples behind `../SKILL.md` — loaded on demand. Each pair shows a weak brief and the strong one for the same task, filled from `../assets/dispatch-packet.md`. The examples show the slim packet; a high-risk run or a phase queue fills `../assets/dispatch-packet-controlled.md` as well.
 
 ## Pair 1 — separate failing tests
 
@@ -74,7 +45,7 @@ Why it fails: the agent touches both — that was one agent doing two tasks seri
   exceptions.
 ```
 
-Dispatch the billing test as a second, symmetric brief. Note what the strong one carries that the weak one doesn't: the failing assertion pasted (the agent never runs a red suite to discover it), the exact verification command, and a boundary that keeps the two agents apart.
+Dispatch the billing test as a second, symmetric brief.
 
 ## Pair 2 — unrelated bugs
 
@@ -119,10 +90,9 @@ Why it fails: session history is not context — it carries your dead ends and m
   cases; scope exceptions.
 ```
 
-The typo gets its own brief at the small tier. Note the reproduce steps pasted
-verbatim—that is the defining snapshot. The worker still observes the named RED
-under TDD; it need not run a broad suite merely to discover which failure owns
-the task.
+The typo gets its own brief at the small tier. The worker still observes the
+named RED under TDD; it need not run a broad suite merely to discover which
+failure owns the task.
 
 ## Pair 3 — parallel research
 
@@ -171,12 +141,12 @@ Why it fails: "best" undefined — each agent optimises a different axis; no cri
   - Unknowns: what you could not determine from the repo
 ```
 
-One brief per approach, identical except `{{approach}}`. The shared report shape is what makes the coordinator's job mechanical: line the four criteria up side by side and the recommendation falls out. The weak version gives you three opinions; the strong one gives you one comparison table.
+One brief per approach, identical except `{{approach}}`.
 
 ## Failure patterns to check before dispatching
 
 - **The brief that needs the session.** Any reference to "the earlier discussion," "as we decided," or "the bug I showed you" — the agent has none of that. Paste it or point at a file.
-- **Bulk pasted, definition pointed.** A 500-line log inline and "the spec is at {{path/to/spec}}" is backwards. The paste tax is paid on every turn of the subagent's run.
+- **Bulk pasted, definition pointed.** A 500-line log inline and "the spec is at {{path/to/spec}}" is backwards.
 - **Tier without selection.** The brief names the capability needed; apply the skill's **Model selection** section to configure the model that will actually run.
 - **Verification by description.** "Make sure it works" is not DONE WHEN. Name the command; the exit code is the verdict.
 - **Symmetric overlap.** Two briefs that each say "and tidy up anything nearby" touch the same files. Generosity is a race condition.

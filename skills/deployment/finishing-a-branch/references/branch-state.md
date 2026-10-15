@@ -115,8 +115,9 @@ and requires its own direct choice; the commit choice grants nothing else.
 2. Check upstream/remote branch collision and contribution instructions.
 3. Push without rewriting shared history. A rejection or moved remote is new
    state to investigate, not permission to force-push.
-4. Create exactly one PR against the proven base using the filled template and
-   truthful evidence. Report its identity.
+4. Create exactly one PR against the proven base with the description Step 1.9
+   prepared: the filled template and evidence no wider than the ledger. Report
+   its identity.
 5. Preserve the local branch/workspace and runtime notes for review feedback.
    Cleanup waits for confirmed integration and a later valid cleanup transition.
 
@@ -179,7 +180,7 @@ candidate/base/remote state and consumes a new exact choice.
 ## Keep
 
 Make no integration, publication, history, or cleanup mutation. Report the exact
-branch/HEAD and workspace path so work remains findable.
+branch/HEAD and workspace path.
 
 ## Owned cleanup
 

@@ -1,7 +1,8 @@
 # Artifact layout
 
-Where the skills write. Only the user sets another path; record it in the
-artifact's ledger pointer so the next reader finds it.
+Where the skills write. Only the user or the project's own instructions set
+another path; record it in the artifact's ledger pointer so the next reader
+finds it.
 
 ## Directories
 
@@ -11,11 +12,11 @@ nothing.
 
 | Directory | Holds | Committed |
 | --- | --- | --- |
-| `briefs/` | goals, scope, feasibility, and interview briefs | yes |
+| `briefs/` | goals, scope, feasibility, and interview briefs; captured tickets | yes |
 | `specs/` | specifications | yes |
-| `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts | yes |
+| `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts, rollout records, schema change records, deprecation records, shard manifests | yes |
 | `plans/` | plan directories: an index and its task files | yes |
-| `audits/` | complexity audit reports, and security reports copied after their verdict, outside the candidate workspace | yes; a security report with open findings once disclosing it is safe |
+| `audits/` | complexity audit reports, outside the candidate workspace | yes |
 | `post-mortems/` | post-mortems | yes |
 | `verification/` | assurance matrices | yes |
 | `evidence/` | run records bound to one state, prototype results and boundary records included | only its `.gitignore` |
@@ -52,6 +53,16 @@ Every ledger is one markdown table with this header:
   was chosen.
 - `Updated` is the date the row was appended.
 
+A plan's decision rows leave `Section` empty. An execution row fills the same
+columns: `Identity` is the plan version, `Section` is the task ID, `State` is
+the task state, `Bound evidence` holds the attempt, the result revision and the
+evaluator evidence, and `Updated` holds the owner and the time. The other rows
+`executing-plans` appends (`finding`, `admitted`, `cancellation requested`) use
+the same columns with the kind in `State`; only a row whose `State` is a task
+state sets a task's state. A row about no single task, such as
+`workspace: not applicable` or a finding outside every task's contract, puts
+`plan` in `Section`, so no reader takes it for a decision row.
+
 A ledger kept anywhere else, or returned instead of written, is recorded in the
 artifact's pointer field.
 
@@ -73,6 +84,8 @@ over the exact text the artifact owns:
 - **A brief's own text:** from the top of the file down to its first `##`
   heading outside a fenced code block; the goals, scope, and feasibility
   sections are other artifacts.
+- **A captured ticket** (a file whose H1 begins `# Ticket:`): the whole
+  file; nothing else is written into it.
 - **A plan:** its index, with every task checkbox and state label normalized to
   `[ ]` and `todo`, followed by every task file in index order.
 
@@ -91,15 +104,22 @@ recording. The agent that issues the artifact runs the command at issue;
 whoever later checks an approval or drift recomputes it the same way. Record the
 value in the ledger row and show it in the decision block. Never write it into
 the artifact: that changes the bytes it names. Any later byte change is a new
-identity, and so a successor.
+identity, and so a successor, except in a deprecation record, shard manifest,
+schema change record, or rollout record: those are updated in place, a decision
+row binds the record's identity at the time of that decision, and a later
+update does not make the row stale.
 
 ## Evidence
 
 `evidence/` holds records that bind to one state and go stale with it:
 verification ledgers, TDD RED records, debugging hypothesis and attempt
-ledgers, review descriptors, dispatch receipts and reports, security reports
-until their verdict, gate-state records, boundary records, and prototype
+ledgers, review descriptors, dispatch receipts and reports, plan review
+reports, security reports, gate-state records, boundary records, and prototype
 results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
+A plan's run records use its directory name: the SDD run ledger lives at
+`.sdlc-skills/evidence/{{plan directory name}}/sdd-ledger.md` and keeps its
+own header (`When | Kind | Task | Detail`), being a run record, not a decision
+ledger.
 
 The candidate digest (`state-identity.sh`, `branch-state.sh`) leaves `evidence/`
 out, so a record written there never changes the candidate it describes. Write

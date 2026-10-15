@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Offline test for check-skill.sh's reference-depth policy check.
+# Offline test for check-skill.sh's reference-depth and prose-arrows policy
+# checks.
+#
+# prose-arrows: an arrow in prose fails; one inside a fenced block or an inline
+# code span, including a span wrapped across two lines, passes.
 #
 # What this guards: a support file under references/ or assets/ that names a
 # third file is exactly the chain (SKILL.md -> support file -> support file)
@@ -20,13 +24,17 @@ case "${1-}" in
   -h|--help)
     cat <<'EOF'
 tests/run-check-skill.sh — offline check for check-skill.sh's reference-depth
-rule.
+and prose-arrows rules.
 
 Takes no arguments; builds a minimal fixture skill under a temporary
 directory in two variants (SKILL.md hides the third file / SKILL.md names it
 too) and asserts
 skills/common/writing-skills/scripts/check-skill.sh --strict warns in the
-first and stays silent in the second. Never mutates the checkout.
+first and stays silent in the second; then builds arrows fixtures: an arrow
+in prose (must fail), arrows only in code, one inside a code span that wraps
+(must pass), and an arrow in prose after a wrapped span or a lone backtick
+(must fail).
+Never mutates the checkout.
 
   --help    this text
 
@@ -98,6 +106,87 @@ if grep -q 'reference-depth' "$out_named"; then
 else
   ok "reference-depth is suppressed once SKILL.md names the third file too"
 fi
+
+# prose-arrows: an arrow in prose fails --strict; one in a fenced block or an
+# inline code span is exact text and passes, even when the span wraps onto the
+# next line, and prose after a wrapped span is still checked.
+build_arrows() {  # <dir> <mode: prose|code|wrapped>
+  dir="$1"; mode="$2"
+  mkdir -p "$dir"
+  {
+    printf -- '---\n'
+    printf 'name: arrows-fixture\n'
+    printf 'description: Use this when testing that check-skill.sh fails an arrow in prose and passes one in code.\n'
+    printf -- '---\n\n'
+    printf '# Arrows fixture\n\n'
+    case "$mode" in
+      prose) printf -- '- Tests fail \342\206\222 fix the cause.\n\n' ;;
+      code)
+        printf -- '- If tests fail, fix the cause. The log shows `a \342\206\222 b`.\n'
+        printf -- '- The states are `proposed \342\206\222 {accepted |\n'
+        printf -- '  rejected}`, in that order.\n\n' ;;
+      wrapped)
+        printf -- '- Run `make\n'
+        printf -- '  check` and tests fail \342\206\222 fix `the` cause.\n\n' ;;
+      stray) printf -- '- A stray ` tick, then tests fail \342\206\222 fix the cause.\n\n' ;;
+    esac
+    printf '```text\n'
+    printf 'step 1 \342\206\222 step 2\n'
+    printf '```\n\n'
+    printf '## Gotchas\n\n'
+    printf -- '- None; this is a fixture, not real guidance.\n'
+  } > "$dir/SKILL.md"
+}
+
+echo "--- check-skill.sh: prose-arrows fails an arrow in prose"
+build_arrows "$tmp/prose/arrows-fixture" prose
+bash "$CHECK" --strict "$tmp/prose/arrows-fixture" >"$tmp/prose.out" 2>&1
+if grep -q 'prose-arrows.*line 8' "$tmp/prose.out"; then
+  ok "prose-arrows names the line of an arrow in prose"
+else
+  bad "prose-arrows did not fire on an arrow in prose"
+fi
+
+echo "--- check-skill.sh: prose-arrows passes arrows in fenced blocks and inline code"
+build_arrows "$tmp/code/arrows-fixture" code
+if bash "$CHECK" --strict "$tmp/code/arrows-fixture" >"$tmp/code.out" 2>&1; then
+  ok "no finding for arrows inside a fence or an inline code span"
+else
+  bad "check-skill.sh failed on arrows that sit only in code: $(head -1 "$tmp/code.out")"
+fi
+
+echo "--- check-skill.sh: prose-arrows checks prose after a code span that wraps"
+build_arrows "$tmp/wrapped/arrows-fixture" wrapped
+bash "$CHECK" --strict "$tmp/wrapped/arrows-fixture" >"$tmp/wrapped.out" 2>&1
+if grep -q 'prose-arrows.*line 9' "$tmp/wrapped.out"; then
+  ok "prose-arrows names an arrow in prose after a wrapped code span"
+else
+  bad "prose-arrows missed an arrow in prose after a wrapped code span"
+fi
+
+echo "--- check-skill.sh: prose-arrows checks prose after a backtick with no partner"
+build_arrows "$tmp/stray/arrows-fixture" stray
+bash "$CHECK" --strict "$tmp/stray/arrows-fixture" >"$tmp/stray.out" 2>&1
+if grep -q 'prose-arrows.*line 8' "$tmp/stray.out"; then
+  ok "prose-arrows names an arrow in prose after a lone backtick"
+else
+  bad "prose-arrows missed an arrow in prose after a lone backtick"
+fi
+
+echo "--- check-skill.sh: --tokens skips frontmatter, ignores CR, and counts code, digits, and CJK"
+mkdir -p "$tmp/tokens"
+printf -- '---\nname: x\ndescription: "y"\n---\nRun `bash scripts/check.sh --strict` on 2024 files.\n\n  - \347\274\226\345\206\231\345\256\236\346\226\275\350\256\241\345\210\222\n' >"$tmp/tokens/a.md"
+sed 's/$/\r/' "$tmp/tokens/a.md" >"$tmp/tokens/crlf.md"
+for awk_bin in awk gawk mawk original-awk nawk; do
+  command -v "$awk_bin" >/dev/null 2>&1 || continue
+  got=$(PATH="$tmp/tokens/bin:$PATH"; mkdir -p "$tmp/tokens/bin"; ln -sf "$(command -v "$awk_bin")" "$tmp/tokens/bin/awk"; bash "$CHECK" --tokens "$tmp/tokens/a.md")
+  crlf=$(PATH="$tmp/tokens/bin:$PATH"; bash "$CHECK" --tokens "$tmp/tokens/crlf.md")
+  if [ "$got" = 25 ] && [ "$crlf" = 25 ]; then
+    ok "--tokens gives 25 under $awk_bin, with LF or CRLF line endings"
+  else
+    bad "--tokens gave '$got' (LF) and '$crlf' (CRLF) under $awk_bin, expected 25"
+  fi
+done
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "check-skill.sh tests: PASS"; exit 0; }

@@ -44,8 +44,8 @@ valid against the standard and still fail a house rule here.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 310 (62% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker; largest is ~3476 |
+| Body lines | At most 500; longest is 300 (60% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker, estimated per word, number, and symbol; largest is ~4116 |
 | Typical body size | Aim for about 80 to 120 lines. A longer discipline body needs behavioral evidence that justifies it |
 | Presentation | The checker warns on long stretches of undivided prose |
 | Supporting paths | They resolve inside the installed skill, and direct references stay shallow |
@@ -54,6 +54,7 @@ valid against the standard and still fail a house rule here.
 | Description wording | `description-rules` policy check: no `Fires on` list, and none of four internal terms |
 | Support-file depth | `reference-depth` warning: a support file names another support file that `SKILL.md` does not name itself |
 | Description YAML | `description-yaml` policy check: the raw value loads under a strict YAML parser |
+| Outcomes as sentences | `prose-arrows` policy check: no `→` in body prose outside a fenced block or an inline code span |
 | Fill-in templates | They go in `assets/`. Explanatory guidance goes in `references/` |
 | Template shape | Every `assets/*.md` template has the same house shape, checked by the repository gate |
 
@@ -67,7 +68,7 @@ written, not about what your agent needs to support.
 | Directory | House use |
 | --- | --- |
 | `references/` | 25 skills; rubrics, checklists, worked examples, and lookup guidance |
-| `assets/` | 32 skills; every fill-in template and other static resources |
+| `assets/` | 39 skills; every fill-in template and other static resources |
 | `scripts/` | 10 skills (see below) |
 
 The repository classifies a document by how it is used. A file that is

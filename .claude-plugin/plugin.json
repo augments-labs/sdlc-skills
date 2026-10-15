@@ -1,7 +1,7 @@
 {
   "name": "sdlc-skills",
   "description": "A cross-platform SDLC skills library for coding agents: planning, design, TDD, debugging, review, and delivery workflows.",
-  "version": "10.5.0",
+  "version": "11.0.0",
   "author": {
     "name": "Njoyim Peguy",
     "email": "pnjoyim@gmail.com"
@@ -19,6 +19,7 @@
     "sdlc"
   ],
   "skills": [
+    "./skills/analysis/working-from-a-ticket",
     "./skills/analysis/writing-specs",
     "./skills/common/dispatching-parallel-agents",
     "./skills/common/handoff",
@@ -40,13 +41,18 @@
     "./skills/design/system-architecture",
     "./skills/design/ui-ux-design",
     "./skills/design/writing-plans",
+    "./skills/implementation/adding-observability",
+    "./skills/implementation/changing-a-live-schema",
     "./skills/implementation/executing-plans",
+    "./skills/implementation/rollout-controls",
     "./skills/implementation/subagent-driven-development",
     "./skills/implementation/test-driven-development",
     "./skills/maintenance/complexity-audit",
     "./skills/maintenance/containing-an-incident",
     "./skills/maintenance/debugging",
+    "./skills/maintenance/deprecating-an-api",
     "./skills/maintenance/diagnosing-a-session",
+    "./skills/maintenance/large-scale-changes",
     "./skills/maintenance/post-mortem",
     "./skills/maintenance/refactor-architecture",
     "./skills/planning/define-goals",
@@ -54,6 +60,7 @@
     "./skills/planning/scoping",
     "./skills/testing/receiving-code-review",
     "./skills/testing/requesting-code-review",
+    "./skills/testing/reviewing-a-pr",
     "./skills/testing/security-audits",
     "./skills/testing/verification-strategy",
     "./skills/testing/visual-ui-verification",
