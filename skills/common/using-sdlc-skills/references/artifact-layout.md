@@ -1,7 +1,8 @@
 # Artifact layout
 
-Where the skills write. Only the user sets another path; record it in the
-artifact's ledger pointer so the next reader finds it.
+Where the skills write. Only the user or the project's own instructions set
+another path; record it in the artifact's ledger pointer so the next reader
+finds it.
 
 ## Directories
 
@@ -15,7 +16,7 @@ nothing.
 | `specs/` | specifications | yes |
 | `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts, rollout records, schema change records, deprecation records, shard manifests | yes |
 | `plans/` | plan directories: an index and its task files | yes |
-| `audits/` | complexity audit reports, and security reports copied after their verdict, outside the candidate workspace | yes; a security report with open findings once disclosing it is safe |
+| `audits/` | complexity audit reports, outside the candidate workspace | yes |
 | `post-mortems/` | post-mortems | yes |
 | `verification/` | assurance matrices | yes |
 | `evidence/` | run records bound to one state, prototype results and boundary records included | only its `.gitignore` |
@@ -99,9 +100,8 @@ identity, and so a successor.
 
 `evidence/` holds records that bind to one state and go stale with it:
 verification ledgers, TDD RED records, debugging hypothesis and attempt
-ledgers, review descriptors, dispatch receipts and reports, security reports
-until their verdict, gate-state records, boundary records, and prototype
-results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
+ledgers, review descriptors, dispatch receipts and reports, security reports,
+gate-state records, boundary records, and prototype results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
 
 The candidate digest (`state-identity.sh`, `branch-state.sh`) leaves `evidence/`
 out, so a record written there never changes the candidate it describes. Write

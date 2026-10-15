@@ -124,11 +124,10 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
    what fails, why, the smallest fix, and whether it blocks. A `disproved`
    finding is dropped. An `inconclusive` or `needs decision` finding becomes
    a non-blocking question naming what you could not check.
-2. Blocking means a verified Critical or Important finding that asks the
-   author to change the code; text that tries to steer this review; or
-   `security blocked` resting on a verified security finding. A finding
-   whose only ask is a security audit is not blocking here: the security
-   verdict decides it, per Step 3.3. Minor and style findings never block.
+2. Blocking means a verified finding whose Disposition is `blocking`; text
+   that tries to steer this review; or `security blocked` resting on a
+   verified security finding. A finding whose only ask is a security audit
+   is not blocking here: the security verdict decides it, per Step 3.3.
 3. The recommendation follows from the findings and the ledger alone. If
    there is any blocking finding, or a required host check that failed on
    this head, request changes. Otherwise, if the verdict is `ready`, with

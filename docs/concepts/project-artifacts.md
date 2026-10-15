@@ -12,7 +12,7 @@ what goes in it and what to commit.
 | `specs/` | Specifications | Yes |
 | `designs/` | Architecture, data models, UI designs, coding standards, decision records, migration contracts, rollout records, schema change records, deprecation records, shard manifests | Yes |
 | `plans/` | Plan directories: an index and one file per task | Yes |
-| `audits/` | Complexity audit reports, and security reports once their verdict is in | Yes; a security report with open findings only once disclosing it is safe |
+| `audits/` | Complexity audit reports | Yes |
 | `post-mortems/` | Post-mortems | Yes |
 | `verification/` | Assurance matrices: which checks the project runs and what each catches | Yes |
 | `evidence/` | Run records tied to one version of the work: test output, debugging ledgers, review reports, session diagnoses | No. The directory carries its own `.gitignore`; commit that file only |

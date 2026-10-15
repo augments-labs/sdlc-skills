@@ -62,8 +62,9 @@ Findings name the violated matrix cell and shortest repair.
 
 `clear` requires every applicable cell and claimed promotion to be accounted
 for; an unrun cell is `inconclusive`. Missing Matrix version or Assurance
-verdict means generic breadth review only. A path, label, combined prose
-identity, shortened digest, or mismatched matrix version is invalid.
+verdict means generic breadth review only. The Matrix version must equal the
+7-character identity its ledger row records; a path, label, combined prose
+identity, or mismatched matrix version is invalid.
 
 ## Report template
 

@@ -50,10 +50,11 @@ authorize no change to history or to a remote, and no discard or cleanup.
    from the `using-git-worktrees` workspace record. Only those may be cleaned
    up. A task-looking path proves nothing.
 7. For integration, read `base.resolved`. If it is `false`, resolve the base
-   before acting. A direct instruction or the project's contribution rules
-   override the detected default. Check remote freshness yourself; the script
-   does not fetch. If the base is stale, has moved, or is ambiguous, do not
-   integrate.
+   before acting. A direct instruction, the project's contribution rules, or
+   the base the `using-git-worktrees` workspace record holds override the
+   detected default; pass that base as `--base`. Check remote freshness
+   yourself; the script does not fetch. If the base is stale, has moved, or
+   is ambiguous, do not integrate.
 8. Read `candidate.published`. If it is `true` or `null`, or a `false` read
    from remote-tracking refs that were not refreshed under the network
    authority you hold now, get separate direct permission for each of squash,

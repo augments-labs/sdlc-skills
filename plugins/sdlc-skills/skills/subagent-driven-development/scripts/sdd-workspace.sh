@@ -10,8 +10,9 @@ usage() {
   cat <<'EOF'
 Usage: bash scripts/sdd-workspace.sh --plan DIR [OPTIONS]
 
-Open the ledger a subagent-driven run records its dispatches, rulings, and task
-states in, or check that it still binds to the plan it was opened against.
+Open the ledger a subagent-driven run records its dispatches, rulings, and
+findings in, or check that it still binds to the plan it was opened against.
+Task states go to the plan index's execution ledger, not here.
 
 Line 1 carries the plan's identity, the version plan-version.sh computes for it.
 That line is what a session resuming after a compaction reads first: if the
@@ -91,9 +92,10 @@ mkdir -p "$dir" 2>/dev/null || { echo "cannot create $dir" >&2; exit 2; }
 {
   printf '# Subagent-driven run — plan %s, identity %s\n' "$(basename "$plan")" "$identity"
   printf '\n'
-  printf 'Append only. One row per dispatch, ruling, finding, admitted finding,\n'
-  printf 'and task state. Rulings carry their reason, so the next brief can inherit\n'
-  printf 'them and the finish message can list them.\n'
+  printf 'Append only. One row per dispatch, ruling, finding, and admitted finding;\n'
+  printf 'task states go to the execution ledger the plan index names. Rulings\n'
+  printf 'carry their reason, so the next brief can inherit them and the finish\n'
+  printf 'message can list them.\n'
   printf '\n'
   printf '| When | Kind | Task | Detail |\n'
   printf '| --- | --- | --- | --- |\n'

@@ -47,7 +47,7 @@ they may not take. This skill never decides what happens to the branch.
    workspace action, and stop. A request for workers made before approval is
    not the answer; rendering the question collects it.
 4. If that row says `mode: inline`, stop; `executing-plans` owns it, and only
-   the user's direct answer changes the mode.
+   the `Approval rule` owner's direct answer changes the mode.
 5. If that row says `mode: delegated` and the index has phases or shards,
    this skill cannot run it and `executing-plans` will not: ask the
    `Approval rule` owner for a direct inline answer, append it as a new
@@ -70,8 +70,10 @@ they may not take. This skill never decides what happens to the branch.
 
    Line 1 is the plan's identity. After a compaction, read the ledger before
    anything else and re-check it with `--check`: the ledger, not your memory of
-   the conversation, is where the run resumes. It is this run's execution
-   ledger; the decision ledger stays where the index points.
+   the conversation, is where the run resumes. It holds this run's
+   dispatches, rulings, and findings; task states go to the index's
+   `External execution ledger`, in the header `executing-plans` writes, and
+   the decision ledger stays where the index points.
 4. Check the plan contract before the first dispatch: every `Consumes` names
    an earlier task's exact `Produces`; every `Depends on` names a task that is
    not cancelled; no task edits its own judge unless its approved `Evaluator
@@ -96,6 +98,8 @@ and ask the user only when the next act would be:
 - irreversible — data, history, or something already published;
 - security-sensitive — secrets, credentials, permissions, a trust boundary;
 - effective outside the worktree;
+- settling a requirement clause with two readings, or a product or
+  architecture choice the approved artifacts do not settle;
 - or the plan is broken on every path you can see, not merely the first one.
 
 Everything else is a ruling. Write it in the ledger with its reason and carry it
@@ -110,7 +114,8 @@ reapproval, end the turn.
    `dispatching-parallel-agents` Step 1. Before each dispatch row, cut that
    task a branch and worktree from the plan worktree's HEAD yourself under
    the plan worktree's commit authority; `using-git-worktrees` run by the
-   worker would reuse yours. Dispatch them together through
+   worker would reuse yours. The brief grants the worker local commit
+   authority on that branch, and no push. Dispatch them together through
    `dispatching-parallel-agents` Step 2; sequence a failing pair.
 2. Batch tasks into one dispatch only when they are small and the same shape:
    same kind of file, same act.
@@ -163,7 +168,7 @@ reapproval, end the turn.
    `assets/re-reviewer-report.md` before dispatch.
 4. After five rounds without convergence, stop dispatching, write the
    adjudication in the ledger (the finding, what each round changed, why it
-   did not converge), and then either decide it yourself under Step 3 or hand
+   did not converge), record the task `blocked` as `unconverged`, and hand
    the user that row. Never open a sixth round.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision, with the task's
@@ -178,10 +183,10 @@ reapproval, end the turn.
    worktrees and branches are task-owned resources in the workspace record
    for `finishing-a-branch`.
 
-   Then record the task's state: done, done with concerns, blocked, or needs
-   context. Mirror only the task row's checkbox and adjacent label. **Do not
-   change the index's `Status` header or normalize it out of the plan's
-   identity.**
+   Then append the task's state to the index's `External execution ledger`:
+   done, done with concerns, blocked, or needs context. Mirror only the task
+   row's checkbox and adjacent label. **Do not change the index's `Status`
+   header or normalize it out of the plan's identity.**
 6. Under `per task` cadence only, **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then `finishing-a-branch`.
    Return after it records its decision.
@@ -199,8 +204,9 @@ In the worktree from Step 2, in order:
    integrated revision (`per task`: the base after the last integration): the
    index's `Acceptance` check plus every done task's evaluator. Worker reports
    are claims; this is the evidence.
-2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch,
-   once, and let it drive a single fix wave.
+2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch.
+   Its fix rounds run under `receiving-code-review`'s convergence check and
+   budget, as the plan-end review in `executing-plans` does.
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
@@ -234,8 +240,8 @@ the evidence. It is never a task because someone wrote it down.
    it edits; it passes Step 2.4. A finding whose fix would change a listed
    task's contract or `Evaluator` is not admitted: it waits for Step 6.4.
 4. Run an added task through Steps 4 and 5 before Step 6. It has no index
-   row to mirror: its state lives in the ledger only, and Step 6.1 runs its
-   evaluator with the listed tasks'.
+   row to mirror: its state lives in the execution ledger only, and Step 6.1
+   runs its evaluator with the listed tasks'.
 5. A finding raised while building or reviewing an added task, or by the
    Step 6.2 review outside every task's contract, waits for Step 6.4. It
    never becomes another task.

@@ -126,7 +126,6 @@ them.
 
 ## Gotchas
 
-- Only a strict challenge that was requested, with no action available to
-  dispatch it, goes to the question `dispatching-parallel-agents` Step 2 asks.
-  Answering `inconclusive` yourself blocks a surface the user explicitly asked
-  for.
+- Any challenge Step 1.5 dispatches, with no action available to dispatch
+  it, goes to the question `dispatching-parallel-agents` Step 2 asks.
+  Answering `inconclusive` yourself blocks a proposal nobody challenged.
