@@ -1,12 +1,11 @@
 # Finding a session's transcript
 
-Harnesses are named nowhere here. They are grouped by how they record a
-session, because that is what decides the search. Work down the families in
-order and stop at the first one that yields a file matching the intake.
+Work down the families in order and stop at the first one that yields a file
+matching the intake.
 
 ## Family A — a per-project directory under a per-user state directory
 
-The most common shape. A state directory in the user's home holds one
+A state directory in the user's home holds one
 subdirectory per project, named after the project's absolute path with every
 non-alphanumeric character replaced by a single marker, and often with a
 leading marker kept from the leading separator. Inside it, one file per
@@ -98,9 +97,7 @@ search by those names.
 A tool call and its result are separate blocks, usually on separate lines: a
 call with no matching result line is itself a finding.
 
-Some formats are one JSON array, or a markdown log. The method does not
-change: search for the term, print a line range around the hit, cut long
-lines by column.
+Some formats are one JSON array, or a markdown log.
 
 ## Searching without loading the file
 
@@ -115,6 +112,3 @@ For a JSON Lines file, extracting one field per line keeps a scan cheap:
 ```bash
 grep -n '"{{kind-field}}":"{{user-kind}}"' "$T" | cut -c1-200 | head -40
 ```
-
-Every hit gives a line number. That number, with a short distinctive
-fragment of the line, is the citation.

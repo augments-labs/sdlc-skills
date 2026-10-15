@@ -23,8 +23,7 @@ interface, depth, seam, adapter, leverage, and the deletion test.
 1. Fill the classification block (the structural proposal's **High-risk
    classification** section). If all four answers are on the ordinary route,
    stay here. If any answer is not, wait for an approved, current migration
-   and assurance contract and for the entry gates (the checks that must pass
-   before work on the target starts) to pass. Work authorized as a
+   and assurance contract and for the entry gates to pass. Work authorized as a
    prerequisite takes in only its exact proposed contract; it cannot edit
    the target, approve the contract, or satisfy entry.
 2. Pin down the exact source revision, the contracts it must honour, and the
@@ -36,9 +35,8 @@ interface, depth, seam, adapter, leverage, and the deletion test.
 4. **REQUIRED SUB-SKILLS:** invoke `using-git-worktrees`, then
    `test-driven-development` for the preservation cycle in that workspace:
    the baseline green, a deliberate divergence red, the exact restoration
-   green. An oracle (what says which answer is right, independent of the
-   implementation under test) that is compile-only or derived from the
-   target is not enough.
+   green. An oracle that is compile-only or derived from the target is not
+   enough.
 
 ## Step 2: Decide the structure
 
@@ -47,9 +45,8 @@ interface, depth, seam, adapter, leverage, and the deletion test.
    relocate, collapse it.
 2. Add a seam only for repeated behavior with a stable owner and measured
    change friction, or for one real volatile or external boundary with
-   measured impedance (the translation it needs), failure policy, or test
-   isolation. Never add one for count (how many implementations there are)
-   or for hypothetical variation.
+   measured impedance, failure policy, or test isolation. Never add one for
+   implementation count or for hypothetical variation.
 3. Fill `assets/structural-proposal.md` before presenting it: the distinct
    structures compared, the removals and where their invariants now live,
    the slice table, and the approver rule. The decision outcome and the
@@ -79,7 +76,7 @@ interface, depth, seam, adapter, leverage, and the deletion test.
 1. Only after the exact scope and the decision authority are in place,
    **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`. If
    the slices take more than one step, invoke `writing-plans`; its mode
-   answer names the executor (the skill that runs the plan).
+   answer names the executor.
 2. For each slice: migrate its callers, run the bound gate and the project
    gate (the checks its row of the slice table names), compare against the
    accepted floors, and retain the known-green state. Checkpoint under
