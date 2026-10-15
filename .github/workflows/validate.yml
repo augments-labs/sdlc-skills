@@ -52,6 +52,37 @@ jobs:
           trap 'echo "::$token::"' EXIT
           bash scripts/sh/validate-trigger-collisions.sh --strict
 
+  check-skill:
+    # check-skill.sh ships in the plugin and runs on the user's machine, so it
+    # is tested on each platform's own bash and awk (Git Bash on Windows).
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: check-skill.sh tests
+        run: bash tests/run-check-skill.sh
+      - name: check-skill.sh --strict on every skill
+        run: |
+          fail=0
+          for dir in skills/*/*/; do
+            bash skills/common/writing-skills/scripts/check-skill.sh --strict "$dir" || fail=1
+          done
+          exit "$fail"
+      - name: Same token estimate on every platform
+        run: |
+          awk --version 2>&1 | head -1 || true
+          got=$(bash skills/common/writing-skills/scripts/check-skill.sh --tokens skills/maintenance/diagnosing-a-session/SKILL.md)
+          echo "estimate: $got"
+          [ "$got" = 3676 ]
+
   reference-validator:
     # A parser cross-check with the Agent Skills reference validator, never a
     # gate: a differing verdict is investigated (CONTRIBUTING.md, "The reference validator").

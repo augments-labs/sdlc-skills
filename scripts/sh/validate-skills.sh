@@ -100,8 +100,7 @@ for skill in "${skills[@]}"; do
   lines=$(wc -l < "$skill")
   [ "$lines" -gt 200 ] && note "warn: $lines lines (>200; well over the house target — is every line earning its place?)"
 
-  words=$(wc -w < "$skill")
-  tokens=$(( words * 13 / 10 ))
+  tokens=$(bash "$CONFORMANCE" --tokens "$skill")
   [ "$tokens" -gt 2500 ] && note "warn: ~$tokens tokens (>2500; over the house target)"
 
   # No external references, vendor model names, or <angle> placeholders — in every
@@ -539,8 +538,7 @@ else
     [ "${#d}" -gt "$max_desc" ] && max_desc=${#d}
     l=$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -l | tr -d ' ')
     [ "$l" -gt "$max_lines" ] && max_lines=$l
-    w=$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -w | tr -d ' ')
-    t=$(( w * 13 / 10 ))
+    t=$(bash "$CONFORMANCE" --tokens "$skill")
     [ "$t" -gt "$max_tokens" ] && max_tokens=$t
   done
   n_refs=$(ls -d skills/*/*/references 2>/dev/null | wc -l | tr -d ' ')
