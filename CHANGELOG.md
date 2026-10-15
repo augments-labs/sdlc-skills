@@ -2,6 +2,30 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [11.0.0] — 2026-10-15
+
+Seven new skills follow work as it happens at a company:
+`working-from-a-ticket`, `reviewing-a-pr`, `rollout-controls`,
+`changing-a-live-schema`, `deprecating-an-api`, `adding-observability` and
+`large-scale-changes`. No skill is renamed or removed.
+
+Every skill is rewritten in plain words, keeps only what an agent would get
+wrong without it, and no longer contradicts another skill; three audits found
+and fixed 78 contradictions between skills.
+
+Breaking: some artifacts written by 10.x move or change, so carry a run in
+progress across before resuming it.
+
+- A subagent-driven run's ledger and a plan's review reports now live under
+  `.sdlc-skills/evidence/`, in a folder named after the plan directory, not
+  in the plan directory itself. Move them there, or pass the run ledger's old
+  path with `--ledger`.
+- In a plan's `00-index.ledger.md`, a row about no single task now has `plan`
+  in `Section`; only approval, reject, cancel and supersede rows leave it
+  empty. Fill `plan` into any other row with an empty `Section`.
+- A post-mortem's `External lifecycle ledger identity/location` field is now
+  `External lifecycle ledger`. Rename it in an open analysis.
+
 ## [10.5.0] — 2026-10-12
 
 Devin, Antigravity, Hermes Agent and Cursor are now supported harnesses, each
