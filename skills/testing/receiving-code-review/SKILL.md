@@ -52,8 +52,8 @@ looks obvious: verify before you agree, edit, reply, or resolve.
    evidence.
 
    A reviewer writes that `parse_header` dereferences a null when the
-   `Content-Length` header is absent. One contained local request without that header
-   gets a 400 before `parse_header` runs. That is `inconclusive`, not
+   `Content-Length` header is absent. One contained local request without
+   that header gets a 400 before `parse_header` runs. That is `inconclusive`, not
    `disproved`: one path that never reached the code says nothing about the
    other callers. `disproved` needs evidence that the claim is false, and an
    inconclusive item stays open under Step 4.2.
