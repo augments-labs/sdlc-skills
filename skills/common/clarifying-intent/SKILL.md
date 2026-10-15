@@ -26,7 +26,7 @@ open, leave that to it.
   build. Fix it and continue to completion.
 - **Skipping never permits a silent decision.** State an assumption that
   falls in none of the categories that follow, with its reason, so the user can
-  redirect. Product, scope, architecture, execution, destructive, or
+  redirect. Product, scope, architecture, execution-mode, destructive, or
   external-state choices stay pending until the user decides them directly.
 
 ## Step 1: Scan before you ask

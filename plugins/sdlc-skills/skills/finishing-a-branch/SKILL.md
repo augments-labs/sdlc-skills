@@ -49,12 +49,12 @@ authorize no change to history or to a remote, and no discard or cleanup.
 6. List the resources this task created (branch, worktree, remote ref, PR)
    from the `using-git-worktrees` workspace record. Only those may be cleaned
    up. A task-looking path proves nothing.
-7. For integration, read `base.resolved`. If it is `false`, resolve the base
-   before acting. A direct instruction, the project's contribution rules, or
-   the base the `using-git-worktrees` workspace record holds override the
-   detected default; pass that base as `--base`. Check remote freshness
-   yourself; the script does not fetch. If the base is stale, has moved, or
-   is ambiguous, do not integrate.
+7. For publication or integration, read `base.resolved`. If it is `false`,
+   resolve the base before acting. A direct instruction, the project's
+   contribution rules, or the base the `using-git-worktrees` workspace record
+   holds override the detected default; pass that base as `--base`, and a PR
+   targets it. Check remote freshness yourself; the script does not fetch. If
+   the base is stale, has moved, or is ambiguous, do not integrate.
 8. Read `candidate.published`. If it is `true` or `null`, or a `false` read
    from remote-tracking refs that were not refreshed under the network
    authority you hold now, get separate direct permission for each of squash,
@@ -121,9 +121,10 @@ Enter only on a direct request. Never offer discard because work looks
 unwanted.
 
 1. Rerun `bash scripts/branch-state.sh` before filling the block. If
-   `base.resolved` is false, get the base from the user or the project, rerun
-   with `--base`, and fill nothing until it resolves. Then fill the block from
-   the output and print it:
+   `base.resolved` is false, take the base the `using-git-worktrees`
+   workspace record holds, or get it from the user or the project, rerun
+   with `--base`, and fill nothing until it resolves. Then fill the block
+   from the output and print it:
 
    ```text
    This will permanently delete:

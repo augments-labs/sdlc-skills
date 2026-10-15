@@ -86,7 +86,8 @@ description: "Runs the checks and reads their output before any claim that work 
    test failing before the fix, and the rest of the suite has not run.
 
 4. A checkpoint commit reuses rows whose check reads only file content, and
-   only when `--compare "$before" --committed` exits 0. Commit, CI, and
+   only when `--compare "$before" --committed` exits 0; once it does, record
+   each reused row again under the committed revision. Commit, CI, and
    review checks bind to their own revision.
 5. **REQUIRED — return the record; this skill routes nowhere.** Every unmet
    check goes back with it to the pending step of whatever asked; never

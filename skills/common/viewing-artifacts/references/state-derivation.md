@@ -27,7 +27,8 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
   change in one section does not invalidate an unrelated section's approval.
 - **Execute** derives from the plan's execution ledger (00-index.ledger.md
   beside the index, or the path its pointer names): each task's state is its
-  latest row bound to the plan's current identity, and a task with no such row
+  latest row (the task ID in `Section`) bound to the plan's current identity
+  (in `Identity`), and a task with no such row
   is `todo`. Only the exact state `done` counts complete; `done with concerns`,
   `blocked`, `in progress`, `needs context`, `cancelled`, `superseded`, and
   `todo` each count separately. The index checkbox rows are a navigation
@@ -42,9 +43,15 @@ ledger beside the artifact: its path with .ledger.md in place of .md, or
 00-index.ledger.md in a plan directory. Preserve the pointer's vocabulary:
 
 - `**External decision ledger:**` — pending, changes requested, approved,
-  rejected, cancelled, or superseded.
-- `**External lifecycle ledger:**` on an ADR — pending, accepted, in force,
-  rejected, cancelled, retired, or superseded.
+  rejected, cancelled, or superseded; on a captured ticket — captured, or
+  superseded by a successor capture.
+- `**External adoption ledger:**` on coding standards — pending, in force,
+  suspended, or superseded.
+- `**External lifecycle ledger:**` on an ADR — pending, changes requested,
+  accepted, in force, rejected, cancelled, retired, or superseded.
+- `**External lifecycle ledger:**` on a post-mortem — per action: proposed,
+  owner-accepted, rejected, cancelled, superseded, implemented, falsified,
+  deployed/enforced, effectiveness reviewed, effective, or closed.
 - `**External condition and decision ledger:**` on feasibility — go, go-if,
   no-go, or cancel, plus each condition's pending, satisfied, or failed state.
   Render go-if with its unmet conditions; recording the decision does not

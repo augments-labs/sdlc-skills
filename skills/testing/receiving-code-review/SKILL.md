@@ -27,7 +27,8 @@ looks obvious: verify before you agree, edit, reply, or resolve.
    delivery task, across revisions, reviewers, and skill calls: five repair
    rounds per delivery task unless the user or the plan sets another number.
    In a plan run, a delivery task is one plan task, and the plan-end branch
-   review has a budget of its own.
+   review has a budget of its own: five rounds unless the user or the plan
+   sets another number.
    Record the budget and each round in the review history. Link each
    recurring causal finding to its earlier evidence and recorded decisions.
 4. If a location is stale, or the state under check, the base, a contract,

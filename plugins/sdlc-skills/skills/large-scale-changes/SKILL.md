@@ -54,9 +54,10 @@ an interface other teams call, and never redesigns structure.
 
 ## Step 3: Commit in layers
 
-1. Put the script's output in one commit whose message names the script and
-   its revision. Put every hand edit (a case the script could not decide) in
-   a separate commit. Put formatting churn in its own commit or leave it out.
+1. Put each script run's output in one commit whose message names the script
+   and its revision. Put every hand edit (a case the script could not decide)
+   in a separate commit. Put formatting churn in its own commit or leave it
+   out.
 2. If a lockfile changes, regenerate it with the package manager and read
    its diff: a transitive dependency that moved is part of the change and
    goes in the report. Never hand-edit a lockfile.
@@ -75,9 +76,10 @@ an interface other teams call, and never redesigns structure.
    part is not a shard: ship it first as its own change and build the
    shards on it.
 3. Produce each shard by rerunning the script restricted to the shard's
-   paths on its own branch, never by picking hunks out of the full run.
-   **REQUIRED SUB-SKILL:** invoke `using-git-worktrees` for each shard's
-   branch.
+   paths on its own branch, never by picking hunks out of the full run. Cut
+   each shard's branch from the manifest's base in its own worktree
+   yourself, recorded as a task-owned resource in the workspace record;
+   `using-git-worktrees` run here would reuse this worktree.
 4. Opening the PRs and pinging the owners is the user's decision, once for
    the batch. Ask with the manifest in front of them and end the turn;
    `clarifying-intent` owns what closes it:
@@ -91,19 +93,18 @@ an interface other teams call, and never redesigns structure.
    Recommendation: 1 — {{one sentence}}.
    ```
 
-5. For each shard the answer covers, **REQUIRED SUB-SKILL:** invoke
-   `finishing-a-branch` with that answer as the direct instruction for its
-   push-and-PR transition; do not ask again per shard. Write the link and
-   the state in the manifest.
+5. For each shard the answer covers, **REQUIRED SUB-SKILLS:** invoke
+   `verification-before-completion` and `requesting-code-review` on the
+   shard's revision, then `finishing-a-branch` with that answer as the
+   direct instruction for its push-and-PR transition; do not ask again per
+   shard. Write the link and the state in the manifest.
 
 ## Step 5: Keep shards current until the last one merges
 
 1. If the base moves under an open shard, merge the new base into the shard
-   (a conflict in a generated file takes the base's whole file), rerun the
-   script on the result for that shard's paths, and commit the new output on
-   top. Replace the shard's mechanical commit instead only under the
-   separate permission `finishing-a-branch` requires to rewrite a published
-   branch. Never rebase or merge generated hunks by hand.
+   (a conflict in a file the script rewrites takes the base's whole file),
+   rerun the script on the result for that shard's paths, and commit the new
+   output on top. Never rebase or merge generated hunks by hand.
 2. If a review changes the transformation, change the script, rerun it on
    every open shard, and record the script's new revision in the manifest.
 3. Report the manifest with every shard's state. The change is done when

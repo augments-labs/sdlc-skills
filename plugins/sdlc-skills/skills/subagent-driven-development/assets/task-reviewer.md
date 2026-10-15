@@ -91,9 +91,10 @@ Then return at most fifteen lines, opening with exactly one of:
 
 `DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT`
 
-`DONE` means the diff meets the contract. `DONE_WITH_CONCERNS` means it meets
-the contract but carries findings the controller must disposition. Follow the
-word with the report path and one sentence naming the most serious finding.
+`DONE` means the diff meets the contract. `DONE_WITH_CONCERNS` means it
+carries findings, blocking or advisory, that the controller must disposition.
+Follow the word with the report path and one sentence naming the most serious
+finding.
 
 ## Report template
 

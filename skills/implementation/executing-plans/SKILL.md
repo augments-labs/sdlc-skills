@@ -118,7 +118,7 @@ mode; switching needs the `Approval rule` owner's direct answer.
    - If no authorized ready task can advance, report the unresolved states,
      their blockers, and the next conditions they require.
    - If a task needs a change to what was approved (scope, interface,
-     evaluator, phase, ownership, mode), write the proposed successor, ask for
+     evaluator, phase, ownership), write the proposed successor, ask for
      reapproval, and end the turn.
    - If a high-risk entry gate has not passed, report it and end the turn.
 
@@ -147,7 +147,7 @@ In the task workspace recorded in Step 2, in order:
 | "All tasks are done, so the plan is done" | Tasks are done inside the plan. The plan is done after Acceptance, review, and the integration decision — three skills you have not invoked yet. |
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate checks with their own owners. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
-| "Subagents are available, but inline is what I'm already in" | The row's mode decides, and the user chose it. A delegated row here is a redirect, not a loop to run. |
+| "Subagents are available, but inline is what I'm already in" | The row's mode decides, and the `Approval rule` owner chose it. A delegated row here is a redirect, not a loop to run. |
 
 ## Gotchas
 

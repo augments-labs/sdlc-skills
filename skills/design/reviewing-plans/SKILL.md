@@ -53,10 +53,9 @@ This skill never edits the plan, approves it, or starts an executor.
    inputs, the worker, provider, storage, and egress authority the user or
    project already gave, a deadline, and who cancels. If there is no such
    authority, the review is not dispatched (Step 2.3).
-5. Bind the report location beside the plan's decision ledger (the plan's
-   record of decisions, kept outside the plan: add to it, never rewrite it):
-   `{{plan-dir}}/00-index.review-{{version}}-{{attempt}}.md`, attempt `1`
-   first. It is the only path that attempt's reviewer may write.
+5. Bind the report location in the plan's evidence directory:
+   `.sdlc-skills/evidence/{{plan directory name}}/00-index.review-{{version}}-{{attempt}}.md`,
+   attempt `1` first. It is the only path that attempt's reviewer may write.
 6. If a predecessor version already has a review, bind that report too; the
    new review focuses on the
    corrected sections and every section that depends on them, and carries

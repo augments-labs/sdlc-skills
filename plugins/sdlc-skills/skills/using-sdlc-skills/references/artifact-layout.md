@@ -53,6 +53,11 @@ Every ledger is one markdown table with this header:
   was chosen.
 - `Updated` is the date the row was appended.
 
+An execution row fills the same columns: `Identity` is the plan version,
+`Section` is the task ID, `State` is the task state, `Bound evidence` holds the
+attempt, the result revision and the evaluator evidence, and `Updated` holds
+the owner and the time.
+
 A ledger kept anywhere else, or returned instead of written, is recorded in the
 artifact's pointer field.
 
@@ -94,14 +99,22 @@ recording. The agent that issues the artifact runs the command at issue;
 whoever later checks an approval or drift recomputes it the same way. Record the
 value in the ledger row and show it in the decision block. Never write it into
 the artifact: that changes the bytes it names. Any later byte change is a new
-identity, and so a successor.
+identity, and so a successor, except in a deprecation record, shard manifest,
+schema change record, or rollout record: those are updated in place, a decision
+row binds the record's identity at the time of that decision, and a later
+update does not make the row stale.
 
 ## Evidence
 
 `evidence/` holds records that bind to one state and go stale with it:
 verification ledgers, TDD RED records, debugging hypothesis and attempt
-ledgers, review descriptors, dispatch receipts and reports, security reports,
-gate-state records, boundary records, and prototype results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
+ledgers, review descriptors, dispatch receipts and reports, plan review
+reports, security reports, gate-state records, boundary records, and prototype
+results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
+A plan's run records use its directory name: the SDD run ledger lives at
+`.sdlc-skills/evidence/{{plan directory name}}/sdd-ledger.md` and keeps its
+own header (`When | Kind | Task | Detail`), being a run record, not a decision
+ledger.
 
 The candidate digest (`state-identity.sh`, `branch-state.sh`) leaves `evidence/`
 out, so a record written there never changes the candidate it describes. Write

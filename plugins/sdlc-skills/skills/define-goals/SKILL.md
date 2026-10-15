@@ -62,8 +62,9 @@ Open `assets/goals-section.md` before starting; each step fills its section.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
-3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` if
-   viability is unresolved; otherwise, if the boundary is next, invoke
+3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` unless an
+   existing feasibility section already fills every dimension row from
+   evidence and no row is unknown; then, if the boundary is next, invoke
    `scoping`. Never impose a phase that is already complete.
 
 ## Gotchas

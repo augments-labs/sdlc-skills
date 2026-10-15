@@ -82,8 +82,8 @@ The richer medium is not automatically better. Match fidelity to the decision: l
 
    Before compiling that whole, freeze **Selected visual references** as a
    keyed collection, with one reference per independently selected decision.
-   Each record carries its Reference ID, Decision ID, Medium, Approved design
-   artifact version, Artifact locator, Artifact version, Content digest,
+   Each record carries its Reference ID, Decision ID, Medium, Artifact
+   locator, Artifact version, Content digest,
    Selection ID, Rendering-input identity, Freshness evaluator, Normative
    conditions, and Distinguishing invariants. A downstream UI task consumes only
    the applicable references.
