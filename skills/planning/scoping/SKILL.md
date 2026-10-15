@@ -23,8 +23,7 @@ Open `assets/scope-section.md` before starting; each step fills its section.
 
 1. Carry the non-negotiables forward first: goal guardrails, existing
    contracts, preserved behavior and data, security, accessibility,
-   compatibility, operability, recovery. They are constraints on every cut,
-   never items up for exclusion.
+   compatibility, operability, recovery.
 2. Put in scope the smallest set of capabilities that reaches the approved
    outcome under those constraints.
 3. Put out of scope each deferred capability, with a stable ID, the
@@ -32,8 +31,7 @@ Open `assets/scope-section.md` before starting; each step fills its section.
    revisiting it. Never list a preserved invariant or an existing commitment
    there.
 4. Write the MVP as the thinnest version that meets the goal and every
-   non-negotiable. A version that is smaller but unsafe or incompatible is
-   not an MVP.
+   non-negotiable.
 5. For each assumption and each dependency, record its validation action,
    its owner, and its expiry or decision point. A hidden project inside
    "assumes X" is scope, not an assumption.

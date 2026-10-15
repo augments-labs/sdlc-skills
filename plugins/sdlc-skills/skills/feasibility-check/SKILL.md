@@ -34,8 +34,8 @@ section.
    are false. Rank them by likelihood × impact. For each risk, record the
    evidence source, its freshness, and the confidence. `unknown` is a valid
    confidence.
-3. Turn the top unknown into a bounded question for `prototyping`, not into
-   more discussion. One spike answers one dimension.
+3. Turn the top unknown into a bounded question for `prototyping`. One
+   spike answers one dimension.
 4. Fill Option Zero with evidence for whether not building, an existing
    tool, configuration, or process, or a smaller initiative meets the goal
    and guardrails.
@@ -44,9 +44,8 @@ section.
 
 1. Write go / no-go / go-if, bound to the exact version of the
    recommendation. For each go-if condition, record a stable ID, its gate
-   (the check that decides whether the condition is met) or its evidence, an
-   owner, an expiry, its state (`pending / satisfied / failed`), and the abort
-   response.
+   or its evidence, an owner, an expiry, its state
+   (`pending / satisfied / failed`), and the abort response.
 2. Write the `## Feasibility` section, which is never edited once its
    identity is issued, to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or
    the user-set path, and leave the approved sections around it untouched.
