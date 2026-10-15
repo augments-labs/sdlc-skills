@@ -6,8 +6,7 @@ description: "Contains a failure that is reaching real users before diagnosing i
 # Containing an Incident
 
 Stop the impact first and prove it stopped from the outside; leave the cause
-to `debugging`. Every minute spent finding the cause while users are failing is
-a minute you chose to spend.
+to `debugging`.
 
 ## When to use
 
@@ -126,9 +125,3 @@ Without a recorded hard-containment fallback, stop and go to step 2 for these:
   production.
 - You are explaining the cause in your reply while the impact is ongoing.
 - The mitigation is in place and nothing records that it is.
-
-## Common mistakes
-
-- Waiting to be sure of the cause first. Certainty is not the goal here; the
-  impact stopping is.
-- Calling the incident resolved because the bleeding stopped.

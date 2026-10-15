@@ -1,7 +1,7 @@
 # The trace file
 
 Read this when writing `trace.json` in Step 6. The viewer page renders this
-file and nothing else, so what is missing here is missing from the page.
+file and nothing else.
 
 The trace holds the events the triage found, each with its transcript line.
 It is not a copy of the transcript. Add an event when it helps the user see

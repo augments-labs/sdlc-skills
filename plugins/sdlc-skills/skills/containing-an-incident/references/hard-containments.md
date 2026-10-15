@@ -49,8 +49,7 @@ truncation drops the poison message. Resolve it in this order:
 3. Say plainly in the record what was lost, so the investigation does not
    quietly assume it exists.
 
-Ongoing user impact outranks a better investigation. An investigation with a gap
-is recoverable; the minutes are not.
+Ongoing user impact outranks a better investigation.
 
 ## The lever helps some users and hurts others
 
@@ -73,7 +72,7 @@ The signal is noisy, delayed, or aggregated, and the graph has not moved yet.
 - Distinguish "no evidence it worked" from "evidence it did not". Waiting one
   reporting interval is reasonable; assuming success is not.
 - If the lever's effect cannot be observed at all, treat it as unpulled, and say
-  so — an unverifiable mitigation is a guess wearing a timestamp.
+  so.
 
 ## It keeps coming back
 
@@ -81,6 +80,5 @@ The lever holds, then the impact returns — a flag re-enabled by a deploy, a
 rollback overwritten by the next release, a limit reset by autoscaling.
 
 Containment has to survive the systems that fight it: pin the flag in the source
-of truth, block the deploy pipeline, or hold the release. Otherwise you are not
-contained, you are between recurrences — and the containment record is what
-tells the next person why the flag must stay off.
+of truth, block the deploy pipeline, or hold the release. The containment
+record is what tells the next person why the flag must stay off.

@@ -18,8 +18,7 @@ enter this skill.
   loss, or exposed a process failure worth correcting.
 - **Skip** an ordinary reproduced bug. For a technical incident, establish the
   technical cause and immediate containment first; if the technical cause is
-  unknown, invoke `debugging`. A process-only failure starts from the events
-  its evidence shows.
+  unknown, invoke `debugging`.
 
 ## Step 1: Control the record
 
@@ -36,9 +35,8 @@ enter this skill.
    then each condition that made the introduction or the impact more likely.
    Name conditions, never a person. When there are several conditions, keep
    them separate.
-2. Fill `Escape-path audit`: freeze the inventory of gates and surfaces (a
-   gate is a check that must accept a result before it may advance) with the
-   hash of its source, then fill every column for each entry, and for each
+2. Fill `Escape-path audit`: freeze the inventory of gates and surfaces with
+   the hash of its source, then fill every column for each entry, and for each
    omission record a decision that someone is accountable for.
 3. Fill every bullet of `Risk-reduction claim` for each action. Never claim
    that recurrence is impossible.
@@ -53,7 +51,7 @@ enter this skill.
    sits outside the issued analysis), to the user-set path or the template's
    path, under the storage authority held now, and record its identity as the
    template says. If the record is in the repository, it is a new state under
-   check (the exact state being judged).
+   check.
 
 ## Step 3: Propose and get the actions accepted
 

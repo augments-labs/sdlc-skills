@@ -24,13 +24,11 @@ diagnosis, not permission to change code.
    frozen* first: identity, goal, path boundary, guarantees in force, and the
    evidence allowed.
 2. Declare the report path up front:
-   `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`. The coordinator (the one
-   running this audit, as opposed to a dispatched auditor) owns it, and it
-   sits outside the audited target's identity. Identify the target by
-   revision. Use a working-tree hash (the template calls it the working-tree
-   digest) only when the report path is outside the repository or
-   `git check-ignore -q` passes for it: a report inside the tree that is not
-   ignored changes the hash the audit froze. If the target is uncommitted and
+   `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`. The coordinator owns
+   it, and it sits outside the audited target's identity. Identify the
+   target by revision. Use a working-tree hash (the template calls it the
+   working-tree digest) only when the report path is outside the repository
+   or `git check-ignore -q` passes for it. If the target is uncommitted and
    the report path is in-tree and unignored, stop; ask for a checkpoint or an
    ignored or out-of-repository report path. If the target drifts, stop or
    restart.
@@ -62,7 +60,7 @@ diagnosis, not permission to change code.
    Line count is not authority.
 2. Apply or approve nothing. If a structural change is accepted, invoke
    `refactor-architecture` for it. Behavior work goes to its feature or bug
-   route, which produces a new, verified state under check.
+   route.
 3. Verify the report's coverage, then stop. Review or branch finishing runs
    only if the user separately asks to ship the report.
 
@@ -85,5 +83,3 @@ diagnosis, not permission to change code.
   isolation may be justified; apply the deletion test, not a slogan.
 - “Tests and rollback are overhead”: a current assurance or recovery guarantee
   owns them; duplicate machinery with no distinct guarantee is the candidate.
-- Editing during the audit freezes neither evidence nor conclusions; report
-  first, then obtain separate implementation authority.

@@ -1,8 +1,7 @@
 # Post-mortem template
 
 `post-mortem` copies this structure when starting the analysis, replacing
-every placeholder; keep it factual and blameless, since causes describe
-conditions and controls rather than moral judgment. Draft it, challenge it,
+every placeholder; keep it factual and blameless. Draft it, challenge it,
 then issue one immutable version; nothing after issue — action states, proof,
 rollout results, effectiveness verdicts — is ever written back here, and a
 `pending` cell means the ledger has not yet recorded that state. Write the
