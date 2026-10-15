@@ -45,6 +45,7 @@ a few skills.
 | `executing-plans` | Runs an approved plan task by task in the current session |
 | `subagent-driven-development` | Runs an approved plan through fresh subagents, with a reviewer on each task |
 | `rollout-controls` | Builds the flag or kill switch and the rollout signals a staged release needs, under the release policy's terms or terms drafted for the release owner to accept |
+| `adding-observability` | Instruments a change or a service so its operators can tell whether it works for users and find out why when it does not, through the project's existing facility, with each signal seen before it counts |
 | `changing-a-live-schema` | Builds an ordinary schema change or backfill in phases so a live store keeps working for both code versions during a deploy and after a rollback, until the contract phase |
 
 ## Testing
