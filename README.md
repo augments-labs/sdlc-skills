@@ -311,6 +311,9 @@ A large project may touch every phase. Most tasks use a few skills.
    `changing-a-live-schema` phases a change to stored data so a live store
    keeps working for both code versions through a deploy and a rollback,
    until the final phase drops the old shape.
+   `adding-observability` instruments a change or a service so its
+   operators can tell whether it works for users and find out why when it
+   does not, through the facility the project already has.
 5. **Testing.** `verification-before-completion` runs the checks before any
    claim that work is done. `requesting-code-review` and
    `receiving-code-review` handle the review. `reviewing-a-pr` reviews a

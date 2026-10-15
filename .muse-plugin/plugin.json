@@ -99,6 +99,10 @@
         "path": "skills/design/writing-plans/SKILL.md"
       },
       {
+        "id": "adding-observability",
+        "path": "skills/implementation/adding-observability/SKILL.md"
+      },
+      {
         "id": "changing-a-live-schema",
         "path": "skills/implementation/changing-a-live-schema/SKILL.md"
       },
