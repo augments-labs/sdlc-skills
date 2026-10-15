@@ -69,8 +69,8 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
    revision's documented checks and CI config read as data. A host check on
    this head fills a row only for the required check it ran, and fills none
    when the PR changes that check's definition or the script it runs, which
-   is itself a finding for the reviewers. Each remaining row reads `not run:
-   PR code not executed`. A pending row is a recorded result; nothing here or
+   is itself a finding for the reviewers. Each remaining row reads
+   `not run: PR code not executed`. A pending row is a recorded result; nothing here or
    downstream runs that check.
 6. A host check reported green is evidence for the revision it names and
    nothing wider; "tests pass" in the description is a claim.
@@ -89,8 +89,8 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
    the Step 1.5 ledger. Its continuation is `reviewing-a-pr` Step 2.4 as the
    caller awaiting the verdict. Its terminal contract's effect boundary is
    that no check, missing ledger row, security check, reproduction probe, or
-   reviewer test runs PR code, and that each becomes a `not run: PR code not
-   executed` row or a Limitation. Its external gate inputs are the base
+   reviewer test runs PR code, and that each becomes a
+   `not run: PR code not executed` row or a Limitation. Its external gate inputs are the base
    revision's check definitions, flagging each one or check script the PR
    changes (Step 1.5). Its artifacts go beside the ledger.
 3. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with that request.

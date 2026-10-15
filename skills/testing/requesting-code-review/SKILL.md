@@ -71,7 +71,7 @@ was actually dispatched).
      independent adversarial pass.
    - **High-risk transformation:** read `references/high-risk-review.md` before
      assigning anyone.
-2. Give every role a stable ID, including each role you omit. For an omitted
+2. Give every role a stable ID, including each omitted role. For an omitted
    role, record the evidence, owner, expiry, compensating check, and approver.
 3. Add a specialist role only when the diff matches its trigger below, then
    open its prompt template. If no trigger matches, the breadth reviewer runs
@@ -128,7 +128,8 @@ was actually dispatched).
    Verdict to the frozen request. If a field is missing, unreadable,
    conflicting, or mismatched, review stays pending. Check the complete
    inventory and every human-authored change; reject unrelated traversal (a
-   reviewer's reading of code unrelated to the change).
+   reviewer's reading beyond the change that no recorded evidence makes
+   relevant).
 6. Decide each Declined to judge entry yourself and record it in the ledger;
    an undecided entry keeps review pending.
 7. Block readiness while required current verification or role coverage is

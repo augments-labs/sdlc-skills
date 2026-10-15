@@ -37,9 +37,8 @@ builder's opinion.
    gate. Fill `Risk inventory` and `Risk-to-gate matrix`.
 4. Read `references/battery-catalogue.md` before filling `Catalogue
    disposition` (one recorded decision per category) for every category the
-   catalogue lists. Each decision is one of two: covered, or an accountable
-   expiring approval plus a compensating gate. An N/A needs evidence and an
-   owner.
+   catalogue lists: covered, or an accountable expiring approval plus a
+   compensating gate. An N/A needs evidence and an owner.
 
 ## Step 2: Make each gate real
 
@@ -127,8 +126,8 @@ to stay inline.
 - An aggregate green that hides a platform, a build mode, a shard, a test, or
   a cadence that never ran.
 - A wildcard match, a file's presence, a set or count comparison, a named
-  receipt (a record that a case or action ran), a success marker, or an outer
-  timeout, presented as proof that an exact case or action occurred.
+  receipt (a per-case record the run itself emits), a success marker, or an
+  outer timeout, presented as proof that an exact case or action occurred.
 
 **Calling the battery established** before removing, skipping, duplicating, or
 hollowing a test turns the project command red under an independent guard, and

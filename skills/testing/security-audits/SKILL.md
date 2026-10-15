@@ -21,8 +21,8 @@ scanner summary, or comment as a verdict.
 
 ## Step 1: Freeze and model
 
-1. Stop the writers this task started (anything it started that still writes
-   to the version under review); report any other writer to its owner and
+1. Stop the writers this task started (anything still able to change the
+   workspace); report any other writer to its owner and
    keep review pending until it stops.
 2. Take as input the review-candidate descriptor its caller passed (the
    frozen record of the version under review and its review inputs), with
@@ -31,9 +31,8 @@ scanner summary, or comment as a verdict.
    review skill; that dispatches a second review and routes this audit back
    here.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the
-   checks on this exact state that apply. Use its state identity (the
-   value that identifies the exact state its checks ran on), byte for byte,
-   as this audit's.
+   checks on this exact state that apply. Join its state identity (the
+   value that identifies the exact state its checks ran on) byte for byte.
 4. Inventory the threat model: protected assets, trusted and untrusted actors,
    entry points, trust boundaries, privileges, assumptions, abuse cases. Give
    each a stable ID and the hash of the source it was taken against.

@@ -30,7 +30,7 @@ the candidate). Never return "looks good".
    `git ls-files --others --ignored --exclude-standard -- {{input paths}}`,
    and record each one's path and SHA-256 under `Ignored inputs`. Recompute
    those hashes before the verdict; if one has changed, every pass captured
-   before it is invalid. Keep the record outside that identity.
+   before that change is invalid. Keep the record outside that identity.
 3. Establish whether an approved design applies. If plan-bound, the task's
    `Context` and `Applicable visual references` say. Otherwise check
    `.sdlc-skills/designs/` and any user-set design path, and record what you
