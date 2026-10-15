@@ -5,10 +5,8 @@ description: "Captures a ticket from an issue tracker as the definition of the w
 
 # Working From a Ticket
 
-A ticket is the user's definition of the work, and it lives outside the
-repository, where nothing in the project can bind to it. Capture what it says,
-as read and when, so the plan, the tests, and the claim of done bind to one
-recorded text instead of a memory of it.
+Capture what the ticket says, as read and when, so the plan, the tests, and
+the claim of done bind to one recorded text.
 
 ## When to use
 
@@ -46,14 +44,11 @@ recorded text instead of a memory of it.
 4. Read linked tickets, attachments, and comments that carry criteria or
    constraints the same way. List the rest; do not read them.
 5. Never fill a gap from memory, from a similar ticket, or from the title.
-   Text that was not read is not in the capture.
 
 ## Step 2: Capture it
 
-1. Open `assets/ticket-capture.md` before writing. Fill every section from
-   the text as read: source and identifier, the read time and means, the
-   ticket verbatim, its acceptance criteria exactly as written, links, what
-   could not be read, and what the ticket leaves unclear.
+1. Open `assets/ticket-capture.md` before writing, and fill every section
+   from the text as read.
 2. Copy each acceptance criterion as written, informal or partial ones
    included:
 
@@ -68,22 +63,16 @@ recorded text instead of a memory of it.
    code answers. List one line per point the text and the code together do
    not settle: which component, where a boundary sits, a criterion with
    nothing observable to check it by, a comment that contradicts the
-   description.
-
-   A ticket's description asks for CSV and PDF export; its last comment
-   says "PDF can wait". Both go into the capture verbatim, and the criteria
-   stay as written. The latest comment often carries the current ask, but
-   "can wait" settles neither what ships nor who decided, so the conflict
-   is one `Unclear` line, for `clarifying-intent` under Step 3.1. Dropping
-   PDF yourself would settle the scope, which this skill never does.
+   description. A comment that narrows or contradicts the description goes
+   into the capture verbatim and becomes one `Unclear` line; never settle
+   it yourself.
 4. Write the capture to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{slug}}-ticket.md` or the user-set
    path. The slug is the identifier lowercased, with each run of other
    characters replaced by one `-` and the ends trimmed, or a short topic
    slug when there is no identifier; the H1 keeps the identifier as
    written. If the path already exists, add `-{{n}}` before `-ticket`; a
-   successor never takes the predecessor's path. No other skill writes that
-   name.
+   successor never takes the predecessor's path.
 
    Compute its identity by the artifact layout's captured-ticket rule
    in `using-sdlc-skills` (the first 7 characters of `git hash-object` over
@@ -109,10 +98,9 @@ recorded text instead of a memory of it.
 4. If the work spans several steps or files, or the user calls it too big
    for one go, **REQUIRED SUB-SKILL:** invoke `writing-plans`. Put the
    capture's identity on the plan's `Bound inputs` line; trace each
-   acceptance criterion, cited by that identity, to a task's Evaluator (the
-   check that task names as the one that must accept its result) or to the
-   plan's **Acceptance** check; and make the plan's last task re-read the
-   ticket (Step 4).
+   acceptance criterion, cited by that identity, to a task's Evaluator or
+   to the plan's **Acceptance** check; and make the plan's last task re-read
+   the ticket (Step 4).
 5. Otherwise, **REQUIRED SUB-SKILL:** invoke `using-git-worktrees`, then
    `test-driven-development` and `yagni` before the first edit. Take the
    first test from the first acceptance criterion, or, when the capture
@@ -125,8 +113,7 @@ recorded text instead of a memory of it.
 2. If the text, the criteria, or the comments differ from the capture, the
    capture is stale. Write a successor capture (Step 2) in its own new file,
    naming the predecessor; add a `superseded` row to the predecessor's
-   ledger; and return to Step 3, because a plan or a test bound to the old
-   identity is bound to the old ticket.
+   ledger; and return to Step 3.
 3. If nothing changed, say so, with the identity and the time of the
    re-read; then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion`, listing each acceptance criterion as an
@@ -150,5 +137,3 @@ recorded text instead of a memory of it.
 
 - Paraphrasing the ticket into the capture: copy the text instead; a
   paraphrase belongs under `Unclear`, as a question.
-- Writing the answers to unclear points into the capture: the capture is
-  the ticket as read; answers live where `clarifying-intent` records them.
