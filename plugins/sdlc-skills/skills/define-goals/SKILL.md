@@ -35,9 +35,7 @@ Open `assets/goals-section.md` before starting; each step fills its section.
 4. For each outcome, record its current baseline, target, time horizon,
    measurement source, and accountable owner. If an outcome has no source or
    date, it cannot be checked, so it is not a goal.
-5. Write the guardrails (what must not degrade) and the failure criterion:
-   the observation that would mean the initiative failed even with its
-   metric up.
+5. Write the guardrails and the failure criterion.
 6. Write the value in one sentence.
 
 ## Step 2: Write and present
