@@ -7,8 +7,7 @@ description: "Checks a running interface visually across states, viewports, them
 
 Drive the integrated interface, keep every frame, calibrate the inspection on
 a deliberately broken frame, and return a row-by-row verdict bound to the
-state under check (the exact state being judged; the evidence record calls it
-the candidate). Never return "looks good".
+state under check. Never return "looks good".
 
 ## When to use
 
@@ -44,13 +43,11 @@ the candidate). Never return "looks good".
      matrix.
    - If an approved design exists, read the approved design itself: flows,
      states, conditions, decisions and acceptance checks. Map each applicable
-     obligation to a required observation or to the other check that owns it
-     (the record calls that check its other owning gate); a preview is only
-     part of that contract. Copy its **Selected visual references** field for
-     field. If plan-bound, match the obligations and references to their
-     tasks and conformance evaluators.
-4. Run each Freshness evaluator (the exact freshness check a selected
-   reference carries):
+     obligation to a required observation or to the other check that owns
+     it; a preview is only part of that contract. Copy its **Selected
+     visual references** field for field. If plan-bound, match the
+     obligations and references to their tasks and conformance evaluators.
+4. Run each selected reference's Freshness evaluator:
    - On `pass`, capture.
    - On `mismatch`, restore the binding and rerun, or obtain a design
      successor (plus a plan successor when plan-bound).
@@ -65,8 +62,7 @@ the candidate). Never return "looks good".
 1. Build the smallest matrix that can decide the verdict: journeys and states
    crossed with viewport, theme, input method, platform, and content
    pressure. Include the empty, loading, error, overflow, and no-permission
-   states the UI contract contains. Record a decision for each omission (the
-   record calls a recorded decision a disposition).
+   states the UI contract contains. Record a decision for each omission.
 2. Drive the real interface through its real input boundary. For a GUI,
    capture screenshots or recordings. For a TUI, use a PTY at the declared
    dimensions and a VT-capable renderer, and keep the raw terminal stream and
@@ -84,10 +80,8 @@ the candidate). Never return "looks good".
 2. Produce one deliberately broken frame with a reversible fault or a
    known-bad fixture outside the state under check. Confirm the same
    inspection marks it red.
-3. Restore the probe. Record the receipts for the red and for the restoration
-   (a receipt is proof, from a trusted source outside the state under check,
-   that the thing happened). If the probe is unsafe or was missed, this check
-   is pending.
+3. Restore the probe. Record the receipts for the red and for the
+   restoration. If the probe is unsafe or was missed, this check is pending.
 4. Inspect every frame with a media-capable observer against the accepted UI
    criteria: hierarchy, legibility, clipping and overflow, focus, contrast,
    content extremes, state feedback, visible recovery controls.
@@ -115,10 +109,9 @@ the candidate). Never return "looks good".
    Otherwise the verdict is fail or pending.
 4. Return the verdict to the skill that requested it. Authorize no
    acceptance, integration, or promotion here.
-5. When the project battery (the set of checks the project runs) is being
-   established, add this check as a row in `verification-strategy`'s matrix
-   with its own cells, action, evidence, owner, cadence, promotion, and
-   failure response.
+5. When the project battery is being established, add this check as a row
+   in `verification-strategy`'s matrix with its own cells, action, evidence,
+   owner, cadence, promotion, and failure response.
 6. For a release, take a fresh verdict against the exact immutable artifact.
    A verdict on source or a working tree is acceptance evidence only.
 

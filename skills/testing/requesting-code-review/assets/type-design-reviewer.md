@@ -19,12 +19,12 @@ check per named risk.
 
 ## The one question, four ways
 
-For each new or changed type, the question is **can external code put this into a state its own rules forbid?** An invariant here is any rule the type must always hold: a single-field constraint, a relationship *between* fields (`start ≤ end`), or a legal state transition (a shipped order can't revert to draft). Name the invariants in play, then examine each from four angles — describe each, do not score it:
+For each new or changed type, the question is **can external code put this into a state its own rules forbid?** Name the invariants in play, then examine each from four angles — describe each, do not score it:
 
 - **Encapsulation** — Are internals hidden, or are mutable fields / mutable-collection getters exposed so callers can break the invariant directly?
 - **Expression** — Is the invariant visible *in the type's structure*, or only stated in a comment a reader must find and trust?
 - **Usefulness** — Does the invariant prevent a real bug and match the domain, or is it ceremony that adds friction without safety?
-- **Enforcement** — Is it checked at construction *and* guarded at every mutation point — or can a setter, a deserializer, or a partially-built instance slip past it? (Immutability removes the mutation points entirely — the strongest enforcement.)
+- **Enforcement** — Is it checked at construction *and* guarded at every mutation point — or can a setter, a deserializer, or a partially-built instance slip past it?
 
 ## Anti-patterns to flag
 
