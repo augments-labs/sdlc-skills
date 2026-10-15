@@ -17,8 +17,10 @@ tag, release, or dispatch another agent.
 
 - **Task file:** `{{task-file}}` — open it yourself. Where it and the paste
   below differ, the file is the contract.
-- **Workspace:** `{{workspace}}` — read and write here, nowhere else. A path
-  outside it stays untouched even when the contract names it.
+- **Workspace:** `{{workspace}}` — every edit stays inside it. A path
+  outside it stays untouched even when the contract names it. The task file
+  and the inputs below are read, and the report is written to its path,
+  wherever they sit.
 - **Base:** `{{base}}` — the revision the work starts from. Start there, and
   report the revision you end on. Local commits on this workspace's branch
   run under the authority the plan worktree's workspace record holds; you

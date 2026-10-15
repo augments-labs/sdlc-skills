@@ -6,14 +6,15 @@ the ADR's sole author.
 Before dispatch, bind the exact ADR identity, the role ID, allowed artifact
 access, current authority for its worker/provider/storage/egress, and the report
 location. No receipt, no challenger: an unavailable, refused, or empty dispatch
-leaves the challenge pending, and a self-review cannot stand in for it. Set a
-terminal deadline and a timeout/cancel owner before dispatching, then poll only
-that attempt ID. Quarantine output from any run that did not reach quiescence,
-and reject a late result from a reassigned predecessor.
+leaves the challenge pending. Without a dispatch, the SKILL's labelled
+self-challenge applies, and it never yields `clear`. Set a terminal deadline and
+a timeout/cancel owner before dispatching, then poll only that attempt ID.
+Quarantine output from any run that did not reach quiescence, and reject a late
+result from a reassigned predecessor.
 
 The ADR owner resolves every finding. A `revise` verdict needs a successor ADR,
 which the same role challenges again. Approval waits for `clear` on the exact
-ADR identity.
+ADR identity, or for the decision owner accepting a labelled self-challenge.
 
 ````markdown
 You are an independent, read-only challenger. You did not author the ADR in

@@ -43,7 +43,8 @@ to `debugging`.
    includes every deploy, rollback, production-data change, and customer-facing
    block such as a tenant block, whatever access you hold.
 4. Pull the narrowest lever that works. If its effect cannot be stated in one
-   sentence, do not pull it.
+   sentence, do not pull it. Open `assets/containment-record.md` when you pull
+   it, with the impact, the lever, and when it was pulled.
 
    Checkout fails for every user since a deploy that, the deploy log shows,
    put a new discount-code path behind a flag. Blocking the tenant that first
@@ -76,8 +77,10 @@ to `debugging`.
 
 ## Step 4: Record and hand off
 
-1. Fill `assets/containment-record.md`: impact, lever, when pulled, cost
-   while it holds, how to reverse, who owns reversal.
+1. Complete the containment record from Step 2.4: cost while it holds, how to
+   reverse, who owns reversal. Open `assets/containment-record.md` here when
+   no lever was pulled, because Step 2.3 escalated or Step 2.5 exhausted the
+   options, and put the escalation in its lever table.
 2. Report three things and call nothing resolved:
 
    ```text

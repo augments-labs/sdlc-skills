@@ -134,12 +134,12 @@ Is the build from PR 322 ready to deploy?
 ```
 
 `release-readiness` freezes the exact artifact set and exercises install and
-recovery as a real consumer would. It is handed the rollout record from
-stage 5, whose accepted terms it binds the rollout to, and the schema
-record from stage 4, as evidence that recovery was exercised and the
-rollback target is named, with any unverified lock listed as such. It
-presents a verdict, ready or not ready, and three options: promote this
-exact set, hold, cancel.
+recovery as a real consumer would. It is handed the rollout record from stage
+5, whose accepted terms it binds the rollout to, and the schema record from
+stage 4, as evidence that recovery was exercised and the rollback target is
+named, with any unverified lock listed as such. It presents a verdict (ready,
+ready with accepted deviations, not ready, or inconclusive) and three options:
+promote this exact set, hold, cancel.
 [Reviewing and shipping](reviewing-and-shipping.md) covers releasing.
 
 What depends on you: naming one. "Ready" is not authority to deploy; the

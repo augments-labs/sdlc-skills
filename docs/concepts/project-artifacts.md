@@ -45,7 +45,10 @@ over its exact text. The agent shows this identity when it asks you to
 approve something and records it in the ledger. Any later change to the text
 is a new identity, which means a new version that needs its own approval.
 This is what stops a plan from being edited after you approved it and still
-counting as approved.
+counting as approved. Four records are kept up to date in place instead:
+deprecation records, shard manifests, schema change records, and rollout
+records. A decision on one of them binds the record as it was at that moment,
+and a later update does not undo the decision.
 
 ## Evidence
 

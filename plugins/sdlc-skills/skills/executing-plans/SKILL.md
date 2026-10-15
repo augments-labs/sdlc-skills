@@ -26,10 +26,12 @@ what happens to the branch.
 
 1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
    `External decision ledger` (the ledger: add to it, never rewrite it). Read
-   every row for this index whose `Identity` is the printed version, in ledger
-   order. The last of them must be the row whose `Bound evidence` names the
-   `Approval rule` owner's approval: a later row that rejects, cancels, or
-   supersedes this version closes it. The index cannot approve itself.
+   every decision row for this index whose `Identity` is the printed version,
+   in ledger order: a decision row leaves `Section` empty, and an execution
+   row carries a task ID there. The last of them must be the row whose
+   `Bound evidence` names the `Approval rule` owner's approval: a later row
+   that rejects, cancels, or supersedes this version closes it. The index
+   cannot approve itself.
 2. If there is no such row, a later row closed the version, or the script
    fails, stop and name the missing version, the row that closed it, or the
    script's error; never substitute a version read from the index.
@@ -42,8 +44,8 @@ what happens to the branch.
 
 If every task's `Files` lies outside any git-tracked project, or the index says
 the deliverable is not a repository change, record `workspace: not applicable`
-in the ledger and skip 2.2. If even one task is inside a repository, Step 2.2
-and Step 5.3 apply to the whole plan.
+in the ledger, with `plan` in `Section`, and skip 2.2. If even one task is
+inside a repository, Step 2.2 and Step 5.3 apply to the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -177,8 +179,8 @@ In the task workspace recorded in Step 2, in order:
 A defect or gap outside the current task's contract is never an edit in this
 task. One a later listed task's contract covers is left to that task. Any
 other, whether you or a review raised it, is a `finding` row in the
-execution ledger: where, what, the evidence. It is never a task because
-someone wrote it down.
+execution ledger, with `plan` in `Section` when no task covers it: where,
+what, the evidence. It is never a task because someone wrote it down.
 
 1. If the index's `Out-of-task findings` field says `log and report`, or is
    absent, every finding waits for Step 5.4.
@@ -208,10 +210,10 @@ someone wrote it down.
 - If the remaining work will not fit this session, finish the current ledger
   row, then invoke `handoff`.
 - On resume, rerun `bash scripts/plan-version.sh`, then re-read before
-  trusting: the latest decision ledger row for the printed version, the
-  workspace's base, HEAD, and dirty state through `using-git-worktrees`, the
-  execution ledger, and whether each `done` row still matches the current
-  revision.
+  trusting: the latest decision row (empty `Section`) for the printed
+  version, the workspace's base, HEAD, and dirty state through
+  `using-git-worktrees`, the execution ledger, and whether each `done` row
+  still matches the current revision.
 - When reality contradicts the plan: a change to what was approved gets a
   proposed successor and direct reapproval; a runtime fact goes into the
   execution ledger only.

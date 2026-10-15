@@ -35,11 +35,12 @@ they may not take. This skill never decides what happens to the branch.
 
 1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
    `External decision ledger` (a ledger: add to it, never rewrite it). Read
-   every row for this index whose `Identity` is the printed version, in
-   ledger order. The last of them must be the row whose `Bound evidence`
-   names the `Approval rule` owner's approval; a later row that rejects,
-   cancels, or supersedes this version closes it. The index cannot approve
-   itself.
+   every decision row for this index whose `Identity` is the printed
+   version, in ledger order: a decision row leaves `Section` empty, and an
+   execution row carries a task ID there. The last of them must be the row
+   whose `Bound evidence` names the `Approval rule` owner's approval; a
+   later row that rejects, cancels, or supersedes this version closes it.
+   The index cannot approve itself.
 2. If there is no such row, if a later row closed the version, or if the
    script fails, stop and name the missing version, the row that closed it,
    or the script's error; never substitute a version read from the index.
@@ -52,7 +53,8 @@ they may not take. This skill never decides what happens to the branch.
    this skill cannot run it and `executing-plans` will not: ask the
    `Approval rule` owner for a direct inline answer, append it as a new
    approved row for this version in the shape `writing-plans` Step 4.5 gives,
-   with `mode: inline`, and stop. The last row's mode is the one 1.1 reads.
+   with `mode: inline`, and stop. The last decision row's mode is the one 1.1
+   reads.
 
 ## Step 2: Open the run
 
@@ -143,7 +145,10 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
 6. Write the dispatch row before dispatching: task ID, attempt, base
    revision, evaluator identity, tier. Then dispatch per
    `dispatching-parallel-agents` Step 2. It owns the dispatch receipt, the
-   not-dispatched rule, and cancellation.
+   not-dispatched rule, and cancellation. When an implementer cannot be
+   dispatched, its question omits option 1: the controller never edits, and
+   building a task inline is a mode change, which only the `Approval rule`
+   owner's direct answer makes, as Step 1.4 says.
 
 ## Step 5: Review the diff, then fix
 
@@ -151,8 +156,10 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
    `assets/task-reviewer.md` when the implementer reports, rendering it with
    `bash scripts/task-brief.sh`, which inserts
    `assets/task-reviewer-report.md` before dispatch.
-2. Sort the findings before any round opens, first by what each one
-   touches, whatever the reviewer rated it:
+2. Verify each finding on its merits first, as `receiving-code-review` Step 2
+   says; one that fails the check goes to the ledger with its evidence and
+   opens no round. Then sort the findings before any round opens, first by
+   what each one touches, whatever the reviewer rated it:
    - an edit the diff makes outside the contract, the implementer report's
      `Done beyond the contract` line included, is `blocking`: a fix round
      removes it, unless a ruling names the contract clause that needs it.
@@ -217,9 +224,11 @@ In the worktree from Step 2, in order:
    are claims; this is the evidence.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch.
    Its fix rounds run under `receiving-code-review`'s convergence check and
-   plan-end budget. You run only the triage and the budget: each fix set
-   goes to a fresh implementer through the Step 4 brief and the Step 5
-   review loop.
+   plan-end budget. You run only the triage and the budget: each fix set goes
+   to a fresh implementer through the Step 4 brief and the Step 5 review loop,
+   with every round a fresh implementer, counted against the plan-end budget,
+   not a task's. When that budget is spent, write the adjudication in the
+   ledger and hand the user that row; no task is recorded `blocked`.
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
@@ -284,6 +293,7 @@ the evidence. It is never a task because someone wrote it down.
 
 - If the remaining work will not fit this session, finish the current ledger
   row, then invoke `handoff`.
-- On resume, rerun `bash scripts/plan-version.sh` and re-read the latest decision
-  ledger row for the printed version before `--check` on the run ledger: the
-  run ledger detects an amended plan, not a row that closed the version.
+- On resume, rerun `bash scripts/plan-version.sh` and re-read the latest
+  decision row (empty `Section`) for the printed version before `--check` on
+  the run ledger: the run ledger detects an amended plan, not a row that
+  closed the version.
