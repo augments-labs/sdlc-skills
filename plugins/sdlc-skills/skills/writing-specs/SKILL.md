@@ -5,10 +5,8 @@ description: "Writes a specification: detailed requirements and acceptance crite
 
 # Writing Specs
 
-Turn an intent into a requirements spec (an SRS): what the software must do,
-how each requirement will be checked, and the assumptions, dependencies, and
-risks around it. Requirements are the *what*; leave the *how* (architecture,
-schemas, code) to design.
+Turn an intent into a requirements spec. Requirements are the *what*; leave
+the *how* (architecture, schemas, code) to design.
 
 ## When to use
 
@@ -48,17 +46,14 @@ its sections.
    generic list of non-functional requirements.
 3. Read `references/reference-forms.md` before choosing the first acceptance
    form. For each requirement, choose the cheapest form that can honestly
-   judge it: an executable gate (a check file that the project's own test or
-   check command can run once it lands in the project), a disposable mockup,
-   a source-fact contract, a rubric, or prose.
+   judge it: an executable gate, a disposable mockup, a source-fact
+   contract, a rubric, or prose.
 4. If the form is an executable gate, write it as a proposed file beside the
    spec, never into the project; `test-driven-development` lands and runs it
    inside the task workspace. If the interface, or the authority to change
-   the project, is still open, write the observable (what would be observed
-   to decide the requirement), the intended gate, its owner, and the handoff.
-   Never invent an interface.
-5. List the edge cases and scenarios that break a naive build: empty input,
-   concurrency, unhappy paths.
+   the project, is still open, write the observable, the intended gate, its
+   owner, and the handoff. Never invent an interface.
+5. List the edge cases and scenarios that break a naive build.
 6. Fill every column of the template's assumptions-and-dependencies table,
    one row per assumption or dependency.
 7. List the open questions, the requirement-level risks, and what is out of
