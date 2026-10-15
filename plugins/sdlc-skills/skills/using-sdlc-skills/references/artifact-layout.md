@@ -53,10 +53,13 @@ Every ledger is one markdown table with this header:
   was chosen.
 - `Updated` is the date the row was appended.
 
-An execution row fills the same columns: `Identity` is the plan version,
-`Section` is the task ID, `State` is the task state, `Bound evidence` holds the
-attempt, the result revision and the evaluator evidence, and `Updated` holds
-the owner and the time.
+A plan's decision rows leave `Section` empty. An execution row fills the same
+columns: `Identity` is the plan version, `Section` is the task ID, `State` is
+the task state, `Bound evidence` holds the attempt, the result revision and the
+evaluator evidence, and `Updated` holds the owner and the time. The other rows
+`executing-plans` appends (`finding`, `admitted`, `cancellation requested`) use
+the same columns with the kind in `State`; only a row whose `State` is a task
+state sets a task's state.
 
 A ledger kept anywhere else, or returned instead of written, is recorded in the
 artifact's pointer field.

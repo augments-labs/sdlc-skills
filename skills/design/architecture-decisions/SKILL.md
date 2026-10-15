@@ -54,7 +54,9 @@ comparing against a filled example.
    template's challenge contract.
 
    Otherwise, write the strongest counter-case yourself, against that same
-   contract, and label it **self-challenge**. A self-challenge never
+   contract, and label it **self-challenge**. When the dispatch action is not
+   callable, write it only if the user chooses option 1 at the
+   `dispatching-parallel-agents` Step 2 question. A self-challenge never
    issues the verdict `clear`, so the risk it leaves open goes to the decision
    owner in Step 3.
 

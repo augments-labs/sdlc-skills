@@ -19,7 +19,7 @@ version. Keep mutable lifecycle evidence in an append-only external ledger.
 - **Identity:** recorded in the ledger row, never here: the first 7 characters of `git hash-object` over this file as issued
 - **Predecessor/delta:** `{{predecessor identity or none; stable changes}}`
 - **Incident/work-cycle ID:** `{{identity}}`
-- **External lifecycle ledger identity/location:** `{{outside this analysis}}`
+- **External lifecycle ledger:** `{{ledger path: beside this analysis unless the user sets another}}`
 - **Scope and exclusions:** `{{boundary}}`
 - **Expected reviewers:** `{{stable role IDs; independent escape-path challenger;
   approved omission with evidence/owner/expiry/compensation}}`

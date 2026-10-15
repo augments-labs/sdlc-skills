@@ -74,13 +74,13 @@ or **blocking**.
 
    ```text
    Release candidate {{artifact-set identity}} → {{target}}
-   Verdict: {{ready | not ready}} — {{n}} gates evidenced, {{n}} deviations owned, rollback {{state}}
+   Verdict: {{ready for the target | ready with accepted deviations | not ready | inconclusive}} — {{n}} gates evidenced, {{n}} deviations owned, rollback {{state}}
 
    1. Promote this exact set
    2. Hold
    3. Cancel
 
-   Recommendation: {{1 only when ready, otherwise 2}} — {{one sentence}}.
+   Recommendation: {{1 only when ready or ready with accepted deviations, otherwise 2}} — {{one sentence}}.
    ```
 
 5. Promote nothing until the user names one of the three. The promotion then
