@@ -3,8 +3,7 @@
 The coordinator fills this template once per dispatched agent, before that
 agent's first dispatch under `dispatching-parallel-agents`, from the task the
 agent owns — never from session history. Fill every field; delete one only
-when it is genuinely empty for this task, and say so, so the agent reads the
-omission as deliberate rather than forgotten. The filled fence, with
+when it is genuinely empty for this task, and say so. The filled fence, with
 `## Dispatch record` left blank, becomes that agent's entire prompt, sent
 through the dispatch action; nothing outside it reaches the agent. The
 coordinator fills `## Dispatch record` afterward, only in its own kept copy,

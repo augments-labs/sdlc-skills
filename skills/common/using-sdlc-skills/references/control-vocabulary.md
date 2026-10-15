@@ -31,9 +31,6 @@ ID survives reassignment, and a retry gets a new attempt ID.
   state identity covers. In a review, the exact version under review. It has a
   hash; anything that changes it makes a new state under check and voids
   verdicts bound to the old one.
-- **Artifact** — any produced output: source, document, build output, evidence
-  record. A state under check is an artifact that has been frozen for a
-  decision.
 
 ## What decides
 

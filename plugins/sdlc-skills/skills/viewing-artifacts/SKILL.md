@@ -8,14 +8,13 @@ description: "Shows the state of the artifact trail — briefs, specs, designs, 
 One self-contained page answers "what is the state of my SDLC work, and what
 needs attention?" from the `.sdlc-skills/` artifact trail. Every value on it
 is derived from a real marker; where no marker exists the page says unknown.
-A confident guess is fabrication — the failure this skill exists to prevent.
 The page carries state, not documents.
 
 ## When to use
 
 - The user asks for the state, progress, or drift of their SDLC work — what needs attention, how far each initiative is, what changed after a downstream artifact consumed it — or asks to see the trail as a page.
 - **Skip** when a specific artifact must be read, created, or edited: that is the owning skill's work, and this skill never mutates the trail.
-- **Skip** when there is no trail and nobody asked for its state — an unprompted empty page helps nobody.
+- **Skip** when there is no trail and nobody asked for its state.
 
 ## Available scripts
 
@@ -26,7 +25,7 @@ The page carries state, not documents.
 ## Step 1: Read the trail
 
 1. Resolve the project root: the main checkout, even from a linked task
-   worktree, because the trail and its plan mirrors live there. When the
+   worktree. When the
    common git directory is not a checkout's `.git` (a submodule, a separate
    git directory, a bare repository's worktree), the root is the current
    checkout's top.
@@ -48,8 +47,7 @@ The page carries state, not documents.
 2. If there is no `.sdlc-skills/`, render the template's empty state, which
    names what produces artifacts. Read an artifact kept at a user-set path
    only where a recorded pointer names it: a pointer field, the `Location`
-   of a row in a ledger (the add-only record of decisions kept outside the
-   artifact it is about), or a plan's bound inputs. If a recorded path cannot
+   of a row in a ledger, or a plan's bound inputs. If a recorded path cannot
    be read, that artifact's values are unknown, and Step 3.3 names the cause
    class. Never search the filesystem for look-alikes.
 3. Read `references/state-derivation.md` before deriving a value. Derive

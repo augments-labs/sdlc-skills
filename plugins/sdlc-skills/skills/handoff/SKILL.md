@@ -13,7 +13,7 @@ says it may go.
 
 - A conversation is ending mid-work, or responsibility for continuing it passes
   to a fresh session or a different agent.
-- **Skip** when the task is finished and self-contained — there's nothing to resume.
+- **Skip** when the task is finished and self-contained.
 - **Skip** bounded worker assignments while the coordinator retains the task;
   those use the dispatch packet and return contract instead.
 

@@ -5,13 +5,14 @@ description: "Builds a throwaway prototype to answer an uncertain design or feas
 
 # Prototyping
 
-A prototype answers one question and dies. Its only job is to turn an uncertainty into a fact cheaply — the code is disposable; the *answer* is what you keep.
+A prototype answers one question and dies: the code is disposable; the
+*answer* is what you keep.
 
 ## When to use
 
 - A specific question is uncertain and faster to *build* than to argue: does this algorithm work, does this layout read, does this library do what its docs claim.
 - Reached from `feasibility-check` (a killer risk) or `ui-ux-design` (a layout choice).
-- **Skip** when you already know the answer, or the question is vague — a prototype that answers the wrong question is pure waste.
+- **Skip** when you already know the answer, or the question is vague.
 
 ## Step 1: Pre-register
 

@@ -2,15 +2,13 @@
 
 ## Where detail belongs
 
-A loaded body competes for context with the task and other instructions. Keep
-what changes action and load supporting detail when needed. Reusing a current
-body is not another load; token claims must describe actual text and execution.
+Keep what changes action and load supporting detail when needed. Reusing a
+current body is not another load; token claims must describe actual text and
+execution.
 
-A concise capability can still need examples or constraints. Discipline skills
-also keep the pressure controls that stop tempting omissions: rationalization
-tables and red flags belong in context when they are needed. Shortening one
-requires relevant behavioral evidence; a description score cannot establish
-that its body still holds under pressure.
+Shortening a rationalization table or red-flag list requires relevant
+behavioral evidence; a description score cannot establish that its body still
+holds under pressure.
 
 ## Descriptions: trigger, not summary
 
@@ -29,22 +27,6 @@ and loaded handoffs can also cause invocation. Two description failure modes:
 
 - `Reproduces the bug, forms a hypothesis, instruments the code, fixes it, then writes a regression test.` — summarizes the workflow; the model follows it from memory and never opens the skill.
 - `A skill for debugging.` — too vague to trigger reliably.
-
-## Progressive disclosure
-
-SKILL.md is the always-loaded part. Sibling files load on demand.
-
-- **In SKILL.md**: intent, when-to-use, the procedure, common mistakes.
-- **In sibling files**: templates (`{{curly}}` placeholders), long examples, lookup tables, scripts, and deep rationale like this document.
-
-Link references only **one level deep** from SKILL.md. A deeper chain, where SKILL.md names A and A names B, gets partially read, so the agent misses what's in B.
-
-## Complexity gate
-
-State applicability and scale-down conditions so small work gets proportionate
-guidance. A required check, or a skill that is one, may have no skip; use its
-smallest meaningful check.
-Line count alone does not establish the risk or scope of a configuration change.
 
 ## How much to write
 

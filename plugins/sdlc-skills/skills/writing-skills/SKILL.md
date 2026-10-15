@@ -15,8 +15,7 @@ in context and load supporting material only when needed.
 
 ## Skill types
 
-Match the form to the need. Read `references/reference.md` when unsure how much
-detail a form needs:
+Read `references/reference.md` when unsure how much detail a form needs:
 
 - **Instruction** — a prose procedure. Most skills.
 - **Template** — ships a `{{placeholder}}` file the agent copies when it produces that document.
@@ -33,7 +32,7 @@ detail a form needs:
    it. A description that still carries a `Fires on` list predates this rule;
    rewrite it to this shape when you edit that skill.
 2. **House limits: at most 500 body lines and under 5000 estimated tokens.**
-   These enforce the concise-body recommendations. Most capability skills land
+   Most capability skills land
    near 80–120 lines; a body past ~200 should justify itself. Intent and
    procedure only; cut marketing ("why this matters"). A worked example in the
    body earns its place only where it shows a judgment the rules alone do not:
@@ -105,7 +104,7 @@ A few skills exist to hold an agent to a discipline it is tempted to skip under
 pressure—for example routing, TDD, YAGNI, verifying completion, systematic
 debugging, and receiving review. For these only:
 
-- Keep the **rationalization table** (each tempting excuse and its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. You cannot lazy-load willpower. Keep only the rows an agent actually falls for.
+- Keep the **rationalization table** (each tempting excuse and its rebuttal) and **red-flag list** in the *body*, never a sibling — a tempted agent won't choose to load a sibling file, and the counter must be in context when the temptation hits. Keep only the rows an agent actually falls for.
 - They run longer than a capability skill, and that is expected. Each extra line still has to earn its place by passing a pressure test; read `references/testing.md` before claiming one passed.
 - Everything else (capability, template, reference, meta) has no temptation to counter — keep it lean.
 - `containing-an-incident` is this library's exemplar of the form: read its

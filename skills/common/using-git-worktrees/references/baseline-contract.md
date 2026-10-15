@@ -5,8 +5,7 @@ again whenever a baseline run comes back red.
 
 A baseline is not "the suite passed once here." It is the record that lets a
 later red cell be attributed: to your change, to an accepted reproduction, or to
-a pre-existing failure someone already owns. Without that record, the first
-failure after your first edit has no interpretation.
+a pre-existing failure someone already owns.
 
 ## Before the command runs
 
@@ -28,8 +27,7 @@ a blocker to be worked around.
 ## Runtime isolation
 
 Parallel work needs distinct ports, databases, migrations, fixtures, caches, and
-environments. Two workspaces sharing one database do not have separate
-baselines; they have one baseline and a race.
+environments.
 
 Capture the pre-state before the run and the post-state after it, and classify
 every side effect as intended or not. An unclassified effect is an uncontained
@@ -50,8 +48,7 @@ Each failing cell binds to exactly one of two things, with its raw output kept:
    | Discriminator | the compensating check that still catches a *new* regression in the excluded area |
 
 The discriminator is the field people skip, and skipping it is what makes an
-exclusion permanent. An exclusion without one converts a known failure into a
-blind spot.
+exclusion permanent.
 
 ## What blocks work
 
@@ -61,6 +58,4 @@ blind spot.
 - Uncontained effects: anything the run changed that you cannot account for or
   restore.
 
-Each of these is a stop, not a warning. The baseline exists to make later
-evidence interpretable; a baseline you cannot interpret has already failed at
-its only job.
+Each of these is a stop, not a warning.
