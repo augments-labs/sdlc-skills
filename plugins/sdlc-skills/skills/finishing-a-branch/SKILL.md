@@ -5,10 +5,9 @@ description: "Takes a branch through the transition the user chooses: push, PR, 
 
 # Finishing a Branch
 
-Take the state under check (the exact working tree or commit being finished;
-the script calls it the candidate) or a named PR through one branch transition
-the user chooses. Green checks and "seems done" authorize no change to history
-or to a remote, and no discard or cleanup.
+Take the state under check (the script calls it the candidate) or a named PR
+through one branch transition the user chooses. Green checks and "seems done"
+authorize no change to history or to a remote, and no discard or cleanup.
 
 ## When to use
 
@@ -72,10 +71,9 @@ or to a remote, and no discard or cleanup.
 ## Step 2: Present the choices
 
 1. Read `references/branch-state.md` before preparing the transition
-   descriptor that applies (the record, defined in the reference, of exactly
-   what one transition will do). If a direct instruction, or a trusted receipt
-   (proof that the choice was given), already covers the descriptor's current
-   targets, action, and payload, record that choice and go on to Step 3.
+   descriptor that applies. If a direct instruction, or a trusted receipt,
+   already covers the descriptor's current targets, action, and payload,
+   record that choice and go on to Step 3.
    Otherwise, offer only the entries the state permits, then stop (`Gates:`
    summarizes the checks bound in Step 1.3):
 

@@ -180,7 +180,7 @@ candidate/base/remote state and consumes a new exact choice.
 ## Keep
 
 Make no integration, publication, history, or cleanup mutation. Report the exact
-branch/HEAD and workspace path so work remains findable.
+branch/HEAD and workspace path.
 
 ## Owned cleanup
 
