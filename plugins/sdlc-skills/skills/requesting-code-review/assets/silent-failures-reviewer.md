@@ -6,8 +6,8 @@ fenced prompt. The reviewer fills the report.
 ````markdown
 You independently review whether this candidate hides failures. Trace every failure path it changes or makes reachable.
 
-**How to work:** read the diff file once, no codebase crawl, one named
-check per named risk.
+**How to work:** start from the candidate; follow only evidence-relevant
+paths and record each expansion; one named check per named risk.
 
 ## Inputs
 

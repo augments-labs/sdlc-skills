@@ -16,6 +16,9 @@ an interface itself; removal ships as its own change after the decision.
 - A function, method, class, endpoint, response field, CLI flag, config key,
   event, or message type that other code, other repositories, or other
   teams call is being removed, replaced, renamed, or given a sunset date.
+- A metric name, label, or log field that a dashboard or alert reads is
+  being renamed or removed; its readers are the callers, and the skip
+  below does not apply to it.
 - **Skip** when every caller is in this repository and a search finds all
   of them: change the callers and the interface in one change under
   `test-driven-development`.
@@ -63,7 +66,10 @@ Interface and Use sections.
    - a CLI flag or config key: a warning on the error stream when the flag
      or key is read;
    - an event or message type: a warning logged by the producer where it is
-     built, since consumers cannot see a marker.
+     built, since consumers cannot see a marker;
+   - a metric name, label, or log field: emit both the old and the new
+     name until the sunset date, and name the old one in the record's
+     Signal section, since a dashboard or alert cannot see a marker.
 2. A runtime warning fires once per process, or once per caller identity,
    never once per call: a warning on every call floods the logs and gets
    silenced along with the signal.
@@ -113,9 +119,12 @@ Interface and Use sections.
    `test-driven-development`: the old path's tests go in the same change
    as the old path, not before. **REQUIRED SUB-SKILL:** at the release
    step, invoke `release-readiness` and hand it the record.
-5. The deprecation is complete only when the record's Status is `removed`
-   and names the ledger row. Until then, any skill that asks for a
-   completed deprecation gets "in progress" and this record's path.
+5. The removal change may proceed on this record plus the owner's `remove`
+   row in the ledger; that is what a skill asking for a completed
+   deprecation accepts for the removal change. The deprecation is complete
+   only when the record's Status is `removed` and names the ledger row;
+   until then, any other skill that asks for a completed deprecation gets
+   "in progress" and this record's path.
 
 ## Hard stops
 

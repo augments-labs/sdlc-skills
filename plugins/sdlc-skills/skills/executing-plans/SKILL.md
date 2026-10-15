@@ -79,7 +79,7 @@ start it.
 ## Step 4: The task loop
 
 Take the next task whose `Depends on` tasks are all `done`. Keep the approved
-mode; switching needs the user's direct answer.
+mode; switching needs the `Approval rule` owner's direct answer.
 
 1. Read the task file, its `Context` paths, its evaluator, and the ledger's
    learnings. Never work from memory of the plan.
@@ -88,10 +88,6 @@ mode; switching needs the user's direct answer.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
-   - If the approval row records `waves: yes` and there is a ready set that
-     passes the independence test of `dispatching-parallel-agents` Step 1,
-     invoke `dispatching-parallel-agents` for that set; otherwise run one task
-     at a time.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files` and `Exclusive ownership`. For a dispatched task, read
    its raw diff, result revision, and evaluator output, never its summary. A
@@ -172,8 +168,9 @@ In the task workspace recorded in Step 2, in order:
   until it and everything it started have stopped, set its output aside
   unused, and reject its late results.
 - After three attempts in one class without convergence, write `blocked`
-  with the class and the attempts, and end the turn. Never patch shard
-  failures one at a time.
+  with the class and the attempts, and skip the task under Step 4.9; the
+  turn ends only through Step 4.9's exits. Never patch shard failures one
+  at a time.
 
 ## Findings outside the task
 

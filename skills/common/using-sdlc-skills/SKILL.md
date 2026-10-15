@@ -63,7 +63,8 @@ action; naming it in prose is not invoking it.
    every entry, print the fenced block. Rendering collects an answer, it never
    infers one.
 9. **A retry needs new evidence or a new intervention inside a finite bound;**
-   `receiving-code-review` owns the bound.
+   the skill that owns the loop states its bound, and a retry with no stated
+   bound is not permitted.
 
 Read `references/control-vocabulary.md` when a term's exact sense decides an
 action.
@@ -80,7 +81,7 @@ Each is a signal to invoke, not to skip:
 | --- | --- |
 | "Too simple" | Scan anyway; simple work hides skipped discipline. |
 | "Task done — check in before the next" | An approved plan authorizes every task in it; `done` is a row added to the plan's record (the ledger), kept outside the plan and never rewritten, not a decision point. Continue until the plan ends. |
-| "Hit an issue — stop and ask" | A clear task owns its obstacles: fix and continue. Only a scope-changing, destructive, or external decision waits for the user. |
+| "Hit an issue — stop and ask" | A clear task owns its obstacles: fix and continue. Only a decision `clarifying-intent` reserves for the user waits for one. |
 | "Opening the PR is one command" | The command is cheap; the decision it executes goes through a gate. `finishing-a-branch` owns it, after review. |
 | "Looks good + constraints = approval" | No accepted answer was selected; the decision is still pending. |
 

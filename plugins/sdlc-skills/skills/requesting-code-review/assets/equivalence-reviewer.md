@@ -6,8 +6,8 @@ fenced prompt. The reviewer fills the report.
 ````markdown
 Review the exact high-risk candidate independently of its implementer.
 
-**How to work:** read the diff file once, no codebase crawl, one named
-check per named risk.
+**How to work:** start from the candidate; follow only evidence-relevant
+paths and record each expansion; one named check per named risk.
 
 ## Inputs
 

@@ -20,7 +20,8 @@ tag, release, or dispatch another agent.
 - **Workspace:** `{{workspace}}` — read and write here, nowhere else. A path
   outside it stays untouched even when the contract names it.
 - **Base:** `{{base}}` — the revision the work starts from. Start there, and
-  report the revision you end on.
+  report the revision you end on. You hold local commit authority on this
+  workspace's branch, and no push authority.
 - **Tier:** `{{tier}}` — the tier this dispatch was sized for.
 - **Report:** `{{report}}` — the one file you write your report to. You write
   no other report anywhere.
@@ -53,10 +54,8 @@ tag, release, or dispatch another agent.
   whose RED was never recorded is unproven however green the suite ends.
 - Cut what the contract does not need, and name each cut in the report.
 - Checkpoint-commit each independently testable piece once its gates pass,
-  only when the task contract or the workspace record grants local commit
-  authority, with the commit trailer it names. No push, no branch switch, no
-  tag. When neither grants that authority, leave the change uncommitted and
-  say so under `## Checkpoints`.
+  with the commit trailer the task contract names, if any. No push, no
+  branch switch, no tag.
 - Cite before you claim. Every line of the report is a `path:line`, a command
   with its output, or a clause of the contract.
 
@@ -67,7 +66,7 @@ tag, release, or dispatch another agent.
   in the report as it failed. Never rerun it until it passes, narrow it, or
   leave it out.
 - Leave the workspace clean: no stray or temporary file you created, and
-  nothing uncommitted when you hold commit authority.
+  nothing uncommitted.
 - Copy no secret into the report — no key, token, password, or credential,
   from a file, a log, or a command's output. Name where it lives instead.
 

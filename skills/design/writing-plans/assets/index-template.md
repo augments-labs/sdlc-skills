@@ -4,8 +4,9 @@
 exact identity of every approved input, the rule that makes each stale, the
 `Approval rule`, and the `Integration cadence`. Write the filled copy to
 00-index.md in `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`, alongside one
-file per task. No approval, execution state, or evidence goes in this file;
-every later change to what it specifies is a successor file.
+file per task. No approval, execution state, or evidence goes in this file,
+except the task checkbox and its state label, which mirror the execution
+ledger; every later change to what it specifies is a successor file.
 
 ```markdown
 # Plan: {{topic}}

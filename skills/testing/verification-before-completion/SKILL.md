@@ -57,7 +57,8 @@ description: "Runs the checks and reads their output before any claim that work 
 3. Read the raw output, not the exit code, and record the run in its row;
    redact only the copy you show your human partner. If an assertion could
    not have failed for this code, say so and do not count its green;
-   repairing it belongs to `verification-strategy`.
+   repairing the task's own test belongs to `test-driven-development`, and
+   repairing a project or battery gate to `verification-strategy`.
 4. Re-check the state with the flags used at capture:
 
    ```bash

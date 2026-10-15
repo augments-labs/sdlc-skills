@@ -42,10 +42,11 @@ true and how that is judged, not the code.
    instruction, and fill its budget. Plan an instruction with no end as that
    bounded policy; never copy it into a task or the goal.
 4. If the approved UI design carries **Selected visual references**, copy
-   the complete keyed collection into the index, and map every Reference ID
-   to an owning task and a conformance evaluator ID in **Visual reference
-   coverage**. If a reference is missing or an ID has no owner, return the
-   plan to `ui-ux-design`.
+   the complete keyed collection into the index, filling `Approved design
+   artifact version` with the design's identity from its ledger row, and map
+   every Reference ID to an owning task and a conformance evaluator ID in
+   **Visual reference coverage**. If a reference is missing or an ID has no
+   owner, return the plan to `ui-ux-design`.
 5. Give every file and side effect exactly one owning task. If two tasks
    fall on the same one, add a dependency and name a single transition owner.
 6. If one transformation runs across many items, bind the machine-readable
@@ -83,8 +84,9 @@ true and how that is judged, not the code.
    `dispatching-parallel-agents`.
 8. Write `00-index.md` plus one file per task to
    `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`. No approval, execution
-   state, or evidence goes in these files. Every later change to what they
-   specify is a successor file.
+   state, or evidence goes in these files, except the task checkbox and its
+   state label, which mirror the execution ledger. Every later change to
+   what they specify is a successor file.
 
 ## Step 3: Self-review against the inputs, by name
 
@@ -143,9 +145,10 @@ true and how that is judged, not the code.
    how to ask it.
 5. Add one row to that ledger: `Identity` = the printed version, `Location`
    = the index path, `State` = approved, `Bound evidence` = the
-   `Approval rule` owner and their answer, any review report path, then
-   `mode: inline` or `mode: delegated`. Write nothing about approval into
-   the index.
+   `Approval rule` owner and their answer, any review report path, then the
+   mode the Step 4.4 question records for the answer: `mode: inline`,
+   `mode: delegated`, or `mode: delegated` plus `waves: yes`. Write nothing
+   about approval into the index.
 6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke the executor that
    mode names against the approved version before any workspace or
    implementation action: `executing-plans` for inline,

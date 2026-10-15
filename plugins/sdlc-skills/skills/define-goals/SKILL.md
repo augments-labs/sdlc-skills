@@ -42,7 +42,9 @@ Open `assets/goals-section.md` before starting; each step fills its section.
 
 1. Write the `## Goals` section, which is never edited once its identity is
    issued, to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the
-   user-set path, leaving the approved sections around it untouched.
+   user-set path, leaving the approved sections around it untouched. When
+   the work came from a captured ticket, fill `Source` with the capture's
+   path and identity.
 2. Present:
 
    ```text

@@ -45,8 +45,10 @@ state under check. Never return "looks good".
      states, conditions, decisions and acceptance checks. Map each applicable
      obligation to a required observation or to the other check that owns
      it; a preview is only part of that contract. Copy its **Selected
-     visual references** field for field. If plan-bound, match the
-     obligations and references to their tasks and conformance evaluators.
+     visual references** field for field, filling `Approved design artifact
+     version` with the design's identity from its ledger row. If plan-bound,
+     match the obligations and references to their tasks and conformance
+     evaluators.
 4. Run each selected reference's Freshness evaluator:
    - On `pass`, capture.
    - On `mismatch`, restore the binding and rerun, or obtain a design

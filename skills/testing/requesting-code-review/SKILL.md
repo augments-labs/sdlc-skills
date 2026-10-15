@@ -123,8 +123,10 @@ tool-issued dispatch ID).
    Verdict to the frozen request. If a field is missing, unreadable,
    conflicting, or mismatched, review stays pending. Check the complete
    inventory and every human-authored change; reject unrelated traversal.
-6. Decide each Declined to judge entry yourself and record it in the ledger;
-   an undecided entry keeps review pending.
+6. Decide each Declined to judge entry and record it in the ledger, except
+   one that turns on a product, scope, or requirement reading: that goes to
+   its decision owner through `clarifying-intent`. An undecided entry keeps
+   review pending.
 7. Block readiness while required current verification or role coverage is
    missing, failed, inconclusive, or conditional, or while a blocking finding
    or an attempt's effects remain unresolved. Keep every failed attempt on
@@ -134,7 +136,7 @@ tool-issued dispatch ID).
 8. Record each report's location, its recorded decision, and the tool-issued
    dispatch ID in the external review ledger.
 9. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
-   before responding to it, including a `not ready` that asks for no edit.
+   before responding to it, including a `not_ready` that asks for no edit.
 10. Before another round, apply `receiving-code-review`'s convergence check.
     If a retry is permitted and the candidate or its bound inputs changed,
     restart at Step 1 with fresh identities and a fresh receipt. Carry prior

@@ -43,7 +43,7 @@ where it lives instead. A section with nothing to record says `none`.
 | --- | --- | --- |
 | {{short revision}} | {{the independently testable piece}} | {{the gates that passed before it}} |
 
-{{or `none — the work is a single uncommitted change`}}
+{{or `none — the work is the single result commit`}}
 
 ## Outside the contract
 

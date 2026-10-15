@@ -110,7 +110,8 @@ its own measurable contribution.
 
 ## Targeted fail-then-pass proof
 
-For each action:
+For each action (every field stays `pending` at issue; the ledger holds the
+proof):
 
 - **Incident/representative bad case:** `{{sanitized artifact/digest}}`
 - **Good control:** `{{case}}`
@@ -121,6 +122,8 @@ For each action:
 - **Exact revision/environment:** `{{identity}}`
 
 ## Enforcement and rollout
+
+Rollout and effectiveness are `pending` at issue; the ledger holds their state.
 
 | Action | Enforcement surface | Deployed/adopted identity | Rollout evidence | Rollback/disable | Operator/owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |

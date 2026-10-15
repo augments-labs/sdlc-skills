@@ -98,9 +98,12 @@ an interface other teams call, and never redesigns structure.
 
 ## Step 5: Keep shards current until the last one merges
 
-1. If the base moves under an open shard, rerun the script on the new base
-   for that shard's paths and replace its mechanical commit; put the hand
-   edit commit back on top. Never rebase or merge generated hunks by hand.
+1. If the base moves under an open shard, merge the new base into the shard
+   (a conflict in a generated file takes the base's whole file), rerun the
+   script on the result for that shard's paths, and commit the new output on
+   top. Replace the shard's mechanical commit instead only under the
+   separate permission `finishing-a-branch` requires to rewrite a published
+   branch. Never rebase or merge generated hunks by hand.
 2. If a review changes the transformation, change the script, rerun it on
    every open shard, and record the script's new revision in the manifest.
 3. Report the manifest with every shard's state. The change is done when

@@ -81,10 +81,11 @@ enter this skill.
 
 ## Step 4: Prove and track the controls
 
-1. Falsify every corrective gate you implement. Fill `Targeted fail-then-pass
-   proof` with raw evidence: it fails on the captured incident or a
-   representative bad case, it passes on the good control, and the version
-   before the fix did not catch it.
+1. Falsify every corrective gate you implement. Record the targeted
+   fail-then-pass proof in the ledger as raw evidence, never in the issued
+   analysis: it fails on the captured incident or a representative bad
+   case, it passes on the good control, and the version before the fix did
+   not catch it.
 2. Track each control to a receipt bound to an identity, from the surface
    that enforces it: CI, runtime, review, release, alerting, recovery. Never
    infer from a summary.

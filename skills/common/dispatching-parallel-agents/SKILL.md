@@ -28,7 +28,8 @@ reconcile every diff yourself before anything integrates.
      integration owner and no concurrent editor.
    - **State** — disjoint ports, databases, fixtures. If either task runs a
      server or migrations, invoke `using-git-worktrees` for each task in the
-     pair.
+     pair; a caller that already gave each task its own worktree has done
+     this.
    - **Order** — neither consumes the other's output. A dependency is a
      sequence.
 
@@ -109,8 +110,10 @@ user's main-session model and any model reserved for orchestration untouched.
    until the worker, everything it spawned, and every effect it started have
    all stopped (quiescent). Set partial output aside, unused (quarantine).
    Only then write failed, timed out, or cancelled.
-5. Reassign the work as a new attempt linked to the one it replaces, and
-   reject every late result or change that arrives from the replaced attempt.
+5. Reassign the work as a new attempt linked to the one it replaces only
+   with a changed intervention and inside the caller's bound; otherwise
+   return the item to the caller as failed or blocked. Reject every late
+   result or change that arrives from the replaced attempt.
 6. If a writer reports a shared generator, file, state, dependency, or scope
    outside its packet, pause the affected work, preserve the diffs,
    reclassify the pieces, assign one owner or a sequence, and issue revised

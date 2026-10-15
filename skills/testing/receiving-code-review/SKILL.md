@@ -26,6 +26,8 @@ looks obvious: verify before you agree, edit, reply, or resolve.
    Keep one review history and one finite repair budget for the whole
    delivery task, across revisions, reviewers, and skill calls: five repair
    rounds per delivery task unless the user or the plan sets another number.
+   In a plan run, a delivery task is one plan task, and the plan-end branch
+   review has a budget of its own.
    Record the budget and each round in the review history. Link each
    recurring causal finding to its earlier evidence and recorded decisions.
 4. If a location is stale, or the state under check, the base, a contract,
@@ -127,7 +129,7 @@ looks obvious: verify before you agree, edit, reply, or resolve.
 - A round count that restarts with each new state under check, reviewer, or
   skill call never reaches its bound. The count belongs to the delivery task,
   so a fresh identity continues it.
-- A stalled repair reported only as `not ready` invites the caller to run the
+- A stalled repair reported only as `not_ready` invites the caller to run the
   same round again. Name `unconverged` and the blocker so the owner decides.
 
 ## Red flags
