@@ -16,9 +16,8 @@ change. Watch it happen; keep the output.
 - **Skip** disposable spikes and non-behavioral content or config. Behavior
   from a spike that is then accepted gets rebuilt under a check.
 - High-risk target code waits for its approved migration and assurance
-  contracts and their entry gates (the checks that must pass before work on
-  the target starts). Work authorized only to build a check cannot edit the
-  target or satisfy entry on its own.
+  contracts and their entry gates. Work authorized only to build a check
+  cannot edit the target or satisfy entry on its own.
 
 ## Step 1: Before the first test command
 
@@ -63,8 +62,8 @@ change. Watch it happen; keep the output.
    product code, passing back the attempt count `debugging` handed this cycle
    when the cycle came from `debugging`.
 4. Keep the output.
-5. Record the test's identity, the identity of the evaluator (the check that
-   decides pass or fail), and the expected observable as of this RED, under
+5. Record the test's identity, the identity of the evaluator, and the
+   expected observable as of this RED, under
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`. If any of the three
    changes later, the cycle is invalid: restart and reach RED again.
 6. Write only the code that makes this test pass.
@@ -76,8 +75,8 @@ change. Watch it happen; keep the output.
 
 ## Step 3: Preserved behavior, GREEN, then a deliberate RED, then GREEN
 
-1. Take the characterization check the task or plan accepted (the references
-   call such a check a gate); for high-risk work, use the differential check
+1. Take the characterization check the task or plan accepted; for high-risk
+   work, use the differential check
    from the assurance matrix. An inherited green suite counts only once it
    has been accepted as covering the preservation contract independently of
    the target. Strengthen smoke-only coverage before the first checkpoint.
@@ -86,17 +85,14 @@ change. Watch it happen; keep the output.
    Watch it go red the way you intended. Keep the output.
 4. Restore the exact state. Watch it go green again.
 5. Transform one slice, keeping that check green. Read
-   `references/preservation-cycle.md` when you pick the oracle (what says
-   which answer is right, independent of the implementation under test),
-   when you meet the generator or config case, or when you decide which
-   evidence to keep.
+   `references/preservation-cycle.md` when you pick the oracle, when you meet
+   the generator or config case, or when you decide which evidence to keep.
 
 ## Step 4: Close the cycle
 
 1. If chronology is part of the claim, use an external observer or immutable
    checkpoints that the evaluator reruns. Logs written by the state under
-   check (the exact state being judged) are not evidence. Never write
-   checkpoint history after the fact.
+   check are not evidence. Never write checkpoint history after the fact.
 2. Restore only the mutations this task made whose pre-state you recorded.
    Leave anything else pending for `finishing-a-branch`. Never delete
    inherited, shared, or user state to manufacture a cycle.

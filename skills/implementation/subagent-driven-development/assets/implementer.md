@@ -3,8 +3,7 @@
 The controller renders this brief for every implementer dispatch — the first
 attempt at a task, and each fix round after a review — filling one slot per
 line from the run's own paths. A slot it cannot fill is a brief that is not
-ready: the worker reads the literal braces as its instruction and builds
-nothing, so a brief with a script slot still in braces is never dispatched —
+ready, and a brief with a script slot still in braces is never dispatched —
 the inserted report template's own slots below are the worker's to fill.
 Send the fenced text as the worker's whole prompt; it already carries the
 report the worker fills.

@@ -5,9 +5,9 @@ description: "Runs an approved plan task by task in this session, through each t
 
 # Executing Plans
 
-Run each task of an approved plan in this session through its evaluator (the
-check it must pass), then hand the integrated result to review and integration.
-This skill never decides what happens to the branch.
+Run each task of an approved plan in this session through its evaluator, then
+hand the integrated result to review and integration. This skill never decides
+what happens to the branch.
 
 ## When to use
 
@@ -73,8 +73,7 @@ start it.
 - Read `references/phase-queues.md` before the first task when the index
   holds phases or shards, and follow it.
 - A high-risk task is blocked until its migration and assurance contracts are
-  approved and their entry gates have passed (a gate is a check that must
-  accept the work before it may advance). Report it; do not start it.
+  approved and their entry gates have passed. Report it; do not start it.
 - Read `Integration cadence`: `plan end` (default) or `per task`.
 
 ## Step 4: The task loop
@@ -99,8 +98,8 @@ mode; switching needs the user's direct answer.
    defect or gap outside the task's contract goes to *Findings outside the
    task*; never fix it inside this task.
 5. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on that
-   exact state: the `Evaluator`, every `VCONF` row (the task's visual
-   conformance gates), and `visual-ui-verification` for an integrated UI.
+   exact state: the `Evaluator`, every `VCONF` row, and
+   `visual-ui-verification` for an integrated UI.
 6. Append the task state to the ledger and mirror the index checkbox:
    - `done`: every check passed on the inspected state
    - `done with concerns`: a check raised something not yet proved
@@ -171,7 +170,7 @@ In the task workspace recorded in Step 2, in order:
   failure-class ID, and start a new attempt that links to it.
 - If a worker is past its deadline, write `cancellation requested`, wait
   until it and everything it started have stopped, set its output aside
-  unused (quarantine it), and reject its late results.
+  unused, and reject its late results.
 - After three attempts in one class without convergence, write `blocked`
   with the class and the attempts, and end the turn. Never patch shard
   failures one at a time.

@@ -10,9 +10,9 @@ unless the user names another place; the data owner's acceptance of the
 contract phase is a row in the ledger beside it, and nowhere else. No secret
 value, credential, or row of personal data goes in it. A phase this change
 does not need reads `not needed` with its reason in its Phases row, its own
-section, and its rows in Tests, which is distinct from empty: a section left
-empty means the thing was not bound, not built, or not verified, so say
-which, and the release decision treats it as missing rather than fine.
+section, and its rows in Tests. A section left empty means the thing was not
+bound, not built, or not verified: say which, and the release decision treats
+it as missing rather than fine.
 
 ```markdown
 # Schema change record — {{change-short-name}}

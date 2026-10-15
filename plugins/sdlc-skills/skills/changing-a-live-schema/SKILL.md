@@ -5,11 +5,10 @@ description: "Builds an ordinary schema change in phases so a live store serves 
 
 # Changing a Live Schema
 
-The store outlives every deploy. During a rolling deploy, and again after a
-rollback, two versions of the code read and write it at once, so every phase
-before contract has to leave the store in a shape both versions can use. This
-skill never runs a migration or backfill against a shared or production
-store; that runs under the project's deploy process and authority.
+Every phase before contract leaves the store in a shape both the new and the
+previous code version can use. This skill never runs a migration or backfill
+against a shared or production store; that runs under the project's deploy
+process and authority.
 
 ## When to use
 
@@ -42,17 +41,14 @@ input is a question for its owner, never a value to assume.
 3. The deploy model: how many code versions run against the store at once
    during a roll, and the exact rollback target, the version that will run
    against the changed store if this deploy is reverted.
-4. The store engine and its version. Whether one operation locks, blocks
-   writes, or rewrites the table depends on both.
+4. The store engine and its version.
 5. The size of the affected data: rows or volume, write rate, and whether
    replicas follow the store.
 
 ## Step 2: Sequence as expand, migrate, contract
 
-Each phase is its own deployable change with a stated gate to advance (a
-gate is a check that must accept a result before the work advances; the
-record's Phases table has a `Gate to advance` column for it) and a stated
-rollback. Write every phase into the record's Phases section now; ship them
+Each phase is its own deployable change with a stated gate to advance and a
+stated rollback. Write every phase into the record's Phases section now; ship them
 one at a time, in this order. Record a phase this change does not need (an
 index alone, a standalone backfill) as `not needed: {{reason}}` in its
 Phases row, its own section, and its rows in Tests; never leave one empty.
@@ -66,9 +62,9 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
 2. **Dual-write and tolerant reads.** The new code writes both shapes and
    reads either, treating a row not yet backfilled as old-shape. Rollback:
    the previous version, which still reads and writes the old shape alone.
-3. **Backfill.** Batch it over a key the store indexes. Make it idempotent,
-   so a batch applied twice leaves the same rows; resumable from a recorded
-   cursor; throttled against replication lag and lock wait; and observable
+3. **Backfill.** Batch it over a key the store indexes. Make it idempotent;
+   resumable from a recorded cursor; throttled against replication lag and
+   lock wait; and observable
    through remaining rows, rate, and errors. Verification compares the two
    shapes by count or checksum and goes in the record. Gate to advance:
    remaining rows zero and verification passed. Never one transaction over
@@ -96,9 +92,8 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it. Record
-   the answer as a row in the ledger beside the record (the decision ledger:
-   add to it, never rewrite it). If there is no row, the contract does not
-   ship.
+   the answer as a row in the ledger beside the record (add to it, never
+   rewrite it). If there is no row, the contract does not ship.
 7. A rename or a type change is done as add, copy, switch, drop, never in
    place.
 8. Add a new constraint in the form the engine offers that does not validate
@@ -197,8 +192,7 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
 ## Common mistakes
 
 - Expanding and contracting in one migration because the change "is small":
-  split it; the old version has to run against the result of every
-  migration that ships with the new version.
+  split it.
 - Backfilling from the deploy session by hand to finish faster: the
   backfill is a job the deploy process runs, with its cursor and progress
   where the operator reads them.
