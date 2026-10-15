@@ -1,14 +1,12 @@
 # Testing a Skill
 
-Format checks prove shape. Behavior proof asks whether the skill changes the
-agent's action at the exact failure surface, and if you never watched an agent
-fail without the skill, you do not know it prevents the right failure. An
-explanation, quotation, or claim of compliance is written by the same generator
-under test and is not a verdict.
+If you never watched an agent fail without the skill, you do not know it
+prevents the right failure. An explanation, quotation, or claim of compliance
+is written by the same generator under test and is not a verdict.
 
 ## What is worth proving
 
-A live run costs money and time, so spend it where behavior can go wrong:
+Spend live runs where behavior can go wrong:
 
 - **Prove** a skill that holds a discipline under pressure, gates a transition,
   bounds authority, or must fire on one opening and stay silent on a neighbouring
@@ -17,9 +15,7 @@ A live run costs money and time, so spend it where behavior can go wrong:
   guide, a format the agent either emits or does not. Nothing there can collapse
   under pressure, so the run measures the model rather than the skill.
 
-Naming the class and skipping is a finding. Running a pressure scenario against a
-skill that has no pressure surface is ceremony, and it buys a green that means
-nothing.
+Naming the class and skipping is a finding.
 
 ## Start from a real failure
 

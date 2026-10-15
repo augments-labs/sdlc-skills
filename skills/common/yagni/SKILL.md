@@ -19,10 +19,6 @@ them.
 - Scope drifts toward a speculative addition or an incomplete delivery: "we
   might need this later".
 - A proposal needs a strict pre-edit challenge.
-- A skill that hands off to this one invokes it directly, and that skill's own
-  trigger decides when: the router (`using-sdlc-skills`), `debugging`, and
-  `receiving-code-review` send a change that affects behavior through
-  `test-driven-development` and this skill before the first edit.
 - **Skip** a throwaway spike answering one question, and non-behavioral config
   or content.
 

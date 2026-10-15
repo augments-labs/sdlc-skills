@@ -6,10 +6,8 @@ description: "Asks the questions that settle what the user actually wants before
 # Clarifying Intent
 
 Close the gap between what was asked and what is actually wanted, *before* you
-build on it. This is a clarification technique any phase can use, not a first
-phase of its own. Use it when the open question decides which artifact or
-procedure is needed, or whether that procedure can safely go ahead. When a
-skill already selected owns asking for the inputs still open, leave that to it.
+build on it. When a skill already selected owns asking for the inputs still
+open, leave that to it.
 
 ## When to use
 
@@ -22,12 +20,10 @@ skill already selected owns asking for the inputs still open, leave that to it.
   hierarchy, accessibility, and visual direction belong to `ui-ux-design`.
   A missing product requirement that blocks either procedure is still a genuine
   clarification or specification gap.
-- **Skip** when the task is trivial or already fully specified — interrogating wastes turns.
+- **Skip** when the task is trivial or already fully specified.
 - **Skip** when the task is clear and what blocks it is an obstacle, not a
   decision: a failing command, an error, a missing piece you can find or
-  build. Fix it and continue to completion. Stopping to report a fixable
-  obstacle and wait for instructions spends the user's turn on work that
-  was already yours.
+  build. Fix it and continue to completion.
 - **Skipping never permits a silent decision.** State an assumption that
   falls in none of the categories that follow, with its reason, so the user can
   redirect. Product, scope, architecture, execution, destructive, or

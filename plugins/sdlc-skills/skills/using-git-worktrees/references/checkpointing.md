@@ -7,8 +7,6 @@ Read this when the task will make more than one commit.
 A checkpoint is one coherent piece a reviewer could accept or reject on its
 own — not a finished feature. If the project's smallest real gate can accept
 it, it can be a checkpoint, and it is committed then rather than at the end.
-Waiting for the final candidate leaves one terminal commit that cannot be
-reviewed or reverted in pieces, and every good intermediate state gone.
 
 ## The authority is recorded once per task
 

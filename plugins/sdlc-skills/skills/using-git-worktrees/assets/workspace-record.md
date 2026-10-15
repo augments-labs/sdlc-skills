@@ -1,10 +1,8 @@
 # Workspace record template
 
 `using-git-worktrees` opens this before the first command and fills each
-section as its step runs, then hands it to whatever finishes the branch.
-Every field below is something a later step needs and cannot re-derive: which
-resources may be cleaned up, which base the work is relative to, and what the
-suite looked like before you touched anything.
+section as its step runs, then hands it to whatever finishes the branch. Every
+field below is something a later step needs and cannot re-derive.
 
 ```markdown
 # Workspace record — {{task-name}}

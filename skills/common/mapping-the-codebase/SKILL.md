@@ -5,14 +5,14 @@ description: "Maps how a region of code fits together — its callers, owners, a
 
 # Mapping the Codebase
 
-Before you touch unfamiliar code, understand its shape. The failure this prevents is editing a region by pattern-matching on syntax while missing how it actually fits together — who calls it, what it owns, where the boundaries are.
+Before you touch unfamiliar code, map who calls it, what it owns, and where
+its boundaries are.
 
 ## When to use
 
 - You're about to change, debug, or extend a part of the codebase you don't know well.
 - **Skip** only when a Step 3 boundary record for this region exists and is
-  inside its freshness limit; one changed line can still alter a public,
-  data, security, or release path.
+  inside its freshness limit.
 
 ## Step 1: Set the boundary
 

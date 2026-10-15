@@ -64,8 +64,7 @@ permitted models.
 | `large` | Resolving uncertainty: architecture, unclear requirements, unexplained failures, uncertain impact, or consequential tradeoffs. |
 
 Work that writes a test or code under `test-driven-development` is never
-`small`: choosing the assertion is a judgment, and a tier too low returns as
-fix rounds.
+`small`: choosing the assertion is a judgment.
 
 At dispatch, map the chosen tier to an available model and set the harness's
 model parameter or agent configuration explicitly; naming a tier in the prompt

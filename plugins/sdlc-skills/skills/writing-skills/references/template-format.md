@@ -1,13 +1,9 @@
 # Template format
 
 Read this before writing or editing any file under `assets/`. It states the
-shape every template takes and the content checklist a complete one carries,
-so a filled copy of one family reads the same no matter which skill produced
-it.
+shape every template takes and the content checklist a complete one carries.
 
 ## Shape
-
-One rule per line; each is checkable by eye.
 
 1. Make line 1 an H1 naming the file's family: `# {{Name}} prompt template`,
    `# {{Name}} report template`, `# {{Name}} template` for a document, or
