@@ -13,7 +13,7 @@ nothing.
 | --- | --- | --- |
 | `briefs/` | goals, scope, feasibility, and interview briefs; captured tickets | yes |
 | `specs/` | specifications | yes |
-| `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts, rollout records, schema change records | yes |
+| `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts, rollout records, schema change records, deprecation records | yes |
 | `plans/` | plan directories: an index and its task files | yes |
 | `audits/` | complexity audit reports, and security reports copied after their verdict, outside the candidate workspace | yes; a security report with open findings once disclosing it is safe |
 | `post-mortems/` | post-mortems | yes |
