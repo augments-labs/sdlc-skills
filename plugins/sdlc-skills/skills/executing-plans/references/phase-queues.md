@@ -4,8 +4,8 @@ Use this only for a plan created with the scalable transformation extension.
 The approved migration contract owns partitions, pause/abort, cutover, rollback,
 and decommission policy. The approved assurance matrix owns gates, thresholds, cadence,
 environments, and failure response. Execution consumes their exact versions and
-records append-only state in the predeclared external ledgers; it does not
-rewrite normative contracts or improvise replacements.
+records append-only state in the predeclared external ledgers; it never
+rewrites those contracts.
 
 Every packet a phase dispatches is a controlled one: beside the slim packet,
 fill the controlled fields `dispatching-parallel-agents` ships as
@@ -68,7 +68,7 @@ sockets/network, time, and cost at the declared cadence. Compare per-worker and
 aggregate use with limits and operating reserve. Stop claiming new shards,
 terminate through the approved kill path, and reap child processes and temporary
 state before exhaustion. Reduce concurrency or sequence work when isolation
-cannot be enforced; a fast queue that destabilizes its host is not converging.
+cannot be enforced.
 
 Resource-limit or cleanup failures enter the raw failure queue. Repeated classes
 pause the contract-defined scope and follow the shared-rule repair below.

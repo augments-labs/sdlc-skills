@@ -5,10 +5,9 @@ description: "Builds the switch and the signals a controlled rollout needs into 
 
 # Rollout Controls
 
-Put the switch and the signals into the change while it is still being built,
-under terms its owner has accepted, so the release decision can bind a policy
-instead of inventing one. This skill never decides the release, flips the
-switch in a shared environment, or expands a rollout.
+Build the switch and the signals under terms the owner has accepted. This
+skill never decides the release, flips the switch in a shared environment, or
+expands a rollout.
 
 ## When to use
 
@@ -18,8 +17,7 @@ switch in a shared environment, or expands a rollout.
   staged rollout.
 - `release-readiness` blocked this change on a missing rollout policy or on
   rollout signals that measure nothing the policy reads.
-- **Skip** a change nobody asked to stage. `yagni` forbids a flag nobody asked
-  for, and a change that reaches users in one ordinary deploy needs none.
+- **Skip** a change nobody asked to stage.
 - **Skip** a rewrite, migration, or other high-risk transformation:
   `migration-strategy` owns its cutover, pause, abort, and rollback, and
   `verification-strategy` owns the checks its stages pass. Say which one
@@ -33,8 +31,7 @@ switch in a shared environment, or expands a rollout.
    definitions. Record the document and version you read.
 2. If a policy exists, copy its terms for this change: mechanism, target
    state, cohort stages, baseline source, success and failure thresholds,
-   minimum observation, kill or rollback action, authority. A term it leaves
-   unsaid is a question for its owner, not a value to fill in.
+   minimum observation, kill or rollback action, authority.
 3. If there is no policy, or a term is unsaid, draft the missing terms from
    the change's risk and the project's existing telemetry, and put the draft
    to the release or decision owner:
@@ -66,8 +63,8 @@ switch in a shared environment, or expands a rollout.
    present the draft again. If the answer is option 3, fill
    `assets/rollout-record.md` before stopping, with Status `declined` and
    only its Policy and Next action sections, and add the row to the decision
-   ledger beside it (the record of who decided what: add to it, never
-   rewrite it), naming who declined and when; this skill ends here. An
+   ledger beside it (add to it, never rewrite it), naming who declined and
+   when; this skill ends here. An
    unaccepted draft is not a policy: build nothing against it.
 
 ## Step 2: Build the switch
@@ -79,13 +76,11 @@ switch in a shared environment, or expands a rollout.
    switch before the risky work starts, never after a side effect.
 3. List every path the change adds: request handler, background job, event
    consumer, scheduled work, migration step, retry, cache fill. Put the
-   switch in front of each. A path the switch does not guard is a rollout the
-   policy cannot stop.
+   switch in front of each.
 4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` in this order:
    the on-state test, failing, then the new path that passes it; then the
    off-state test, which fails because the path still runs; then the switch,
-   which passes it by restoring the prior behaviour. The off-state test is
-   the kill switch's proof.
+   which passes it by restoring the prior behaviour.
 5. Make turning it off change behaviour without a deploy: read the switch at
    runtime, never as a build-time constant. Record the exact off action.
 6. Write the removal follow-up: an owner, and the condition after which the
@@ -99,8 +94,7 @@ switch in a shared environment, or expands a rollout.
    outcome the change exists to move. Liveness serves no threshold.
 2. Emit through the project's existing telemetry facility, under its naming
    convention. Add no vendor, library, or dashboard tool.
-3. Carry the switch state or cohort on every signal, so the on and off
-   cohorts can be compared against the baseline.
+3. Carry the switch state or cohort on every signal.
 4. No secret, credential, token, or personal data in a signal's value or
    labels.
 5. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each signal:

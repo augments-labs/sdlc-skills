@@ -6,9 +6,8 @@ description: "Runs an approved plan's tasks through fresh subagents: one impleme
 # Subagent-Driven Development
 
 You are the controller. Fresh workers build and review one task, or one
-approved wave, at a time; you hold the plan, the ledger (this run's record),
-and every decision they may not take. This skill never decides what happens
-to the branch.
+approved wave, at a time; you hold the plan, the ledger, and every decision
+they may not take. This skill never decides what happens to the branch.
 
 ## When to use
 
@@ -82,8 +81,8 @@ to the branch.
    runs now. If any of these fails, report the field and task; dispatch
    nothing under an invalid contract.
 5. A high-risk task is blocked until its migration and assurance contracts
-   are approved and their entry gates (the checks that must pass before
-   work on it starts) have passed. Report it; dispatch nothing for it.
+   are approved and their entry gates have passed. Report it; dispatch
+   nothing for it.
 6. Scan for conflicts. List the files each task claims, and write every pair
    claiming the same file into the ledger as an ordering.
 7. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
@@ -100,8 +99,7 @@ and ask the user only when the next act would be:
 - or the plan is broken on every path you can see, not merely the first one.
 
 Everything else is a ruling. Write it in the ledger with its reason and carry it
-into the next brief, so the next worker inherits the decision instead of
-re-litigating it. A change to what was approved — scope, interface, evaluator,
+into the next brief. A change to what was approved — scope, interface, evaluator,
 ownership, mode — is never a ruling: write the proposed successor, ask for
 reapproval, end the turn.
 
@@ -132,9 +130,8 @@ reapproval, end the turn.
    the adapters, never here.
 6. Write the dispatch row before dispatching: task ID, attempt, base
    revision, evaluator identity, tier. Then dispatch per
-   `dispatching-parallel-agents` Step 2. It owns the dispatch receipt (the
-   tool-issued ID that proves the dispatch happened), the not-dispatched
-   rule, and cancellation.
+   `dispatching-parallel-agents` Step 2. It owns the dispatch receipt, the
+   not-dispatched rule, and cancellation.
 
 ## Step 5: Review the diff, then fix
 

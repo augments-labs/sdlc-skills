@@ -5,11 +5,8 @@ description: "Instruments a change or a service so its operators can tell whethe
 
 # Adding Observability
 
-Pick the question an operator will ask before picking any signal, emit the
-signal through what the project already has, and call nothing instrumented
-until someone has seen it arrive. This skill never adds a telemetry library
-or vendor on its own, never renames a signal something already reads, and
-never decides who gets paged.
+This skill never adds a telemetry library or vendor on its own, never
+renames a signal something already reads, and never decides who gets paged.
 
 ## When to use
 
@@ -55,23 +52,20 @@ never decides who gets paged.
 
 1. Give every metric a label set a human can list in advance: outcome, error
    kind, route template, operation. Never a user id, request id, raw URL
-   path, email, or error message text: each distinct value is a new series.
+   path, email, or error message text.
 2. Initialize every counter the alerts and ratios read to zero for each label
-   set that can occur, at startup, so a path that has not failed yet reports
-   `0` rather than nothing.
+   set that can occur, at startup.
 3. Record latency as a histogram whose buckets include every threshold
    someone will alert on. Never an average, and never a summary when
    instances are aggregated.
-4. Carry the trace or request id on every log line the request writes, so
-   the trace and the log meet. Where the request crosses a queue, a thread
-   pool, a scheduled job, or another process, inject the trace context into
-   the message or carry it by hand; it does not follow on its own.
+4. Carry the trace or request id on every log line the request writes. Where
+   the request crosses a queue, a thread pool, a scheduled job, or another
+   process, inject the trace context into the message or carry it by hand.
 5. If the facility samples traces at the start of the request, set it to keep
    errors when it allows that; if it does not, say in the report that error
    traces are sampled away.
 6. Log an expected condition (a validation failure, a not-found, a retry
-   that will succeed) below error level. Error level is for what an operator
-   acts on.
+   that will succeed) below error level.
 7. No secret, credential, token, request body, header, query string, or
    personal data in a signal's value, label, or log field.
 
@@ -82,7 +76,7 @@ never decides who gets paged.
    carries a value from the forbidden list above.
 2. For each signal the test cannot reach (a dashboard query, a trace across
    a hop, a sampled error), read it in a real environment and record where
-   it was seen. A signal nobody has seen is unverified; report it as such.
+   it was seen.
 
 ## Step 4: Alert, then hand off
 
@@ -91,8 +85,7 @@ never decides who gets paged.
    owner takes. Whether it pages anyone is the owner's decision; ask, never
    assume.
 2. Fire each alert once on purpose (a test environment, a synthetic failure,
-   or a lowered threshold restored afterwards) and record that it fired. An
-   alert that has never fired is unverified.
+   or a lowered threshold restored afterwards) and record that it fired.
 3. If an existing metric name, label, or log field must change, every
    dashboard and alert that reads it is a caller. **REQUIRED SUB-SKILL:**
    invoke `deprecating-an-api` for the rename; never rename in place.
@@ -153,8 +146,5 @@ never decides who gets paged.
 
 ## Common mistakes
 
-- Instrumenting what is easy to reach (the handler's entry, the call count,
-  the host's CPU) instead of the user's outcome: start from Step 1's two
-  questions and add nothing that answers neither.
 - Writing an alert for every metric: an alert without a first action is noise
   the owner silences along with the real ones.
