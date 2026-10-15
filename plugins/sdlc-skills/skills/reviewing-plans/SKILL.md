@@ -5,11 +5,7 @@ description: "Gets an independent review of one exact plan version before the pl
 
 # Reviewing Plans
 
-A plan's flaws cost least before approval and most in the middle of
-execution. Put one exact plan version in front of a reviewer who did not
-write it, give every finding a recorded decision, and hand the blockers back
-to the plan's author. This skill never edits the plan, approves it, or starts
-an executor.
+This skill never edits the plan, approves it, or starts an executor.
 
 ## When to use
 
@@ -61,8 +57,8 @@ an executor.
    record of decisions, kept outside the plan: add to it, never rewrite it):
    `{{plan-dir}}/00-index.review-{{version}}-{{attempt}}.md`, attempt `1`
    first. It is the only path that attempt's reviewer may write.
-6. If a predecessor version (an earlier version this one replaces) already
-   has a review, bind that report too; the new review focuses on the
+6. If a predecessor version already has a review, bind that report too; the
+   new review focuses on the
    corrected sections and every section that depends on them, and carries
    the earlier recorded decisions forward.
 
@@ -72,8 +68,8 @@ an executor.
    slot with the paths and identities from Step 1, never a paraphrase.
 2. Send the filled prompt once through the harness's real dispatch action,
    as `dispatching-parallel-agents` Step 2 says. Record the tool-issued ID as
-   the dispatch receipt (the proof that the dispatch happened), with the plan
-   version it binds. A name or a prompt is not a dispatch.
+   the dispatch receipt, with the plan version it binds. A name or a prompt
+   is not a dispatch.
 3. If the action is unavailable, refused, or comes back empty, write
    `not dispatched` and ask the not-dispatched question from
    `dispatching-parallel-agents` Step 2.2. A high-risk route requires an

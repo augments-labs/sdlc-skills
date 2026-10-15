@@ -5,10 +5,6 @@ description: "Plans how a rewrite or migration preserves behavior through cutove
 
 # Migration Strategy
 
-Write the contract that says how a trusted source becomes the intended target
-without losing behavior, data, control, or the ability to recover, and get
-that contract approved before any work on the target starts.
-
 ## When to use
 
 - The transformation is too broad, too split into parts, too heavy in what it
@@ -22,8 +18,7 @@ that contract approved before any work on the target starts.
   security, concurrency, resources, cutover, or recovery each fail on its own
   (**failure surfaces**)? If the ordinary route cannot make those surfaces
   reviewable and recoverable, hold work on the target until this contract
-  is approved and `verification-strategy`'s entry gates have passed (a gate
-  is a check that must accept a result before the work may advance). If the
+  is approved and `verification-strategy`'s entry gates have passed. If the
   answers are uncertain, record the change as pending classification.
   Classify it again whenever the inputs change.
 - **Skip** a bounded change whose behavior and diff can still be reviewed
@@ -51,8 +46,7 @@ the section of it that the step names.
    it. A newly discovered choice goes back to that owner; never settle it
    here.
 5. Each unknown blocks until it is proved irrelevant or approved with a
-   compensating gate (a check that covers the risk of carrying it
-   unresolved).
+   compensating gate.
 
 ## Step 2: Design the transition
 
@@ -61,26 +55,25 @@ the section of it that the step names.
    states are allowed; the compatibility direction; and what happens to
    unmapped or invalid input.
 2. Fill `Representative trial slice`: the riskiest paths at a useful scale,
-   drawn from a stable coverage inventory (the fixed list of cells the slice
-   is chosen from); a recorded decision for every cell left out (the template's
-   `Uncovered cells`); the outcome, the expansion decision, and the
-   failure response. Commands and thresholds belong to the assurance matrix.
-3. Fill `Partitions and ownership`: a stable inventory of shards (the parts
-   the work is split into) and the rules for who owns each. Attempts, owners,
-   heartbeats, transfers, and results go into a ledger (a record kept outside
-   the contract: add to it, never rewrite it), never into the contract.
+   drawn from a stable coverage inventory; a recorded decision for every cell
+   left out (the template's `Uncovered cells`); the outcome, the expansion
+   decision, and the failure response. Commands and thresholds belong to the
+   assurance matrix.
+3. Fill `Partitions and ownership`: a stable inventory of shards and the
+   rules for who owns each. Attempts, owners, heartbeats, transfers, and
+   results go into a ledger (a record kept outside the contract: add to it,
+   never rewrite it), never into the contract.
 
 ## Step 3: Control what moves underneath you
 
 1. Fill `Source evolution during migration`: either freeze the source, or run
-   one versioned change-intake contract (a versioned rule for how later source
-   changes enter the migration) and an external queue. Every source change
-   after the baseline gets an identity and an exact terminal disposition (the
-   final state it reaches, with its evidence).
+   one versioned change-intake contract and an external queue. Every source
+   change after the baseline gets an identity and an exact terminal
+   disposition, with its evidence.
 2. Fill `Mutable live-state catch-up` wherever data or work keeps moving:
    from how the boundary is bound through to the maximum permitted lag and
    the gate that owns that limit. Every write after the snapshot lands in
-   exactly one terminal disposition (one final state, with its evidence).
+   exactly one terminal disposition, with its evidence.
    "Probably applied" is not reconciled and blocks cutover.
 3. Fill `Convergence and failure queue`: reconcile the external ledgers, and
    give every skip an approved recorded decision. If one *class* of failure

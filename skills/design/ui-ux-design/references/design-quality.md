@@ -70,22 +70,6 @@ over one layout is one candidate, not two.
 
 Distinctive does not mean loud. A restrained direction earns its identity through exact type, rhythm, proportion, copy, and interaction. A maximal direction earns it through coherent execution. In both cases, remove decoration that cannot explain its job.
 
-## Treat words as interface material
-
-- Name concepts from the user's side of the screen, not the implementation.
-- Use specific, active control labels that predict the result: the same action keeps the same name through button, progress, confirmation, and history.
-- Let labels label and examples demonstrate; do not make one phrase perform both jobs.
-- Make errors say what happened, what remains safe, and what the user can do next.
-- Make empty states explain the opportunity and offer the relevant first action.
-- Match tone to audience and context. High-stakes failure needs clarity, not personality.
-- Test long labels, translated text, large numbers, missing values, and user-generated content.
-
-## Design interaction, not screenshots
-
-For every important control or region, cover the relevant states: initial, hover, focus, pressed, selected, disabled, loading, success, warning, error, and read-only. Make affordances perceivable without relying on hover. Preserve entered data through recoverable failures. Put destructive actions behind clear consequence language and an appropriate recovery or confirmation path.
-
-Check the journey with keyboard-only input, touch, pointer, zoom, text resizing, reduced motion, and assistive semantics. Define focus order and focus return after dialogs or navigation changes. Associate validation messages with their fields and provide an error summary when the form or task warrants one.
-
 ## Critique before deciding
 
 Ask these against the brief and real project:

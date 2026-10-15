@@ -4,7 +4,6 @@ This file is a filled example and failure catalogue to compare a draft against, 
 
 ## What each field must contain
 
-- **Title** — the decision as a short active statement: "Session state lives in the datastore, not the process." Not "Database discussion."
 - **Identity** — a rule, not a value: the hash of the decision content the owner
   saw, recorded in the ledger row; every normative edit is a successor and
   reopens the decision.
@@ -17,12 +16,9 @@ This file is a filled example and failure catalogue to compare a draft against, 
   the decision subject.
 - **Lifecycle evidence** — authenticates the owner's exact answer/version and
   every conformance/terminal transition; an ADR cannot self-authenticate.
-- **Context** — only what a reader needs to judge the decision without re-running the investigation. A requirement, a measured constraint ("p99 must stay under 200 ms"), an existing commitment ("the rest of the system is synchronous"). Opinions and aspirations don't belong here.
-- **Decision** — concrete enough that someone could verify it against the code. "Retries happen at the queue consumer with exponential backoff" is a decision; "we'll make messaging robust" is a wish.
-- **Alternatives considered** — compare at least two real options in total, including the selected Decision. Give the reason each alternative lost. This is the load-bearing section: it stops a later reader from re-opening a settled question and from silently reversing the decision. "Rejected: can't do X" beats "X is nicer."
+- **Alternatives considered** — compare at least two real options in total, including the selected Decision. Give the reason each alternative lost.
 - **Status quo/defer** — evaluate it when viable; otherwise state the evidence
   that disqualifies it rather than silently assuming change.
-- **Consequences** — honest about both directions: what you gain *and* what you now own (an operational burden, a migration path, a capability you gave up). A decision with only upsides was not examined.
 - **Evidence/uncertainty** — identity and limits, not "research says." Assumptions
   need stable IDs, evidence/state, validation, owners, expiry, and failure paths.
 - **Independent challenge** — dispatch exists only after a nonempty attempt ID.
@@ -114,10 +110,7 @@ inspection must pass on the implementation revision before in-force state.
 
 ## Common failure patterns
 
-- **The diary entry.** Context recounts the meeting instead of the forces. If a sentence wouldn't change whether the decision is right, cut it.
-- **The verdict without the trial.** Decision recorded, alternatives missing. Six months later someone re-proposes the rejected option and the cycle repeats.
 - **The missing lifecycle record.** Work shipped, but no bound external evidence
   says whether the proposal was accepted or conformed.
 - **The amended ADR.** The decision changed in place. Preserve it; a replacement
   links back, and only acceptance makes the old identity externally superseded.
-- **The resume line.** Consequences list only benefits. If reversing the decision would be expensive or impossible, that belongs in the record — it's the warning label.

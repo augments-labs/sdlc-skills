@@ -5,8 +5,6 @@ description: "Settles the conventions agents and humans both follow in a project
 
 # Coding Standards
 
-Set the conventions once so every contributor — human or agent — writes code that reads like one author. The highest-leverage standard is **shared vocabulary**: name things from the domain, consistently, so the same concept is never two words.
-
 ## When to use
 
 - Starting a project, or when conventions have drifted and the code reads like several authors.
@@ -28,8 +26,7 @@ Open `assets/standards-template.md` before starting; each step fills its section
 4. Name the one way this project does each of these: error handling,
    validation, async, dependency injection, and testing seams. Give one
    short example of each.
-5. Write the hard nevers, the things never to do in this project. Keep the
-   list short.
+5. Write the hard nevers, the things never to do in this project.
 
 ## Step 2: Assign enforcement
 
@@ -37,8 +34,7 @@ Open `assets/standards-template.md` before starting; each step fills its section
    assign a formatter, linter, type or static check, or repository check
    that fails. If the rule is about vocabulary, architecture, or judgement,
    assign a named review rubric and a named owner.
-2. Set each check's strictness deliberately. The warning budget is zero.
-   Never leave a permissive default.
+2. The warning budget is zero. Never leave a permissive default.
 3. Point to the exemplar (the file that does all of the above right). Run
    its checks and rubric now. If the project is greenfield and has no
    exemplar, name the first artifact and its owner; adoption stays pending.

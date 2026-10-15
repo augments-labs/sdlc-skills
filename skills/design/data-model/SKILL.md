@@ -5,11 +5,6 @@ description: "Defines domain concepts, relationships, state transitions, and inv
 
 # Data Model
 
-Model the domain before the code that manipulates it. A domain model is more
-than columns: it is the concepts, how they relate, the transitions they may
-make, and the invariants that must always hold. That is true whether or not
-any of it is ever stored.
-
 ## When to use
 
 - The work introduces or changes domain concepts: persistent entities, or the
@@ -28,8 +23,7 @@ Open `assets/data-model-section.md` before the steps below fill it in.
 2. List each entity's attributes with their type and meaning. Write what null
    means and which enumeration values are allowed, not just the column.
 3. Map the relationships: cardinality, ownership, and what cascades on delete.
-4. Draw the state transitions of each concept that has a lifecycle. A
-   transition you do not draw is one the code permits by accident.
+4. Draw the state transitions of each concept that has a lifecycle.
 5. For each invariant that must never break, name what enforces it (a
    constraint, a transaction boundary, a test, or a reconciliation) and who
    owns failures.
