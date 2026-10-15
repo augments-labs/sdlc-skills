@@ -49,6 +49,7 @@
     "./skills/maintenance/complexity-audit",
     "./skills/maintenance/containing-an-incident",
     "./skills/maintenance/debugging",
+    "./skills/maintenance/deprecating-an-api",
     "./skills/maintenance/diagnosing-a-session",
     "./skills/maintenance/post-mortem",
     "./skills/maintenance/refactor-architecture",

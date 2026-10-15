@@ -131,6 +131,10 @@
         "path": "skills/maintenance/debugging/SKILL.md"
       },
       {
+        "id": "deprecating-an-api",
+        "path": "skills/maintenance/deprecating-an-api/SKILL.md"
+      },
+      {
         "id": "diagnosing-a-session",
         "path": "skills/maintenance/diagnosing-a-session/SKILL.md"
       },

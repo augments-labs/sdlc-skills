@@ -320,6 +320,9 @@ A large project may touch every phase. Most tasks use a few skills.
    build is safe to ship.
 7. **Maintenance.** `debugging` finds the cause of a bug before any fix.
    `containing-an-incident` and `post-mortem` handle failures that reach users.
+   `deprecating-an-api` retires an interface others call: the replacement
+   ships first, callers get a signal they see, use is measured, and the
+   removal is a later change you accept.
 
 The [skill catalogue](docs/reference/skills.md) lists every skill with one
 line on what it does, including the common skills that belong to no phase.
