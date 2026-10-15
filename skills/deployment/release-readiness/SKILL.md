@@ -21,9 +21,8 @@ fills its sections. Read `references/gate-details.md` when a step below cites
 a row number and you need that row's concrete check.
 
 1. Fill the `Immutable release-input descriptor`: the promotion, the source,
-   the contracts, the expected artifacts and check cells (each combination of
-   platform, packaging, build mode, and so on that a check must cover), and
-   who may approve. Write no secret values.
+   the contracts, the expected artifacts and check cells, and who may
+   approve. Write no secret values.
 2. Write every attempt and its evidence in the `External attempt and evidence
    ledger` (the ledger: add to it, never rewrite it), never in the descriptor.
 3. Freeze the artifact set: one finished, successful build per required
@@ -33,10 +32,10 @@ a row number and you need that row's concrete check.
 
 ## Step 2: Judge it
 
-Work every `Readiness rows` entry until it is **evidenced** (the ledger holds a
-passing result for it), **not applicable with an approved disposition** (the
-row's owner accepts the reason it does not apply, and that acceptance is
-recorded under the descriptor's approver rule), or **blocking**.
+Work every `Readiness rows` entry until it is **evidenced**, **not applicable
+with an approved disposition** (the row's owner accepts the reason it does not
+apply, and that acceptance is recorded under the descriptor's approver rule),
+or **blocking**.
 
 1. Install, start, or load each member through the paths a real consumer
    uses. Passing checks on the source tree are not evidence about the
@@ -45,9 +44,9 @@ recorded under the descriptor's approver rule), or **blocking**.
    check that protects this promotion over its expected inventory, then
    compare that inventory with what actually ran and account for every
    difference (row 11).
-3. Exercise the cutover and the recovery, including the claimed RPO (how much
-   data may be lost) and RTO (how long recovery may take), and observe what
-   happens; do not infer it (rows 3, 13). Fill `Rollout and recovery`.
+3. Exercise the cutover and the recovery, including the claimed RPO and RTO,
+   and observe what happens; do not infer it (rows 3, 13). Fill `Rollout and
+   recovery`.
 4. Check the target: configuration, secrets, capacity, dependencies, and the
    order of the steps (row 6). Verify that each is present and has the
    expected shape; never print a value.
