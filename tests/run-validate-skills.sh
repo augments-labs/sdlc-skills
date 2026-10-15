@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Offline tests for scripts/sh/validate-skills.sh's "every assets/ template
-# has the house shape" check and its prose-arrows pending list.
+# has the house shape" check and its prose-arrows check under --strict.
 #
 # What this guards: template-format.md's Shape rules 1-5 (H1, a preamble
 # line before the fence, exactly one outer fence with a markdown/text
@@ -12,9 +12,8 @@
 # disallowed fence language, no fenced block at all, an empty file, and two
 # outer fence pairs — get their own fixtures alongside the five above.
 #
-# A third copy checks the prose-arrows pending list both ways: an unlisted
-# skill with arrows fails, and a listed skill with none, or a listed name that
-# is no skill, fails the list.
+# A third copy adds an arrow to one skill body and checks that --strict fails
+# it on prose-arrows.
 #
 # Deterministic on purpose: file in, file out, exit code out. No model runs,
 # no network. The copies of the tree live under a temporary directory and
@@ -26,14 +25,14 @@ case "${1-}" in
   -h|--help)
     cat <<'EOF'
 tests/run-validate-skills.sh — offline check for the "every assets/ template
-has the house shape" gate and the prose-arrows pending list in
+has the house shape" gate and the prose-arrows check in
 scripts/sh/validate-skills.sh.
 
 Takes no arguments; copies the repository tree into a temporary directory
 three times (once to break one or more fixtures per Shape rule, once left
-untouched, once to edit the prose-arrows pending list), runs
+untouched, once to add an arrow to a skill body), runs
 scripts/sh/validate-skills.sh against each copy, and asserts the check names
-the broken file or list entry and stays silent on the untouched tree. Never
+the broken file or skill and stays silent on the untouched tree. Never
 mutates the checkout.
 
   --help    this text
@@ -264,29 +263,22 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Copy 3: the prose-arrows pending list. Unlisting a skill that still has
-# arrows fails it under --strict; listing a skill with none, or a name that is
-# no skill, fails the list.
+# Copy 3: an arrow in prose. A skill body that states an outcome as
+# `condition → act` fails --strict on prose-arrows, named under that skill.
 # ---------------------------------------------------------------------------
 arrows="$tmp/arrows"
 copy_tree "$arrows"
-pending="$arrows/scripts/sh/data/prose-arrows-pending.txt"
-unlisted=$(grep -vE '^[[:space:]]*(#|$)' "$pending" | head -1)
-sed -i.bak "/^${unlisted}\$/d" "$pending" && rm -f "$pending.bak"
-printf 'yagni\nno-such-skill\n' >>"$pending"
+printf '\nA plan with no owner → stop.\n' >>"$arrows/skills/common/yagni/SKILL.md"
 
-echo "--- validate-skills.sh: the prose-arrows pending list is enforced both ways"
+echo "--- validate-skills.sh: an arrow in a skill body fails --strict"
 arrows_out="$tmp/arrows.out"
 ( cd "$arrows" && bash scripts/sh/validate-skills.sh --strict ) >"$arrows_out" 2>&1
-grep -qE "FAIL: prose-arrows: line [0-9]+" "$arrows_out" && grep -B1000 'FAIL: prose-arrows' "$arrows_out" | grep '^•' | tail -1 | grep -q "/$unlisted/" \
-  && ok "an unlisted skill with arrows fails ($unlisted)" \
-  || bad "unlisting $unlisted did not fail it on prose-arrows"
-grep -q "yagni is listed in .*prose-arrows-pending.txt but its body has no arrow left" "$arrows_out" \
-  && ok "a listed skill with no arrow left fails the list" \
-  || bad "listing yagni, which has no arrows, did not fail"
-grep -q "prose-arrows-pending.txt lists no-such-skill, which is not a skill" "$arrows_out" \
-  && ok "a listed name that is no skill fails the list" \
-  || bad "listing no-such-skill did not fail"
+rc=$?
+[ "$rc" -ne 0 ] && ok "exit code is non-zero with an arrow in yagni ($rc)" \
+  || bad "exit code is 0 with an arrow in yagni"
+grep -B1000 'FAIL: prose-arrows' "$arrows_out" | grep '^•' | tail -1 | grep -q '/yagni/' \
+  && ok "the prose-arrows failure is named under yagni" \
+  || bad "no prose-arrows failure under yagni"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "validate-skills.sh tests: PASS"; exit 0; }
