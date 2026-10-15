@@ -325,7 +325,10 @@ A large project may touch every phase. Most tasks use a few skills.
    `containing-an-incident` and `post-mortem` handle failures that reach users.
    `deprecating-an-api` retires an interface others call: the replacement
    ships first, callers get a signal they see, use is measured, and the
-   removal is a later change you accept.
+   removal is a later change you accept. `large-scale-changes` applies one
+   mechanical change (a codemod, a dependency bump, a lint rule) across many
+   files with a script, and splits the result into one shard per owner that
+   you decide once whether to open all or as a pilot first.
 
 The [skill catalogue](docs/reference/skills.md) lists every skill with one
 line on what it does, including the common skills that belong to no phase.

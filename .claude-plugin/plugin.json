@@ -52,6 +52,7 @@
     "./skills/maintenance/debugging",
     "./skills/maintenance/deprecating-an-api",
     "./skills/maintenance/diagnosing-a-session",
+    "./skills/maintenance/large-scale-changes",
     "./skills/maintenance/post-mortem",
     "./skills/maintenance/refactor-architecture",
     "./skills/planning/define-goals",

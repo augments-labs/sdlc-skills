@@ -78,6 +78,7 @@ a few skills.
 | `complexity-audit` | Audits existing code for complexity it does not need |
 | `refactor-architecture` | Restructures code whose shape makes every change expensive |
 | `deprecating-an-api` | Retires an interface others call: the replacement first, a signal callers see, measured use, and the removal as its own change the owner accepts |
+| `large-scale-changes` | Applies one mechanical change across many files, packages, or owners with a script, and splits the result into shards each owner can review, merge, and revert alone |
 
 ## Common
 
