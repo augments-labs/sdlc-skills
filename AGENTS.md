@@ -91,6 +91,9 @@ is evidence; one argued from the skill text is not.
 - **New skill:** name the failure it answers and say whether it is an observed
   session, a contract gap, or an unmeasured candidate. Pick the phase folder
   from `docs/reference/skills.md`, or `common/`.
+- **Focus:** write what the agent wouldn't know without the skill:
+  project-specific conventions, domain-specific procedures, non-obvious edge
+  cases, and the particular tools or APIs to use.
 - **Cutting:** ask of each section "would the agent get this wrong without
   this?" When unsure, keep it and say so in the PR. Hard stops and
   destructive-action guards are never cut.
