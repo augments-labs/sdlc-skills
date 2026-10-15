@@ -1,199 +1,129 @@
 # AGENTS.md
 
-Guidance for anyone — human or agent — working in this repository.
+`sdlc-skills` is a library of SDLC skills for coding agents. Invoke
+`writing-skills` before authoring or editing a skill.
 
-`sdlc-skills` is a cross-platform library of opt-in SDLC skills for coding
-agents. Read `docs/concepts/skills-and-gates.md` for the philosophy, and
-`skills/common/writing-skills/SKILL.md` before authoring or editing any skill.
+Every skill rests on one idea: a claim leaves the agent through an external
+**gate** (an executable check, an accountable decision, or a review), never
+through confidence.
 
-The one idea behind every skill: you are a non-deterministic generator, so claims
-leave the generator through an external **gate**, never through confidence. Which
-kind of gate answers which kind of claim is `using-sdlc-skills`.
+Write instructions, not facts. "Invoke `requesting-code-review` before any
+push" gets obeyed; "review and integration are separate gates" gets read past.
+Put the hard stop, REQUIRED marker, red-flag list, or rationalization table at
+the step where the temptation hits. A handoff is a numbered, emphasized step
+naming the skill to invoke, never a closing remark. Emphasis gets an agent to a
+gate and never replaces one; keep it out of descriptions.
 
-Emphasis is how a body gets obeyed. An agent can obey an instruction; it
-cannot obey a fact. "Review and integration remain separate gates" is a fact,
-and an agent under pressure reads past it. "Invoke `requesting-code-review`
-before any push" is an instruction, and a hard stop, a REQUIRED marker, a
-red-flag list, or a rationalization table placed at the exact step where the
-temptation hits is what makes it stick. Write bodies that way, deliberately: a
-handoff is a numbered, emphasized step naming the skill to invoke, never a
-closing remark. The sessions in which an agent skipped a gate skipped one that
-was stated as a fact.
+## Before you open a PR
 
-Emphasis has one limit: it gets an agent to a gate; it never replaces one.
-Nothing becomes true by being said forcefully, so a forceful instruction still
-ends at an executable check, an accountable decision, or a review. And it stays
-out of descriptions, which fire on plain triggers — that was measured, not
-assumed.
+You MUST:
 
-## If you are an AI agent
+1. Fill every section of `.github/PULL_REQUEST_TEMPLATE.md` with specific,
+   true answers.
+2. Search open **and** closed PRs and issues for the same problem. If it exists
+   or was rejected, stop and tell the human. If a prior attempt was closed, say
+   what is different.
+3. Confirm it belongs in core (*What belongs here*).
+4. Meet every bullet in *Contributing*.
+5. Show the human the complete diff and get explicit approval.
 
-Read this before you change anything. A weak PR does not help the human you are
-working with: it costs a reviewer's time, spends that human's credibility, and
-gets closed regardless. What counts is whether the diff meets the bar below, not
-whether you can say you followed a checklist.
+If any check fails, do not open the PR; explain why it would be rejected.
 
-Before you open a PR here, you MUST:
-
-1. **Read the PR template** (`.github/PULL_REQUEST_TEMPLATE.md`) and fill every section with specific, true answers — not placeholders, not a summary of what you *would* do.
-2. **Search PRs and issues — open *and* closed — for the same problem.** If it already exists or was already rejected, stop and tell the human you're working with; don't open a duplicate. If a prior attempt was closed, say what is different here.
-3. **Confirm it belongs in core** — see *What belongs here*.
-4. **Meet every bullet in *Contributing*** — a real problem you actually hit, one change, the gate re-run with what it actually returned, behaviour-shaping changes explained, and the authoring environment disclosed.
-5. **Show the human the complete diff** for explicit approval before submitting.
-
-If any check fails, do not open the PR. Explain why it would be rejected and what would have to change first.
-
-Local checkpoint commits on a task branch are ordinary authorized work here, and
-`using-git-worktrees` owns when to make one and what it does not grant.
+Local checkpoint commits on a task branch are authorized; `using-git-worktrees`
+owns when to make one.
 
 ## Authoring rules (non-negotiable)
 
-Files under `skills/` ship to users. They must be self-contained, portable
-engineering guidance. Files under `docs/` are read by users and follow the same
-authoring rules.
+Files under `skills/` and `docs/` ship to users.
 
-`docs/` is user documentation for the current library contract: task guides,
-short concept pages, and reference pages for people who install and use the
-library, written in plain second person. Design reasons, gates, test notes,
-adapter internals, and other maintainer material belong in `CONTRIBUTING.md`,
-not in `docs/`. Never put run transcripts, failure records, pass-rate anecdotes,
-superseded behavior, or investigation notes in either. Keep ephemeral results in
-the review workflow or private notes.
-
-**The Agent Skills standard outranks every rule here.** Where this file, or
-anything under `docs/`, conflicts with agentskills.io, the standard wins and the
-house rule is the bug. A house rule may be *stricter*; it may never permit what
-the standard forbids, forbid what it requires, or reassign a meaning it defines.
-The conformance record is `docs/reference/agent-skills-conformance.md`; the
-gate reads its numbers, so keep the matched phrases intact when editing it
-(see `CONTRIBUTING.md`, "Keeping the conformance record current").
+- `docs/` documents the current contract for users, in plain second person.
+  Maintainer material (design reasons, gates, test notes, adapter internals)
+  goes in `CONTRIBUTING.md`. Never put run transcripts, failure records,
+  pass-rate anecdotes, superseded behavior, or investigation notes in either.
+- The Agent Skills standard (agentskills.io) outranks every rule here. A house
+  rule may be stricter; it may never permit what the standard forbids, forbid
+  what it requires, or redefine its terms. When editing
+  `docs/reference/agent-skills-conformance.md`, keep its matched phrases
+  intact: the gate reads them.
 
 1. **No external references.** Do not name other repositories, projects,
-   articles, or authors, and do not cite issue/PR numbers or tracker links. State
-   the principle directly ("a monolithic plan is re-read on every compaction") —
-   never attribute it. Provenance belongs in private notes, not a shipped skill.
-   The same rule governs commit messages, PR descriptions, and release notes:
-   state the change and its evidence; never attribute it to another repository,
-   project, or library it may resemble. (Disclosing the authoring environment,
-   required under *Contributing*, is not attribution and stays.)
-2. **Model- and harness-agnostic.** Refer to models by capability tier —
-   `small | medium | large` — never vendor names (haiku, sonnet, gpt, gemini, …).
-   Don't assume a specific harness's tooling or paths. Each harness binds
-   tier → model and action → command.
-3. **The format is `skills/common/writing-skills`.** Body ceilings, the
-   `description` shape, which sibling directory each support file goes to, the
-   complexity gate, `{{double-curly}}` placeholders, how to get shorter without
-   compressing prose into noun stacks, and why discipline skills run longer are
-   all stated there, once. Invoke that skill before authoring or editing one —
-   this file does not restate it, so a copy here cannot drift from it.
+   articles, or authors, or cite issue/PR numbers or tracker links. State the
+   principle directly; never attribute it. This also applies to commit
+   messages, PR descriptions, and release notes. Disclosing the authoring
+   environment is not attribution.
+2. **Model- and harness-agnostic.** Name model tiers (`small | medium |
+   large`), never vendor models. Assume no harness's tooling or paths.
+3. **`writing-skills` owns the format.** This file does not restate it.
 4. **Explain behavior-shaping changes.** A change to what a skill makes an agent
-   do names the failure or contract gap it answers. This repository runs no live
-   agent, so the PR argues from the skill text and the gates.
-5. **A body you touch meets the current `writing-skills` format in full**,
-   including its Gotchas, load-condition, and fragile-operation rules. Run
-   `check-skill.sh --strict` on each skill you edit: `validate-skills.sh` reports
-   those checks as warnings, so CI does not fail on them.
+   do names the failure or contract gap it answers.
+5. **A body you touch meets the current `writing-skills` format in full.** Run
+   `check-skill.sh --strict` on each skill you edit: `validate-skills.sh` only
+   warns on those checks.
 
-## Verify against the gate
+## Checks
 
-Rules 1–3 are not honor-system. `scripts/sh/validate-skills.sh` enforces them
-deterministically — frontmatter shape, body and description ceilings, no external
-references, no vendor model names, the `assets/` vs `references/` split, and that
-every skill is registered in the plugin manifests. CI (`.github/workflows/`) runs
-it on every push and PR. Run it before you commit:
+Run before you commit; CI runs the first on every push and PR:
 
 ```bash
 bash scripts/sh/validate-skills.sh
+bash skills/common/writing-skills/scripts/check-skill.sh --strict skills/{{phase}}/{{name}}
 ```
 
-Run `bash scripts/sh/install-git-hooks.sh` once to make `git commit` run the
-same gate automatically on a relevant staged change (`--remove` undoes it).
+`check-skill.sh` runs bundled scripts with `--help`: read `CONTRIBUTING.md`,
+"Conformance checks", before running it on an unfamiliar skill.
 
-For one skill, `skills/common/writing-skills/scripts/check-skill.sh` applies the
-checker's format and house-policy profile, including outside this repository.
-It extracts the library's frontmatter subset rather than parsing all YAML, and
-executes bundled scripts with `--help`. See `CONTRIBUTING.md`, "Conformance
-checks", for coverage and effects before checking an unfamiliar skill.
+Edit skills under `skills/`, then run
+`bash scripts/sh/sync-codex-plugin-skills.sh`; never edit
+`plugins/sdlc-skills/skills/` by hand. Edit `AGENTS.md`, never `GEMINI.md` or
+`CLAUDE.md`.
 
-Rule 4 (behavior) has no deterministic gate — that is the honest limit. No live
-agent runs in this repository or its CI.
+## Evals
 
-## Adding a skill
+Behavior evals live in
+[sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals):
+`bin/triggering` scores whether a description triggers, and `bin/behavior`
+runs a scenario against a live agent CLI and judges what it built. A behavior
+claim backed by an eval record (its `results/` path and pinned plugin commit)
+is evidence; one argued from the skill text is not.
 
-Invoke `writing-skills` and follow its procedure — it owns the template, the
-format, and the checks to run before calling one done. Three things are this
-repository's and are not in there: name the failure it answers, pick the phase
-folder from the canonical order in `docs/reference/skills.md` (or `common/`), and run
-`scripts/sh/validate-skills.sh`, which adds the house rules on top of the
-standard's.
+## Adding or editing a skill
 
-**Start from the failure.** Record observed sessions, current contract gaps,
-and unmeasured candidates separately, and name which one the new skill answers.
-
-## Editing a skill
-
-Changing a skill is changing behaviour. This repository runs no live agent, so a
-change is judged on its text and the gates:
-
-- **The always-loaded `SKILL.md` body:** name the failure or contract gap the
-  change answers, and run `check-skill.sh --strict` on the skill.
-- **Cutting:** cut by judgement, not word count. Ask of each section:
-  "would the agent get this wrong without this?" When unsure, keep it and say
-  so in the PR. Hard stops and destructive-action guards are never cut.
-- **Description (the trigger):** follow `writing-skills`' description shape;
-  the collision gate reports a trigger clause another description already carries.
-- **A file under `references/` or `assets/`** (loaded on demand, not under
-  pressure): the always-loaded body is unchanged; say so.
-- Never reword carefully-tuned discipline content — rationalization tables,
-  red-flag lists, hard-stops — without saying in the PR why the new wording holds
-  the same line.
+- **New skill:** name the failure it answers and say whether it is an observed
+  session, a contract gap, or an unmeasured candidate. Pick the phase folder
+  from `docs/reference/skills.md`, or `common/`.
+- **Cutting:** ask of each section "would the agent get this wrong without
+  this?" When unsure, keep it and say so in the PR. Hard stops and
+  destructive-action guards are never cut.
+- **Discipline content:** never reword a red-flag list, rationalization table,
+  or hard stop without saying in the PR why the new wording holds the same line.
+- **Support files only:** for a change under `references/` or `assets/` alone,
+  say the body is unchanged.
 
 ## What belongs here
 
-Core skills are **general-purpose SDLC guidance** — useful across projects,
-languages, and domains. A skill that only helps one domain, tool, team, or
-workflow belongs in your own skill library, not here. The test: would this help
-someone on a completely different kind of project?
-
-For whether a phase's activities are separable or one interleaved pass, see
-`CONTRIBUTING.md`, "One skill or several".
+General-purpose SDLC guidance that would help someone on a completely different
+kind of project. A skill for one domain, tool, team, or workflow belongs in
+your own library.
 
 ## Contributing
 
-- **Solve a real problem you actually hit** — not a speculative or theoretical one. "My review agent flagged it" or "this could theoretically break" is not a problem statement.
-- **One change per PR.** Don't bundle unrelated edits or batch-fix the tracker — pick one problem, understand it, submit focused work.
-- **Run the gates** before opening a PR (see *Verify against the gate*).
-- **Identify yourself.** Disclose in the PR the model, harness, harness version, and any installed plugins that produced the change — or state plainly it was written by hand. Contributions are weighed by how they were made: a behaviour claim reasoned from documentation is held to a different bar than one grounded in a real session. Hiding the authoring environment is grounds for closing the PR.
-- **Target `dev` from a task branch.** `dev` is where reviewed changes collect; `main` holds releases only and receives nothing but release PRs from `dev`. A PR opened against `main` is asked to retarget `dev` before review.
-- **Never bump versions or edit CHANGELOG version headings in a PR.** Releases are versioned once, by the maintainer — see `RELEASING.md`, which also owns what a changelog entry says.
-- **No third-party dependencies.** SDLC skills is zero-dependency by design; a change that needs an external tool or service belongs in a separate plugin. Two exceptions: adding a harness, and the non-blocking CI job that cross-checks skills with the Agent Skills reference validator — users install nothing and it never gates.
-- The bar is the gate and the evidence, not volume or confidence. "No skill is needed here" is a valid, useful outcome; an inconclusive result is a valid finding; a fabricated one closes the PR.
+- **Solve a real problem you hit.** "My review agent flagged it" or "this could
+  theoretically break" is not a problem statement.
+- **One change per PR.**
+- **Identify yourself.** Disclose the model, harness and its version, and every
+  installed plugin, or state that it was written by hand.
+- **Target `dev` from a task branch.** `main` takes release PRs only.
+- **Never bump versions or edit CHANGELOG version headings.** See
+  `RELEASING.md`.
+- **No third-party dependencies,** except to add a harness and the
+  non-blocking reference-validator CI job.
+- "No skill is needed here" and an inconclusive result are valid outcomes; a
+  fabricated one closes the PR.
 
 ## New harness support
 
-Adding a harness (an IDE, CLI, or agent runner) means more than dropping skill
-files where the tool can see them — they must actually *load and activate*. These
-skills are inert unless the harness both discovers them and is nudged to reach
-for one at the right moment (on Claude Code, the `hooks/` SessionStart nudge;
-elsewhere, an equivalent). See `CONTRIBUTING.md`, "Agent adapters".
-
-A PR adding a harness MUST add `tests/harnesses/{{name}}.sh` offline bindings
-for `tests/run-plugin-smoke.sh` and
-show a skill *actually activating* through that harness's CLI on a
-representative opening, not describe how it should work. Files present but
-never invoked are not a working integration.
-
-## Layout
-
-- `skills/<phase>/<name>/` — the skills, by SDLC phase (canonical order is in `docs/reference/skills.md`; folders are unnumbered).
-- `.claude-plugin/` — the install manifest; its skills array must list every skill on disk (the gate checks it). Cursor reads it too, from the repository root, so no `.cursor-plugin/`, `rules/`, `agents/`, or `commands/` may sit there (the gate checks it). `.kimi-plugin/` — the Kimi Code manifest; its skills paths must resolve to the same canonical set. `plugins/sdlc-skills/` — the Codex plugin, whose skill mirror the sync script regenerates, listed for install by `.agents/plugins/marketplace.json`; Devin and Antigravity install the same directory through `.devin-plugin/` and `.antigravity-plugin/`, so no `AGENTS.md` or `GEMINI.md` may sit at its root, and `rules/AGENTS.md` there carries the Antigravity router nudge (the gate checks both). `.opencode/` — the OpenCode plugin, which registers the canonical skills and injects the router through hooks (the gate checks it; opencode's own cache files there stay ignored). `.muse-plugin/` — the Muse Code manifest, the same skills list for builds that ship plugin support. `.pi/extensions/` — the pi extension, which injects the router in-process. `.hermes-plugin/` — the Hermes plugin, which registers the canonical skills and puts the router in the system prompt (the gate and `tests/run-hermes-plugin.sh` check it). `index.js` — the package entry OpenCode 2.x resolves when the plugin is installed from npm. Adding a harness: `CONTRIBUTING.md`, "Adding an adapter".
-- `AGENTS.md` — this file, the canonical contributor guide. `GEMINI.md` symlinks to it; `CLAUDE.md` is a short pointer to it. A harness that reads its own instructions file gets the same guidance from one source, even one that refuses a symlinked instructions file.
-- `.github/` — CI (`workflows/validate.yml`, `workflows/release-readiness.yml`) and the PR template (`PULL_REQUEST_TEMPLATE.md`).
-- `.codex/` — the checkout-local Codex configuration: sandbox mode and approval policy, and agent nesting and concurrency limits.
-- `scripts/sh/` — portable validators, token budget, adapter checks, and hook scripts, plus `data/`, the gate data they read: `chains.toml`, each chain's skills and body-word budget, and `allowed-cycles.txt`; CI runs `validate-skills.sh`, `token-budget.sh`, `validate-trigger-collisions.sh`, and `validate-skill-graph.sh`, which reports skills that hand off to each other unless `data/allowed-cycles.txt` lists the pair. `install-git-hooks.sh` points `core.hooksPath` at `scripts/git-hooks/`, whose `pre-commit` runs those same four locally on a relevant staged change. Everything here is deterministic, free, and safe to run anywhere.
-- `tests/` — offline tests, where the answer is known in advance and no model runs: `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, and `run-state-identity.sh`.
-- `tests/harnesses/{{name}}.sh` — one file per CLI, holding only how that harness installs and discovers the plugin; `run-plugin-smoke.sh` binds to them. They decide nothing.
-- `assets/` — the project's brand marks. Not to be confused with a skill's own `assets/`, which holds templates that skill emits.
-- `docs/` — user documentation, markdown only: `README.md` (the index), `guides/` (task guides), `concepts/` (short explanations), and `reference/` (the skill catalogue, supported agents, and the conformance record the gate reads). Maintainer material lives in `CONTRIBUTING.md`. Never referenced from a shipped skill; the gate enforces that.
-- `CHANGELOG.md`, `RELEASING.md` — the release record, and how releases are versioned and cut (semver over the skill surface; the gate checks the nine manifest versions agree).
-- `.claude/` — local config and notes; gitignored, never shipped.
+A harness must load and activate the skills, not only see the files: it needs
+a session-start nudge (on Claude Code, `hooks/`). See `CONTRIBUTING.md`,
+"Agent adapters". A PR adding a harness MUST add `tests/harnesses/{{name}}.sh`
+for `tests/run-plugin-smoke.sh` and show a skill activating through that
+harness's CLI on a representative opening.
