@@ -4,8 +4,8 @@
 
 [bug-fix]
 skills = ["using-sdlc-skills", "using-git-worktrees", "mapping-the-codebase", "debugging", "test-driven-development", "yagni", "verification-before-completion"]
-recorded_words = 6832
-budget_words = 6882
+recorded_words = 7022
+budget_words = 7072
 
 [new-feature]
 skills = ["using-sdlc-skills", "working-from-a-ticket", "clarifying-intent", "writing-specs", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
@@ -24,8 +24,8 @@ budget_words = 9606
 
 [incident]
 skills = ["using-sdlc-skills", "containing-an-incident", "debugging", "verification-before-completion", "post-mortem"]
-recorded_words = 4686
-budget_words = 4736
+recorded_words = 4876
+budget_words = 4926
 
 [release]
 skills = ["using-sdlc-skills", "verification-before-completion", "requesting-code-review", "release-readiness", "finishing-a-branch"]
