@@ -11,16 +11,16 @@ no evidence of a human reading the diff is closed without review.
 
 ## Who made this change? (required)
 
-<!-- We assume an agent wrote this PR. Say which one and where it ran, or
-state plainly that a human wrote it. Contributions are weighed by how
+<!-- A human, an agent, or both may write this PR. Say which, and for an
+agent say which one and where it ran. Contributions are weighed by how
 they were made: a behaviour claim reasoned from documentation is held to a
 different bar than one grounded in a real session. Hiding the authoring
 environment is grounds for closing the PR. -->
 
 | Field | Value |
 | --- | --- |
-| Written by | human / agent |
-| Model + exact id | <!-- or n/a if by a human --> |
+| Written by | human / agent / both |
+| Model + exact id | <!-- or n/a when no agent wrote any of it --> |
 | Harness + version | <!-- the IDE, CLI, or runner, or n/a --> |
 | Human who reviewed this diff | <!-- a person, not a role --> |
 

@@ -93,8 +93,9 @@ proves and which test to run for which change.
 3. If the change alters what a skill makes an agent do, name the failure or
    the gap it answers. No live agent runs in this repository, so the pull
    request argues from the skill text and the checks.
-4. Say how the change was written: by a human, or with which model, harness,
-   and harness version. A pull request that hides this is closed.
+4. Say who wrote the change: a human, an agent, or both, and for an agent
+   which model, harness, and harness version. A pull request that hides this
+   is closed.
 5. Read the complete diff yourself before you submit it.
 
 ## Testing and the gates
