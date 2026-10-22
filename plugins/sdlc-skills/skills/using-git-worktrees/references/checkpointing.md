@@ -13,7 +13,9 @@ it, it can be a checkpoint, and it is committed then rather than at the end.
 Stage and commit a checkpoint by the explicit paths this task changed, never
 with `git add -A`, `git add .`, or `git commit -a`. A path that was already
 staged or modified before the task began (the workspace record's Inventory,
-right column) stays out of the commit. A path-limited commit leaves anything
+right column) stays out of the commit. If a path you changed was already
+modified before the task began, stop and ask: a path-limited commit takes the
+whole file, including the earlier edits. A path-limited commit leaves anything
 else in the index staged and uncommitted:
 
 ```bash
