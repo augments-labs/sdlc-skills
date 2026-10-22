@@ -11,16 +11,18 @@ no evidence of a human reading the diff is closed without review.
 
 ## Who made this change? (required)
 
-<!-- A human, an agent, or both may write this PR. Say which, and for an
-agent say which one and where it ran. Contributions are weighed by how
-they were made: a behaviour claim reasoned from documentation is held to a
-different bar than one grounded in a real session. Hiding the authoring
-environment is grounds for closing the PR. -->
+<!-- Two questions: who decided and directed this change (orchestrated it),
+and who wrote it. A human, an agent, or both may have orchestrated it; the
+model row names the agent that wrote it, if any, and the harness row says
+where it ran. Contributions are weighed by how they were made: a behaviour
+claim reasoned from documentation is held to a different bar than one
+grounded in a real session. Hiding the authoring environment is grounds for
+closing the PR. -->
 
 | Field | Value |
 | --- | --- |
-| Written by | human / agent / both |
-| Model + exact id | <!-- or n/a when no agent wrote any of it --> |
+| Orchestrated by | human / agent / both |
+| Model + exact id | <!-- the agent that wrote it, or n/a when a human wrote all of it --> |
 | Harness + version | <!-- the IDE, CLI, or runner, or n/a --> |
 | Human who reviewed this diff | <!-- a person, not a role --> |
 
@@ -98,7 +100,7 @@ repository runs no live agent, so behaviour is argued from the text unless
 ## Environments tested
 
 <!-- One row per environment in which you ran the changed skill, script, or
-hook after the change. "Written by" above says where the change was made;
+hook after the change. The table above says who made the change and where;
 this says where it was exercised. Behaviour is argued from the text until a
 row shows it running. A skill change with no row is accepted as a text-only
 claim and is held to that bar; say `not run` in the first row, with `n/a`
