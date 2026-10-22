@@ -1,0 +1,107 @@
+name: Skill change or new skill
+description: Propose a change to a skill's contract, a new skill, or a documentation change.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before filing**, search open **and** closed issues and pull requests. Some proposals were built differently, and some were declined with a reason.
+
+        A proposal is accepted when it names the failure it answers. "It could theoretically break" or "my review agent flagged it" is not a failure. "No skill is needed here" is a valid outcome.
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Prior proposals
+      options:
+        - label: I searched open and closed issues and pull requests, and this has not been proposed before.
+          required: true
+  - type: textarea
+    id: filer
+    attributes:
+      label: Who is filing this proposal?
+      description: Who you are, and whether you file on behalf of someone else. If an agent files this, name the human who asked for it and quote their instruction as closely as you can.
+    validations:
+      required: true
+  - type: textarea
+    id: human-summary
+    attributes:
+      label: Human-written summary
+      description: Under 200 words, written by a person. What you were doing, what the skills did or failed to do, and what you wished had happened.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of change?
+      options:
+        - A change to an existing skill's contract (what it makes the agent do)
+        - A new skill
+        - A change to the documentation under docs/
+        - A change to a check, script, or adapter
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence-kind
+    attributes:
+      label: What is this answering?
+      description: The same three kinds the maintainers use when they add a skill. An unmeasured candidate is welcome; it is read as such.
+      options:
+        - An observed session (a transcript or diagnosis report shows the failure)
+        - A contract gap (the skill text permits the failure; no session yet)
+        - An unmeasured candidate (an idea, not yet seen to fail)
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: The failure this answers
+      description: What the agent did, or would do, without this change. Quote the skill line that permits it. For an observed session, attach the transcript excerpt or the diagnosis report's Findings, redacted by kind and line.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Concretely. For a skill, the step it goes in and the sentence you would write. For a new skill, what the agent would not know without it.
+    validations:
+      required: true
+  - type: input
+    id: phase
+    attributes:
+      label: Skill and phase folder
+      description: The skill the change goes in, or for a new skill its phase from the catalogue (planning, analysis, design, implementation, testing, deployment, maintenance, common).
+      placeholder: e.g. writing-plans (design); or new skill in testing
+    validations:
+      required: true
+  - type: checkboxes
+    id: core
+    attributes:
+      label: Does it belong in core?
+      description: Core is general-purpose guidance for a phase of the software lifecycle. A skill for one domain, team, tool, or third-party service belongs in your own library.
+      options:
+        - label: It would help someone on a completely different kind of project.
+          required: true
+        - label: It does not depend on one harness, vendor model, tool, or service.
+          required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What else would answer the failure, and why this is better. If you considered nothing else, say so.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: We assume an agent drafted this proposal. Say which one and where it ran; a proposal reasoned from the text is weighed differently from one grounded in a session.
+      value: |
+        | Field | Value |
+        | --- | --- |
+        | Written by (hand / agent) | |
+        | sdlc-skills version or commit | |
+        | Harness + version | |
+        | Model + exact id | |
+        | Installed plugins | |
+    validations:
+      required: true

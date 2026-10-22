@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/augments-labs/sdlc-skills/blob/main/docs/README.md
+    about: Installing, first session, guides for each kind of work, and the skill catalogue. Read the guide for your case before filing.
+  - name: Behavior evals
+    url: https://github.com/augments-labs/sdlc-skills-evals
+    about: Triggering and behavior evals for the skills live in their own repository. A claim about what a skill makes an agent do is measured there.
