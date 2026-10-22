@@ -73,17 +73,14 @@ selects nothing. If selection is unavailable, say so and use only a fallback
 the user's preferences permit; never claim an override was applied. Leave the
 user's main-session model and any model reserved for orchestration untouched.
 
-After dispatch, read back the model the harness reports for the spawned agent.
-If it differs from the one you set, or the harness reports none, record that
-in the packet's `Model read back` field beside its `Dispatch receipt`, and
-never report the chosen tier as the one that ran.
-
 ## Step 2: Dispatch
 
 1. Dispatch through the real callable action. Work is dispatched only when the
    action has returned a non-empty tool-issued ID; record each ID in the
    packet's `Dispatch receipt` field. Naming an agent or writing a prompt is
-   not dispatch.
+   not dispatch. Then fill the packet's `Model read back` from the model the
+   harness reports for that agent, or `none reported`; on a mismatch or none,
+   never report the chosen tier as the one that ran.
 2. If the action is unavailable, refused, or returns no tool-issued ID, write
    `not dispatched`, and name the action tried and what would make it
    callable. Never describe a fan-out that has no tool-issued IDs behind it,
