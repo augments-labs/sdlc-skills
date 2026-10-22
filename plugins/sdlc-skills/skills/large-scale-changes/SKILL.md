@@ -81,8 +81,12 @@ an interface other teams call, and never redesigns structure.
    yourself, recorded as a task-owned resource in the workspace record;
    `using-git-worktrees` run here would reuse this worktree.
 4. Opening the PRs and pinging the owners is the user's decision, once for
-   the batch. Ask with the manifest in front of them and end the turn;
-   `clarifying-intent` owns what closes it:
+   the batch. First, for every shard, **REQUIRED SUB-SKILLS:** invoke
+   `verification-before-completion` and `requesting-code-review` on the
+   shard's revision, prepare its PR description as `finishing-a-branch`
+   Step 1.9 does, and fill the shard's Revision, Remote/ref, and PR
+   title/body columns. Then ask with the manifest in front of them and end
+   the turn; `clarifying-intent` owns what closes it:
 
    ```text
    {{n}} shards for {{m}} owners, {{k}} files; manifest at {{path}}.
@@ -93,11 +97,13 @@ an interface other teams call, and never redesigns structure.
    Recommendation: 1 — {{one sentence}}.
    ```
 
-5. For each shard the answer covers, **REQUIRED SUB-SKILLS:** invoke
-   `verification-before-completion` and `requesting-code-review` on the
-   shard's revision, then `finishing-a-branch` with that answer as the
-   direct instruction for its push-and-PR transition; do not ask again per
-   shard. Write the link and the state in the manifest.
+5. For each shard the answer covers, **REQUIRED SUB-SKILL:** invoke
+   `finishing-a-branch` with that answer as the direct instruction for its
+   push-and-PR transition; do not ask again per shard while the shard's
+   revision, remote/ref, and PR title/body match what the manifest recorded
+   before the question was asked. Write the link and the state in the
+   manifest. A shard whose revision or payload changes afterwards (Step 5)
+   is asked again by `finishing-a-branch`.
 
 ## Step 5: Keep shards current until the last one merges
 

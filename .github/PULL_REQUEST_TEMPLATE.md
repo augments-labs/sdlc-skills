@@ -11,18 +11,19 @@ no evidence of a human reading the diff is closed without review.
 
 ## Who made this change? (required)
 
-<!-- We assume an agent wrote this PR. Say which one and where it ran, or
-state plainly that it was written by hand. Contributions are weighed by how
-they were made: a behaviour claim reasoned from documentation is held to a
-different bar than one grounded in a real session. Hiding the authoring
-environment is grounds for closing the PR. -->
+<!-- Two questions: who decided and directed this change (orchestrated it),
+and who wrote it. A human, an agent, or both may have orchestrated it; the
+model row names the agent that wrote it, if any, and the harness row says
+where it ran. Contributions are weighed by how they were made: a behaviour
+claim reasoned from documentation is held to a different bar than one
+grounded in a real session. Hiding the authoring environment is grounds for
+closing the PR. -->
 
 | Field | Value |
 | --- | --- |
-| Written by | hand / agent |
-| Model + exact id | <!-- or n/a if by hand --> |
+| Orchestrated by | human / agent / both |
+| Model + exact id | <!-- the agent that wrote it, or n/a when a human wrote all of it --> |
 | Harness + version | <!-- the IDE, CLI, or runner, or n/a --> |
-| Installed plugins | <!-- name and version of every plugin loaded, or none --> |
 | Human who reviewed this diff | <!-- a person, not a role --> |
 
 ## What problem did you hit?
@@ -44,8 +45,8 @@ considered nothing else, say so; know that a reviewer reads that as a flag. -->
 
 ## Is this one change?
 
-<!-- If the PR carries more than one unrelated change, stop and split it.
-If the edits look separable but depend on each other, name the dependency. -->
+<!-- Yes or no. If the edits look separable but depend on each other, name
+the dependency. -->
 
 ## Does it belong in core?
 
@@ -89,12 +90,32 @@ attempt should land where that one did not. -->
     bash skills/common/writing-skills/scripts/check-skill.sh --strict path/to/each/skill/touched
 
 For a skill change, name the failure or contract gap it answers. This
-repository runs no live agent, so behaviour is argued from the text, not
-measured here. -->
+repository runs no live agent, so behaviour is argued from the text unless
+"Environments tested" below records a run. -->
 
 ## Evaluation
 
 - What opening prompt started the session that led to this change?
+
+## Environments tested
+
+<!-- One row per environment in which you ran the changed skill, script, or
+hook after the change. The table above says who made the change and where;
+this says where it was exercised. Behaviour is argued from the text until a
+row shows it running. A skill change with no row is accepted as a text-only
+claim and is held to that bar; say `not run` in the first row, with `n/a`
+in its other cells, rather than leaving the table blank or filling it from
+memory.
+
+For each row, "What ran" is the exact opening prompt or the scenario, and
+"Observed" is what the agent did, in one line, with a link to the transcript,
+diagnosis report, or eval record (its `results/` path and pinned plugin
+commit) when you have one. A row without an observation is an installation,
+not a test. -->
+
+| Harness | Harness version | Model | Model version/ID | Plugins loaded | What ran | Observed |
+| --- | --- | --- | --- | --- | --- | --- |
+| <!-- the IDE, CLI, or runner, or not run --> | | | <!-- exact id --> | <!-- every plugin, or none --> | <!-- prompt or scenario --> | <!-- one line + link --> |
 
 ## Rigor
 

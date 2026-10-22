@@ -172,7 +172,7 @@ a compaction or a resume.
 
 A step that never happened has no line. Record it as an event with status
 `missing`, on the line where it was due, and open its `summary` with "This
-step did not happen". The page draws it as an empty dashed circle.
+step did not happen". The page draws it as a dashed box carrying a ∅ glyph.
 
 | `findings` field | Holds |
 | --- | --- |

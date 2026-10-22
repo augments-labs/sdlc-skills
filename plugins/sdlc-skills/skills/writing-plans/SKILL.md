@@ -68,6 +68,8 @@ true and how that is judged, not the code.
 
 2. Open `assets/task-template.md` before writing each task. Fill `Task ID`,
    `Depends on`, `Files`, `Exclusive ownership/effects`, `Context` as paths.
+   List the plan's `00-index.md` in every task's `Context`, so a dispatched
+   worker reads the Constraints and Review focus the task inherits.
 3. Fill **Consumes** from earlier tasks' exact **Produces** names and types.
    Put existing code and external input artifacts in **Context**; do not invent
    producer tasks for inputs that already exist.
@@ -77,16 +79,29 @@ true and how that is judged, not the code.
    accountable judge and deciding observations. For a UI task, copy
    `Applicable visual references` and give every Reference ID a **Visual
    conformance gates** row.
+
+   Before writing a custom check, look in the repository and its runtime for
+   an existing deterministic checker of that surface (test runner, linter,
+   type checker, schema or config validator, the project's check command),
+   and use it when it verifies the claim. Add a heavy new tool only with a
+   stated reason.
+
+   If the task's claim rests on a security boundary (path filter, allowlist,
+   rate limit, lock), the Evaluator tries to get past it through the real
+   component chain: encoded separators, dot segments, case variants, input
+   sent without the client's normalisation. For a counting limit, it also
+   sends more simultaneous attempts than the limit and expects at most the
+   limit to pass.
 6. Fill `Evaluator identity/owner` so the check lives outside what the task
    may change. If a task may edit its own check, write the permitted scope
    and require RED or deliberate falsification before GREEN counts.
 7. Fill `Suggested tier` with the **Model selection** section of
    `dispatching-parallel-agents`.
 8. Write `00-index.md` plus one file per task to
-   `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`. No approval, execution
-   state, or evidence goes in these files, except the task checkbox and its
-   state label, which mirror the execution ledger. Every later change to
-   what they specify is a successor file.
+   `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/` or the user-set path. No
+   approval, execution state, or evidence goes in these files, except the
+   task checkbox and its state label, which mirror the execution ledger.
+   Every later change to what they specify is a successor file.
 
 ## Step 3: Self-review against the inputs, by name
 
@@ -94,24 +109,50 @@ true and how that is judged, not the code.
    column keeps that name: the check that covers an accepted risk) to a task
    or phase. Fix each uncovered requirement; cut each task that traces to
    nothing.
-2. Replace every `TBD`, `handle edge cases`, `similar to task N` with the
+2. If you find a gap or contradiction in the approved spec, here or while
+   writing tasks, stop planning. No task lists the spec among its `Files` or
+   edits it. **REQUIRED SUB-SKILL:** invoke `writing-specs` for a successor
+   spec that names the approved one as its predecessor, and plan against the
+   successor once it is approved.
+3. Replace every `TBD`, `handle edge cases`, `similar to task N` with the
    task it hides. Replace an `Expected:` value that did not come from running
    the command on the current tree with the value the command printed, or
-   with a rubric when the command cannot run yet.
-3. Confirm every task has an executable Evaluator or a controlled rubric,
+   with a rubric when the command cannot run yet. A user-facing string the
+   plan fixes (message, label, help text, doc sentence) that states a
+   location, condition, or number names the file and symbol it was checked
+   against; rewrite a claim with no such citation to what is known, or
+   remove it.
+4. Confirm every task has an executable Evaluator or a controlled rubric,
    and that the index has one top-level **Acceptance** check.
-4. Resolve every Consumes to a Produces under the same name and type. Check
+5. Resolve every Consumes to a Produces under the same name and type. Check
    the index's Constraints block against every task.
-5. Confirm every selected Reference ID has a carrying task and a matching
+6. Name in the index's **Architecture** the one type or module that owns
+   each domain fact more than one task consumes: a type, a set of kinds and
+   where their traits live, the error type that crosses a module boundary.
+   If two tasks each define the same fact, give it one owner and make the
+   others consume it.
+7. Walk the tasks in dependency order. At each task boundary, confirm that
+   every input the next task reads already exists, that every deleted or
+   renamed artifact has no surviving consumer, and that the task's own
+   Evaluator can run on that state.
+8. Resolve every path and symbol the plan cites against the current
+   revision, and replace any that does not resolve. Cite a path or a
+   symbol, never a line number.
+9. Confirm every selected Reference ID has a carrying task and a matching
    conformance evaluator.
-6. Confirm independent tasks have disjoint files, data, effects, evaluators,
-   and external state; every overlap has a dependency and one owner.
-7. Fill **Review focus** with up to five spec-implied inputs or failure modes
-   that no task Evaluator exercises, or mark it `none`; give every `none yet`
-   row a check or name it in the PR.
-8. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
-   high-risk, and resolve every blocker it returns; for any other plan, ask
-   the offer question `reviewing-plans` states.
+10. Confirm independent tasks have disjoint files, data, effects, evaluators,
+    and external state; every overlap has a dependency and one owner.
+11. Fill **Review focus** with up to five spec-implied inputs or failure
+    modes that no task Evaluator exercises, or mark it `none`; give every
+    `none yet` row a check or name it in the PR. If a task tells things
+    apart by the shape of a string (a key, slug, name, or path used as an
+    identity), name two different inputs that produce the same string and
+    the task test that separates them, or have the task carry the identity
+    as structured data.
+12. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
+    high-risk, and bring every blocker it returns to a recorded decision as
+    that skill says; for any other plan, ask
+    the offer question `reviewing-plans` states.
 
 ## Step 4: Present, then stop
 
@@ -120,7 +161,7 @@ true and how that is judged, not the code.
    owner:
 
    ```text
-   Plan {{path}} — version {{printed version}}
+   Plan {{absolute path of the plan directory}} — version {{printed version}}
    {{goal, architecture, constraints, acceptance, trace, task list, review findings}}
 
    1. Approve, then choose an execution mode

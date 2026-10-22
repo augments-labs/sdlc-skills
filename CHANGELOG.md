@@ -2,6 +2,25 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [11.0.1] — 2026-10-22
+
+Eleven skills close gaps found by triaging reports against the library: a
+step that needs a tool now says what to do when it is missing or refused,
+`debugging` checks a cause against the person's own records, worktree
+checkpoints stage by path, dispatch reads back the model that ran, TDD picks
+the cycle for an existing-behavior test, verification runs every check whose
+scope covers a changed file, a plan resolves what it cites, and a delegated
+run rejects a report that skips an item. Nothing is renamed, removed or moved.
+
+The skill check now fails a body of 19,000 bytes or more, the smallest size
+at which a harness has been seen to cut a body it re-attaches after a context
+summary, and `using-sdlc-skills` treats a re-attached body as current only
+when it is whole.
+
+The issue forms and the PR template ask which plugins were loaded and who
+orchestrated the change. The Antigravity install smoke test reads the skill
+count from the 1.4 CLI's output.
+
 ## [11.0.0] — 2026-10-15
 
 Seven new skills follow work as it happens at a company:

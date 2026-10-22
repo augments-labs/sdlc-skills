@@ -173,6 +173,24 @@ else
   bad "prose-arrows missed an arrow in prose after a lone backtick"
 fi
 
+echo "--- check-skill.sh: body-bytes is a policy check on a body past 19000 bytes but under 5000 tokens"
+build_skill "$tmp/bytes/depth-fixture" 1
+# 60 lines of 31-letter words: about 19,900 bytes and about 3,200 tokens, under 500 lines.
+awk 'BEGIN { w = "abcdefghijklmnopqrstuvwxyzabcde"; for (l = 0; l < 60; l++) { line = ""; for (i = 0; i < 10; i++) line = line (i ? " " : "") w; print line } }' >> "$tmp/bytes/depth-fixture/SKILL.md"
+bash "$CHECK" --strict "$tmp/bytes/depth-fixture" >"$tmp/bytes-strict.out" 2>&1
+bash "$CHECK" "$tmp/bytes/depth-fixture" >"$tmp/bytes-warn.out" 2>&1
+if grep -q '^fail	body-bytes' "$tmp/bytes-strict.out" && grep -q '^warn	body-bytes' "$tmp/bytes-warn.out" && ! grep -q 'body-tokens' "$tmp/bytes-strict.out"; then
+  ok "body-bytes fails under --strict, warns without it, and fires below the token ceiling"
+else
+  bad "body-bytes: strict=$(grep body- "$tmp/bytes-strict.out" | tr '\n' ';') warn=$(grep body- "$tmp/bytes-warn.out" | tr '\n' ';')"
+fi
+build_skill "$tmp/bytes-ok/depth-fixture" 1
+if bash "$CHECK" --strict "$tmp/bytes-ok/depth-fixture" >"$tmp/bytes-ok.out" 2>&1 && ! grep -q body-bytes "$tmp/bytes-ok.out"; then
+  ok "body-bytes is silent on a small body"
+else
+  bad "body-bytes fired on a small body: $(head -1 "$tmp/bytes-ok.out")"
+fi
+
 echo "--- check-skill.sh: --tokens skips frontmatter, ignores CR, and counts code, digits, and CJK"
 mkdir -p "$tmp/tokens"
 printf -- '---\nname: x\ndescription: "y"\n---\nRun `bash scripts/check.sh --strict` on 2024 files.\n\n  - \347\274\226\345\206\231\345\256\236\346\226\275\350\256\241\345\210\222\n' >"$tmp/tokens/a.md"

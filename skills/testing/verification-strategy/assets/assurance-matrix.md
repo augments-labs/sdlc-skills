@@ -95,6 +95,7 @@ Never copy those mutable results into this normative matrix.
 | `{{D-008}}` Production-like/QA/canary/soak/recovery | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` |
 | `{{D-009}}` Falsifiability/mutation/metric floors | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` |
 | `{{D-010}}` Skipped/deleted-test and inventory audit | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` |
+| `{{D-011}}` Visual and interface correctness | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` | `{{...}}` |
 
 N/A is not prose shorthand: every omission needs current rationale/evidence,
 owner, expiry/revisit, compensating gate, and complete approval.

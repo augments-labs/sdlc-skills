@@ -62,6 +62,11 @@ worsened impact or a newly available lever reopens containment.
    predictions. A correlation, one quiet interval, or "the logs look fine" is
    not a cause.
 
+   Before you report the cause, if the person saw the symptom in records you
+   can read (a database, logs, an exported file), check it against exactly
+   those records under the descriptor's evidence controls. A reproduction on
+   inputs you built shows the path exists, not that it is the one they hit.
+
 ## Step 3: Fix and close
 
 1. If the request was for a diagnosis only, report the cause and the
@@ -103,6 +108,18 @@ the ledger.
 - A wrong-reason RED that bounces back from `test-driven-development` applies
   no fix: restarting the count, or counting only applied fixes, means the
   breaker never trips.
+- A test double that lacks something the real dependency does can be the
+  cause. Check when the double is created, called, and torn down relative to
+  the code under test before hunting a defect in that code; skipping this
+  sends every hypothesis to the wrong layer.
+- A nonzero exit beside an "all passed" summary is a process-level failure
+  (the runner, a hook, or teardown failed), not a test failure. Calling it
+  flaky or green leaves the real failure undiagnosed; diagnose what exited
+  nonzero before reading any test result.
+- A flag, cached value, or shared field has more readers than the one that
+  showed the bug. Before you flip it, or call a stale-state fix done, search
+  for every reader and check each one; fixing only the reader you saw leaves
+  the others stale or newly broken.
 
 ## Hard stops
 

@@ -49,8 +49,8 @@ its sections.
    judge it: an executable gate, a disposable mockup, a source-fact
    contract, a rubric, or prose.
 4. If the form is an executable gate, write it as a proposed file beside the
-   spec, never into the project; `test-driven-development` lands and runs it
-   inside the task workspace. If the interface, or the authority to change
+   spec, never into the project; the implementer lands and runs it inside
+   the task workspace as its `test-driven-development` check. If the interface, or the authority to change
    the project, is still open, write the observable, the intended gate, its
    owner, and the handoff. Never invent an interface.
 5. List the edge cases and scenarios that break a naive build.
@@ -72,7 +72,7 @@ its sections.
 3. Present:
 
    ```text
-   Spec {{path}} — version {{identity (per template)}}
+   Spec {{absolute path}} — version {{identity (per template)}}
    Requirements: {{n}}  Open questions: {{n}}  Out of scope: {{n}}
 
    1. Approve and hand off to design

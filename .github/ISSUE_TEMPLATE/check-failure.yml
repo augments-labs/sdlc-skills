@@ -1,0 +1,76 @@
+name: Check or script failure
+description: A validator, bundled skill script, hook, or test in this repository fails, hangs, or gives a wrong result.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before filing**, search open **and** closed issues and pull requests. If the failure is already there, add your run as a comment.
+
+        This form is for deterministic things: `scripts/`, `tests/`, `hooks/`, and the scripts bundled under a skill's `scripts/` directory. A skill making an agent behave wrongly is a **Skill behavior report**.
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Prior reports
+      options:
+        - label: I searched open and closed issues and pull requests, and this is not already reported.
+          required: true
+  - type: textarea
+    id: filer
+    attributes:
+      label: Who is filing this report?
+      description: Who you are, and whether you file on behalf of someone else. If an agent files this, name the human who asked for it, quote their instruction as closely as you can, and say whether they wrote or approved the Summary below.
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Under 200 words, in plain words. What you ran, what it did, what you expected. If an agent files this, the human who asked for it writes or approves this section, and the agent says so in the field above.
+    validations:
+      required: true
+  - type: input
+    id: script
+    attributes:
+      label: Script or check
+      placeholder: e.g. skills/common/writing-skills/scripts/check-skill.sh, or scripts/sh/session-start.sh
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command
+      description: As typed, from the repository root or the directory you ran it in. Say which. Redact any credential, token, or personal data by kind.
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Raw output and exit code
+      description: Paste the complete output, not a summary, and the exit code. Redact any sensitive value by kind.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Fill every row. The shell version matters for a bash script; the harness matters for a hook.
+      value: |
+        | Field | Value |
+        | --- | --- |
+        | sdlc-skills version or commit | |
+        | OS + shell, with the shell's version | |
+        | Harness + version (n/a if you ran it from a plain shell) | |
+        | Model + exact id (n/a if no agent ran it) | |
+        | Plugins loaded (name and version of each, or none) | |
+        | Installed through (plugin marketplace, clone, other) | |
+    validations:
+      required: true

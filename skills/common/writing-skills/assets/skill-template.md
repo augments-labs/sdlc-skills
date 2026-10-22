@@ -51,7 +51,8 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 
 1. {{do the work}}.
 2. Run {{the check}} and read what it reports.
-3. If it fails, fix the cause, then run it again. Repeat until it passes.
+3. If it fails, fix the cause, then run it again. After {{n}} failing runs,
+   stop and report the failure as unresolved.
 
 ## Gotchas
 

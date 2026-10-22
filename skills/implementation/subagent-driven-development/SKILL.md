@@ -50,11 +50,10 @@ they may not take. This skill never decides what happens to the branch.
 4. If that row says `mode: inline`, stop; `executing-plans` owns it, and only
    the `Approval rule` owner's direct answer changes the mode.
 5. If that row says `mode: delegated` and the index has phases or shards,
-   this skill cannot run it and `executing-plans` will not: ask the
+   neither this skill nor `executing-plans` can run it: ask the
    `Approval rule` owner for a direct inline answer, append it as a new
    approved row for this version in the shape `writing-plans` Step 4.5 gives,
-   with `mode: inline`, and stop. The last decision row's mode is the one 1.1
-   reads.
+   with `mode: inline`, and stop. Step 1.1 reads the last decision row's mode.
 
 ## Step 2: Open the run
 
@@ -75,13 +74,12 @@ they may not take. This skill never decides what happens to the branch.
    ```
 
    Line 1 is the plan's identity. After a compaction, read the ledger before
-   anything else and re-check it with `--check`: the ledger, not your memory of
-   the conversation, is where the run resumes. It lives at
+   anything else and re-check it with `--check`: the run resumes from the
+   ledger, not from memory. It lives at
    `.sdlc-skills/evidence/{{plan directory name}}/sdd-ledger.md` and holds
-   this run's dispatches, rulings, and findings; task states go to the
-   index's `External execution ledger`, one row per task state as
-   `artifact-layout.md` maps an execution row, and the decision ledger stays
-   where the index points.
+   this run's dispatches, rulings, and findings. Task states go to the
+   index's `External execution ledger`, one row per state as
+   `artifact-layout.md` maps an execution row; the decision ledger stays where the index points.
 4. Check the plan contract before the first dispatch: every `Consumes` names
    an earlier task's exact `Produces`; every `Depends on` names a task that is
    not cancelled; no task edits its own judge unless its approved `Evaluator
@@ -92,7 +90,8 @@ they may not take. This skill never decides what happens to the branch.
    nothing under an invalid contract.
 5. A high-risk task is blocked until its migration and assurance contracts
    are approved and their entry gates have passed. Report it; dispatch
-   nothing for it.
+   nothing for it. A prerequisite task that only builds an entry gate and
+   touches no target is not blocked by that gate.
 6. Scan for conflicts. List the files each task claims, and write every pair
    claiming the same file into the ledger as an ordering.
 7. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
@@ -131,10 +130,11 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
 3. Fill `assets/implementer.md` when dispatching an implementer, rendering it
    with `bash scripts/task-brief.sh`, which pastes the task contract and
    inserts `assets/implementer-report.md` before dispatch. Pass with
-   `--input` each path the worker would otherwise search for: the task's
-   `Context`, the instructions file and the nearest test of the module it
-   edits where they exist, and a file, written beside the report, of the
-   ledger rulings that touch this task. Paths the worker opens for itself;
+   `--input` each path the worker would otherwise search for: the plan index,
+   whose `Constraints` every task inherits; the task's `Context`; the
+   instructions file and the nearest test of the module it edits where they
+   exist; and a file, written beside the report, of the ledger rulings that
+   touch this task. Paths the worker opens for itself;
    never pasted history.
 4. Set the tier explicitly, from the Model selection table in
    `dispatching-parallel-agents`.
@@ -147,15 +147,23 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
    `dispatching-parallel-agents` Step 2. It owns the dispatch receipt, the
    not-dispatched rule, and cancellation. When an implementer cannot be
    dispatched, its question omits option 1: the controller never edits, and
-   building a task inline is a mode change, which only the `Approval rule`
-   owner's direct answer makes, as Step 1.4 says.
+   building a task inline is a mode change only the `Approval rule` owner's
+   direct answer makes (Step 1.4). Until a worker's report
+   arrives, run only read-only git in its worktree; an add, commit, or reset
+   there races its writes.
 
 ## Step 5: Review the diff, then fix
 
-1. Build the package with `bash scripts/review-package.sh`, then fill
-   `assets/task-reviewer.md` when the implementer reports, rendering it with
-   `bash scripts/task-brief.sh`, which inserts
-   `assets/task-reviewer-report.md` before dispatch.
+1. If a worker ends without its report file and can still be reached, ask
+   it once for the report before the frozen deadline; with none by then,
+   apply `dispatching-parallel-agents` Step 2.4. Before packaging, confirm
+   the implementer and everything it started have stopped and `git status`
+   shows nothing changed after the reported revision; otherwise stop the
+   stragglers and rebuild the range. Build the package with
+   `bash scripts/review-package.sh`, then fill `assets/task-reviewer.md` when
+   the implementer reports, rendering it with `bash scripts/task-brief.sh`,
+   which inserts `assets/task-reviewer-report.md` before dispatch, and pass
+   the plan index with `--input` for its `Review focus`.
 2. Verify each finding on its merits first, as `receiving-code-review` Step 2
    says; one that fails the check goes to the ledger with its evidence and
    opens no round. Then sort the findings before any round opens, first by
@@ -172,13 +180,25 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
      accepted as it stands, folded into a round a blocking finding opened,
      or ruled blocking with the failure it causes. It never opens a round or
      a task by itself.
+   - a `## Declined to judge` or `## Limitations` entry gets one recorded
+     decision before the task is `done`. On a main user flow, run the check
+     or remove the dependency on the unrun environment; "check at deploy" is
+     no decision.
+   - a `## Discoveries for later tasks` entry is copied into the ledger as a
+     ruling naming the later task; one that changes that task's approved
+     contract goes to Step 3's reapproval instead.
 
    The rounds are the task's repair budget from `receiving-code-review`:
    five unless the user or the plan sets another number, and the `per task`
    review rounds of 5.6 count against the same budget. All but the last two
    rounds go back to the same implementer, which still holds the task. The
    last two go to a fresh implementer one tier up, briefed from the findings
-   file; it has read nothing.
+   file; it has read nothing. Every round gets its findings by file path,
+   never pasted; when the harness reports the same implementer's context near
+   its limit, a fresh one at its tier takes the round from that file. A round
+   may answer a finding with no change and evidence that the claim is false:
+   the re-review weighs it once and withdraws or upholds the finding; an
+   upheld one stays in the loop and counts against the budget.
 3. Fill `assets/re-reviewer.md` when a fix round returns, so the second look
    judges the fix and its blast radius rather than the task again, rendering it
    with `bash scripts/task-brief.sh`, which inserts
@@ -195,9 +215,9 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
    For a wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
    those branches into the plan worktree (a blocked task's branch stays out)
    and run this check on the merged HEAD before any wave task is `done`. If
-   that check on the merged HEAD is red, open a fix round in the plan
-   worktree on the task it names, counted against that task's repair budget
-   and ending in 5.4's adjudication, then merge and check again. The wave
+   it is red, open a fix round in the plan worktree on the task it names,
+   counted against that task's repair budget and ending in 5.4's
+   adjudication, then merge and check again. The wave
    worktrees and branches are task-owned resources in the workspace record
    for `finishing-a-branch`.
 
@@ -211,8 +231,8 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
 7. Go to Step 4 with the next ready task. Do not report, ask, or pause at
    `done`. When every task is `done`, or `cancelled`/`superseded` with its
    approved ledger decision, go to Step 6. If no ready task can advance, or a
-   high-risk entry gate has not passed, report the unresolved states and
-   their blockers and end the turn.
+   high-risk entry gate has not passed and no ready task can advance without
+   it, report the unresolved states and their blockers and end the turn.
 
 ## Step 6: Finish the plan
 
@@ -224,11 +244,11 @@ In the worktree from Step 2, in order:
    are claims; this is the evidence.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch.
    Its fix rounds run under `receiving-code-review`'s convergence check and
-   plan-end budget. You run only the triage and the budget: each fix set goes
-   to a fresh implementer through the Step 4 brief and the Step 5 review loop,
-   with every round a fresh implementer, counted against the plan-end budget,
-   not a task's. When that budget is spent, write the adjudication in the
-   ledger and hand the user that row; no task is recorded `blocked`.
+   plan-end budget. You run only the triage and the budget: each fix set and
+   every round goes to a fresh implementer through the Step 4 brief and the
+   Step 5 review loop, counted against the plan-end budget, not a task's.
+   When that budget is spent, write the adjudication in the ledger and hand
+   the user that row; no task is recorded `blocked`.
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
@@ -279,15 +299,14 @@ the evidence. It is never a task because someone wrote it down.
   list grew to 91. Admit by observed failure, inside the budget.
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
-  yourself; that is what Step 5.5 is for.
+  yourself (Step 5.5).
 - A fresh implementer in a late round has read nothing. "Fix the findings"
   names a file it does not have; give it the findings path and the task path.
-- A worker that dispatches its own workers returns a diff nobody reconciled and
-  dispatch receipts you never held. Every brief here prohibits subdispatch;
-  keep it.
+- Every brief here prohibits subdispatch; keep it. A worker's own workers
+  return a diff nobody reconciled and receipts you never held.
 - The controller never edits, so `test-driven-development` and `yagni` load in
   the implementer, where the brief requires them; loading them here proves
-  nothing about the worker's session.
+  nothing about the worker.
 
 ## Stopping and resuming
 
@@ -297,3 +316,10 @@ the evidence. It is never a task because someone wrote it down.
   decision row (empty `Section`) for the printed version before `--check` on
   the run ledger: the run ledger detects an amended plan, not a row that
   closed the version.
+- For a dispatch row with no result row, confirm that worker has stopped, as
+  `dispatching-parallel-agents` Step 2.4 says, then run `git log` from the
+  row's base in its worktree. If commits exist, build their review package
+  and dispatch only the reviewer. If none exist, set any uncommitted output
+  aside and reassign the task under `dispatching-parallel-agents` Step 2.5:
+  the lost session is the cause and the resumed one the changed
+  intervention; outside the caller's bound, return it as blocked.

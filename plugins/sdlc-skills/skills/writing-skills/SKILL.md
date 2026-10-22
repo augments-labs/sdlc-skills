@@ -31,7 +31,11 @@ Read `references/reference.md` when unsure how much detail a form needs:
    characters, no word cap, no `Fires on` list, no summary of the steps. Quote
    it. A description that still carries a `Fires on` list predates this rule;
    rewrite it to this shape when you edit that skill.
-2. **House limits: at most 500 body lines and under 5000 estimated tokens.**
+2. **House limits: at most 500 body lines, under 5000 estimated tokens, and
+   under 19,000 bytes.** A harness may cut a body it re-attaches after it
+   summarizes the conversation, and the steps after the cut are lost; 19,000
+   bytes keeps a body under the smallest cut observed, about 20,000
+   characters.
    Most capability skills land
    near 80–120 lines; a body past ~200 should justify itself. Intent and
    procedure only; cut marketing ("why this matters"). A worked example in the
@@ -75,7 +79,10 @@ Read `references/reference.md` when unsure how much detail a form needs:
    where running it is the act. The body says to ask and end the turn;
    `using-sdlc-skills` says how to ask through a choice tool, and the fenced
    block prints when no choice tool exists or the tool cannot offer every
-   entry. A block asking for typed text says to print it.
+   entry. A block asking for typed text says to print it. Any other step that
+   needs a tool or capability says what to do when it is missing and when it
+   is present but refused or limited; an "if missing" line alone leaves a
+   refusal unhandled.
 
    Every retry names its owner, observable progress, finite attempt/resource
    boundary, and unresolved outcome. Before retrying, apply an evidence-supported
@@ -156,7 +163,8 @@ debugging, and receiving review. For these only:
 
 ## Verify before done
 
-- Run the skill check, fix what it reports, and run it again until it passes:
+- Run the skill check, fix what it reports, and run it again. After three
+  runs that still fail, stop and report the remaining failures as unresolved:
 
   ```bash
   bash scripts/check-skill.sh --strict path/to/skill

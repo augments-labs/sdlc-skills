@@ -39,7 +39,7 @@ in the external ledger the fields below name.
 
 *Source: clarifying-intent on {{request/date}}. Keep this ≤ ~40 lines. Draft authority
 is not approval. Lifecycle state never mutates this normative brief. Material
-invalidity marks it blocked/changes-requested externally; only an approved
+invalidity marks it blocked or changes requested externally; only an approved
 replacement supersedes it. If this grows, hand approved intent onward instead of
 hiding a spec here.*
 ```

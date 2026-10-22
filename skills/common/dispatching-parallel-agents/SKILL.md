@@ -78,7 +78,9 @@ user's main-session model and any model reserved for orchestration untouched.
 1. Dispatch through the real callable action. Work is dispatched only when the
    action has returned a non-empty tool-issued ID; record each ID in the
    packet's `Dispatch receipt` field. Naming an agent or writing a prompt is
-   not dispatch.
+   not dispatch. Then fill the packet's `Model read back` from the model the
+   harness reports for that agent, or `none reported`; on a mismatch or none,
+   never report the chosen tier as the one that ran.
 2. If the action is unavailable, refused, or returns no tool-issued ID, write
    `not dispatched`, and name the action tried and what would make it
    callable. Never describe a fan-out that has no tool-issued IDs behind it,
@@ -124,7 +126,8 @@ user's main-session model and any model reserved for orchestration untouched.
 1. Inspect every returned diff yourself against its declared base, ownership
    set, authorized checkpoints, and the raw output of its checks. Reject a
    scope leak, a mixed change, or missing evidence, even when the suite is
-   green.
+   green. If the packet's scope is a list of items, reject a report that lacks
+   a line for any item.
 2. Advance the required scope only when every packet has an accepted success
    report, or a directly approved scope change or reassignment.
 3. Integrate through the named owner. Run the combined checks on the exact

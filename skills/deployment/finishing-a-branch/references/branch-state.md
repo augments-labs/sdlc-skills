@@ -120,6 +120,8 @@ and requires its own direct choice; the commit choice grants nothing else.
    its identity.
 5. Preserve the local branch/workspace and runtime notes for review feedback.
    Cleanup waits for confirmed integration and a later valid cleanup transition.
+   Record and report the retained worktree as *Report a retained worktree*
+   below says.
 
 ## Push branch without a PR
 
@@ -142,7 +144,28 @@ candidate/base/remote state and consumes a new exact choice.
 4. Do not infer retarget, history rewrite, close/reopen, branch deletion,
    integration, or cleanup. Each is absent or a distinct transition.
 5. Preserve branch/workspace and report refreshed PR/head/base identities as
-   `published for review`.
+   `published for review`. Record and report the retained worktree as *Report
+   a retained worktree* below says.
+
+## Report a retained worktree
+
+A worktree left behind a `published for review` report, with no record of who
+removes it, is never removed. Report it; never remove it here.
+
+1. If the workspace record lists the worktree as task-owned, append its path,
+   the PR identity, and `retained until merge` to the append-only external
+   ledger (top of this file), then print:
+
+   ```text
+   Worktree {{path}}: retained for review feedback, owned by this task.
+   Removal: after {{pr}} merges, a new invocation of `finishing-a-branch`
+   confirms integration and offers owned cleanup. Until then it stays.
+   ```
+
+2. If the worktree is detached, shared, user-owned, host-owned, or of uncertain
+   ownership, print `Worktree {{path}}: retained; removal belongs to
+   {{owner, or "unknown: the user decides"}}, not this skill.` and leave it
+   in place.
 
 ## Close or reopen a PR without changing source
 

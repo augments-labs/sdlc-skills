@@ -92,7 +92,7 @@ to `debugging`.
 3. **REQUIRED SUB-SKILL:** invoke `debugging` for the cause. Once cause and
    containment are known, invoke `post-mortem`. Write both into the record's
    `Still open` lines. Diagnose nothing from this skill.
-4. Under the hard-containment fallback, pass residual impact, attempted
+4. Under the hard-containment fallback, pass residual impact, exhausted safe
    levers, and incident/escalation owner to `debugging`. New or worsened
    impact or a newly available lever reopens containment; unchanged residual
    impact does not.

@@ -105,8 +105,10 @@ enter this skill.
 Record in the external ledger, outside the issued analysis, each action's
 move from `proposed` to one of `{owner-accepted | rejected | cancelled |
 superseded}`, and, for an accepted action, from there through `implemented`,
-`falsified`, `deployed/enforced`, `effectiveness reviewed`, `effective`, and
-`closed`, in that order. Let no prose, merge, or local green skip a state.
+`falsified`, `deployed/enforced`, `effectiveness reviewed`, then `effective`
+or `ineffective` or `inconclusive`, and `closed`, in that order; an
+`ineffective` or `inconclusive` action closes only as Step 4.4 allows, else
+it is `reopened`. Let no prose, merge, or local green skip a state.
 
 ## Gotchas
 

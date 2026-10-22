@@ -54,7 +54,8 @@ vocabulary:
   accepted, in force, rejected, cancelled, retired, or superseded.
 - `**External lifecycle ledger:**` on a post-mortem — per action: proposed,
   owner-accepted, rejected, cancelled, superseded, implemented, falsified,
-  deployed/enforced, effectiveness reviewed, effective, or closed.
+  deployed/enforced, effectiveness reviewed, effective, ineffective,
+  inconclusive, reopened, or closed.
 - `**External condition and decision ledger:**` on feasibility — go, go-if,
   no-go, or cancel, plus each condition's pending, satisfied, or failed state.
   Render go-if with its unmet conditions; recording the decision does not
