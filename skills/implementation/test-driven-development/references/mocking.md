@@ -20,6 +20,7 @@ Assert the observable result your caller would see, never that the mock was call
 ## Keep mocks honest
 
 - **Mirror the real shape.** A stub returning only the fields you currently read breaks silently when the code later needs a field you omitted. Match the real response.
+- **Enforce the real limits.** A stand-in enforces the real dependency's page size, row cap, or rate limit. A guard for "the limit was reached" gets a test whose data exceeds one page.
 - **Don't mock away the behavior under test.** If the test depends on a side effect, mocking the method that produces it guts the test.
 - **One seam, one shape.** Structure external calls as specific functions (one per operation), so each test injects one simple stand-in instead of a branching mock factory.
 

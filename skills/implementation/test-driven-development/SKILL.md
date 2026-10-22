@@ -34,6 +34,11 @@ change. Watch it happen; keep the output.
    - For new or intentionally changed behavior, go to Step 2.
    - For behavior that must survive a change unchanged, go to Step 3.
    - For a bugfix, go to Step 2, starting from its runnable reproduction.
+   - For a task whose deliverable is tests for behavior that already works,
+     go to Step 3 with the new tests as its check, run items 1 to 4, read
+     `references/preservation-cycle.md` when you pick the oracle, then
+     continue at Step 4: the deliberate divergence the suite must catch
+     stands in for RED.
 
    Never invent a failure for behavior that already works.
 
@@ -48,6 +53,15 @@ change. Watch it happen; keep the output.
 ## Step 2: New behavior, RED then GREEN
 
 1. Write one test for the next approved behavior.
+
+   If the behavior is a detector (a lint rule, validator, or scanner), pin,
+   in the same test, an input it must flag and a near-miss it must pass; a
+   separate near-miss test gets its RED from a detector that over-matches.
+
+   If the change adds an in-progress flag or lock, run one Step 2 cycle per
+   public method that touches the state it guards, calling it while the
+   operation is in flight. Take that list from the state, not from the
+   misuse you expect.
 2. Run it through the project's real test command.
 3. Read the failure. Confirm it is the right one: the test was discovered,
    executed, and failed at the intended assertion.
@@ -57,6 +71,11 @@ change. Watch it happen; keep the output.
    RED, wrong reason:   ERROR test_rejects_expired_token — ImportError: cannot import name 'verify'
    Not RED:             1 skipped, 0 failed
    ```
+
+   If the wrong reason is a missing symbol, add the smallest stub that cannot
+   pass (it raises or returns a wrong value) and rerun, so the failure is at
+   the intended assertion. If a stub cannot be added, confirm the runner
+   collected exactly the tests you wrote before reading the failure.
 
    On a wrong reason whose cause is not directly visible, or an unexplained
    result, invoke `debugging` before any product code, passing back the
@@ -102,7 +121,9 @@ change. Watch it happen; keep the output.
    evidence record (the ledger: add to it, never rewrite it, and keep it
    outside the state under check), not the whole record.
 4. Return to whatever invoked this skill: a plan task, a worktree checkpoint,
-   or a fix under `debugging`. Run no commit, push, or PR here.
+   or a fix under `debugging`. In that report, list each piece of work you
+   deferred during the cycle with the condition that closes it. Run no
+   commit, push, or PR here.
 
 ## Gotchas
 
@@ -138,6 +159,7 @@ change. Watch it happen; keep the output.
 | "I'd lose the code I wrote" | Revert only your out-of-cycle implementation; sunk cost is not evidence. |
 | "The test is hard to write" | The interface or oracle is exposing a design problem; fix that seam. |
 | "There's no test framework" | Use the smallest executable assertion that can fail. |
+| "This layer has no test harness" | Move its rules into units and test-drive those. The wiring left without a RED stays pending under the hard stops: report it and how you checked it, then ask whether to add a harness (naming its dependencies and config cost) or to accept the wiring as an unverified exception, and end the turn. |
 | "It's just generated/config code" | Test the behavioral source and regeneration contract, not text presence. |
 
 ## Common mistakes
