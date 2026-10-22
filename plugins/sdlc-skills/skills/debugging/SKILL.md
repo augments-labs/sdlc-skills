@@ -40,6 +40,10 @@ worsened impact or a newly available lever reopens containment.
 5. Reproduce. Confirm the loop observes *this* bug, not a neighbouring one.
    Capture raw inputs, timing, topology, rate, and every environment
    difference under the descriptor's evidence controls.
+   If the person saw the symptom in records you can read (a database, logs,
+   an exported file), check the suspected cause against exactly those records
+   before you report it. A reproduction on inputs you built shows the path
+   exists, not that it is the one they hit.
 
 ## Step 2: Find the cause
 
@@ -103,6 +107,17 @@ the ledger.
 - A wrong-reason RED that bounces back from `test-driven-development` applies
   no fix: restarting the count, or counting only applied fixes, means the
   breaker never trips.
+- A test double that lacks something the real dependency does can be the
+  cause. Check when the double is created, called, and torn down relative to
+  the code under test before hunting a defect in that code; skipping this
+  sends every hypothesis to the wrong layer.
+- A nonzero exit beside an "all passed" summary is a process-level failure
+  (the runner, a hook, or teardown failed), not a test failure. Calling it
+  flaky or green leaves the real failure undiagnosed.
+- A flag, cached value, or shared field has more readers than the one that
+  showed the bug. Before you flip it, or call a stale-state fix done, search
+  for every reader and check each one; fixing only the reader you saw leaves
+  the others stale or newly broken.
 
 ## Hard stops
 
