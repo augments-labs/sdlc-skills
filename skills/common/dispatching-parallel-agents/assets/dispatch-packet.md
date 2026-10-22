@@ -39,16 +39,20 @@ section below with a stricter rule.
 ## Output
 
 - **Report:** {{base/result revisions, diff range, files changed, command and raw verdict, authorized checkpoint commits or none, scope exceptions}}
+- **Item lines:** {{none, when the scope is not a list | the list of items this agent owns}} — when the scope is a list, the report gives one line per item, done or skipped with its reason; a report missing a line is rejected.
 - **Report path:** {{the one file the agent writes its report to; it writes no other report anywhere}}
 - **Return line:** {{the exact status token and report path the agent's final message must give, so the coordinator can act without reopening the file}}
 
 ## Dispatch record
 
 Filled by the coordinator after dispatch, never by the worker, and never from
-anything but the dispatch action's own returned identifiers.
+anything but the dispatch action's own returned identifiers and the model the
+harness reports for the spawned agent.
 
 - **Dispatch receipt:** {{fill only from the callable action's returned nonempty
   agent/job IDs; otherwise "not dispatched" plus unavailable/refused/empty result}}
+- **Model read back:** {{the model the harness reports for the spawned agent,
+  or "none reported"; add "mismatch" and the model set when the two differ}}
 - **Terminal outcome:** {{not dispatched | running | cancellation requested |
   succeeded with accepted report | failed and quiescent | timed out and
   quiescent | cancelled and quiescent; raw evidence, quarantined output,
