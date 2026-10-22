@@ -89,7 +89,9 @@ as its step runs.
 2. Pick the mechanism, taking the first that applies: a user instruction; then
    project guidance; then a harness-native worktree command, run with the name
    above and HEAD at the proven base, after which skip to Step 4; then the
-   steps below.
+   steps below. A harness-native command acts on the session's own
+   repository: if the work is in another repository, skip it, run the steps
+   below from that repository, and say why the native command was not used.
 3. Inside a submodule, stop here: create an owned branch in the submodule and
    write an explicit plan for the parent gitlink, and never run the rest of
    Step 3 from the superproject's paths. Otherwise choose the directory and
