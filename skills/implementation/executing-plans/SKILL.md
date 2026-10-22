@@ -125,8 +125,8 @@ mode; switching needs the `Approval rule` owner's direct answer.
    - If a task needs a change to what was approved (scope, interface,
      evaluator, phase, ownership), write the proposed successor, ask for
      reapproval, and end the turn.
-   - If a high-risk entry gate has not passed and no ready prerequisite task
-     builds it, report it and end the turn.
+   - If a high-risk entry gate has not passed and no ready task can advance
+     without it, report it and end the turn.
 
 ## Step 5: Finish the plan
 

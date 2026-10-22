@@ -65,6 +65,7 @@ full report so coverage remains visible.
 ### {{finding title}}
 
 - Severity: {{Critical | Important | Minor}}
+- Class: {{keep | simplify | decision | investigate}}
 - Disposition: {{blocking | advisory}}
 - Surface and evidence: {{owned surface; exact file:line}}
 - Requirement/guarantee: {{what must survive}}
