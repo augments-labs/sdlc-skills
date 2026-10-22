@@ -40,10 +40,6 @@ worsened impact or a newly available lever reopens containment.
 5. Reproduce. Confirm the loop observes *this* bug, not a neighbouring one.
    Capture raw inputs, timing, topology, rate, and every environment
    difference under the descriptor's evidence controls.
-   If the person saw the symptom in records you can read (a database, logs,
-   an exported file), check the suspected cause against exactly those records
-   before you report it. A reproduction on inputs you built shows the path
-   exists, not that it is the one they hit.
 
 ## Step 2: Find the cause
 
@@ -65,6 +61,11 @@ worsened impact or a newly available lever reopens containment.
    registered effect. Confirm that competing hypotheses fail their own
    predictions. A correlation, one quiet interval, or "the logs look fine" is
    not a cause.
+
+   Before you report the cause, if the person saw the symptom in records you
+   can read (a database, logs, an exported file), check it against exactly
+   those records under the descriptor's evidence controls. A reproduction on
+   inputs you built shows the path exists, not that it is the one they hit.
 
 ## Step 3: Fix and close
 
@@ -113,7 +114,8 @@ the ledger.
   sends every hypothesis to the wrong layer.
 - A nonzero exit beside an "all passed" summary is a process-level failure
   (the runner, a hook, or teardown failed), not a test failure. Calling it
-  flaky or green leaves the real failure undiagnosed.
+  flaky or green leaves the real failure undiagnosed; diagnose what exited
+  nonzero before reading any test result.
 - A flag, cached value, or shared field has more readers than the one that
   showed the bug. Before you flip it, or call a stale-state fix done, search
   for every reader and check each one; fixing only the reader you saw leaves
