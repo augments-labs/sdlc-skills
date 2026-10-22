@@ -73,6 +73,11 @@ selects nothing. If selection is unavailable, say so and use only a fallback
 the user's preferences permit; never claim an override was applied. Leave the
 user's main-session model and any model reserved for orchestration untouched.
 
+After dispatch, read back the model the harness reports for the spawned agent.
+If it differs from the one you set, or the harness reports none, record that
+in the packet's `Model read back` field beside its `Dispatch receipt`, and
+never report the chosen tier as the one that ran.
+
 ## Step 2: Dispatch
 
 1. Dispatch through the real callable action. Work is dispatched only when the
@@ -124,7 +129,8 @@ user's main-session model and any model reserved for orchestration untouched.
 1. Inspect every returned diff yourself against its declared base, ownership
    set, authorized checkpoints, and the raw output of its checks. Reject a
    scope leak, a mixed change, or missing evidence, even when the suite is
-   green.
+   green. If the packet's scope is a list of items, reject a report that lacks
+   a line for any item.
 2. Advance the required scope only when every packet has an accepted success
    report, or a directly approved scope change or reassignment.
 3. Integrate through the named owner. Run the combined checks on the exact
