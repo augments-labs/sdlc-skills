@@ -27,6 +27,8 @@ does not say there was nothing to find.
 1. Before citing silence, run the identical probe (same query, filter,
    credentials, host, and configuration) on an input known to hold a hit:
    a planted record, a retained known-bad case, or a real one you can point to.
+   A planted record is a write: plant one only under authority that covers
+   writes there; otherwise use a real known hit, or limit the claim.
 2. Run that control in the environment the system runs in. A hit on a local
    copy, a test database, or another account says nothing about whether the
    probe can see the population where the system lives.

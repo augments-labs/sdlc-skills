@@ -40,9 +40,12 @@ description: "Runs the checks and reads their output before any claim that work 
    A check counts for a changed file only if its configuration includes that
    file. Add a row for every project check whose configured scope includes a
    changed path, even one nothing listed. If that check already reports errors
-   on the base, run it there too and compare the two error lists instead of
-   expecting zero: an error the base lacks fails the row, and an inherited one
-   stays listed and limits the claim to "no new errors".
+   on the base, run it on the base in a separate worktree, never by switching
+   the state under check, and compare the two error lists instead of
+   expecting zero: an error the base lacks fails the row; an inherited one
+   that matches an approved pre-existing exclusion in the workspace record
+   stays listed and limits the claim to "no new errors"; one with no
+   exclusion is an unexplained red: list it and keep the claim pending.
 4. Capture the state the checks will run on; add `--committed` when that
    state is a commit:
 
