@@ -12,10 +12,11 @@ re-reading the brief, the skills, and the code before its first edit; else
 option 1.
 `executing-plans` owns the inline loop and `subagent-driven-development` the
 delegated one; the answer picks which is invoked. Ask this and end the turn;
-`clarifying-intent` owns a reply that names no option. Record the answer on
-the exact version's ledger row as `mode: inline`, `mode: delegated`, or, for
-option 3, `mode: delegated` plus `waves: yes`; a row for another version
-settles nothing here.
+`clarifying-intent` owns a reply that names no option. Record the answer
+by appending a new approved row for the exact version, in the shape
+`writing-plans` Step 4.5 gives, carrying `mode: inline`, `mode: delegated`,
+or, for option 3, `mode: delegated` plus `waves: yes`; never edit the
+existing row, and a row for another version settles nothing here.
 
 ```text
 Plan {{version}} is approved. How should it run?

@@ -187,7 +187,9 @@ Commonly missed:
 
 ## Writing the finding
 
-Use the security report template supplied with the audit. Trace each finding
+As the independent auditor, use the security report template supplied with
+the audit; as the coordinator, write into the Step 2.8 working note, never
+the template. Trace each finding
 from attacker-controlled source through propagation to its sink or effect;
 include the concrete exploit, observed gate result, and smallest correction.
 

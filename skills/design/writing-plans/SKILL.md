@@ -110,7 +110,8 @@ true and how that is judged, not the code.
    that no task Evaluator exercises, or mark it `none`; give every `none yet`
    row a check or name it in the PR.
 8. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
-   high-risk, and resolve every blocker it returns; for any other plan, ask
+   high-risk, and bring every blocker it returns to a recorded decision as
+   that skill says; for any other plan, ask
    the offer question `reviewing-plans` states.
 
 ## Step 4: Present, then stop

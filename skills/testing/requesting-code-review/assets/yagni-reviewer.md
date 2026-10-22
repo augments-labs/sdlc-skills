@@ -64,7 +64,8 @@ full report so coverage remains visible.
 
 ### {{finding title}}
 
-- Severity/disposition: {{severity; blocking | advisory}}
+- Severity: {{Critical | Important | Minor}}
+- Disposition: {{blocking | advisory}}
 - Surface and evidence: {{owned surface; exact file:line}}
 - Requirement/guarantee: {{what must survive}}
 - Recommendation: {{smaller complete replacement; required verification}}

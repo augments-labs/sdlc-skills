@@ -203,7 +203,7 @@
     visuals:   {{visual-source-label}} · {{visual-file-name}} · {{visual-file-path}}
     tasks:     {{tasks-done}} · {{tasks-total}} · {{tasks-pct}}
                {{task-id}} · {{task-title}} · {{task-pill-class}}
-               {{task-pill-content}} · {{tasks-completed}}
+               {{task-pill-content}} · {{tasks-closed}}
     gates:     {{gate-name}} · {{gate-pill-class}} · {{gate-pill-content}} · {{gate-note}}
 -->
 
@@ -356,17 +356,18 @@
                 <tr><td class="mono">{{task-id}}</td><td>{{task-title}}</td><td><span class="pill {{task-pill-class}}">{{task-pill-content}}</span></td></tr>
               </table>
 
-              <!-- TIER-2 · completed tasks — OMIT this block when no task
-                   is completed. All completed-state rows (done, cancelled,
-                   superseded — a concerns state is NOT completed and stays
+              <!-- TIER-2 · closed tasks — OMIT this block when no task
+                   is closed. All closed-state rows (done, cancelled,
+                   superseded — a concerns state is NOT closed and stays
                    in the main table above) go into this ONE details block,
-                   closed by default, the summary carrying the completed
-                   count. Every completed row is present in the HTML
+                   collapsed by default, the summary carrying the closed
+                   count. Only `done` rows count toward {{tasks-done}} and
+                   {{tasks-pct}}. Every closed row is present in the HTML
                    regardless of the details state: collapsing is visual
                    only, never an omission. Pure CSS/HTML — no JavaScript. -->
               <details style="margin:8px 0 0">
-                <summary class="ts">{{tasks-completed}} completed tasks</summary>
-                <table class="tasktable" aria-label="Completed tasks">
+                <summary class="ts">{{tasks-closed}} closed tasks</summary>
+                <table class="tasktable" aria-label="Closed tasks">
                   <tr><th style="width:36px">#</th><th>task</th><th style="width:110px">status</th></tr>
                   <tr><td class="mono">{{task-id}}</td><td>{{task-title}}</td><td><span class="pill {{task-pill-class}}">{{task-pill-content}}</span></td></tr>
                 </table>

@@ -91,8 +91,8 @@ description: "Runs the checks and reads their output before any claim that work 
    review checks bind to their own revision.
 5. **REQUIRED — return the record; this skill routes nowhere.** Every unmet
    check goes back with it to the pending step of whatever asked; never
-   invoke that caller from here. `using-sdlc-skills`' done rule routes what
-   follows; only `release-readiness` decides release.
+   invoke that caller from here. `using-sdlc-skills`' rule on calling work
+   done routes what follows; only `release-readiness` decides release.
 6. Run no commit, push, PR, or merge from this skill.
 
 ## Gotchas

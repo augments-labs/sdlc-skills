@@ -156,7 +156,8 @@ debugging, and receiving review. For these only:
 
 ## Verify before done
 
-- Run the skill check, fix what it reports, and run it again until it passes:
+- Run the skill check, fix what it reports, and run it again. After three
+  runs that still fail, stop and report the remaining failures as unresolved:
 
   ```bash
   bash scripts/check-skill.sh --strict path/to/skill

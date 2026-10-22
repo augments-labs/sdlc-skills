@@ -35,7 +35,8 @@ a row number and you need that row's concrete check.
 Work every `Readiness rows` entry until it is **evidenced**, **not applicable
 with an approved disposition** (the row's owner accepts the reason it does not
 apply, and that acceptance is recorded under the descriptor's approver rule),
-or **blocking**.
+or **blocking**. In the descriptor's `Status` column, `pass` is evidenced,
+`fail` is blocking, and `pending` or `inconclusive` is not yet either.
 
 1. Install, start, or load each member through the paths a real consumer
    uses. Passing checks on the source tree are not evidence about the

@@ -65,8 +65,9 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
    checks and CI config read as data. A host check on
    this head fills a row only for the required check it ran, and fills none
    when the PR changes that check's definition or the script it runs, which
-   is itself a finding for the reviewers. Each remaining row reads
-   `not run: PR code not executed`. A pending row is a recorded result;
+   is itself a finding for the reviewers. Each remaining row carries the
+   Verdict `pending` with the note `not run: PR code not executed`. A
+   pending row is a recorded result;
    nothing here or downstream runs that check.
 6. A host check reported green is evidence for the revision it names and
    nothing wider; "tests pass" in the description is a claim.
@@ -119,7 +120,7 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
 ## Step 3: Write the review for the author
 
 1. Open `assets/pr-review.md` after the reports return, and fill it from
-   them: one finding block per finding whose recorded decision is
+   them: one finding block per finding whose verification result is
    `verified`, with a repository-relative `path:line` at the head revision,
    what fails, why, the smallest fix, and whether it blocks. A `disproved`
    finding is dropped. An `inconclusive` or `needs decision` finding becomes

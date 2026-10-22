@@ -86,7 +86,7 @@ open, leave that to it.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-4. Record its state (pending, changes-requested, approved, rejected,
+4. Record its state (pending, changes requested, approved, rejected,
    cancelled, or superseded) in that record outside the brief. Never edit the
    proposed brief to show its state.
 5. Only approval moves the work past the precondition this brief satisfies.

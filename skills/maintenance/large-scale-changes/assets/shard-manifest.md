@@ -22,9 +22,9 @@ say which; the change is not done while any row's state is not merged.
 
 ## Shards
 
-| Shard | Owner | Paths | Files | Builds alone | State | Link |
-| --- | --- | --- | --- | --- | --- | --- |
-| {{name}} | {{owner from the ownership file, or the package}} | {{path globs}} | {{n}} | {{yes, with the check run; or no, with the shared part it needs}} | {{pending, open, changes-requested, merged, reverted}} | {{PR or branch, or none}} |
+| Shard | Owner | Paths | Files | Builds alone | Revision | State | Link |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| {{name}} | {{owner from the ownership file, or the package}} | {{path globs}} | {{n}} | {{yes, with the check run; or no, with the shared part it needs}} | {{the shard's revision the batch answer covers, or none}} | {{pending, open, changes-requested, merged, reverted}} | {{PR or branch, or none}} |
 
 ## Excluded paths
 

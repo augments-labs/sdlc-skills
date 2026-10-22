@@ -11,12 +11,14 @@ browser. A request with neither the key nor the cookie gets 403. Browsers
 scope cookies by host, not port: while the preview runs, any other listener
 on this host that the browser visits receives the cookie and can replay it.
 
-Start it backgrounded and read the one-line JSON startup record:
+Start it through the wrapper beside it, which backgrounds the server and
+prints the one-line JSON startup record:
 
-    nohup python3 serve.py --root .sdlc-skills > /tmp/serve.log 2>&1 &
+    bash scripts/start-server.sh --root .sdlc-skills --entry {{page}}.html
 
-Stop it with the kill command from that record, or let the watchdog or
-idle timeout end it. Options: --help
+Stop it with `bash scripts/stop-server.sh {{pid}}`, using the `pid` from
+that record (the record's `stop` field holds the equivalent kill command),
+or let the watchdog or idle timeout end it. Options: --help
 """
 
 import argparse

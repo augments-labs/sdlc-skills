@@ -75,7 +75,9 @@ start it.
 - Read `references/phase-queues.md` before the first task when the index
   holds phases or shards, and follow it.
 - A high-risk task is blocked until its migration and assurance contracts are
-  approved and their entry gates have passed. Report it; do not start it.
+  approved and their entry gates have passed. Report it; do not start it. A
+  prerequisite task that only builds an entry gate and touches no target is
+  not blocked by that gate.
 - Read `Integration cadence`: `plan end` (default) or `per task`.
 
 ## Step 4: The task loop
@@ -91,7 +93,8 @@ mode; switching needs the `Approval rule` owner's direct answer.
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
 4. Inspect the result yourself: diff against the attempt's starting revision;
-   compare with `Files` and `Exclusive ownership`. For a dispatched task, read
+   compare with `Files` and `Exclusive ownership/effects`. For a dispatched
+   task, read
    its raw diff, result revision, and evaluator output, never its summary. A
    defect or gap outside the task's contract goes to *Findings outside the
    task*; never fix it inside this task.

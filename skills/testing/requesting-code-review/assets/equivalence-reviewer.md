@@ -61,7 +61,8 @@ identities. Never infer equivalence from compilation or aggregate green alone.
 
 ### {{finding title}}
 
-- Severity/disposition: {{severity and blocking status}}
+- Severity: {{Critical | Important | Minor}}
+- Disposition: {{blocking | advisory}}
 - Contract: {{migration fact or invariant ID}}
 - Evidence: {{source and target observations; reproduction or gate}}
 - Correction: {{required change}}
