@@ -32,14 +32,14 @@ received cleanup authority, so cleanup is pending.
 Entries in the session store expire on idle timeout, not just on absolute TTL.
 
 ## State identity
-- Plan/artifact: docs/plans/session-expiry/ at revision 3
+- Plan/artifact: .sdlc-skills/plans/2026-07-28-session-expiry/ at version 9f8e7d6
 - Branch / commit / workspace: fix/session-idle-expiry / a1b2c3d / primary checkout
-- Uncommitted: src/store/memory.js — half-done sweep pass, not yet wired in
+- Workspace inputs: unstaged src/store/memory.js — half-done sweep pass, not yet wired in
 - Done: TTL-based expiry (commit a1b2c3d), covered by store-expiry test
 - In flight: idle-expiry sweep — the sweep function exists but is never scheduled
 
 ## Decisions and authority
-- Sweep-based expiry — direct option selected for revision 3 after the load comparison
+- Sweep-based expiry — direct option selected for version 9f8e7d6 after the load comparison
 - Pending: sweep interval — 30s vs 60s; no answer yet
 
 ## Evidence
@@ -52,7 +52,7 @@ Entries in the session store expire on idle timeout, not just on absolute TTL.
 - No external or destructive permission pending
 
 ## Resume first action
-Refresh branch/status, confirm plan revision 3 is still current, and rerun the
+Refresh branch/status, confirm plan version 9f8e7d6 is still current, and rerun the
 store-expiry baseline. Then ask for the pending interval decision; do not wire it
 from this handoff alone.
 
@@ -61,7 +61,7 @@ from this handoff alone.
 - verification-before-completion — before claiming the idle-expiry behaviour works
 
 ## References
-- plan directory from writing-plans: docs/plans/session-expiry/
+- plan directory from writing-plans: .sdlc-skills/plans/2026-07-28-session-expiry/
 - TTL work: commit a1b2c3d
 ```
 
@@ -77,7 +77,7 @@ from this handoff alone.
 ## Edge cases
 
 - **Handing off to yourself after compaction.** Write it as if to a stranger — you will have lost exactly the context you're tempted to leave implicit.
-- **Multiple open threads.** One handoff document, but a Next step per thread, ordered — never one blended paragraph.
+- **Multiple open threads.** One handoff document and one resume first action; the other threads are separate In flight lines, ordered — never one blended paragraph.
 - **Nothing is in flight, only decisions pending.** Still write the handoff; a pending decision with its options recorded is resumable work.
 - **The failure is the finding.** If the session's result is "this approach doesn't work," the handoff's Goal stays, State says "approach rejected," and Decisions carries the evidence — so the next session doesn't repeat the experiment.
 - **Long-lived handoffs.** If a handoff may sit for days, add a date at the top and double-check every branch/commit reference still exists when you resume.

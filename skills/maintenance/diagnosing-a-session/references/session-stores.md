@@ -91,8 +91,9 @@ under whatever names a given format gives them:
 | Working directory and branch | shows where a write landed |
 | The turn itself, with a role and content blocks | holds the prompt text, the agent's text, tool calls, and tool results |
 
-Read the first lines of the file to learn which names this format uses, and
-search by those names.
+Learn which names this format uses with a key-only print of the first lines,
+such as `head -n 3 {{file}} | grep -o '"[A-Za-z_]*":' | sort -u`, which shows
+no values, and search by those names.
 
 A tool call and its result are separate blocks, usually on separate lines: a
 call with no matching result line is itself a finding.

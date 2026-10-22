@@ -51,8 +51,8 @@ The richer medium is not automatically better. Match fidelity to the decision: l
    already issued, and never fork a second file.
 
    Do not silently overwrite the evidence, and prove it rather than intending
-   it: a new version's diff on the surface adds a block and changes only which
-   radio carries `checked`. `git diff` cannot prove it: it shows nothing for an
+   it: a new version's diff on the surface adds a version block, its radio
+   and its banner label, and changes only which radio carries `checked`. `git diff` cannot prove it: it shows nothing for an
    untracked or ignored page. Record each block's SHA-256 under
    `.sdlc-skills/evidence/` when you issue it, and compare against that record.
    From the project root, with the page's own path in `page`:

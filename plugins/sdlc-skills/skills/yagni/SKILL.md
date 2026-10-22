@@ -54,7 +54,7 @@ them.
    was requested, fill the challenger prompt,
    `assets/yagni-challenger.md` with `assets/challenge-report.md` before
    dispatching it read-only as `dispatching-parallel-agents` Step 2 says, and
-   wait.
+   wait. Record the dispatch ID it returns next to the report.
 
    Read the report; match its Proposal and Challenge inputs to the request. A
    verdict that is missing, mismatched, conflicting, or invalid counts as

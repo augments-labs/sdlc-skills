@@ -93,7 +93,7 @@ the section of it that the step names.
 
 1. Write the contract to
    `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`. Keep the
-   stable-ID delta, the review state, and the execution state outside it.
+   review state, the decision state, and the execution state outside it.
    Compute its identity now, as the template says; the challengers bind to
    this path and this identity.
 2. Fill `assets/migration-challenger.md` with that path and identity before
@@ -111,7 +111,7 @@ the section of it that the step names.
 4. Present the contract:
 
    ```text
-   Migration contract {{path}} — {{strategy}}
+   Migration contract {{path}} version {{identity (per template)}} — {{strategy}}
    Preserves: {{invariants}}. Trial: {{slice}}. Pause/abort/rollback: {{rules}}. Retirement: {{plan}}.
 
    1. Approve this exact version for planning

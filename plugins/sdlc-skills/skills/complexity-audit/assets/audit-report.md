@@ -9,7 +9,7 @@ it; dispatched auditors return partition reports that get reconciled into it.
 
 ## What was frozen
 
-- **Target identity:** {{exact revision; the working-tree digest only when the report path is git-ignored}}
+- **Target identity:** {{exact revision; the working-tree digest only when the report path is outside the repository or git-ignored}}
 - **Goal of this audit:** {{the question it answers}}
 - **Included paths:** {{what is in scope}}
 - **Excluded paths:** {{what is out, and why}}

@@ -134,7 +134,7 @@ Rollout and effectiveness are `pending` at issue; the ledger holds their state.
 
 | Action | Review window | Baseline vs observed | Gate execution/adoption | False positives/cost | Verdict | Follow-up |
 | --- | --- | --- | --- | --- | --- | --- |
-| `{{A-01}}` | `{{window}}` | `{{raw comparison}}` | `{{did it actually run?}}` | `{{impact}}` | `effective/ineffective/inconclusive` | `{{close/reopen/change}}` |
+| `{{A-01}}` | `{{window}}` | `{{raw comparison}}` | `{{did it actually run?}}` | `{{impact}}` | `effective/ineffective/inconclusive` | `{{close/reopen}}` |
 
 Sparse recurrence data may be inconclusive. Use leading evidence—gate execution,
 coverage, controlled drills, detection latency—without claiming absence proves
@@ -149,7 +149,7 @@ Close only when:
   evidence with accountable rationale and residual risk/replacement;
 - every owner-accepted corrective gate has targeted fail-then-pass evidence;
 - every owner-accepted control is deployed/enforced in its real surface;
-- each effectiveness review is effective, or ineffective/inconclusive work was
-  reopened/superseded or received direct residual-risk closure;
+- each effectiveness review is effective, or ineffective/inconclusive work
+  received direct residual-risk closure; no action is `reopened`;
 - artifact access/retention/cleanup obligations and authorities are reconciled.
 ```

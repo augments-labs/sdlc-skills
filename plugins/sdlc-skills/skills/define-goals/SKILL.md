@@ -30,8 +30,8 @@ Open `assets/goals-section.md` before starting; each step fills its section.
    one averaged metric.
 3. Record one accountable decision owner, or else the approvers, the conflict
    resolver, and the decision rule. If the user is the only stakeholder (a
-   solo owner), the user is the decision owner; leave the approver, conflict,
-   and decision-rule fields out.
+   solo owner), write the user as the decision owner in `Decision rule:` and
+   name no approvers or conflict resolver.
 4. For each outcome, record its current baseline, target, time horizon,
    measurement source, and accountable owner. If an outcome has no source or
    date, it cannot be checked, so it is not a goal.

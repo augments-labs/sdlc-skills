@@ -60,7 +60,7 @@ change. Watch it happen; keep the output.
 
    On a wrong reason whose cause is not directly visible, or an unexplained
    result, invoke `debugging` before any product code, passing back the
-   attempt count `debugging` handed this cycle when the cycle came from
+   attempt count its ledger recorded for this cycle when the cycle came from
    `debugging`.
 4. Keep the output.
 5. Record the test's identity, the identity of the evaluator, and the

@@ -92,7 +92,8 @@ they may not take. This skill never decides what happens to the branch.
    nothing under an invalid contract.
 5. A high-risk task is blocked until its migration and assurance contracts
    are approved and their entry gates have passed. Report it; dispatch
-   nothing for it.
+   nothing for it. A prerequisite task that only builds an entry gate and
+   touches no target is not blocked by that gate.
 6. Scan for conflicts. List the files each task claims, and write every pair
    claiming the same file into the ledger as an ordering.
 7. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
@@ -211,8 +212,8 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
 7. Go to Step 4 with the next ready task. Do not report, ask, or pause at
    `done`. When every task is `done`, or `cancelled`/`superseded` with its
    approved ledger decision, go to Step 6. If no ready task can advance, or a
-   high-risk entry gate has not passed, report the unresolved states and
-   their blockers and end the turn.
+   high-risk entry gate has not passed and no ready task can advance without
+   it, report the unresolved states and their blockers and end the turn.
 
 ## Step 6: Finish the plan
 
