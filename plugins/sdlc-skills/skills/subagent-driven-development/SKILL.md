@@ -132,10 +132,11 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
 3. Fill `assets/implementer.md` when dispatching an implementer, rendering it
    with `bash scripts/task-brief.sh`, which pastes the task contract and
    inserts `assets/implementer-report.md` before dispatch. Pass with
-   `--input` each path the worker would otherwise search for: the task's
-   `Context`, the instructions file and the nearest test of the module it
-   edits where they exist, and a file, written beside the report, of the
-   ledger rulings that touch this task. Paths the worker opens for itself;
+   `--input` each path the worker would otherwise search for: the plan index,
+   whose `Constraints` every task inherits; the task's `Context`; the
+   instructions file and the nearest test of the module it edits where they
+   exist; and a file, written beside the report, of the ledger rulings that
+   touch this task. Paths the worker opens for itself;
    never pasted history.
 4. Set the tier explicitly, from the Model selection table in
    `dispatching-parallel-agents`.
@@ -149,14 +150,22 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
    not-dispatched rule, and cancellation. When an implementer cannot be
    dispatched, its question omits option 1: the controller never edits, and
    building a task inline is a mode change, which only the `Approval rule`
-   owner's direct answer makes, as Step 1.4 says.
+   owner's direct answer makes, as Step 1.4 says. Until a worker's report
+   arrives, run only read-only git in its worktree; an add, commit, or reset
+   there races its writes.
 
 ## Step 5: Review the diff, then fix
 
-1. Build the package with `bash scripts/review-package.sh`, then fill
-   `assets/task-reviewer.md` when the implementer reports, rendering it with
-   `bash scripts/task-brief.sh`, which inserts
-   `assets/task-reviewer-report.md` before dispatch.
+1. If a worker ends without its report file, ask that same worker for the
+   report once before treating it as stalled under
+   `dispatching-parallel-agents` Step 2.4. Before packaging, confirm the
+   implementer and everything it started have stopped, and that `git status`
+   shows nothing changed after the reported revision; otherwise stop the
+   stragglers and rebuild the range. Build the package with
+   `bash scripts/review-package.sh`, then fill `assets/task-reviewer.md` when
+   the implementer reports, rendering it with `bash scripts/task-brief.sh`,
+   which inserts `assets/task-reviewer-report.md` before dispatch. Pass the
+   plan index with `--input` for its `Review focus`.
 2. Verify each finding on its merits first, as `receiving-code-review` Step 2
    says; one that fails the check goes to the ledger with its evidence and
    opens no round. Then sort the findings before any round opens, first by
@@ -173,13 +182,25 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
      accepted as it stands, folded into a round a blocking finding opened,
      or ruled blocking with the failure it causes. It never opens a round or
      a task by itself.
+   - a `## Declined to judge` or `## Limitations` entry gets one recorded
+     decision before the task is `done`. On a main user flow, run the check
+     or remove the dependency on the unrun environment; "check at deploy" is
+     no decision.
+   - a `## Discoveries for later tasks` entry is copied into the ledger as a
+     ruling naming the later task; one that changes that task's approved
+     contract goes to Step 3's reapproval instead.
 
    The rounds are the task's repair budget from `receiving-code-review`:
    five unless the user or the plan sets another number, and the `per task`
    review rounds of 5.6 count against the same budget. All but the last two
    rounds go back to the same implementer, which still holds the task. The
    last two go to a fresh implementer one tier up, briefed from the findings
-   file; it has read nothing.
+   file; it has read nothing. Every round gets its findings by file path,
+   never pasted, and when the same implementer's context has grown large, a
+   fresh one at its tier takes the round from that file. A round may answer a
+   finding with no change and evidence that the claim is false: the re-review
+   weighs it once and withdraws the finding or upholds it, and an upheld
+   finding stays in the loop, counted against the budget.
 3. Fill `assets/re-reviewer.md` when a fix round returns, so the second look
    judges the fix and its blast radius rather than the task again, rendering it
    with `bash scripts/task-brief.sh`, which inserts
@@ -298,3 +319,8 @@ the evidence. It is never a task because someone wrote it down.
   decision row (empty `Section`) for the printed version before `--check` on
   the run ledger: the run ledger detects an amended plan, not a row that
   closed the version.
+- For a dispatch row with no result row, confirm that worker has stopped, as
+  `dispatching-parallel-agents` Step 2.4 says, then run `git log` from the
+  row's base in its worktree. If commits exist, build their review package
+  and dispatch only the reviewer. If none exist, set any uncommitted output
+  aside and dispatch the task again as a new attempt linked to that row.

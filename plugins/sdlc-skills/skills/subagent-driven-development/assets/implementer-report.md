@@ -54,6 +54,14 @@ where it lives instead. A section with nothing to record says `none`.
 
 {{file and the missing detail, one line each — reported here, never edited; or none}}
 
+## Discoveries for later tasks
+
+{{a fact this task established that a later task needs — a name, a path, a behavior — with its `path:line` or command, and the later task it affects, one line each; or none}}
+
+## Findings answered without a change
+
+{{fix rounds only: the finding ID, and the `path:line` or command output showing the claim is false, one line each; or none}}
+
 ## Unresolved
 
 {{what is unfinished, which gate stayed red, which question the contract does not answer, and what each one blocks; or none}}
