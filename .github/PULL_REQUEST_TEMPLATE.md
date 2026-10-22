@@ -102,8 +102,9 @@ repository runs no live agent, so behaviour is argued from the text unless
 hook after the change. "Written by" above says where the change was made;
 this says where it was exercised. Behaviour is argued from the text until a
 row shows it running. A skill change with no row is accepted as a text-only
-claim and is held to that bar; say `not run` in the first row rather than
-leaving the table blank or filling it from memory.
+claim and is held to that bar; say `not run` in the first row, with `n/a`
+in its other cells, rather than leaving the table blank or filling it from
+memory.
 
 For each row, "What ran" is the exact opening prompt or the scenario, and
 "Observed" is what the agent did, in one line, with a link to the transcript,
@@ -111,9 +112,9 @@ diagnosis report, or eval record (its `results/` path and pinned plugin
 commit) when you have one. A row without an observation is an installation,
 not a test. -->
 
-| Harness + version | Model + exact id | Plugins loaded | What ran | Observed |
-| --- | --- | --- | --- | --- |
-| <!-- e.g. a CLI 2.1.0, or not run --> | | <!-- every plugin, or none --> | <!-- prompt or scenario --> | <!-- one line + link --> |
+| Harness | Harness version | Model | Model version/ID | Plugins loaded | What ran | Observed |
+| --- | --- | --- | --- | --- | --- | --- |
+| <!-- the IDE, CLI, or runner, or not run --> | | | <!-- exact id --> | <!-- every plugin, or none --> | <!-- prompt or scenario --> | <!-- one line + link --> |
 
 ## Rigor
 
