@@ -75,7 +75,10 @@ Read `references/reference.md` when unsure how much detail a form needs:
    where running it is the act. The body says to ask and end the turn;
    `using-sdlc-skills` says how to ask through a choice tool, and the fenced
    block prints when no choice tool exists or the tool cannot offer every
-   entry. A block asking for typed text says to print it.
+   entry. A block asking for typed text says to print it. Any other step that
+   needs a tool or capability says what to do when it is missing and when it
+   is present but refused or limited; an "if missing" line alone leaves a
+   refusal unhandled.
 
    Every retry names its owner, observable progress, finite attempt/resource
    boundary, and unresolved outcome. Before retrying, apply an evidence-supported
