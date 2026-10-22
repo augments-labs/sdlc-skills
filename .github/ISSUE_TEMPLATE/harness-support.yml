@@ -23,10 +23,10 @@ body:
     validations:
       required: true
   - type: textarea
-    id: human-summary
+    id: summary
     attributes:
-      label: Human-written summary
-      description: Under 200 words, written by a person. Which tool you work in and what you want the skills to do there.
+      label: Summary
+      description: Under 200 words, in plain words. Which tool you work in and what you want the skills to do there. If an agent files this, the human who asked for it writes or approves this section, and the agent says so in the field above.
     validations:
       required: true
   - type: input

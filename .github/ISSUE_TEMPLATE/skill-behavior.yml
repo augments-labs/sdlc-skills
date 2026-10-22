@@ -25,10 +25,10 @@ body:
     validations:
       required: true
   - type: textarea
-    id: human-summary
+    id: summary
     attributes:
-      label: Human-written summary
-      description: Under 200 words, written by a person in their own words. What went wrong, and what should have happened instead. If an agent is filing, this is the human's section, not the agent's.
+      label: Summary
+      description: Under 200 words, in plain words. What went wrong, and what should have happened instead. If an agent files this, the human who asked for it writes or approves this section, and the agent says so in the field above.
     validations:
       required: true
   - type: textarea

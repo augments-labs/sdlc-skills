@@ -23,10 +23,10 @@ body:
     validations:
       required: true
   - type: textarea
-    id: human-summary
+    id: summary
     attributes:
-      label: Human-written summary
-      description: Under 200 words, written by a person. What you ran, what it did, what you expected.
+      label: Summary
+      description: Under 200 words, in plain words. What you ran, what it did, what you expected. If an agent files this, the human who asked for it writes or approves this section, and the agent says so in the field above.
     validations:
       required: true
   - type: input
