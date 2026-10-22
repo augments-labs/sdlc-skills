@@ -23,7 +23,7 @@ belongs under `## Limitations`.
 
 ### F-{{n}} — {{fixed | not fixed | partly fixed | withdrawn | upheld}}
 
-- Evidence: {{path:line in the fix diff, and what it now does}}
+- Evidence: {{path:line in the fix diff and what it now does; for withdrawn or upheld, the evidence weighed and why it holds or fails}}
 - Still open: {{for `partly fixed`, `not fixed`, or `upheld`, the part that is not addressed; else none}}
 - Blast radius: {{the callers, contracts, or covered paths this fix touches, and the one check you ran on each}}
 
