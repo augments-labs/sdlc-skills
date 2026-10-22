@@ -40,6 +40,10 @@ Policy checks (`warn` by default, `fail` with --strict):
                             no `: `, no ` #`, and no leading * & [ { # ! % @ `
   frontmatter-fields        frontmatter keys are only name, description,
                             license, compatibility, metadata, allowed-tools
+  body-bytes                the body is under 19000 bytes: a harness may cut
+                            a body it re-attaches after summarizing the
+                            conversation; the smallest cut observed is about
+                            20000 characters
   compatibility-length      compatibility, when present, is at most 500 chars
   description-rules         the description carries no `Fires on` list and none of
                             exact candidate, material intent, owning phase
@@ -261,6 +265,12 @@ KEYS
   [ "$body_lines" -le 500 ] || finding fail body-lines "body is $body_lines lines; the house ceiling is 500"
   tokens="$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | estimate_tokens)"
   [ "$tokens" -lt 5000 ] || finding fail body-tokens "body is ~$tokens tokens; the house ceiling is 5000"
+  # A harness may cut a body it re-attaches after summarizing the conversation;
+  # the steps after the cut are then never seen again. The smallest cut
+  # observed is about 20000 characters. Bodies are nearly all ASCII, so bytes
+  # stand in for characters, with a margin.
+  body_bytes="$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -c | tr -d ' ')"
+  [ "$body_bytes" -lt 19000 ] || policy body-bytes "body is $body_bytes bytes; the house ceiling is 19000, under the smallest re-attachment cut observed (about 20000 characters)"
 
   # --- presentation -------------------------------------------------------------
   # The guidance asks for concise, stepwise instructions an agent can scan, and

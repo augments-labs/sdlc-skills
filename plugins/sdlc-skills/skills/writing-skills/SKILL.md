@@ -31,7 +31,11 @@ Read `references/reference.md` when unsure how much detail a form needs:
    characters, no word cap, no `Fires on` list, no summary of the steps. Quote
    it. A description that still carries a `Fires on` list predates this rule;
    rewrite it to this shape when you edit that skill.
-2. **House limits: at most 500 body lines and under 5000 estimated tokens.**
+2. **House limits: at most 500 body lines, under 5000 estimated tokens, and
+   under 19,000 bytes.** A harness may cut a body it re-attaches after it
+   summarizes the conversation, and the steps after the cut are lost; 19,000
+   bytes keeps a body under the smallest cut observed, about 20,000
+   characters.
    Most capability skills land
    near 80–120 lines; a body past ~200 should justify itself. Intent and
    procedure only; cut marketing ("why this matters"). A worked example in the
