@@ -24,13 +24,15 @@ adapter_install() { # $1 plugin source
 # processed from the installed copy, but not their names. The names are read
 # from that copy and accepted only when the two counts agree, so a skill that
 # landed on disk but that Antigravity would not load fails here. The rules file
-# that carries the router nudge must have been copied too.
+# that carries the router nudge must have been copied too. The count line reads
+# `skills : N processed` on 1.3.x and `skills N · agents 0 · ...` on 1.4.x; both
+# shapes are accepted.
 adapter_component_inventory() { # $1 plugin dir (unset: the install is a copy)
   local installed="$harness_home/.gemini/config/plugins/sdlc-skills" processed names
   [ -f "$installed/rules/AGENTS.md" ] || {
     echo "no rules/AGENTS.md in the installed plugin — the router nudge would not load" >>"$errlog"; return 1; }
   processed="$(agy plugin validate "$installed" </dev/null 2>>"$errlog" |
-    sed 's/\x1b\[[0-9;]*m//g' | sed -nE 's/.*skills[[:space:]]*:[[:space:]]*([0-9]+) processed.*/\1/p')"
+    sed 's/\x1b\[[0-9;]*m//g' | sed -nE 's/.*skills[[:space:]]*:?[[:space:]]*([0-9]+)([[:space:]]+processed|[[:space:]]+·|[[:space:]]*$).*/\1/p' | head -n 1)"
   names="$(find "$installed/skills" -mindepth 2 -maxdepth 2 -name SKILL.md -printf '%h\n' 2>/dev/null |
     sed 's|.*/||' | sort -u)"
   if [ "${processed:-0}" -ne "$(printf '%s\n' "$names" | grep -c .)" ]; then
