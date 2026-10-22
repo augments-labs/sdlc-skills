@@ -20,8 +20,9 @@ catalogue's triggers, not by confidence.
 2. **Load the body, not the memory of it.** A description or an announced skill
    loads nothing; a current body already in context needs no reload. A body
    the harness re-attached after it summarized the conversation is current
-   only if it ends where the file ends: if it stops early, or ends in a
-   truncation marker, reload it before acting on it.
+   only if it is whole: if it stops mid-sentence or mid-step, lacks a section
+   its own steps cite, ends in a truncation marker, or you cannot tell, reload
+   it before acting on it.
 3. **State which skill you are using and why, then follow it.** Set one aside
    only when its own scope or skip conditions show it does not fit. When no
    trigger matches, proceed without a skill and invent no workflow.
