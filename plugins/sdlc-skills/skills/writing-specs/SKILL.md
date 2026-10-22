@@ -72,7 +72,7 @@ its sections.
 3. Present:
 
    ```text
-   Spec {{path}} — version {{identity (per template)}}
+   Spec {{absolute path}} — version {{identity (per template)}}
    Requirements: {{n}}  Open questions: {{n}}  Out of scope: {{n}}
 
    1. Approve and hand off to design

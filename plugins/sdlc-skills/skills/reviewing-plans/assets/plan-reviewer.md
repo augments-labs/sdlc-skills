@@ -29,12 +29,19 @@ style nits.
 1. **Traceability:** every requirement and accepted risk gate has one owning
    task or phase; every task traces to a requirement, risk, or necessary gate.
 2. **Correctness:** paths, interfaces, types, and commands match current
-   evidence and exact artifact revisions.
+   evidence and exact artifact revisions. Where a task tells things apart by
+   the shape of a string (a key, slug, name, or path used as an identity),
+   find two different inputs that produce the same string; a collision no
+   task test separates is a finding.
 3. **Decomposition:** bounded tasks are independently evaluable; large
    homogeneous work uses a stable inventory and exclusive shards.
 4. **Consistency:** every Consumes resolves to a Produces under the same name
    and type; dependencies and phase entries are acyclic and complete; files,
-   data, effects, evaluators, and external state are exclusive or ordered.
+   data, effects, evaluators, and external state are exclusive or ordered;
+   every domain fact more than one task consumes (a type, a set of kinds and
+   where their traits live, an error crossing a module boundary) has the one
+   owner the index's Architecture names, and a fact two tasks each define is
+   a finding.
 5. **Assurance:** Evaluators reference the accepted thresholds, environments,
    cadence, and failure response without weakening them.
 6. **Control:** trial, phase entry/exit, pause/abort, repeated-failure re-audit,
