@@ -1,0 +1,95 @@
+name: Skill behavior report
+description: A skill made an agent do the wrong thing, skip a gate, or stop where it should have continued.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before filing**, search open **and** closed issues and pull requests. If the problem is already there, add your report as a comment on it instead of opening a new issue.
+
+        This repository runs no live agent, so a behavior report is weighed by the record behind it: a transcript or a `diagnosing-a-session` report, then an eval record, then a reading of the skill text. Say which one you have.
+
+        Never paste a credential, token, connection string, or personal data, not even inside a quoted prompt. Write the kind of value and where it sat instead, as `diagnosing-a-session` does.
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Prior reports
+      options:
+        - label: I searched open and closed issues and pull requests, and this is not already reported.
+          required: true
+  - type: textarea
+    id: filer
+    attributes:
+      label: Who is filing this report?
+      description: Who you are, and whether you file on behalf of someone else. If an agent files this, name the human who asked for it, quote their instruction as closely as you can, and say whether they wrote or approved the Summary below.
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Under 200 words, in plain words. What went wrong, and what should have happened instead. If an agent files this, the human who asked for it writes or approves this section, and the agent says so in the field above.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: We assume an agent produced the session. Say which one and where it ran. Fill every row.
+      value: |
+        | Field | Value |
+        | --- | --- |
+        | sdlc-skills version or commit | |
+        | Harness + version | |
+        | Model + exact id | |
+        | Installed plugins (name and version of each) | |
+        | OS + shell | |
+    validations:
+      required: true
+  - type: input
+    id: skill
+    attributes:
+      label: Skill and step
+      description: The skill as the agent invoked it, and the step or rule it got wrong. Write `using-sdlc-skills` when the problem is that no skill, or the wrong skill, was loaded.
+      placeholder: e.g. executing-plans, Step 4.5; or test-driven-development was never invoked
+    validations:
+      required: true
+  - type: textarea
+    id: opening-prompt
+    attributes:
+      label: Opening prompt
+      description: The exact prompt that started the session, or the exact turn where the skill should have applied. Routing depends on the words used, so paraphrase changes the report.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what should have happened
+      description: The specific action the agent took and the action the skill text asked for. Quote the skill line you expected it to follow.
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence-kind
+    attributes:
+      label: Evidence behind this report
+      description: Pick the strongest you have. A report argued only from the skill text is still welcome; it is read as a contract gap, not as an observed failure.
+      options:
+        - A transcript or a diagnosing-a-session report, with line citations
+        - An eval record from sdlc-skills-evals (results path and pinned plugin commit)
+        - Observed in a session, but no transcript kept
+        - Reasoned from the skill text, no session
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Attach or paste the transcript excerpt, the Findings and Timeline sections of the diagnosis report, or the eval results path with the pinned plugin commit. Redact sensitive values by kind and line.
+  - type: textarea
+    id: without-plugin
+    attributes:
+      label: Does it happen without sdlc-skills?
+      description: Some reported behavior is the harness's or the model's, not a skill's. Say what you ran without the plugin and what happened. "Not tried" is an honest answer.
+    validations:
+      required: true

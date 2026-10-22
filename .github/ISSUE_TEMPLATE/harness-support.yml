@@ -1,0 +1,65 @@
+name: Harness support request
+description: Ask for the skills to load and activate in a coding agent, IDE, or CLI that has no adapter yet.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before filing**, search open **and** closed issues and pull requests for the harness. Check `docs/reference/agents.md` for the adapters that already exist, and `docs/guides/other-agents.md` for the manual setup that works without one.
+
+        A working adapter loads the entry skill at session start so that skills fire without the user asking. Files that are present but never invoked are not an integration, so the questions below are about the harness's session-start mechanism.
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Prior requests
+      options:
+        - label: I searched open and closed issues and pull requests for this harness.
+          required: true
+  - type: textarea
+    id: filer
+    attributes:
+      label: Who is filing this request?
+      description: Who you are, and whether you file on behalf of someone else. If an agent files this, name the human who asked for it, quote their instruction as closely as you can, and say whether they wrote or approved the Summary below.
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Under 200 words, in plain words. Which tool you work in and what you want the skills to do there. If an agent files this, the human who asked for it writes or approves this section, and the agent says so in the field above.
+    validations:
+      required: true
+  - type: input
+    id: harness
+    attributes:
+      label: Harness name, version, and link
+      placeholder: e.g. Example Code 1.4.0, https://example.com/docs
+    validations:
+      required: true
+  - type: textarea
+    id: mechanism
+    attributes:
+      label: How does it load skills and run something at session start?
+      description: Link the docs for its plugin, extension, hook, or instruction-file mechanism. Say whether it can run a command or inject text when a session opens, and whether it follows the Agent Skills standard (a SKILL.md with frontmatter).
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you tried
+      description: The manual setup you attempted, from `docs/guides/other-agents.md` or your own, and what happened. If you got a skill to activate, paste the clean-session transcript for the prompt `Fix the failing login test`. Redact any credential, token, or personal data by kind.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        | Field | Value |
+        | --- | --- |
+        | OS + shell | |
+        | Model + exact id | |
+        | Other plugins or extensions installed | |
+    validations:
+      required: true
