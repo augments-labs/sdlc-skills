@@ -36,6 +36,13 @@ description: "Runs the checks and reads their output before any claim that work 
    missing, only planned, blocked, or unexplained makes the claim pending
    before anything runs. If the requirement names a person who must accept
    the work, read `references/manual-acceptance.md` before its row.
+
+   A check counts for a changed file only if its configuration includes that
+   file. Add a row for every project check whose configured scope includes a
+   changed path, even one nothing listed. If that check already reports errors
+   on the base, run it there too and compare the two error lists instead of
+   expecting zero: an error the base lacks fails the row, and an inherited one
+   stays listed and limits the claim to "no new errors".
 4. Capture the state the checks will run on; add `--committed` when that
    state is a commit:
 
@@ -59,6 +66,13 @@ description: "Runs the checks and reads their output before any claim that work 
    not have failed for this code, say so and do not count its green;
    repairing the task's own test belongs to `test-driven-development`, and
    repairing a project or battery gate to `verification-strategy`.
+
+   If a reading is zero, empty, or "no errors", count it only after the same
+   probe, run the same way, returned a hit on a known-positive input. A
+   surface the run never exercised is unverified, not clean: name it in the
+   row. If the tool that acted reports a value (rows written, a file saved, a
+   setting applied), count it only once you read it back through an
+   independent path.
 4. Re-check the state with the flags used at capture:
 
    ```bash
@@ -112,6 +126,10 @@ description: "Runs the checks and reads their output before any claim that work 
 - Never change the state under check with the bookkeeping meant to prove it.
 - A check never seen to fail for the defect it guards is suspect. Read
   `references/hollow-verification.md` before citing its green.
+- An empty or zero result is a claim about the instrument until a positive
+  control shows it can see the population in the environment the system runs
+  in. Output you produced by hand shows you can run the command, not that the
+  system acted. Read `references/hollow-verification.md` before citing either.
 - A check silenced is not a check passed. Suppressing a finding, lowering a
   strictness setting, or excluding a path changes what ran, not what is true;
   the claim that check supported is now unproven.
