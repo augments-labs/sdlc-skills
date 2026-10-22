@@ -89,7 +89,9 @@ as its step runs.
 2. Pick the mechanism, taking the first that applies: a user instruction; then
    project guidance; then a harness-native worktree command, run with the name
    above and HEAD at the proven base, after which skip to Step 4; then the
-   steps below.
+   steps below. A harness-native command acts on the session's own
+   repository: if the work is in another repository, skip it, run the steps
+   below from that repository, and say why the native command was not used.
 3. Inside a submodule, stop here: create an owned branch in the submodule and
    write an explicit plan for the parent gitlink, and never run the rest of
    Step 3 from the superproject's paths. Otherwise choose the directory and
@@ -159,7 +161,8 @@ authority to push, publish, or integrate.
 
 1. After each coherent piece a reviewer could accept or reject separately:
    **REQUIRED SUB-SKILL:** invoke `verification-before-completion`, run its
-   smallest real check, and commit locally under the recorded authority.
+   smallest real check, and commit locally under the recorded authority,
+   staging only the paths this task changed.
 2. When the work on the branch is ready for integration: **REQUIRED
    SUB-SKILL:** invoke `finishing-a-branch` with the recorded workspace, base,
    and ownership. Run no push, publish, integrate, discard, delete, history
@@ -176,9 +179,9 @@ authority to push, publish, or integrate.
 
 ## Gotchas
 
-- Read `references/checkpointing.md` when the task will make more than one
-  commit: it defines the unit of a checkpoint, and what `git commit` does not
-  grant.
+- Read `references/checkpointing.md` before the first commit: it defines the
+  unit of a checkpoint, how to stage one by path, and what `git commit` does
+  not grant.
 - A check written during planning lands on whatever branch the shared
   checkout is on.
 - A policy line that okays the current checkout grants only that; local
