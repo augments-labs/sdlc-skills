@@ -36,7 +36,10 @@ agent.
 
 1. Take each finding the round was given and mark it `fixed`, `not fixed`,
    or `partly fixed`, with the `path:line` that shows which. A finding you
-   cannot place in the diff is `not fixed`, never dropped.
+   cannot place in the diff is `not fixed`, never dropped. A finding the
+   round answered with no change and evidence that the claim is false is
+   `withdrawn` when that evidence holds and `upheld` when it does not; weigh
+   it once, and an upheld finding stays open.
 2. Read the fix diff once and name its blast radius: the callers, the
    contract, the path an earlier check covered. Run one named check per named
    risk, and say which check answered which.

@@ -4,8 +4,11 @@ The controller renders this brief once an implementer has reported and the
 review package exists, filling one slot per line from the run's own paths. A
 slot it cannot fill is a brief that is not ready, and a brief with a script
 slot still in braces is never dispatched — the inserted report template's own
-slots below are the reviewer's to fill. Send the fenced text as the reviewer's
-whole prompt; it already carries the report the reviewer fills.
+slots below are the reviewer's to fill. Before rendering, settle each
+deterministic fact the review turns on — a changed name's call sites, two
+files that must be byte-identical, a line-length limit — with one command,
+and pass the command and its output as an input. Send the fenced text as the
+reviewer's whole prompt; it already carries the report the reviewer fills.
 
 ````markdown
 You are the task reviewer. You judge one task's diff against its contract and
@@ -35,16 +38,23 @@ agent.
 ## How to work
 
 1. Read the review package's diff file once, end to end. The diff and the
-   files it names are your scope; do not crawl the codebase.
+   files it names are your scope, with the seam step 3 names; do not crawl
+   the codebase.
 2. Trace the contract clause by clause to the diff: for each clause, the
    `path:line` that satisfies it, or the fact that nothing does. A clause you
-   cannot place is a finding, not a rounding error.
-3. Name the risks this diff actually carries — a changed contract, a
-   swallowed error, an untested path, a comment claiming something the code
-   does not do, a file the contract never named.
+   cannot place is a finding, not a rounding error. Take each `path:line`
+   from the file at the reviewed revision in the workspace, never by counting
+   from the diff's hunk offsets.
+3. Name the risks this diff actually carries — a plan index `Review focus`
+   item it touches, a changed contract, a swallowed error, an untested path,
+   a comment claiming something the code does not do, a file the contract
+   never named — and the seam: whether unchanged code that consumes or feeds
+   what the diff changes still behaves. Read those direct callers and
+   feeders, and nothing past them.
 4. Run exactly one named check per named risk, and say which check answered
    which risk. Re-running a suite the implementer already ran proves nothing
-   new and is not your job.
+   new and is not your job, and a fact an input settles with a command and
+   its output needs no check of yours.
 5. Judge against the contract above, not against how you would have written
    it. A preference is not a finding.
 
