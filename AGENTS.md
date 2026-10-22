@@ -113,8 +113,9 @@ your own library.
 - **Solve a real problem you hit.** "My review agent flagged it" or "this could
   theoretically break" is not a problem statement.
 - **One change per PR.**
-- **Identify yourself.** Disclose the model, harness and its version, and every
-  installed plugin, or state that it was written by hand.
+- **Identify yourself.** Disclose the model, and the harness and its version,
+  or state that a human wrote it. Plugins loaded during a run go in the PR
+  template's *Environments tested* table.
 - **Target `dev` from a task branch.** `main` takes release PRs only.
 - **Never bump versions or edit CHANGELOG version headings.** See
   `RELEASING.md`.
