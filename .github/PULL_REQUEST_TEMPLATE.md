@@ -45,8 +45,8 @@ considered nothing else, say so; know that a reviewer reads that as a flag. -->
 
 ## Is this one change?
 
-<!-- If the PR carries more than one unrelated change, stop and split it.
-If the edits look separable but depend on each other, name the dependency. -->
+<!-- Yes or no. If the edits look separable but depend on each other, name
+the dependency. -->
 
 ## Does it belong in core?
 
