@@ -113,8 +113,9 @@ your own library.
 - **Solve a real problem you hit.** "My review agent flagged it" or "this could
   theoretically break" is not a problem statement.
 - **One change per PR.**
-- **Identify yourself.** Say whether a human, an agent, or both wrote the
-  change; for an agent, disclose the model, and the harness and its version.
+- **Identify yourself.** Say whether a human, an agent, or both orchestrated
+  the change, and which agent wrote it, if any: disclose its model, and the
+  harness and its version.
   Plugins loaded during a run go in the PR template's *Environments tested*
   table.
 - **Target `dev` from a task branch.** `main` takes release PRs only.

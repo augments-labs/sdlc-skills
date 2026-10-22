@@ -98,7 +98,7 @@ body:
       value: |
         | Field | Value |
         | --- | --- |
-        | Written by (hand / agent) | |
+        | Orchestrated by (human / agent / both) | |
         | sdlc-skills version or commit | |
         | Harness + version | |
         | Model + exact id | |
