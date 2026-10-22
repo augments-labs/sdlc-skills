@@ -19,7 +19,7 @@ body:
     id: filer
     attributes:
       label: Who is filing this request?
-      description: Who you are, and whether you file on behalf of someone else. If an agent files this, name the human who asked for it and quote their instruction as closely as you can.
+      description: Who you are, and whether you file on behalf of someone else. If an agent files this, name the human who asked for it, quote their instruction as closely as you can, and say whether they wrote or approved the Summary below.
     validations:
       required: true
   - type: textarea
