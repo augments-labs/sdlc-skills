@@ -17,8 +17,9 @@ prints the one-line JSON startup record:
     bash scripts/start-server.sh --root .sdlc-skills --entry {{page}}.html
 
 Stop it with `bash scripts/stop-server.sh {{pid}}`, using the `pid` from
-that record (the record's `stop` field holds the equivalent kill command),
-or let the watchdog or idle timeout end it. Options: --help
+that record; the wrapper checks that the PID is this preview before it
+sends the record's `stop` signal. Or let the watchdog or idle timeout end
+it. Options: --help
 """
 
 import argparse

@@ -150,6 +150,6 @@ Close only when:
 - every owner-accepted corrective gate has targeted fail-then-pass evidence;
 - every owner-accepted control is deployed/enforced in its real surface;
 - each effectiveness review is effective, or ineffective/inconclusive work was
-  reopened/superseded or received direct residual-risk closure;
+  reopened or received direct residual-risk closure;
 - artifact access/retention/cleanup obligations and authorities are reconciled.
 ```

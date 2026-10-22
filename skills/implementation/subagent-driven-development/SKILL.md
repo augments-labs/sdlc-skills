@@ -212,8 +212,8 @@ reapproval, end the turn. A mode change is never a ruling either: it takes the
 7. Go to Step 4 with the next ready task. Do not report, ask, or pause at
    `done`. When every task is `done`, or `cancelled`/`superseded` with its
    approved ledger decision, go to Step 6. If no ready task can advance, or a
-   high-risk entry gate has not passed, report the unresolved states and
-   their blockers and end the turn.
+   high-risk entry gate has not passed and no ready prerequisite task builds
+   it, report the unresolved states and their blockers and end the turn.
 
 ## Step 6: Finish the plan
 

@@ -51,7 +51,7 @@ no secret into the report — name where it lives instead.
 4. Compare only alternatives with equal guarantees and lifecycle risk. Include
    transitive maintenance, upgrade, operational, security, and test ownership;
    line reduction alone is not evidence.
-5. Disposition each surface as `keep`, `simplify`, `decision`, or `investigate`.
+5. Classify each surface as `keep`, `simplify`, `decision`, or `investigate`.
    Unknown dynamic/configured/external use is `investigate`, never removable.
 
 ## Output

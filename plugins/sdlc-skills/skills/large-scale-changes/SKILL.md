@@ -97,10 +97,11 @@ an interface other teams call, and never redesigns structure.
    `verification-before-completion` and `requesting-code-review` on the
    shard's revision, then `finishing-a-branch` with that answer as the
    direct instruction for its push-and-PR transition; do not ask again per
-   shard while the shard's revision and PR title/body match what the
-   manifest recorded when the question was asked. Write the revision, the
-   link, and the state in the manifest. A shard whose revision or payload
-   changes afterwards (Step 5) is asked again by `finishing-a-branch`.
+   shard while the shard's revision, remote/ref, and PR title/body match
+   what the manifest recorded before the question was asked; fill those
+   three columns for every shard first. Write the link and the state in the
+   manifest. A shard whose revision or payload changes afterwards (Step 5)
+   is asked again by `finishing-a-branch`.
 
 ## Step 5: Keep shards current until the last one merges
 

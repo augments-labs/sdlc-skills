@@ -86,8 +86,8 @@ author. Nothing is posted until the user chooses, and nothing is ever merged.
    the Step 1.5 ledger. Its continuation is `reviewing-a-pr` Step 2.4 as the
    caller awaiting the verdict. Its terminal contract's effect boundary is
    that no check, missing ledger row, security check, reproduction probe, or
-   reviewer test runs PR code, and that each becomes a
-   `not run: PR code not executed` row or a Limitation. Its external gate
+   reviewer test runs PR code, and that each becomes a `pending` row noting
+   `not run: PR code not executed`, or a Limitation. Its external gate
    inputs are the base revision's check definitions, flagging each one or
    check script the PR changes (Step 1.5). Its artifacts go beside the ledger.
 3. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` with that request.
