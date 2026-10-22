@@ -102,6 +102,6 @@ body:
         | sdlc-skills version or commit | |
         | Harness + version | |
         | Model + exact id | |
-        | Installed plugins | |
+        | Plugins loaded (name and version of each, or none) | |
     validations:
       required: true

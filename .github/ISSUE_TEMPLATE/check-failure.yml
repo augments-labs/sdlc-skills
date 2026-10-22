@@ -70,7 +70,7 @@ body:
         | OS + shell, with the shell's version | |
         | Harness + version (n/a if you ran it from a plain shell) | |
         | Model + exact id (n/a if no agent ran it) | |
-        | Installed plugins (name and version of each, or none) | |
+        | Plugins loaded (name and version of each, or none) | |
         | Installed through (plugin marketplace, clone, other) | |
     validations:
       required: true
