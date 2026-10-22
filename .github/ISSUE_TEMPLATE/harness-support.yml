@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Before filing**, search open **and** closed issues and pull requests for the harness. Check `docs/guides/other-agents.md` for the adapters that already exist and the manual setup that works without one.
+        **Before filing**, search open **and** closed issues and pull requests for the harness. Check `docs/reference/agents.md` for the adapters that already exist, and `docs/guides/other-agents.md` for the manual setup that works without one.
 
         A working adapter loads the entry skill at session start so that skills fire without the user asking. Files that are present but never invoked are not an integration, so the questions below are about the harness's session-start mechanism.
   - type: checkboxes
@@ -47,7 +47,7 @@ body:
     id: tried
     attributes:
       label: What you tried
-      description: The manual setup you attempted, from `docs/guides/other-agents.md` or your own, and what happened. If you got a skill to activate, paste the clean-session transcript for the prompt `Fix the failing login test`.
+      description: The manual setup you attempted, from `docs/guides/other-agents.md` or your own, and what happened. If you got a skill to activate, paste the clean-session transcript for the prompt `Fix the failing login test`. Redact any credential, token, or personal data by kind.
       render: text
     validations:
       required: true

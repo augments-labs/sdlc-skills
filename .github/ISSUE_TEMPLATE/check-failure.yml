@@ -33,14 +33,14 @@ body:
     id: script
     attributes:
       label: Script or check
-      placeholder: e.g. skills/common/writing-skills/scripts/check-skill.sh, or hooks/session-start
+      placeholder: e.g. skills/common/writing-skills/scripts/check-skill.sh, or scripts/sh/session-start.sh
     validations:
       required: true
   - type: textarea
     id: command
     attributes:
       label: Exact command
-      description: As typed, from the repository root or the directory you ran it in. Say which.
+      description: As typed, from the repository root or the directory you ran it in. Say which. Redact any credential, token, or personal data by kind.
       render: bash
     validations:
       required: true
@@ -68,7 +68,9 @@ body:
         | --- | --- |
         | sdlc-skills version or commit | |
         | OS + shell, with the shell's version | |
-        | Harness + version (for a hook or adapter) | |
+        | Harness + version (n/a if you ran it from a plain shell) | |
+        | Model + exact id (n/a if no agent ran it) | |
+        | Installed plugins (name and version of each, or none) | |
         | Installed through (plugin marketplace, clone, other) | |
     validations:
       required: true

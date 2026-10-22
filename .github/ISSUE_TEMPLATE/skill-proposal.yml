@@ -5,9 +5,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Before filing**, search open **and** closed issues and pull requests. Some proposals were built differently, and some were declined with a reason.
+        **Before filing**, search open **and** closed issues and pull requests. A proposal may already have been built differently, or declined with a reason.
 
-        A proposal is accepted when it names the failure it answers. "It could theoretically break" or "my review agent flagged it" is not a failure. "No skill is needed here" is a valid outcome.
+        A proposal is considered only when it names the failure it answers. "It could theoretically break" or "my review agent flagged it" is not a failure. "No skill is needed here" is a valid outcome.
   - type: checkboxes
     id: search
     attributes:
