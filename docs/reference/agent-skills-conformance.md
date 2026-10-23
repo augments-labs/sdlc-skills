@@ -46,6 +46,7 @@ valid against the standard and still fail a house rule here.
 | --- | --- |
 | Body lines | At most 500; longest is 321 (64% of ceiling) |
 | Estimated body tokens | Under 5000 by the skill checker, estimated per word, number, and symbol; largest is ~4566 |
+| Body bytes | `body-bytes` policy check: under 19,000, the smallest size at which a harness has been seen to cut a body it re-attaches after a context summary; largest is 18,958 |
 | Typical body size | Aim for about 80 to 120 lines. A longer discipline body needs behavioral evidence that justifies it |
 | Presentation | The checker warns on long stretches of undivided prose |
 | Supporting paths | They resolve inside the installed skill, and direct references stay shallow |
