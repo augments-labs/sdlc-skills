@@ -1,6 +1,6 @@
 ---
 name: diagnosing-a-session
-description: "Reconstructs what an agent session actually did from its recorded transcript and shows where it went wrong as a written report and a local trace page, citing the transcript line behind every claim. Use when the user asks why a session did something, what happened earlier in a run, why an agent skipped a step, took an action nobody asked for, or lost track of the task, or when they want a session transcript or agent run inspected. Skip a defect in the software being built and a failure still reaching users."
+description: "Reconstructs what an agent session did from its recorded transcript and shows where it went wrong. Use when the user asks why a session did something, what happened earlier in a run, why an agent skipped a step, took an action nobody asked for, or lost track of the task, or wants a session transcript or agent run inspected. Skip defects in the software being built and failures still reaching users."
 ---
 
 # Diagnosing a Session

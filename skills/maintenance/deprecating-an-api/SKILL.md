@@ -1,6 +1,6 @@
 ---
 name: deprecating-an-api
-description: "Retires a function, method, class, endpoint, response field, CLI flag, config key, event, or message type that other code or other teams call, so no caller breaks before the owner decides. Use when removing, replacing, renaming, or sunsetting something others call, when a removal date or sunset is being set, or when the user says deprecate this, retire this, or stop supporting this. Skip an interface whose every caller is in this repository and found by a search, and a stored data shape, which changing-a-live-schema owns."
+description: "Retires a public function, method, class, endpoint, response field, CLI flag, config key, event, or message type without breaking callers. Use when removing, replacing, renaming, or sunsetting something others call, setting a removal date or sunset, or when the user says deprecate this, retire this, or stop supporting this. Skip interfaces whose callers are all inside this repository and stored data shapes, which changing-a-live-schema owns."
 ---
 
 # Deprecating an API

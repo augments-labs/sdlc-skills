@@ -32,6 +32,7 @@ walks through the story above stage by stage.
 ## Table of contents
 
 - [How it works](#how-it-works)
+- [Engineering constraints and context rot](#engineering-constraints-and-context-rot)
 - [Installation](#installation)
   - [Claude Code](#claude-code)
   - [Codex CLI](#codex-cli)
@@ -82,6 +83,44 @@ Two things are worth knowing up front:
   is invoked. A skill can steer an agent toward running the tests, but only
   the tests can tell you the code works. Keep your CI, reviews, and release
   controls in place.
+
+## Engineering constraints and context rot
+
+A common criticism of repositories like this one is that recent models are
+strong enough on their own, so shipping dozens of skills only wastes the
+context window. That criticism treats software engineering as free-form code
+generation. Models are trained on the open internet, where the quickest path to
+a plausible diff wins. Real engineering is defined by constraints: working in
+an isolated checkout, seeing a test fail before writing the fix, phasing a live
+schema change so rollback still works, and stopping at the decisions that
+belong to you. Skipping those constraints saves tokens now and costs you later
+when an unreviewed assumption or a broken deploy reaches production.
+
+The context-window cost, however, is a real problem. When a library has this
+many skills, every description loaded at session start and every skill loaded
+during a task shares the same window as your code and tool output. As a session
+grows, earlier instructions lose weight and the agent starts cutting corners.
+People call this context rot. Tackling it takes work in three places:
+
+1. **In the skill library.** Keep skill descriptions short so they only state
+   when a skill applies. Move templates and detailed reference material into
+   separate files (`assets/`, `references/`) that the agent reads only when a
+   step needs them. Replace long prose checks with small scripts (`scripts/`),
+   keep state on disk (`.sdlc-skills/`), and cap the word count of every skill
+   and workflow chain.
+2. **In the agent harness.** Unload a planning skill once its phase is done,
+   leave a short record on disk, and run implementation tasks in fresh
+   subagents so planning history does not sit in the coding window.
+3. **In the model and runtime.** Keep standing rules separate from the rolling
+   chat history in the model itself, and enforce preconditions in the tool
+   runner instead of repeating reminders in the prompt.
+
+`sdlc-skills` applies the library-level fixes directly, and uses subagents
+where your harness supports them (`subagent-driven-development`). Every skill
+and workflow chain is checked against a word budget
+(`scripts/sh/token-budget.sh`), state lives on disk under `.sdlc-skills/`, and
+once a plan is approved you can hand it to a fresh session or to subagents so
+implementation starts with a clean context window.
 
 ## Installation
 

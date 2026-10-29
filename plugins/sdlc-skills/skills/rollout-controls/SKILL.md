@@ -1,6 +1,6 @@
 ---
 name: rollout-controls
-description: "Builds the switch and the signals a controlled rollout needs into a change before it ships: a flag or kill switch that defaults off and guards every path the change adds, and the telemetry the rollout's thresholds read. Use when the project's release policy, the plan, or the user calls for a feature flag, kill switch, canary, or staged rollout, or when release readiness blocked a change on a missing rollout policy or missing rollout signals. Skip a change nobody asked to stage, and skip a migration or high-risk transformation whose own contract already owns its rollout."
+description: "Adds the feature flag or kill switch and threshold signals a controlled rollout needs. Use when release policy, the plan, or the user calls for a feature flag, kill switch, canary, or staged rollout, or when release readiness blocks on missing rollout policy or rollout signals. Skip changes nobody asked to stage and migrations or high-risk transformations whose own contract owns rollout."
 ---
 
 # Rollout Controls

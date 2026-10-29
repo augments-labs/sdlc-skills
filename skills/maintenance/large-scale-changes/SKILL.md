@@ -1,6 +1,6 @@
 ---
 name: large-scale-changes
-description: "Applies one mechanical change across many files, packages, or owners with a script, and splits the result into shards each owner can review, merge, and revert alone. Use when writing or running a codemod, or when the user says migrate every call site, rename this everywhere, bump X across all packages, roll out this lint rule or config everywhere, or split this into PRs per owner. Skip a change that fits one reviewable PR, and skip restructuring code whose shape is the problem, which refactor-architecture owns."
+description: "Applies a mechanical change across many files, packages, or owners with a script and per-owner shards. Use when writing or running a codemod, or when the user says migrate every call site, rename this everywhere, bump X across all packages, roll out this lint rule or config everywhere, or split this into PRs per owner. Skip changes that fit one reviewable PR and structural redesigns, which refactor-architecture owns."
 ---
 
 # Large-Scale Changes

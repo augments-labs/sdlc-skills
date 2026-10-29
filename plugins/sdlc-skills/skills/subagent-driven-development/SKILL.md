@@ -1,6 +1,6 @@
 ---
 name: subagent-driven-development
-description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, when the user asks for subagents or workers to do the building, or when the user replies choosing delegated mode. Skip a lone task with no plan directory."
+description: "Runs an approved plan's tasks through fresh subagents with controller-owned review and gates. Use when an approved plan is built by dispatched workers rather than in this session, when the user asks for subagents or workers to build it, or when the user chooses delegated mode. Skip a lone task with no plan directory."
 ---
 
 # Subagent-Driven Development
@@ -22,7 +22,7 @@ they may not take. This skill never decides what happens to the branch.
 
 ## Available scripts
 
-- **`scripts/plan-version.sh`** — prints the plan's version.
+- **`scripts/plan-version.sh`** — prints the plan's version, or with `--check-contract` and `--verify` checks task-contract invariants and the decision ledger.
 - **`scripts/sdd-workspace.sh`** — opens the plan-scoped ledger and re-checks
   that it still binds to the plan. Run it before the first dispatch, and again
   after every compaction.
@@ -33,27 +33,22 @@ they may not take. This skill never decides what happens to the branch.
 
 ## Step 1: Verify approval and mode
 
-1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
-   `External decision ledger` (a ledger: add to it, never rewrite it). Read
-   every decision row for this index whose `Identity` is the printed
-   version, in ledger order: a decision row leaves `Section` empty, and an
-   execution row carries a task ID there. The last of them must be the row
-   whose `Bound evidence` names the `Approval rule` owner's approval; a
-   later row that rejects, cancels, or supersedes this version closes it.
-   The index cannot approve itself.
-2. If there is no such row, if a later row closed the version, or if the
-   script fails, stop and name the missing version, the row that closed it,
-   or the script's error; never substitute a version read from the index.
-3. If that row records no mode, ask `assets/mode-question.md` before any
-   workspace action, and stop. A request for workers made before approval is
-   not the answer; rendering the question collects it.
-4. If that row says `mode: inline`, stop; `executing-plans` owns it, and only
-   the `Approval rule` owner's direct answer changes the mode.
-5. If that row says `mode: delegated` and the index has phases or shards,
-   neither this skill nor `executing-plans` can run it: ask the
-   `Approval rule` owner for a direct inline answer, append it as a new
-   approved row for this version in the shape `writing-plans` Step 4.5 gives,
-   with `mode: inline`, and stop. Step 1.1 reads the last decision row's mode.
+1. Run `bash scripts/plan-version.sh --verify` on the plan directory to verify
+   the plan's version against the `External decision ledger` (a ledger: add to
+   it, never rewrite it) and task-contract invariants. The index cannot approve
+   itself; the last decision row (`Section` empty) for the printed version must
+   record the `Approval rule` owner's approval and not be closed by a later row.
+2. If `--verify` fails, stop and name the missing version, the row that closed
+   it, or the script's error; never substitute a version read from the index.
+3. If `mode=unset`, ask `assets/mode-question.md` before any workspace action,
+   and stop. A request for workers made before approval is not the answer;
+   rendering the question collects it.
+4. If `mode=inline`, stop; `executing-plans` owns it, and only the `Approval
+   rule` owner's direct answer changes the mode.
+5. If `mode=delegated` and `phases_or_shards=yes`, neither this skill nor
+   `executing-plans` can run it: ask the `Approval rule` owner for a direct
+   inline answer, append it as a new approved row for this version in the shape
+   `writing-plans` Step 4.5 gives, with `mode: inline`, and stop.
 
 ## Step 2: Open the run
 
@@ -80,21 +75,20 @@ they may not take. This skill never decides what happens to the branch.
    this run's dispatches, rulings, and findings. Task states go to the
    index's `External execution ledger`, one row per state as
    `artifact-layout.md` maps an execution row; the decision ledger stays where the index points.
-4. Check the plan contract before the first dispatch: every `Consumes` names
-   an earlier task's exact `Produces`; every `Depends on` names a task that is
-   not cancelled; no task edits its own judge unless its approved `Evaluator
-   identity/owner` permits the exact change; `Implementation disciplines` is
-   filled; a UI task's `Applicable visual references` match the index's
-   `Selected visual references` field for field, and each freshness evaluator
-   runs now. If any of these fails, report the field and task; dispatch
-   nothing under an invalid contract.
+4. Confirm the plan contract before the first dispatch from Step 1's
+   `--verify` output (`Consumes`, `Depends on`, `Implementation disciplines`,
+   and `overlap=` lines): write every `overlap=` pair claiming the same file
+   into the ledger as an ordering; confirm no task edits its own judge unless
+   its approved `Evaluator identity/owner` permits the exact change; and for a
+   UI task, confirm `Applicable visual references` match the index's `Selected
+   visual references` field for field and run each freshness evaluator now. If
+   any check fails, report the field and task; dispatch nothing under an
+   invalid contract.
 5. A high-risk task is blocked until its migration and assurance contracts
    are approved and their entry gates have passed. Report it; dispatch
    nothing for it. A prerequisite task that only builds an entry gate and
    touches no target is not blocked by that gate.
-6. Scan for conflicts. List the files each task claims, and write every pair
-   claiming the same file into the ledger as an ordering.
-7. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
+6. Read `Integration cadence`: `plan end` (default) or `per task`. It decides
    Step 5.6.
 
 ## Step 3: Rule, don't stall
@@ -270,26 +264,7 @@ the evidence. It is never a task because someone wrote it down.
 
 1. If the index's `Out-of-task findings` field says `log and report`, or is
    absent, every finding waits for Step 6.4.
-2. If it says `fix when admitted`, admit only an observed failure: wrong
-   output, a crash, a shipped statement that is false, a test that passes on
-   broken code. Write the admitted finding a task file shaped like the plan's
-   own under `{{plan-dir}}/added/`, unlisted in the index so the plan's
-   identity holds, and append an `admitted` row that repeats the finding
-   row's where-text and names that file.
-3. The approved field authorizes an added task inside its budget, and
-   nothing else. Its `Evaluator` reproduces the observed failure and is red
-   before the fix; its `Depends on` names every listed task that owns a file
-   it edits; it passes Step 2.4. A finding whose fix would change a listed
-   task's contract or `Evaluator` is not admitted: it waits for Step 6.4.
-4. Run an added task through Steps 4 and 5 before Step 6. It has no index
-   row to mirror: its state lives in the execution ledger only, and Step 6.1
-   runs its evaluator with the listed tasks'.
-5. A finding raised while building or reviewing an added task, or by the
-   Step 6.2 review outside every task's contract, waits for Step 6.4. It
-   never becomes another task.
-6. When added tasks reach the field's budget, admit nothing more; the rest
-   wait for Step 6.4. If no budget is recorded, the budget is a quarter of
-   the listed tasks, rounded up.
+2. Read `references/admitted-findings.md` when the index's `Out-of-task findings` field says `fix when admitted`.
 
 ## Gotchas
 

@@ -1,6 +1,6 @@
 ---
 name: changing-a-live-schema
-description: "Builds an ordinary schema change in phases so a live store serves both code versions during a deploy and after a rollback, until the contract phase ends that. Use when adding, renaming, dropping, or retyping a column or field, adding an index or constraint, splitting a table, changing a stored document shape, or backfilling data on a store a running system reads. Skip a store nothing live reads yet or whose owner has recorded accepted downtime, and a rewrite or whole-store migration, which migration-strategy owns."
+description: "Phases a live schema change so the store serves both code versions through deploy and rollback. Use when adding, renaming, dropping, or retyping a column or field, adding an index or constraint, splitting a table, changing a stored document shape, or backfilling data on a live store. Skip stores nothing live reads yet or with recorded accepted downtime, and whole-store migrations, which migration-strategy owns."
 ---
 
 # Changing a Live Schema
