@@ -6,9 +6,9 @@ Notable changes to SDLC skills, newest first. Versions follow semantic versionin
 
 Plan verification, worktree inspection, and section hashing now run through
 bundled scripts, the conditional admitted-findings procedure moves out of the
-executor bodies, and skill descriptions drop internal step summaries, cutting
-always-on catalog overhead and active-chain word counts without changing any
-skill name, trigger, or `.sdlc-skills/` artifact shape.
+executor bodies, and fourteen skill descriptions drop step detail and tighten
+phrasing, cutting always-on catalog overhead and active-chain word counts
+without changing any skill name or `.sdlc-skills/` artifact shape.
 
 The README documents how engineering constraints and context rot interact across
 the library, the harness, and the runtime, and the conformance reference records
