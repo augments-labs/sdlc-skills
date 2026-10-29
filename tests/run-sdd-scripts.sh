@@ -587,6 +587,75 @@ else
   bad "no role templates at $A"
 fi
 
+echo "--- plan-version.sh --check-contract and --verify: deterministic ledger and contract checks"
+vplan="$tmp/vplan"
+mkdir -p "$vplan"
+cat > "$vplan/00-index.md" <<'IDX'
+# Plan: Test
+
+## Tasks
+
+- [ ] `T-1` — First task · `01-first.md` · `todo`
+- [ ] `T-2` — Second task · `02-second.md` · `todo`
+IDX
+cat > "$vplan/01-first.md" <<'T1'
+# Task 01
+**Task ID:** `T-1`
+**Depends on:** none
+**Files:** `src/a.sh` (edit)
+**Implementation disciplines:** `test-driven-development` + `yagni`
+- **Consumes:** nothing
+- **Produces:** `helper_fn`
+T1
+cat > "$vplan/02-second.md" <<'T2'
+# Task 02
+**Task ID:** `T-2`
+**Depends on:** `T-1`
+**Files:** `src/a.sh` (edit) · `src/b.sh` (new)
+**Implementation disciplines:** `test-driven-development` + `yagni`
+- **Consumes:** `helper_fn`
+- **Produces:** nothing
+T2
+
+vhash="$(bash "$D/plan-version.sh" "$vplan" 2>/dev/null)"
+cc_out="$(bash "$D/plan-version.sh" --check-contract "$vplan" 2>/dev/null)"
+check "--check-contract passes on valid contract (exit 0)" "$?" "0"
+if printf '%s\n' "$cc_out" | grep -qF "overlap=src/a.sh:T-1,T-2"; then
+  ok "--check-contract reports file ownership overlap"
+else
+  bad "--check-contract did not report overlap=src/a.sh:T-1,T-2 (got: $cc_out)"
+fi
+
+# Unapproved (missing ledger) fails --verify with exit 1
+bash "$D/plan-version.sh" --verify "$vplan" >/dev/null 2>&1
+check "--verify exits 1 when ledger is missing" "$?" "1"
+
+# Approved ledger with mode: delegated and waves: yes passes --verify
+cat > "$vplan/00-index.ledger.md" <<LED
+| Identity | Section | Location | State | Bound evidence | Updated |
+| --- | --- | --- | --- | --- | --- |
+| $vhash |  | 00-index.md | pending | presented | 2026-10-29 |
+| $vhash |  | 00-index.md | approved | owner approved · mode: delegated · waves: yes | 2026-10-29 |
+| $vhash | T-1 | 01-first.md | in progress | attempt 1 | 2026-10-29 |
+LED
+ver_out="$(bash "$D/plan-version.sh" --verify "$vplan" 2>/dev/null)"
+check "--verify exits 0 on approved version (ignoring execution rows with Section filled)" "$?" "0"
+if printf '%s\n' "$ver_out" | grep -qx "mode=delegated" && printf '%s\n' "$ver_out" | grep -qx "waves=yes"; then
+  ok "--verify extracts mode=delegated and waves=yes from last decision row"
+else
+  bad "--verify did not extract mode=delegated and waves=yes (got: $ver_out)"
+fi
+
+# Later decision row that closes the version fails --verify with exit 1
+printf '| %s |  | 00-index.md | superseded | replaced | 2026-10-29 |\n' "$vhash" >> "$vplan/00-index.ledger.md"
+bash "$D/plan-version.sh" --verify "$vplan" >/dev/null 2>&1
+check "--verify exits 1 when a later decision row closes the version" "$?" "1"
+
+# Broken Consumes (references symbol no earlier task Produces) fails --check-contract with exit 4
+sed -i 's/`helper_fn`/`missing_fn`/' "$vplan/02-second.md"
+bash "$D/plan-version.sh" --check-contract "$vplan" >/dev/null 2>&1
+check "--check-contract exits 4 when Consumes names an unproduced token" "$?" "4"
+
 echo "---"
 [ "$fails" -eq 0 ] && { echo "SDD script tests: PASS"; exit 0; }
 echo "SDD script tests: FAIL"; exit 1

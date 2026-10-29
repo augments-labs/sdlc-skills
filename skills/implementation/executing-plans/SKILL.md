@@ -20,24 +20,21 @@ what happens to the branch.
 
 ## Available scripts
 
-- **`scripts/plan-version.sh`** — prints the plan's version.
+- **`scripts/plan-version.sh`** — prints the plan's version, or with `--check-contract` and `--verify` checks task-contract invariants and the decision ledger.
 
 ## Step 1: Verify approval and mode
 
-1. Run `bash scripts/plan-version.sh` on the plan directory before reading the
-   `External decision ledger` (the ledger: add to it, never rewrite it). Read
-   every decision row for this index whose `Identity` is the printed version,
-   in ledger order: a decision row leaves `Section` empty, and an execution
-   row carries a task ID there. The last of them must be the row whose
-   `Bound evidence` names the `Approval rule` owner's approval: a later row
-   that rejects, cancels, or supersedes this version closes it. The index
-   cannot approve itself.
-2. If there is no such row, a later row closed the version, or the script
-   fails, stop and name the missing version, the row that closed it, or the
-   script's error; never substitute a version read from the index.
-3. If that row records no mode, ask `assets/mode-question.md` before any
-   workspace action, and stop.
-4. If that row records `mode: delegated`, **REQUIRED SUB-SKILL:** invoke
+1. Run `bash scripts/plan-version.sh --verify` on the plan directory to verify
+   the plan's version against the `External decision ledger` (the ledger: add
+   to it, never rewrite it) and task-contract invariants. The index cannot
+   approve itself; the last decision row (`Section` empty) for the printed
+   version must record the `Approval rule` owner's approval and not be closed
+   by a later row (`rejected`, `cancelled`, `superseded`, or `changes requested`).
+2. If `--verify` fails, stop and name the missing version, the row that closed
+   it, or the script's error; never substitute a version read from the index.
+3. If `mode=unset`, ask `assets/mode-question.md` before any workspace action,
+   and stop.
+4. If `mode=delegated`, **REQUIRED SUB-SKILL:** invoke
    `subagent-driven-development`; this skill ends here and runs nothing.
 
 ## Step 2: Set up the workspace
@@ -54,23 +51,20 @@ inside a repository, Step 2.2 and Step 5.3 apply to the whole plan.
 
 ## Step 3: Check the plan contract
 
-For every task, confirm:
+Confirm from Step 1's `--verify` output and the task files:
 
-- each `Consumes` names an earlier task's exact `Produces`; existing code and
-  external input artifacts belong in `Context`, not an invented producer task
-- each `Depends on` names a task that is not cancelled
-- the task does not edit its judge unless the approved
-  `Evaluator identity/owner` explicitly permits the exact change and requires
-  pre-change RED or deliberate falsification; undeclared or weakened criteria
-  block execution
-- `Implementation disciplines` is filled
+- `Consumes`, `Depends on`, and `Implementation disciplines` passed `--verify`
+  (existing code and external input artifacts belong in `Context`, not an
+  invented producer task)
+- no task edits its judge unless the approved `Evaluator identity/owner`
+  explicitly permits the exact change and requires pre-change RED or
+  deliberate falsification; undeclared or weakened criteria block execution
 - for a UI task, `Applicable visual references` match the index's `Selected
   visual references` field for field; run each freshness evaluator now
 
 Record the checked input/output mappings and evaluator ownership in the
 execution ledger (the index's `External execution ledger`) before the first
-edit. If any of these checks fails, report the field and the task; do not
-start it.
+edit. If any check fails, report the field and the task; do not start it.
 
 - Read `references/phase-queues.md` before the first task when the index
   holds phases or shards, and follow it.

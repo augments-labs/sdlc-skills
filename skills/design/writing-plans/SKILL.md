@@ -29,7 +29,7 @@ true and how that is judged, not the code.
 
 ## Available scripts
 
-- **`scripts/plan-version.sh`** — prints the plan's version.
+- **`scripts/plan-version.sh`** — prints the plan's version, or with `--check-contract` and `--verify` checks task-contract invariants and the decision ledger.
 
 ## Step 1: Write the index
 
@@ -122,34 +122,29 @@ true and how that is judged, not the code.
    location, condition, or number names the file and symbol it was checked
    against; rewrite a claim with no such citation to what is known, or
    remove it.
-4. Confirm every task has an executable Evaluator or a controlled rubric,
-   and that the index has one top-level **Acceptance** check.
-5. Resolve every Consumes to a Produces under the same name and type. Check
-   the index's Constraints block against every task.
-6. Name in the index's **Architecture** the one type or module that owns
+4. Run `bash scripts/plan-version.sh --check-contract` on the plan directory to verify that every `Consumes` resolves to an earlier task's `Produces`, every `Depends on` names an existing non-cancelled task, `Implementation disciplines` is filled, and any file overlap across tasks has a dependency and one owner. Also confirm every task has an executable Evaluator or a controlled rubric, that the index has one top-level **Acceptance** check, and that the index's Constraints block holds across every task.
+5. Name in the index's **Architecture** the one type or module that owns
    each domain fact more than one task consumes: a type, a set of kinds and
    where their traits live, the error type that crosses a module boundary.
    If two tasks each define the same fact, give it one owner and make the
    others consume it.
-7. Walk the tasks in dependency order. At each task boundary, confirm that
+6. Walk the tasks in dependency order. At each task boundary, confirm that
    every input the next task reads already exists, that every deleted or
    renamed artifact has no surviving consumer, and that the task's own
    Evaluator can run on that state.
-8. Resolve every path and symbol the plan cites against the current
+7. Resolve every path and symbol the plan cites against the current
    revision, and replace any that does not resolve. Cite a path or a
    symbol, never a line number.
-9. Confirm every selected Reference ID has a carrying task and a matching
+8. Confirm every selected Reference ID has a carrying task and a matching
    conformance evaluator.
-10. Confirm independent tasks have disjoint files, data, effects, evaluators,
-    and external state; every overlap has a dependency and one owner.
-11. Fill **Review focus** with up to five spec-implied inputs or failure
-    modes that no task Evaluator exercises, or mark it `none`; give every
-    `none yet` row a check or name it in the PR. If a task tells things
-    apart by the shape of a string (a key, slug, name, or path used as an
-    identity), name two different inputs that produce the same string and
-    the task test that separates them, or have the task carry the identity
-    as structured data.
-12. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
+9. Fill **Review focus** with up to five spec-implied inputs or failure
+   modes that no task Evaluator exercises, or mark it `none`; give every
+   `none yet` row a check or name it in the PR. If a task tells things
+   apart by the shape of a string (a key, slug, name, or path used as an
+   identity), name two different inputs that produce the same string and
+   the task test that separates them, or have the task carry the identity
+   as structured data.
+10. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
     high-risk, and bring every blocker it returns to a recorded decision as
     that skill says; for any other plan, ask
     the offer question `reviewing-plans` states.
@@ -181,9 +176,11 @@ true and how that is judged, not the code.
 4. On approval, in a separate turn, ask the mode question from
    `assets/mode-question.md` when this version's row in the
    `External decision ledger` (the ledger: add to it, never rewrite it; it
-   sits outside the plan) records no `mode:`. That file owns the block, the
-   subagent-action condition (when it may offer the delegated options), and
-   how to ask it.
+   sits outside the plan) records no `mode:`. Because the approved plan and
+   its ledger row live on disk, delegated mode (or starting the executor from
+   the plan path in a fresh session) leaves planning-phase context behind.
+   That file owns the block, the subagent-action condition (when it may offer
+   the delegated options), and how to ask it.
 5. Add one row to that ledger: `Identity` = the printed version, `Location`
    = the index path, `State` = approved, `Bound evidence` = the
    `Approval rule` owner and their answer, any review report path, then the
