@@ -270,26 +270,7 @@ the evidence. It is never a task because someone wrote it down.
 
 1. If the index's `Out-of-task findings` field says `log and report`, or is
    absent, every finding waits for Step 6.4.
-2. If it says `fix when admitted`, admit only an observed failure: wrong
-   output, a crash, a shipped statement that is false, a test that passes on
-   broken code. Write the admitted finding a task file shaped like the plan's
-   own under `{{plan-dir}}/added/`, unlisted in the index so the plan's
-   identity holds, and append an `admitted` row that repeats the finding
-   row's where-text and names that file.
-3. The approved field authorizes an added task inside its budget, and
-   nothing else. Its `Evaluator` reproduces the observed failure and is red
-   before the fix; its `Depends on` names every listed task that owns a file
-   it edits; it passes Step 2.4. A finding whose fix would change a listed
-   task's contract or `Evaluator` is not admitted: it waits for Step 6.4.
-4. Run an added task through Steps 4 and 5 before Step 6. It has no index
-   row to mirror: its state lives in the execution ledger only, and Step 6.1
-   runs its evaluator with the listed tasks'.
-5. A finding raised while building or reviewing an added task, or by the
-   Step 6.2 review outside every task's contract, waits for Step 6.4. It
-   never becomes another task.
-6. When added tasks reach the field's budget, admit nothing more; the rest
-   wait for Step 6.4. If no budget is recorded, the budget is a quarter of
-   the listed tasks, rounded up.
+2. Read `references/admitted-findings.md` when the index's `Out-of-task findings` field says `fix when admitted`.
 
 ## Gotchas
 

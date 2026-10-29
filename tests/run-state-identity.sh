@@ -289,6 +289,50 @@ dangling_digest="$(cat "$tmp/dangling.out")"
 [ "$dangling_digest" != "$base_no_dangling" ] && ok "non-repo digest with a dangling symlink differs from the same directory without it" \
   || bad "non-repo digest with a dangling symlink equals the same directory without it (link ignored)"
 
+echo "--- artifact-layout.sh --hash: deterministic identity for files, sections, and briefs"
+AL="skills/common/using-sdlc-skills/scripts/artifact-layout.sh"
+hash_doc="$tmp/doc.md"
+cat > "$hash_doc" <<'DOC'
+# Alignment Brief: Test
+
+**Goal:** Test brief preamble.
+
+```bash
+## Not a heading inside fence
+```
+
+## Architecture
+
+First section body.
+
+```sh
+# comment inside fence
+## Also not a heading
+```
+
+More architecture text.
+
+## Scope
+
+Second section body.
+DOC
+
+want_file="$(git hash-object "$hash_doc" | cut -c1-7)"
+got_file="$(bash "$AL" --hash "$hash_doc" 2>/dev/null)"
+check "artifact-layout.sh --hash FILE matches git hash-object" "$got_file" "$want_file"
+
+want_arch="$(awk -v h='## Architecture' '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && $0 == h {n++; f = 1; s = s $0 "\n"; next} f && !z && /^##? / {f = 0} f {b = b $0 "\n"; if (NF) {s = s b; b = ""}} END {if (n != 1) {exit 1} printf "%s", s}' "$hash_doc" | git hash-object --stdin | cut -c1-7)"
+got_arch="$(bash "$AL" --hash "$hash_doc" --section '## Architecture' 2>/dev/null)"
+check "artifact-layout.sh --hash FILE --section matches section hash (ignoring code fences)" "$got_arch" "$want_arch"
+
+want_brief="$(awk '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && /^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' "$hash_doc" | git hash-object --stdin | cut -c1-7)"
+got_brief="$(bash "$AL" --hash "$hash_doc" --brief 2>/dev/null)"
+check "artifact-layout.sh --hash FILE --brief matches brief preamble hash (ignoring code fences)" "$got_brief" "$want_brief"
+
+missing_err="$(bash "$AL" --hash "$hash_doc" --section '## Missing' 2>&1 >/dev/null)"
+rc=$?
+check "artifact-layout.sh --hash fails with exit 2 when section heading is absent" "$rc:$missing_err" "2:0 headings match"
+
 echo "---"
 [ "$fails" -eq 0 ] && { echo "state-identity.sh tests: PASS"; exit 0; }
 echo "state-identity.sh tests: FAIL"; exit 1

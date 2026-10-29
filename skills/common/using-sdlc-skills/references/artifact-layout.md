@@ -90,9 +90,9 @@ over the exact text the artifact owns:
   `[ ]` and `todo`, followed by every task file in index order.
 
 ```bash
-git hash-object .sdlc-skills/specs/2026-01-15-login.md | cut -c1-7
-awk -v h='## Architecture' '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && $0 == h {n++; f = 1; s = s $0 "\n"; next} f && !z && /^##? / {f = 0} f {b = b $0 "\n"; if (NF) {s = s b; b = ""}} END {if (n != 1) {printf "%d headings match\n", n > "/dev/stderr"; exit 1} printf "%s", s}' .sdlc-skills/designs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
-awk '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && /^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' .sdlc-skills/briefs/2026-01-15-login.md | git hash-object --stdin | cut -c1-7
+bash scripts/artifact-layout.sh --hash .sdlc-skills/specs/2026-01-15-login.md
+bash scripts/artifact-layout.sh --hash .sdlc-skills/designs/2026-01-15-login.md --section '## Architecture'
+bash scripts/artifact-layout.sh --hash .sdlc-skills/briefs/2026-01-15-login.md --brief
 ```
 
 A `# comment` in a fenced shell example stays inside its section, so an edit
