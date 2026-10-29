@@ -24,24 +24,21 @@ tests, and the project's own checks are.
   are in and its baseline record, and keep making Step 5 checkpoints.
 - **Skip** read-only work.
 
+## Available scripts
+
+- **`scripts/worktree-state.sh`** — reports checkout isolation, submodule
+  status, dirty state, base resolution, branch collisions, and `.worktrees/`
+  ignore status as JSON.
+
 ## Step 1: Detect what you are in
 
 Open `assets/workspace-record.md` before the first command. Fill each section
 as its step runs.
 
-1. Run this:
-
-   ```bash
-   git rev-parse --show-toplevel
-   git status --short --branch
-   git rev-parse --show-superproject-working-tree   # non-empty: you are in a submodule
-   git_dir="$(cd "$(git rev-parse --git-dir)" && pwd -P)"
-   common_dir="$(cd "$(git rev-parse --git-common-dir)" && pwd -P)"
-   [ "$git_dir" != "$common_dir" ] && echo "already inside a linked worktree"
-   git worktree list
-   ```
-
-2. Read the submodule line first: inside a submodule the two directories
+1. Run `bash scripts/worktree-state.sh` to inspect `toplevel`, `git_dir`,
+   `common_dir`, `linked_worktree`, `submodule_superproject`, `detached`,
+   `dirty`, and `worktrees`.
+2. Read `submodule_superproject` first: inside a submodule the two directories
    match even though there is no linked worktree.
 3. If the checkout is detached or host-owned and its owner is unknown, do not
    nest, attach, switch, or clean it.
@@ -62,62 +59,39 @@ as its step runs.
 
 1. Take the base from direct user or project guidance. With none, the base is
    the current branch this task started from. On a detached HEAD, or when the
-   guidance conflicts, ask and stop. Record the base's revision and remote
-   freshness:
-
-   ```bash
-   git fetch origin "$BASE"          # only with network authority; otherwise record "not fetched"
-   git rev-parse "$BASE" "origin/$BASE"
-   ```
-
+   guidance conflicts, ask and stop. With network authority, run
+   `git fetch origin "$BASE"` (otherwise record "not fetched"), then run
+   `bash scripts/worktree-state.sh --base "$BASE"` and record `base.local_sha`
+   and `base.remote_sha`.
 2. Read `references/baseline-contract.md` before any install or baseline
    command.
 
 ## Step 3: Create the workspace
 
 1. Name it by project convention, or `feature/{{short-task}}`,
-   `fix/{{short-task}}`, `docs/{{short-task}}`. Check collisions:
-
-   ```bash
-   git check-ref-format --branch "$BRANCH"
-   git show-ref --verify --quiet "refs/heads/$BRANCH" && echo "local branch exists"
-   git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" && echo "remote branch exists"
-   ```
-
-   If either `echo` line prints, or `git check-ref-format` fails, pick another
-   name. Never overwrite or reuse an existing branch.
+   `fix/{{short-task}}`, `docs/{{short-task}}`. Run
+   `bash scripts/worktree-state.sh --check-branch "$BRANCH"`; if it exits `1`
+   (`valid_format` is `false` or a local or remote branch exists), pick
+   another name. Never overwrite or reuse an existing branch.
 2. Pick the mechanism, taking the first that applies: a user instruction; then
    project guidance; then a harness-native worktree command, run with the name
    above and HEAD at the proven base, after which skip to Step 4; then the
    steps below. A harness-native command acts on the session's own
    repository: if the work is in another repository, skip it, run the steps
    below from that repository, and say why the native command was not used.
-3. Inside a submodule, stop here: create an owned branch in the submodule and
-   write an explicit plan for the parent gitlink, and never run the rest of
-   Step 3 from the superproject's paths. Otherwise choose the directory and
-   prove it is ignored; a path the user gave wins. A common git directory that
-   is not a checkout's `.git`, such as a bare repository or a separate git
-   directory, has no main checkout: ask where the worktree goes and stop.
-
-   ```bash
-   [ -z "$(git rev-parse --show-superproject-working-tree)" ] || echo "SUBMODULE: stop"
-   root="${common_dir%/.git}"
-   [ "$root" != "$common_dir" ] && git -C "$root" rev-parse --is-inside-work-tree >/dev/null 2>&1 ||
-     echo "NO MAIN CHECKOUT: ask where the worktree goes"
-   cd "$root"
-   dir=".worktrees"
-   git check-ignore -q "$dir/" || echo "$dir/ is not ignored"
-   ```
-
-4. If that line printed, exclude the directory locally; that is the whole
+3. Inside a submodule (`submodule_superproject` non-empty), stop here: create
+   an owned branch in the submodule and write an explicit plan for the parent
+   gitlink, and never run the rest of Step 3 from the superproject's paths.
+   Otherwise choose the directory (`dir=".worktrees"` unless the user gave a
+   path) under `main_checkout_root`. If `main_checkout_root` is `null` (a bare
+   repository or separate git directory), ask where the worktree goes and
+   stop.
+4. If `worktrees_dir_ignored` is `false` (or `git -C "$root" check-ignore -q "$dir/"`
+   fails for a custom `dir`), exclude the directory locally with
+   `printf '%s/\n' "$dir" >> "$common_dir/info/exclude"`; that is the whole
    change. Never add `{{dir}}/` to `.gitignore` in any checkout: authority to
    commit locally covers task checkpoints, not a project change nobody
    requested.
-
-   ```bash
-   printf '%s/\n' "$dir" >> "$common_dir/info/exclude"
-   ```
-
 5. Create from the proven base and enter:
 
    ```bash

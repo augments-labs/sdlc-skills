@@ -656,6 +656,47 @@ sed -i 's/`helper_fn`/`missing_fn`/' "$vplan/02-second.md"
 bash "$D/plan-version.sh" --check-contract "$vplan" >/dev/null 2>&1
 check "--check-contract exits 4 when Consumes names an unproduced token" "$?" "4"
 
+echo "--- worktree-state.sh: read-only checkout, linked worktree, and branch collision checks"
+WT_SCRIPT="skills/common/using-git-worktrees/scripts/worktree-state.sh"
+wt_out="$(bash "$WT_SCRIPT" --dir "$repo" --check-branch "feature/new-branch" 2>/dev/null)"
+check "worktree-state.sh exits 0 on shared checkout with unused branch name" "$?" "0"
+if printf '%s\n' "$wt_out" | grep -qF '"linked_worktree": false' && printf '%s\n' "$wt_out" | grep -qF '"valid_format": true'; then
+  ok "worktree-state.sh reports linked_worktree: false and valid_format: true"
+else
+  bad "worktree-state.sh missing expected JSON fields (got: $wt_out)"
+fi
+
+# Existing local branch collision exits 1
+curr_br="$(git -C "$repo" symbolic-ref --short HEAD)"
+bash "$WT_SCRIPT" --dir "$repo" --check-branch "$curr_br" >/dev/null 2>&1
+check "worktree-state.sh exits 1 when --check-branch names an existing local branch" "$?" "1"
+
+# Linked worktree reports linked_worktree: true
+linked_wt="$tmp/linked-wt"
+git -C "$repo" worktree add -q "$linked_wt" -b "feature/linked-test"
+lwt_out="$(bash "$WT_SCRIPT" --dir "$linked_wt" 2>/dev/null)"
+if printf '%s\n' "$lwt_out" | grep -qF '"linked_worktree": true'; then
+  ok "worktree-state.sh reports linked_worktree: true inside a linked worktree"
+else
+  bad "worktree-state.sh did not report linked_worktree: true (got: $lwt_out)"
+fi
+
+# Submodule reports submodule_superproject and linked_worktree: false
+sub_src="$tmp/sub-src"
+git init -q "$sub_src"
+git -C "$sub_src" config user.email t@t
+git -C "$sub_src" config user.name t
+echo "sub" > "$sub_src/sub.txt"
+git -C "$sub_src" add sub.txt
+git -C "$sub_src" commit -q -m "sub init"
+git -C "$repo" -c protocol.file.allow=always submodule add -q "$sub_src" submod
+sub_out="$(bash "$WT_SCRIPT" --dir "$repo/submod" 2>/dev/null)"
+if printf '%s\n' "$sub_out" | grep -qF '"linked_worktree": false' && ! printf '%s\n' "$sub_out" | grep -qF '"submodule_superproject": ""'; then
+  ok "worktree-state.sh reports submodule_superproject and linked_worktree: false inside a submodule"
+else
+  bad "worktree-state.sh did not detect submodule correctly (got: $sub_out)"
+fi
+
 echo "---"
 [ "$fails" -eq 0 ] && { echo "SDD script tests: PASS"; exit 0; }
 echo "SDD script tests: FAIL"; exit 1
