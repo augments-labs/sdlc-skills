@@ -171,11 +171,11 @@ contract_out="$(awk -v dir="$dir" '
         sub(/\r$/, "", line)
         if (line ~ /^\*\*Implementation disciplines:\*\*/) {
           v = line; sub(/^\*\*Implementation disciplines:\*\*/, "", v); v = trim(v)
-          if (v != "" && v !~ /^\{\{/) has_disc = 1
+          if (v != "" && v !~ /^`?\{\{/) has_disc = 1
         }
         if (line ~ /^\*\*Depends on:\*\*/) {
           v = line; sub(/^\*\*Depends on:\*\*/, "", v); v = trim(v)
-          if (tolower(v) != "none" && v !~ /^none\b/i) {
+          if (tolower(v) !~ /^none([^a-z0-9_]|$)/) {
             rest = v
             while (match(rest, /`[^`]+`/)) {
               dep = substr(rest, RSTART + 1, RLENGTH - 2)
@@ -212,13 +212,13 @@ contract_out="$(awk -v dir="$dir" '
         if (line ~ /^[ \t]*-[ \t]*\*\*Consumes:\*\*/) {
           in_cons = 1; in_prod = 0
           v = line; sub(/^[ \t]*-[ \t]*\*\*Consumes:\*\*/, "", v); v = trim(v)
-          if (tolower(v) ~ /^(nothing|none)\b/) { in_cons = 0 }
+          if (tolower(v) ~ /^(nothing|none)([^a-z0-9_]|$)/) { in_cons = 0 }
           else {
             rest = v
             while (match(rest, /`[^`]+`/)) {
               tok = substr(rest, RSTART + 1, RLENGTH - 2)
               rest = substr(rest, RSTART + RLENGTH)
-              req_tokens[++nreq] = tok
+              if (!(tok in known_task)) req_tokens[++nreq] = tok
             }
           }
           continue
@@ -226,13 +226,15 @@ contract_out="$(awk -v dir="$dir" '
         if (line ~ /^[ \t]*-[ \t]*\*\*Produces:\*\*/) {
           in_cons = 0; in_prod = 1
           v = line; sub(/^[ \t]*-[ \t]*\*\*Produces:\*\*/, "", v); v = trim(v)
-          if (tolower(v) ~ /^(nothing|none)\b/) { in_prod = 0 }
+          if (tolower(v) ~ /^(nothing|none)([^a-z0-9_]|$)/) { in_prod = 0 }
           else {
             rest = v
             while (match(rest, /`[^`]+`/)) {
               tok = substr(rest, RSTART + 1, RLENGTH - 2)
               rest = substr(rest, RSTART + RLENGTH)
               produced[tok] = 1
+              sp = index(tok, " ")
+              if (sp > 1) produced[substr(tok, 1, sp - 1)] = 1
             }
           }
           continue
@@ -243,7 +245,7 @@ contract_out="$(awk -v dir="$dir" '
           while (match(rest, /`[^`]+`/)) {
             tok = substr(rest, RSTART + 1, RLENGTH - 2)
             rest = substr(rest, RSTART + RLENGTH)
-            req_tokens[++nreq] = tok
+            if (!(tok in known_task)) req_tokens[++nreq] = tok
           }
         }
         if (in_prod) {
@@ -252,6 +254,8 @@ contract_out="$(awk -v dir="$dir" '
             tok = substr(rest, RSTART + 1, RLENGTH - 2)
             rest = substr(rest, RSTART + RLENGTH)
             produced[tok] = 1
+            sp = index(tok, " ")
+            if (sp > 1) produced[substr(tok, 1, sp - 1)] = 1
           }
         }
       }
@@ -262,7 +266,12 @@ contract_out="$(awk -v dir="$dir" '
       }
       for (r = 1; r <= nreq; r++) {
         tok = req_tokens[r]
-        if (!(tok in produced)) {
+        ok_prod = (tok in produced)
+        if (!ok_prod) {
+          sp = index(tok, " ")
+          if (sp > 1 && (substr(tok, 1, sp - 1) in produced)) ok_prod = 1
+        }
+        if (!ok_prod) {
           printf "Error: task %s Consumes `%s`, which no earlier task Produces.\n", id, tok > "/dev/stderr"
           err = 1
         }
@@ -288,6 +297,10 @@ fi
 # --verify: check the External decision ledger for an unclosed approved decision row.
 ledger="$dir/00-index.ledger.md"
 if [ ! -f "$ledger" ]; then
+  ext_led="$(awk '/^- \*\*External decision ledger:\*\*/ { if (match($0, /`[^`]+`/)) print substr($0, RSTART + 1, RLENGTH - 2); exit }' "$index")"
+  [ -n "$ext_led" ] && [ -f "$ext_led" ] && ledger="$ext_led"
+fi
+if [ ! -f "$ledger" ]; then
   echo "Error: decision ledger $ledger not found for version $version." >&2
   exit 1
 fi
@@ -307,7 +320,7 @@ ledger_out="$(awk -F'|' -v want="$version" '
       printf "Error: no decision row for version %s in ledger.\n", want > "/dev/stderr"
       exit 1
     }
-    if (last_st != "approved") {
+    if (last_st != "approved" || last_ev == "") {
       printf "Error: version %s is not approved (latest decision row state: %s).\n", want, last_st > "/dev/stderr"
       exit 1
     }

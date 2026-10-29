@@ -651,6 +651,78 @@ printf '| %s |  | 00-index.md | superseded | replaced | 2026-10-29 |\n' "$vhash"
 bash "$D/plan-version.sh" --verify "$vplan" >/dev/null 2>&1
 check "--verify exits 1 when a later decision row closes the version" "$?" "1"
 
+# Ledger with no decision row for current version fails --verify with exit 1
+cat > "$vplan/00-index.ledger.md" <<'LED'
+| Identity | Section | Location | State | Bound evidence | Updated |
+| --- | --- | --- | --- | --- | --- |
+| 0000000 |  | 00-index.md | approved | owner approved | 2026-10-29 |
+LED
+bash "$D/plan-version.sh" --verify "$vplan" >/dev/null 2>&1
+check "--verify exits 1 when ledger has no decision row for current version" "$?" "1"
+
+# Pending, rejected, cancelled, and changes requested decision states fail --verify with exit 1
+for st in pending rejected cancelled "changes requested"; do
+  cat > "$vplan/00-index.ledger.md" <<LED
+| Identity | Section | Location | State | Bound evidence | Updated |
+| --- | --- | --- | --- | --- | --- |
+| $vhash |  | 00-index.md | $st | decision recorded | 2026-10-29 |
+LED
+  bash "$D/plan-version.sh" --verify "$vplan" >/dev/null 2>&1
+  check "--verify exits 1 when latest decision row state is '$st'" "$?" "1"
+done
+
+# Approved with mode: inline and no waves outputs mode=inline and waves=no
+cat > "$vplan/00-index.ledger.md" <<LED
+| Identity | Section | Location | State | Bound evidence | Updated |
+| --- | --- | --- | --- | --- | --- |
+| $vhash |  | 00-index.md | approved | owner approved · mode: inline | 2026-10-29 |
+LED
+ver_inline="$(bash "$D/plan-version.sh" --verify "$vplan" 2>/dev/null)"
+if printf '%s\n' "$ver_inline" | grep -qx "mode=inline" && printf '%s\n' "$ver_inline" | grep -qx "waves=no"; then
+  ok "--verify extracts mode=inline and waves=no"
+else
+  bad "--verify did not extract mode=inline and waves=no (got: $ver_inline)"
+fi
+
+# Approved with no mode outputs mode=unset
+cat > "$vplan/00-index.ledger.md" <<LED
+| Identity | Section | Location | State | Bound evidence | Updated |
+| --- | --- | --- | --- | --- | --- |
+| $vhash |  | 00-index.md | approved | owner approved | 2026-10-29 |
+LED
+ver_unset="$(bash "$D/plan-version.sh" --verify "$vplan" 2>/dev/null)"
+if printf '%s\n' "$ver_unset" | grep -qx "mode=unset"; then
+  ok "--verify reports mode=unset when approval row omits mode"
+else
+  bad "--verify did not report mode=unset (got: $ver_unset)"
+fi
+
+# Task-ID attribution in Consumes (e.g. from `T-1`) is ignored and passes --check-contract
+cp "$vplan/02-second.md" "$vplan/02-second.md.bak"
+sed -i 's/- \*\*Consumes:\*\* `helper_fn`/- **Consumes:** `helper_fn` from `T-1`/' "$vplan/02-second.md"
+bash "$D/plan-version.sh" --check-contract "$vplan" >/dev/null 2>&1
+check "--check-contract ignores task-ID attribution in Consumes (exit 0)" "$?" "0"
+cp "$vplan/02-second.md.bak" "$vplan/02-second.md"
+
+# Depends on unknown zero-padded task ID (T-099) fails --check-contract with exit 4
+sed -i 's/\*\*Depends on:\*\* `T-1`/**Depends on:** `T-099`/' "$vplan/02-second.md"
+bash "$D/plan-version.sh" --check-contract "$vplan" >/dev/null 2>&1
+check "--check-contract exits 4 when Depends on names unknown zero-padded task T-099" "$?" "4"
+cp "$vplan/02-second.md.bak" "$vplan/02-second.md"
+
+# Depends on cancelled task fails --check-contract with exit 4
+cp "$vplan/00-index.md" "$vplan/00-index.md.bak"
+sed -i 's/- \[ \] `T-1` — First task · `01-first.md` · `todo`/- [ ] `T-1` — First task · `01-first.md` · `cancelled`/' "$vplan/00-index.md"
+bash "$D/plan-version.sh" --check-contract "$vplan" >/dev/null 2>&1
+check "--check-contract exits 4 when Depends on names a cancelled task" "$?" "4"
+cp "$vplan/00-index.md.bak" "$vplan/00-index.md"
+
+# Empty/placeholder Implementation disciplines fails --check-contract with exit 4
+sed -i 's/\*\*Implementation disciplines:\*\* `test-driven-development` + `yagni`/**Implementation disciplines:** `{{disciplines}}`/' "$vplan/02-second.md"
+bash "$D/plan-version.sh" --check-contract "$vplan" >/dev/null 2>&1
+check "--check-contract exits 4 when Implementation disciplines is a placeholder" "$?" "4"
+cp "$vplan/02-second.md.bak" "$vplan/02-second.md"
+
 # Broken Consumes (references symbol no earlier task Produces) fails --check-contract with exit 4
 sed -i 's/`helper_fn`/`missing_fn`/' "$vplan/02-second.md"
 bash "$D/plan-version.sh" --check-contract "$vplan" >/dev/null 2>&1
@@ -658,20 +730,58 @@ check "--check-contract exits 4 when Consumes names an unproduced token" "$?" "4
 
 echo "--- worktree-state.sh: read-only checkout, linked worktree, and branch collision checks"
 WT_SCRIPT="skills/common/using-git-worktrees/scripts/worktree-state.sh"
-wt_out="$(bash "$WT_SCRIPT" --dir "$repo" --check-branch "feature/new-branch" 2>/dev/null)"
+curr_br="$(git -C "$repo" symbolic-ref --short HEAD)"
+wt_out="$(bash "$WT_SCRIPT" --dir "$repo" --base "$curr_br" --check-branch "feature/new-branch" 2>/dev/null)"
 check "worktree-state.sh exits 0 on shared checkout with unused branch name" "$?" "0"
-if printf '%s\n' "$wt_out" | grep -qF '"linked_worktree": false' && printf '%s\n' "$wt_out" | grep -qF '"valid_format": true'; then
-  ok "worktree-state.sh reports linked_worktree: false and valid_format: true"
+if printf '%s\n' "$wt_out" | grep -qF '"linked_worktree": false' && printf '%s\n' "$wt_out" | grep -qF '"valid_format": true' && ! printf '%s\n' "$wt_out" | grep -qF '"base": null'; then
+  ok "worktree-state.sh reports linked_worktree: false, valid_format: true, and resolved base object"
 else
   bad "worktree-state.sh missing expected JSON fields (got: $wt_out)"
 fi
 
 # Existing local branch collision exits 1
-curr_br="$(git -C "$repo" symbolic-ref --short HEAD)"
 bash "$WT_SCRIPT" --dir "$repo" --check-branch "$curr_br" >/dev/null 2>&1
 check "worktree-state.sh exits 1 when --check-branch names an existing local branch" "$?" "1"
 
-# Linked worktree reports linked_worktree: true
+# Invalid branch ref format exits 1 with valid_format: false
+inv_out="$(bash "$WT_SCRIPT" --dir "$repo" --check-branch "bad..branch" 2>/dev/null)"
+check "worktree-state.sh exits 1 when --check-branch has invalid ref format" "$?" "1"
+if printf '%s\n' "$inv_out" | grep -qF '"valid_format": false'; then
+  ok "worktree-state.sh reports valid_format: false on invalid ref format"
+else
+  bad "worktree-state.sh did not report valid_format: false (got: $inv_out)"
+fi
+
+# Remote branch collision under refs/remotes/origin/ exits 1 with remote_exists: true
+git -C "$repo" update-ref "refs/remotes/origin/feature/remote-taken" HEAD
+rem_out="$(bash "$WT_SCRIPT" --dir "$repo" --check-branch "feature/remote-taken" 2>/dev/null)"
+check "worktree-state.sh exits 1 when --check-branch collides with refs/remotes/origin/*" "$?" "1"
+if printf '%s\n' "$rem_out" | grep -qF '"remote_exists": true'; then
+  ok "worktree-state.sh reports remote_exists: true on remote branch collision"
+else
+  bad "worktree-state.sh did not report remote_exists: true (got: $rem_out)"
+fi
+
+# .worktrees/ ignore status transitions from false to true when added to info/exclude
+printf '.worktrees/\n' >> "$repo/.git/info/exclude"
+ign_out="$(bash "$WT_SCRIPT" --dir "$repo" 2>/dev/null)"
+if printf '%s\n' "$ign_out" | grep -qF '"worktrees_dir_ignored": true'; then
+  ok "worktree-state.sh reports worktrees_dir_ignored: true when .worktrees/ is excluded"
+else
+  bad "worktree-state.sh did not report worktrees_dir_ignored: true (got: $ign_out)"
+fi
+
+# Dirty working tree reports dirty_count > 0
+echo "untracked-dirty" > "$repo/dirty-check.txt"
+dirty_out="$(bash "$WT_SCRIPT" --dir "$repo" 2>/dev/null)"
+rm -f "$repo/dirty-check.txt"
+if printf '%s\n' "$dirty_out" | grep -qF '"dirty_count": 1' && printf '%s\n' "$dirty_out" | grep -qF 'dirty-check.txt'; then
+  ok "worktree-state.sh reports dirty_count: 1 and dirty file entry"
+else
+  bad "worktree-state.sh did not report dirty state (got: $dirty_out)"
+fi
+
+# Linked worktree reports linked_worktree: true and main_checkout_root; detached HEAD reports detached: true
 linked_wt="$tmp/linked-wt"
 git -C "$repo" worktree add -q "$linked_wt" -b "feature/linked-test"
 lwt_out="$(bash "$WT_SCRIPT" --dir "$linked_wt" 2>/dev/null)"
@@ -680,6 +790,29 @@ if printf '%s\n' "$lwt_out" | grep -qF '"linked_worktree": true'; then
 else
   bad "worktree-state.sh did not report linked_worktree: true (got: $lwt_out)"
 fi
+git -C "$linked_wt" checkout -q --detach HEAD
+det_out="$(bash "$WT_SCRIPT" --dir "$linked_wt" 2>/dev/null)"
+if printf '%s\n' "$det_out" | grep -qF '"detached": true' && printf '%s\n' "$det_out" | grep -qF '"branch": null'; then
+  ok "worktree-state.sh reports detached: true and branch: null on detached HEAD"
+else
+  bad "worktree-state.sh did not report detached state (got: $det_out)"
+fi
+
+# Bare repository reports bare: true and main_checkout_root: null
+bare_repo="$tmp/bare.git"
+git init -q --bare "$bare_repo"
+bare_out="$(bash "$WT_SCRIPT" --dir "$bare_repo" 2>/dev/null)"
+if printf '%s\n' "$bare_out" | grep -qF '"bare": true' && printf '%s\n' "$bare_out" | grep -qF '"main_checkout_root": null'; then
+  ok "worktree-state.sh reports bare: true and main_checkout_root: null on bare repo"
+else
+  bad "worktree-state.sh did not report bare state (got: $bare_out)"
+fi
+
+# Non-repository directory exits 2
+non_repo="$tmp/not-a-repo"
+mkdir -p "$non_repo"
+bash "$WT_SCRIPT" --dir "$non_repo" >/dev/null 2>&1
+check "worktree-state.sh exits 2 outside a git repository" "$?" "2"
 
 # Submodule reports submodule_superproject and linked_worktree: false
 sub_src="$tmp/sub-src"

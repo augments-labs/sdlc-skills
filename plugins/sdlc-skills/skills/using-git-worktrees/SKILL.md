@@ -82,8 +82,9 @@ as its step runs.
 3. Inside a submodule (`submodule_superproject` non-empty), stop here: create
    an owned branch in the submodule and write an explicit plan for the parent
    gitlink, and never run the rest of Step 3 from the superproject's paths.
-   Otherwise choose the directory (`dir=".worktrees"` unless the user gave a
-   path) under `main_checkout_root`. If `main_checkout_root` is `null` (a bare
+   Otherwise set `root` to `main_checkout_root` and `common_dir` to Step 1's
+   `common_dir`, and choose the directory (`dir=".worktrees"` unless the user
+   gave a path) under `root`. If `main_checkout_root` is `null` (a bare
    repository or separate git directory), ask where the worktree goes and
    stop.
 4. If `worktrees_dir_ignored` is `false` (or `git -C "$root" check-ignore -q "$dir/"`

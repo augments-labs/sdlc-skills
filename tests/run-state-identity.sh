@@ -289,8 +289,21 @@ dangling_digest="$(cat "$tmp/dangling.out")"
 [ "$dangling_digest" != "$base_no_dangling" ] && ok "non-repo digest with a dangling symlink differs from the same directory without it" \
   || bad "non-repo digest with a dangling symlink equals the same directory without it (link ignored)"
 
-echo "--- artifact-layout.sh --hash: deterministic identity for files, sections, and briefs"
+echo "--- artifact-layout.sh: default layout creation and --hash for files, sections, and briefs"
 AL="skills/common/using-sdlc-skills/scripts/artifact-layout.sh"
+al_root="$tmp/al-root"
+mkdir -p "$al_root"
+bash "$AL" --root "$al_root" >/dev/null 2>&1
+check "artifact-layout.sh --root creates .sdlc-skills/ layout (exit 0)" "$?" "0"
+if [ -d "$al_root/.sdlc-skills/briefs" ] && [ -d "$al_root/.sdlc-skills/plans" ] && [ -f "$al_root/.sdlc-skills/evidence/.gitignore" ]; then
+  ok "artifact-layout.sh --root creates expected subdirectories and evidence/.gitignore"
+else
+  bad "artifact-layout.sh --root missing expected directories or .gitignore"
+fi
+echo "custom" > "$al_root/.sdlc-skills/evidence/.gitignore"
+bash "$AL" --root "$al_root" >/dev/null 2>&1
+check "artifact-layout.sh --root is idempotent and does not overwrite existing evidence/.gitignore" "$(cat "$al_root/.sdlc-skills/evidence/.gitignore")" "custom"
+
 hash_doc="$tmp/doc.md"
 cat > "$hash_doc" <<'DOC'
 # Alignment Brief: Test
@@ -300,6 +313,10 @@ cat > "$hash_doc" <<'DOC'
 ```bash
 ## Not a heading inside fence
 ```
+
+~~~text
+## Also not a heading inside tilde fence
+~~~
 
 ## Architecture
 
@@ -321,17 +338,52 @@ want_file="$(git hash-object "$hash_doc" | cut -c1-7)"
 got_file="$(bash "$AL" --hash "$hash_doc" 2>/dev/null)"
 check "artifact-layout.sh --hash FILE matches git hash-object" "$got_file" "$want_file"
 
-want_arch="$(awk -v h='## Architecture' '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && $0 == h {n++; f = 1; s = s $0 "\n"; next} f && !z && /^##? / {f = 0} f {b = b $0 "\n"; if (NF) {s = s b; b = ""}} END {if (n != 1) {exit 1} printf "%s", s}' "$hash_doc" | git hash-object --stdin | cut -c1-7)"
-got_arch="$(bash "$AL" --hash "$hash_doc" --section '## Architecture' 2>/dev/null)"
-check "artifact-layout.sh --hash FILE --section matches section hash (ignoring code fences)" "$got_arch" "$want_arch"
+want_arch="$(cat <<'EOF' | git hash-object --stdin | cut -c1-7
+## Architecture
 
-want_brief="$(awk '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ 	]*$/) z = 0} !z && /^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' "$hash_doc" | git hash-object --stdin | cut -c1-7)"
+First section body.
+
+```sh
+# comment inside fence
+## Also not a heading
+```
+
+More architecture text.
+EOF
+)"
+got_arch="$(bash "$AL" --hash "$hash_doc" --section '## Architecture' 2>/dev/null)"
+check "artifact-layout.sh --hash FILE --section matches literal section text hash (ignoring code fences)" "$got_arch" "$want_arch"
+
+want_brief="$(cat <<'EOF' | git hash-object --stdin | cut -c1-7
+# Alignment Brief: Test
+
+**Goal:** Test brief preamble.
+
+```bash
+## Not a heading inside fence
+```
+
+~~~text
+## Also not a heading inside tilde fence
+~~~
+EOF
+)"
 got_brief="$(bash "$AL" --hash "$hash_doc" --brief 2>/dev/null)"
-check "artifact-layout.sh --hash FILE --brief matches brief preamble hash (ignoring code fences)" "$got_brief" "$want_brief"
+check "artifact-layout.sh --hash FILE --brief matches literal brief preamble hash (ignoring backtick and tilde fences)" "$got_brief" "$want_brief"
 
 missing_err="$(bash "$AL" --hash "$hash_doc" --section '## Missing' 2>&1 >/dev/null)"
 rc=$?
 check "artifact-layout.sh --hash fails with exit 2 when section heading is absent" "$rc:$missing_err" "2:0 headings match"
+
+printf '\n## Architecture\n\nDuplicate heading.\n' >> "$hash_doc"
+dup_err="$(bash "$AL" --hash "$hash_doc" --section '## Architecture' 2>&1 >/dev/null)"
+rc=$?
+check "artifact-layout.sh --hash fails with exit 2 when section heading is duplicated" "$rc:$dup_err" "2:2 headings match"
+
+bash "$AL" --root "$al_root" --hash "$hash_doc" >/dev/null 2>&1
+check "artifact-layout.sh rejects mutually exclusive --root and --hash (exit 2)" "$?" "2"
+bash "$AL" --hash "$hash_doc" --section '## Scope' --brief >/dev/null 2>&1
+check "artifact-layout.sh rejects mutually exclusive --section and --brief (exit 2)" "$?" "2"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "state-identity.sh tests: PASS"; exit 0; }

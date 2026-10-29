@@ -98,9 +98,11 @@ bash scripts/artifact-layout.sh --hash .sdlc-skills/briefs/2026-01-15-login.md -
 A `# comment` in a fenced shell example stays inside its section, so an edit
 below it changes the identity.
 
-`e69de29` is the hash of nothing: the heading matched no line, or matched more
-than once and the command named the count on stderr. Fix the headings before
-recording. The agent that issues the artifact runs the command at issue;
+When `--section` matches no heading or more than one heading, `artifact-layout.sh`
+prints the match count on stderr, writes nothing to stdout, and exits `2`. Fix
+the headings before recording (`e69de29` is the hash of empty input, such as an
+empty file or a `--brief` file with no preamble before its first `## ` heading).
+The agent that issues the artifact runs the command at issue;
 whoever later checks an approval or drift recomputes it the same way. Record the
 value in the ledger row and show it in the decision block. Never write it into
 the artifact: that changes the bytes it names. Any later byte change is a new
