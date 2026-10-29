@@ -83,6 +83,45 @@ Two things are worth knowing up front:
   the tests can tell you the code works. Keep your CI, reviews, and release
   controls in place.
 
+### Constraints, context cost, and the three layers
+
+A common objection to structured agent skills is that capable models no longer
+need them and that loading workflows only bloats the context window. That
+confuses code generation with software engineering. Models trained on broad
+public code default to the shortest path to a plausible diff; engineering is
+defined by the constraints around that diff — isolating the checkout, proving a
+test fails for the right reason first, phasing a live schema change so rollback
+still works, and stopping at decisions a human owns. Dropping those constraints
+saves tokens up front and pays the price later in silent regressions and
+unreviewed assumptions.
+
+The context cost, however, is real. Every skill description loaded at session
+start and every skill body loaded during a task shares an append-only
+transcript with your code and tool output. Over a long run, accumulated
+instructions compete with the working set and adherence degrades (**context
+rot**). Keeping strict engineering discipline without rotting the context
+window takes work at three layers:
+
+1. **The skill library:** keep frontmatter descriptions strictly to routing
+   triggers, move templates and edge-case procedures into on-demand files
+   (`assets/`, `references/`), replace multi-step prose verification with
+   deterministic scripts (`scripts/`), store durable state on disk
+   (`.sdlc-skills/`), and enforce word budgets on every skill and workflow
+   chain.
+2. **The agent harness:** mount a phase skill only while that phase is active,
+   fold completed phases into compact disk records, and run implementation
+   tasks in fresh subagents so planning history does not crowd coding context.
+3. **The model and runtime:** separate standing workflow invariants from
+   rolling conversation history at the attention layer, and enforce gate
+   preconditions in the tool runtime rather than through repeated prompt
+   reminders.
+
+`sdlc-skills` implements the library layer directly — every skill and workflow
+chain is gated by `scripts/sh/token-budget.sh`, deterministic state checks run
+as bundled scripts, and approved plans hand off cleanly to fresh sessions or
+delegated subagents (`subagent-driven-development`) so execution starts with a
+clean window.
+
 ## Installation
 
 Installation differs by agent. If you use more than one, install the library

@@ -1,6 +1,6 @@
 ---
 name: subagent-driven-development
-description: "Runs an approved plan's tasks through fresh subagents: one implementer per task, a reviewer on its diff, and a bounded fix loop, with the controller keeping every decision. Use when an approved plan is about to be built by dispatched workers rather than in this session, when the user asks for subagents or workers to do the building, or when the user replies choosing delegated mode. Skip a lone task with no plan directory."
+description: "Runs an approved plan's tasks through fresh subagents with controller-owned review and gates. Use when an approved plan is built by dispatched workers rather than in this session, when the user asks for subagents or workers to build it, or when the user chooses delegated mode. Skip a lone task with no plan directory."
 ---
 
 # Subagent-Driven Development

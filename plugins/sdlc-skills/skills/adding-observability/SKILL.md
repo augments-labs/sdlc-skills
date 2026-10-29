@@ -1,6 +1,6 @@
 ---
 name: adding-observability
-description: "Instruments a change or a service so its operators can tell whether it works for users and find out why when it does not, through the project's existing logging, metrics, and tracing facility, with an alert on a user-facing symptom. Use when adding logs, metrics, traces, or an alert, or when the user says add observability, add monitoring, instrument this, we have no visibility, or we cannot tell whether it is working. Skip the signals a staged rollout's thresholds read, which rollout-controls owns, and skip reading existing signals to find a cause, which debugging owns."
+description: "Instruments a change or service with logs, metrics, traces, and symptom alerts. Use when adding logs, metrics, traces, or an alert, or when the user says add observability, add monitoring, instrument this, we have no visibility, or we cannot tell whether it is working. Skip rollout threshold signals, which rollout-controls owns, and reading existing signals to find a cause, which debugging owns."
 ---
 
 # Adding Observability
