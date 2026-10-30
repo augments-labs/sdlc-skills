@@ -2,6 +2,18 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [11.0.2] — 2026-10-29
+
+Plan verification, worktree inspection, and section hashing now run through
+bundled scripts, the conditional admitted-findings procedure moves out of the
+executor bodies, and fourteen skill descriptions drop step detail and tighten
+phrasing, cutting always-on catalog overhead and active-chain word counts
+without changing any skill name or `.sdlc-skills/` artifact shape.
+
+The README documents how engineering constraints and context rot interact across
+the library, the harness, and the runtime, and the conformance reference records
+the skill body byte ceiling.
+
 ## [11.0.1] — 2026-10-22
 
 Eleven skills close gaps found by triaging reports against the library: a
