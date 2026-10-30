@@ -1,6 +1,6 @@
 ---
 name: reviewing-a-pr
-description: "Reviews a pull request someone else wrote, with findings written for its author and a verdict posted only after you confirm it. Use when a teammate's or a contributor's PR is assigned to you or waiting on your review, or when the user says review PR 42, look at this pull request, what do you think of this contribution, or should we accept this. Skip a change you wrote yourself, which `requesting-code-review` reviews before it leaves your machine, and skip feedback arriving on your own change, which `receiving-code-review` verifies."
+description: "Reviews a pull request someone else wrote. Use when a teammate's or contributor's PR is assigned to you or waiting on your review, or when the user says review PR 42, look at this pull request, what do you think of this contribution, or should we accept this. Skip changes you wrote yourself, which `requesting-code-review` reviews, and feedback arriving on your own change, which `receiving-code-review` verifies."
 ---
 
 # Reviewing a PR

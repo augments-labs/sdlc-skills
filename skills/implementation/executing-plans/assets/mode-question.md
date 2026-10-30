@@ -9,7 +9,9 @@ several files and whose files, state, and outputs are disjoint; option 2
 when most tasks span several files and are self-contained enough that
 keeping them out of this session's context is worth every fresh worker
 re-reading the brief, the skills, and the code before its first edit; else
-option 1.
+option 1. Because the approved plan and its ledger row are on disk, delegated
+mode (or starting the executor from the plan path in a fresh session) leaves
+planning-phase context behind.
 `executing-plans` owns the inline loop and `subagent-driven-development` the
 delegated one; the answer picks which is invoked. Ask this and end the turn;
 `clarifying-intent` owns a reply that names no option. Record the answer
@@ -24,7 +26,7 @@ Plan {{version}} is approved. How should it run?
 1. Inline — every task in this session
    Keeps this session's context; you review each task's diff yourself; a compaction re-reads the whole plan.
 2. Delegated — one fresh subagent per task, in sequence
-   Starts each task fresh, keeping this session's context out of the build; each worker re-reads the code before its first edit, and a dispatched reviewer reads each task's diff, so small tasks run slower than inline; a compaction only re-checks the controller's ledger.
+   Starts each task fresh, keeping this session's planning context out of the build; each worker re-reads the code before its first edit, and a dispatched reviewer reads each task's diff, so small tasks run slower than inline; a compaction only re-checks the controller's ledger.
 3. Delegated, in waves — every ready task whose files, state, and outputs are disjoint dispatches together
    Each task still gets its own subagent and reviewer; the merged state is re-gated before any of them is done.
 

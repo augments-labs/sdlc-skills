@@ -27,7 +27,7 @@ Every skill is checked against the format on every change.
 | `name` is 1 to 64 lowercase letters, digits, or hyphens | Length and character checks |
 | No leading, trailing, or consecutive hyphens | Pattern check |
 | `name` matches its directory | Compared for each directory |
-| `description` is not empty and at most 1024 characters | Extracted field length; longest is 582 |
+| `description` is not empty and at most 1024 characters | Extracted field length; longest is 501 |
 | Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` | `frontmatter-fields` policy check |
 | `compatibility`, when present, is at most 500 characters | `compatibility-length` policy check |
 
@@ -44,8 +44,9 @@ valid against the standard and still fail a house rule here.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 321 (64% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker, estimated per word, number, and symbol; largest is ~4566 |
+| Body lines | At most 500; longest is 300 (60% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker, estimated per word, number, and symbol; largest is ~4205 |
+| Body bytes | `body-bytes` policy check: under 19,000, the smallest size at which a harness has been seen to cut a body it re-attaches after a context summary; largest is 17,435 |
 | Typical body size | Aim for about 80 to 120 lines. A longer discipline body needs behavioral evidence that justifies it |
 | Presentation | The checker warns on long stretches of undivided prose |
 | Supporting paths | They resolve inside the installed skill, and direct references stay shallow |
@@ -67,9 +68,9 @@ written, not about what your agent needs to support.
 
 | Directory | House use |
 | --- | --- |
-| `references/` | 25 skills; rubrics, checklists, worked examples, and lookup guidance |
+| `references/` | 26 skills; rubrics, checklists, worked examples, and lookup guidance |
 | `assets/` | 39 skills; every fill-in template and other static resources |
-| `scripts/` | 10 skills (see below) |
+| `scripts/` | 11 skills (see below) |
 
 The repository classifies a document by how it is used. A file that is
 filled in and emitted is a template, whatever its filename says, and lives
@@ -86,9 +87,10 @@ declare, and they add no third-party packages.
 | `finishing-a-branch` | `branch-state.sh` | Inspects commits, uncommitted changes, ownership, and recoverability. Read-only |
 | `verification-before-completion` | `state-identity.sh` | Captures the identity of the source and its environment, so evidence can be tied to them |
 | `writing-skills` | `check-skill.sh` | Checks one skill against the format and the house rules, and runs its bundled scripts with `--help` |
-| `writing-plans`, `executing-plans`, `subagent-driven-development` | `plan-version.sh`, one identical copy each | Prints a plan's version from its index and task files. Read-only |
+| `writing-plans`, `executing-plans`, `subagent-driven-development` | `plan-version.sh`, one identical copy each | Prints a plan's version from its index and task files, verifies its approval ledger, and checks task contracts. Read-only |
 | `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Open and re-check a plan's run ledger, render a role brief, and assemble a task's diff for its reviewer |
-| `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`. Never overwrites a file |
+| `using-git-worktrees` | `worktree-state.sh` | Inspects checkout isolation, submodule status, dirty state, base resolution, branch collisions, and `.worktrees/` ignore status. Read-only |
+| `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`, and hashes files or sections for ledger rows. Never overwrites a file |
 | `viewing-artifacts` | `serve.py`, `start-server.sh`, `stop-server.sh` | Starts and stops a local preview that the skill owns, writes a log, and may open a browser |
 | `ui-ux-design` | The same preview scripts | Provides the comparison preview |
 | `diagnosing-a-session` | The same preview scripts | Serves the session trace page |
