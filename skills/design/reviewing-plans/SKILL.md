@@ -13,6 +13,7 @@ This skill never edits the plan, approves it, or starts an executor.
   classification route is high-risk: `writing-plans` requires this review.
 - The user asks for an independent look at a plan, or accepts the review that
   `writing-plans` offers for a plan that is not high-risk.
+- An executor proposes a high-risk successor mid-run (Step 1.6).
 - **Skip** a plan with no printed version yet: its index or task files are not
   written.
 - **Skip** editing the plan. Corrections belong to the plan's author, as a
@@ -49,17 +50,19 @@ This skill never edits the plan, approves it, or starts an executor.
    for the author; never review against a newer one instead.
 3. Bind one reviewer role ID that did not write this plan. Pick its tier with
    the **Model selection** section of `dispatching-parallel-agents`.
-4. Bind the review boundary: read-only access to the plan directory and its
-   inputs, the worker, provider, storage, and egress authority the user or
+4. Bind the review boundary: read-only access to the plan directory, its
+   inputs, and the repository at the `Bound inputs` code revision, the worker, provider, storage, and egress authority the user or
    project already gave, a deadline, and who cancels. If there is no such
    authority, the review is not dispatched (Step 2.3).
 5. Bind the report location in the plan's evidence directory:
    `.sdlc-skills/evidence/{{plan directory name}}/00-index.review-{{version}}-{{attempt}}.md`,
    attempt `1` first. It is the only path that attempt's reviewer may write.
 6. If a predecessor version already has a review, bind that report too; the
-   new review focuses on the
-   corrected sections and every section that depends on them, and carries
-   the earlier recorded decisions forward.
+   new review reads the successor's delta (its `Successor delta` line, the
+   tasks it adds or changes) and every section that depends on them, nothing
+   else, and carries the earlier recorded decisions forward. An executor
+   proposing a successor mid-run comes here the same way: the delta is
+   reviewed, the approved remainder is not reread.
 
 ## Step 2: Dispatch the review and keep its receipt
 
@@ -92,7 +95,8 @@ This skill never edits the plan, approves it, or starts an executor.
    version, or the report is missing or unreadable, the review stays
    pending. If the reviewer returned `NEEDS_CONTEXT` with a question, the
    review stays pending; return that exact question to the plan's author, at
-   the caller's pending `writing-plans` step, as a `decision` item. A
+   the caller's pending step (`writing-plans` Step 3.11, or the executor
+   step that proposed the successor), as a `decision` item. A
    high-risk plan is not presented until the question is answered and the
    review is run again on the answered version.
 2. Print the plan's version again. If it changed during the review, the
@@ -113,8 +117,8 @@ This skill never edits the plan, approves it, or starts an executor.
    `Bound evidence`.
 5. Return to the caller's pending step with the report path and its recorded
    decisions:
-   - If a blocker is `accepted`, return to the pending `writing-plans` step;
-     the correction is a proposed successor, and a high-risk successor comes
+   - If a blocker is `accepted`, return to the caller's pending step; the
+     correction is a proposed successor, and a high-risk successor comes
      back here before it is presented.
    - If no blocker is open, return to the caller, or to the user who asked.
    - On a high-risk route, the caller presents nothing until this review has
@@ -124,6 +128,10 @@ This skill never edits the plan, approves it, or starts an executor.
 
 ## Gotchas
 
+- A review that reads only the plan and its inputs checks the plan against
+  itself: nine such reviews passed a plan whose tasks could not be built as
+  written on the base they were bound to. The Buildability lens opens the
+  code, and a reviewer given no code revision returns `NEEDS_CONTEXT`.
 - Self-review is not this review. The author's own checks in `writing-plans`
   Step 3 read the plan with the assumptions that wrote it; counting them as
   the independent review presents a high-risk plan no second reader saw.

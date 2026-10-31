@@ -19,8 +19,8 @@ style nits.
 
 - Plan: {{plan directory, index and task file paths, and the exact printed version}}
 - Approved inputs: {{requirements and design paths with exact identities; the migration contract and assurance matrix when the route is high-risk}}
-- Codebase evidence: {{relevant paths and revisions}}
-- Review boundary: {{reviewer role ID; read-only access to the plan and its inputs; worker, provider, storage, and egress authority}}
+- Codebase evidence: {{the repository path and the exact base revision the index binds, plus any relevant paths}}
+- Review boundary: {{reviewer role ID; read-only access to the plan, its inputs, and the repository at the bound revision; worker, provider, storage, and egress authority}}
 - Report location: {{the one path you may write}}
 - Terminal control: {{deadline and timeout/cancel owner}}
 
@@ -51,6 +51,17 @@ style nits.
    goal.
 7. **Authorization:** the reviewed plan version and execution mode are pending
    until directly approved.
+8. **Buildability:** open the repository at the bound revision; the plan's
+   description of the code is not evidence. For every task: each `Files`
+   path exists there or is created by this or an earlier task; each
+   interface the task changes or removes (a type, a kind, a trait, a
+   signature, an exported name, a stored format) has every consumer in the
+   repository (callers, exhaustive matches, implementations, serialized
+   copies, in every package) inside this task's `Files` or a dependent
+   task's; each claim the `Objective` or `Change` makes about the current
+   code holds there; and the Evaluator runs on that state. Report the
+   search you ran (the path and symbol) per interface in the coverage table;
+   a consumer no task owns is a blocker.
 
 ## Boundary
 

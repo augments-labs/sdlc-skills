@@ -23,6 +23,9 @@ ledger; every later change to what it specifies is a successor file.
   conflict resolver and decision rule}}
 - **Bound inputs:** {{exact brief/spec/design/model/ADR/migration/assurance/code
   identities, evidence freshness, and invalidation rules}}
+- **Plan set:** {{none, or: the slices in order, this plan's position (slice
+  n of m), its predecessor plan's path, and the next slice's name; a later
+  slice is planned only after this one lands}}
 - **Selected visual references:** {{complete keyed collection from the approved
   design, copied field for field in the table below; or `not applicable`}}
 
