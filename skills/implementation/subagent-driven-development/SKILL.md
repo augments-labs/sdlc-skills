@@ -259,6 +259,8 @@ In the worktree from Step 2, in order:
 4. Close with "Rulings I made": every ruling in the ledger, one line each,
    then "Findings not built": every `finding` row with no `admitted` row,
    with its evidence, one line each. The user decides which become work.
+   If the index's `Plan set` names a next slice, name it: `writing-plans`
+   plans it against the landed base.
 
 | Thought | Reality |
 | --- | --- |

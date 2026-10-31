@@ -150,6 +150,8 @@ In the task workspace recorded in Step 2, in order:
    executes the answer. Run no push, PR, merge, or delete here.
 4. Close with "Findings not built": every `finding` row with no `admitted`
    row, with its evidence, one line each. The user decides which become work.
+   If the index's `Plan set` names a next slice, name it: `writing-plans`
+   plans it against the landed base.
 
 | Thought | Reality |
 | --- | --- |
