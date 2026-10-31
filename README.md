@@ -133,11 +133,11 @@ script disagree, so the numbers cannot drift from the tree.
 | What loads | Words | Approx tokens |
 | --- | --- | --- |
 | The router, every session | 843 | 1312 |
-| One skill body, when its skill fires | | 580 to 4639 |
+| One skill body, when its skill fires | | 580 to 4664 |
 | The bug-fix chain, 7 skills | 7533 | 11834 |
-| The new-feature chain, 12 skills | 15521 | 24664 |
-| The plan-execution chain, 8 skills | 10560 | 16844 |
-| The delegated-execution chain, 7 skills | 10185 | 16365 |
+| The new-feature chain, 12 skills | 15519 | 24687 |
+| The plan-execution chain, 8 skills | 10573 | 16870 |
+| The delegated-execution chain, 7 skills | 10198 | 16390 |
 | The incident chain, 5 skills | 5154 | 8076 |
 | The release chain, 5 skills | 5609 | 9084 |
 <!-- token-budget-table:end -->

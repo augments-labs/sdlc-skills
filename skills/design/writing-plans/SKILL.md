@@ -34,6 +34,7 @@ true and how that is judged, not the code.
 ## Available scripts
 
 - **`scripts/plan-version.sh`** — prints the plan's version, or with `--check-contract` and `--verify` checks task-contract invariants and the decision ledger.
+- **`scripts/plan-files.sh`** — checks each task's `Files` paths against a base revision. Read-only.
 
 ## Step 1: Write the index
 
@@ -129,16 +130,21 @@ true and how that is judged, not the code.
    location, condition, or number names the file and symbol it was checked
    against; rewrite a claim with no such citation to what is known, or
    remove it.
-4. Run `bash scripts/plan-version.sh --check-contract` on the plan directory to verify that every `Consumes` resolves to an earlier task's `Produces`, every `Depends on` names an existing non-cancelled task, `Implementation disciplines` is filled, and any file overlap across tasks has a dependency and one owner. Also confirm every task has an executable Evaluator or a controlled rubric, that the index has one top-level **Acceptance** check, and that the index's Constraints block holds across every task.
+4. Run `bash scripts/plan-version.sh --check-contract` on the plan directory;
+   it checks `Consumes`, `Depends on`, `Implementation disciplines`, and
+   file overlap. Then confirm every task has an executable Evaluator or a
+   controlled rubric, that the index has one top-level **Acceptance** check,
+   and that its Constraints block holds across every task.
 5. Name in the index's **Architecture** the one type or module that owns
    each domain fact more than one task consumes: a type, a set of kinds and
    where their traits live, the error type that crosses a module boundary.
    If two tasks each define the same fact, give it one owner and make the
    others consume it.
 6. Walk the tasks in dependency order against the bound base revision, not
-   against the design's description of it. At each task boundary, confirm
-   that every path in `Files` exists at the base or is created by this or an
-   earlier task, that every input the next task reads already exists, that
+   against the design's description of it. Run
+   `bash scripts/plan-files.sh --base {{revision}} {{plan dir}}` and fix each
+   `gap` it prints before presenting. Then confirm at each task boundary
+   that every input the next task reads already exists, that
    every deleted or renamed artifact has no surviving consumer, and that the
    task's own Evaluator can run on that state.
 7. For every interface a task changes or removes (a type, a kind in a set of

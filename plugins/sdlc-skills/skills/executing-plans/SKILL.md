@@ -21,6 +21,7 @@ what happens to the branch.
 ## Available scripts
 
 - **`scripts/plan-version.sh`** — prints the plan's version, or with `--check-contract` and `--verify` checks task-contract invariants and the decision ledger.
+- **`scripts/plan-files.sh`** — checks each task's `Files` paths against a base revision. Read-only.
 
 ## Step 1: Verify approval and mode
 
