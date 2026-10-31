@@ -2,6 +2,16 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [11.0.4] — 2026-10-31
+
+`writing-plans`, `executing-plans`, and `subagent-driven-development` ship
+`plan-files.sh`, which resolves every path on each task's `Files` line
+against the bound base revision in task order and prints each gap before the
+plan is presented; a done or cancelled task is skipped, and a task with no
+`Files` path is a gap. The contribution rules say when a chain budget may
+rise: cut the body first, and raise it only with a line in the PR naming the
+words added to the budget and what they buy.
+
 ## [11.0.3] — 2026-10-31
 
 Planning a change can now run inline in a fresh session: the mode question

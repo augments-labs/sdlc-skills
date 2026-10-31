@@ -207,9 +207,11 @@ done < <(find skills \( -path '*/references/*.md' -o -path '*/assets/*.md' \) -t
 # The plan's version script and mode question ship with every skill that reads
 # them, so each executor is self-contained; the copies must not drift.
 for copy in executing-plans subagent-driven-development; do
-  echo "• plan-version.sh: the $copy copy is byte-identical to writing-plans"
-  cmp -s skills/design/writing-plans/scripts/plan-version.sh "skills/implementation/$copy/scripts/plan-version.sh" ||
-    err "plan-version.sh: the writing-plans and $copy copies differ"
+  for script in plan-version.sh plan-files.sh; do
+    echo "• $script: the $copy copy is byte-identical to writing-plans"
+    cmp -s "skills/design/writing-plans/scripts/$script" "skills/implementation/$copy/scripts/$script" ||
+      err "$script: the writing-plans and $copy copies differ"
+  done
 
   echo "• mode-question.md: the $copy copy is byte-identical to writing-plans"
   cmp -s skills/design/writing-plans/assets/mode-question.md "skills/implementation/$copy/assets/mode-question.md" ||

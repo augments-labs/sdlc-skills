@@ -44,8 +44,8 @@ valid against the standard and still fail a house rule here.
 
 | Dimension | House policy and measurement |
 | --- | --- |
-| Body lines | At most 500; longest is 315 (63% of ceiling) |
-| Estimated body tokens | Under 5000 by the skill checker, estimated per word, number, and symbol; largest is ~4492 |
+| Body lines | At most 500; longest is 316 (63% of ceiling) |
+| Estimated body tokens | Under 5000 by the skill checker, estimated per word, number, and symbol; largest is ~4522 |
 | Body bytes | `body-bytes` policy check: under 19,000, the smallest size at which a harness has been seen to cut a body it re-attaches after a context summary; largest is 18,958 |
 | Typical body size | Aim for about 80 to 120 lines. A longer discipline body needs behavioral evidence that justifies it |
 | Presentation | The checker warns on long stretches of undivided prose |
@@ -88,6 +88,7 @@ declare, and they add no third-party packages.
 | `verification-before-completion` | `state-identity.sh` | Captures the identity of the source and its environment, so evidence can be tied to them |
 | `writing-skills` | `check-skill.sh` | Checks one skill against the format and the house rules, and runs its bundled scripts with `--help` |
 | `writing-plans`, `executing-plans`, `subagent-driven-development` | `plan-version.sh`, one identical copy each | Prints a plan's version from its index and task files, verifies its approval ledger, and checks task contracts. Read-only |
+| `writing-plans`, `executing-plans`, `subagent-driven-development` | `plan-files.sh`, one identical copy each | Resolves every task's `Files` paths against a base revision, in task order, and reports the ones that are not there. Read-only |
 | `subagent-driven-development` | `sdd-workspace.sh`, `task-brief.sh`, `review-package.sh` | Open and re-check a plan's run ledger, render a role brief, and assemble a task's diff for its reviewer |
 | `using-git-worktrees` | `worktree-state.sh` | Inspects checkout isolation, submodule status, dirty state, base resolution, branch collisions, and `.worktrees/` ignore status. Read-only |
 | `using-sdlc-skills` | `artifact-layout.sh` | Creates the `.sdlc-skills/` directories and `evidence/.gitignore`, and hashes files or sections for ledger rows. Never overwrites a file |
