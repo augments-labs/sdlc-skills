@@ -115,10 +115,12 @@ without which its `Evaluator` cannot pass; any other finding stays a
 row in one run, dispatch nothing more: apply `writing-plans` Step 3.6 and
 3.7 to every remaining task against the current base, in one pass, and
 propose one successor carrying every gap, its `Bound inputs` naming that
-base revision. On a high-risk route,
+base revision. A claim that fails Step 3.7 is a `gap` row and a finding for
+the owner of the document that made it; invoke nothing from here. On a
+high-risk route,
 **REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a proposed successor
-before asking for reapproval; it binds the predecessor's report and reviews
-the delta and what depends on it (its Step 1.6).
+before asking for reapproval; its Step 1.6 binds the predecessor's report
+and reviews the delta and what depends on it.
 
 ## Step 4: Dispatch one task
 
@@ -282,10 +284,9 @@ the evidence. It is never a task because someone wrote it down.
 
 ## Gotchas
 
-- A gap found mid-task reads as one successor to write now, and the next
-  task finds the next: one run wrote fifteen successors this way before the
-  plan was walked against the base once. The second `gap` row batches the
-  rest.
+- A gap found mid-task reads as one successor to write now: one run wrote
+  fifteen this way before the plan was walked against the base once. The
+  second `gap` row batches the rest.
 - An instruction to fix whatever turns up reads as licence to queue every
   advisory as a task, and each fix's review then raises more — reproduced
   by a plan run that carried that instruction with no budget: its 14-row

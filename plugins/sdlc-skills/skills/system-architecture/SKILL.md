@@ -70,7 +70,9 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    stable ID delta. The identity goes in the ledger row, never the header.
 2. Fill the high-risk classification block. If any answer is off the ordinary
    route, or the user marks the work high-risk, run
-   `assets/design-review.md` before presenting. That review is blocking.
+   `assets/design-review.md` before presenting. That review is blocking. A
+   `NEEDS_CONTEXT` return keeps it pending: supply the path it names and
+   run the review again.
 3. Present:
 
    ```text

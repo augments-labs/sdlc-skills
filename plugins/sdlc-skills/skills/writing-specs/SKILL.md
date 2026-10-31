@@ -74,7 +74,8 @@ its sections.
    is off the ordinary route, or the user marks the work high-risk, run the
    review in `assets/spec-review.md` before presenting, with a reviewer who is
    not the spec's sole author. That review is blocking: do not present the
-   spec (Step 3.3) before it is done.
+   spec (Step 3.3) before it is done. A `NEEDS_CONTEXT` return keeps it
+   pending: supply the path it names and run the review again.
 3. Present:
 
    ```text

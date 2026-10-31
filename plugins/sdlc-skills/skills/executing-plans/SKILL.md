@@ -118,20 +118,21 @@ mode; switching needs the `Approval rule` owner's direct answer.
      their blockers, and the next conditions they require.
    - If a task needs a change to what was approved (scope, interface,
      evaluator, phase, ownership), write the proposed successor, ask for
-     reapproval, and end the turn. A successor proposed because a task
-     cannot be built as written (a consumer no task owns, a path or claim
-     that does not hold on the base: a finding without which the task's
-     `Evaluator` cannot pass; any other finding stays a `finding` row) is a
-     `gap` row in the execution ledger. On the second `gap` row in one run,
-     start no task: apply `writing-plans` Step 3.6 and 3.7 to every
-     remaining task against the current base, in one pass, and propose one
-     successor carrying every gap found, its `Bound inputs` naming that
-     base revision. On a high-risk route, **REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a
-     proposed successor before asking for reapproval; it binds the
-     predecessor's report and reviews the delta and what depends on it
-     (its Step 1.6).
+     reapproval, and end the turn.
    - If a high-risk entry gate has not passed and no ready task can advance
      without it, report it and end the turn.
+
+A successor proposed because a task cannot be built as written (a finding
+without which its `Evaluator` cannot pass; any other finding stays a
+`finding` row) is a `gap` row in the execution ledger. On the second `gap`
+row in one run, start no task: apply `writing-plans` Step 3.6 and 3.7 to
+every remaining task against the current base, in one pass, and propose one
+successor carrying every gap, its `Bound inputs` naming that base revision.
+A claim that fails Step 3.7 is a `gap` row and a finding for the owner of
+the document that made it; invoke nothing from here. On a high-risk route,
+**REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a proposed successor
+before asking for reapproval; it binds the predecessor's report and reviews
+the delta and what depends on it (its Step 1.6).
 
 ## Step 5: Finish the plan
 

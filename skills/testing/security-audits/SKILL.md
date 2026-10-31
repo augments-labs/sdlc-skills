@@ -104,7 +104,8 @@ production state you cannot touch. Do not approve the omission yourself.
 4. If there is no answer, or the reply is silence or urgency, the verdict
    stays `inconclusive`.
 5. An accepted omission is bound to this exact version under review and is
-   voided, with the verdict, by any security-relevant edit.
+   voided, with the verdict, by any later edit; the Step 3.4 re-audit
+   rebinds both, or records the omission as a blocker again.
 6. A lack of auditor independence is not on this menu; Step 3 settles it.
 
 ## Gotchas
