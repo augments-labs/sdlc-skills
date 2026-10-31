@@ -128,23 +128,35 @@ true and how that is judged, not the code.
    where their traits live, the error type that crosses a module boundary.
    If two tasks each define the same fact, give it one owner and make the
    others consume it.
-6. Walk the tasks in dependency order. At each task boundary, confirm that
-   every input the next task reads already exists, that every deleted or
-   renamed artifact has no surviving consumer, and that the task's own
-   Evaluator can run on that state.
-7. Resolve every path and symbol the plan cites against the current
+6. Walk the tasks in dependency order against the bound base revision, not
+   against the design's description of it. At each task boundary, confirm
+   that every path in `Files` exists at the base or is created by this or an
+   earlier task, that every input the next task reads already exists, that
+   every deleted or renamed artifact has no surviving consumer, and that the
+   task's own Evaluator can run on that state.
+7. For every interface a task changes or removes (a type, a kind in a set of
+   kinds, a trait, a signature, an exported name, a stored format), search
+   the base revision for its consumers: callers, exhaustive matches,
+   implementations, serialized copies, in every package of the repository.
+   Confirm each consumer sits in this task's `Files` or in a dependent
+   task's. A consumer no task owns is a gap: fix it before presenting. A
+   task whose `Objective` rests on a claim about the current code (a command
+   exists, a format carries a field) resolves that claim against the base
+   revision; if it does not hold, stop planning as Step 3.2 says, returning
+   the claim to the skill that owns the document that made it.
+8. Resolve every path and symbol the plan cites against the current
    revision, and replace any that does not resolve. Cite a path or a
    symbol, never a line number.
-8. Confirm every selected Reference ID has a carrying task and a matching
+9. Confirm every selected Reference ID has a carrying task and a matching
    conformance evaluator.
-9. Fill **Review focus** with up to five spec-implied inputs or failure
+10. Fill **Review focus** with up to five spec-implied inputs or failure
    modes that no task Evaluator exercises, or mark it `none`; give every
    `none yet` row a check or name it in the PR. If a task tells things
    apart by the shape of a string (a key, slug, name, or path used as an
    identity), name two different inputs that produce the same string and
    the task test that separates them, or have the task carry the identity
    as structured data.
-10. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
+11. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
     high-risk, and bring every blocker it returns to a recorded decision as
     that skill says; for any other plan, ask
     the offer question `reviewing-plans` states.
@@ -196,3 +208,8 @@ true and how that is judged, not the code.
 
 - A row keyed to the index's `Normative version` line survives a task-file
   edit; key rows to the printed version.
+- A `Files` list written from the design names the files the design
+  discusses, not the ones the change breaks: a plan that added a kind to a
+  set of kinds listed its owning module and missed seven exhaustive matches
+  in another package, each found by a worker mid-task and each a successor
+  version. Step 3.7 searches the base, not the design.
