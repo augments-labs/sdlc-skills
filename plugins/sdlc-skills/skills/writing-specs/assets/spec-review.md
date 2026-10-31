@@ -25,7 +25,7 @@ Review the requirements spec in Inputs. Flag **only** issues that would lead to 
 
 - Spec: {{spec path and exact version}}
 - Approved goal/brief: {{goal/brief path and exact version}}
-- Codebase evidence: {{relevant paths and revisions}}
+- Codebase evidence: {{the repository path and the exact current revision, plus any relevant paths}}
 - Review boundary: {{reviewer role ID, allowed artifact access, worker/provider/storage/egress authority, and report location}}
 - Terminal control: {{deadline and timeout/cancel owner}}
 
@@ -46,6 +46,7 @@ Review the requirements spec in Inputs. Flag **only** issues that would lead to 
    paths, target-derived preservation oracles, unauthorized project mutation,
    and prose only when the chosen acceptance form cannot honestly judge the
    requirement.
+7. **Current-code claims** — every sentence stating what the code does today cites a path and symbol; open the repository at the revision named under Codebase evidence and confirm or refute each one. An unconfirmed claim is a finding.
 
 ## Boundary
 

@@ -89,7 +89,9 @@ tool-issued dispatch ID).
    - If a trust boundary changed, the suggested owner is `security-audits`.
      That finding blocks readiness at every depth until an independent
      `security clear` on this candidate is recorded, unless the Deep security
-     role returned it.
+     role returned it. Request that audit once, on the first round whose
+     other roles return no blocking finding; until then the finding is
+     carried forward in the review history, not audited per round.
    - If existing code needs an audit for accidental complexity, the suggested
      owner is `complexity-audit`.
    - If the assurance strategy is hollow or needs challenging, the suggested
@@ -141,7 +143,12 @@ tool-issued dispatch ID).
     If a retry is permitted and the candidate or its bound inputs changed,
     restart at Step 1 with fresh identities and a fresh receipt. Carry prior
     coverage and recorded decisions forward; focus the successor review on
-    fixes, affected paths, and regressions.
+    fixes, affected paths, and regressions. A recorded `security clear`
+    carries forward too, unless the round edited a file, boundary, or path
+    the audit report names, or added a security surface; then obtain the
+    focused re-audit of that edit that `security-audits` Step 3.4 describes,
+    never a new audit of the candidate. The Deep security role reruns under
+    the same rule.
 11. **REQUIRED — continue a `ready` verdict through the recorded owner:**
     - If a caller is awaiting this review, return to its pending step; never
       invoke the caller recursively.
@@ -182,6 +189,11 @@ tool-issued dispatch ID).
   verdict.
 - A trust-boundary finding without `security clear` is not advisory. Filing it
   as advice to reach `ready` ships a boundary nobody audited.
+- Each fix round restarts at Step 1 with a fresh candidate, and a fresh
+  candidate reads as needing a fresh audit: one run audited every round of
+  every task, 102 audits in 193 dispatches, most of them of edits the audit
+  report never named. The audit runs once at convergence and is voided only
+  by an edit it names.
 
 ## Common mistakes
 

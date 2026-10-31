@@ -54,6 +54,12 @@ its sections.
    the project, is still open, write the observable, the intended gate, its
    owner, and the handoff. Never invent an interface.
 5. List the edge cases and scenarios that break a naive build.
+   Every sentence in the spec that states what the code does today (a
+   command exists, a format carries a field, a path handles a case) names
+   the path and symbol it was checked against at the current revision.
+   Rewrite one you cannot cite to what is known, or move it to the open
+   questions. A requirement built on an unchecked claim is planned against
+   code that is not there.
 6. Fill every column of the template's assumptions-and-dependencies table,
    one row per assumption or dependency.
 7. List the open questions, the requirement-level risks, and what is out of
@@ -91,6 +97,11 @@ its sections.
 
 ## Gotchas
 
+- A claim about the current code that reads as settled is planned as
+  settled: a spec that said a sign-in command existed and a lock format
+  carried a licence field reached implementation before anyone found that
+  neither held on the base, each as a plan successor mid-task. Step 2.5
+  cites the path and symbol, or says it is unknown.
 - A retired requirement ID reused for new work silently makes every earlier
   citation of it (test names, review comments, out-of-scope links) point at
   the new work.

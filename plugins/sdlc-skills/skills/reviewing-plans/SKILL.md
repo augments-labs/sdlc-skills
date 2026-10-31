@@ -49,17 +49,19 @@ This skill never edits the plan, approves it, or starts an executor.
    for the author; never review against a newer one instead.
 3. Bind one reviewer role ID that did not write this plan. Pick its tier with
    the **Model selection** section of `dispatching-parallel-agents`.
-4. Bind the review boundary: read-only access to the plan directory and its
-   inputs, the worker, provider, storage, and egress authority the user or
+4. Bind the review boundary: read-only access to the plan directory, its
+   inputs, and the repository at the `Bound inputs` code revision, the worker, provider, storage, and egress authority the user or
    project already gave, a deadline, and who cancels. If there is no such
    authority, the review is not dispatched (Step 2.3).
 5. Bind the report location in the plan's evidence directory:
    `.sdlc-skills/evidence/{{plan directory name}}/00-index.review-{{version}}-{{attempt}}.md`,
    attempt `1` first. It is the only path that attempt's reviewer may write.
 6. If a predecessor version already has a review, bind that report too; the
-   new review focuses on the
-   corrected sections and every section that depends on them, and carries
-   the earlier recorded decisions forward.
+   new review reads the successor's delta (its `Successor delta` line, the
+   tasks it adds or changes) and every section that depends on them, nothing
+   else, and carries the earlier recorded decisions forward. An executor
+   proposing a successor mid-run comes here the same way: the delta is
+   reviewed, the approved remainder is not reread.
 
 ## Step 2: Dispatch the review and keep its receipt
 
@@ -124,6 +126,10 @@ This skill never edits the plan, approves it, or starts an executor.
 
 ## Gotchas
 
+- A review that reads only the plan and its inputs checks the plan against
+  itself: nine such reviews passed a plan whose tasks could not be built as
+  written on the base they were bound to. The Buildability lens opens the
+  code, and a reviewer given no code revision returns `NEEDS_CONTEXT`.
 - Self-review is not this review. The author's own checks in `writing-plans`
   Step 3 read the plan with the assumptions that wrote it; counting them as
   the independent review presents a high-risk plan no second reader saw.
