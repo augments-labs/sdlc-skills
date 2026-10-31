@@ -122,6 +122,35 @@ and workflow chain is checked against a word budget
 once a plan is approved you can hand it to a fresh session or to subagents so
 implementation starts with a clean context window.
 
+The budget bounds the cost; it does not make it small. This is what the
+current tree loads, measured on the skill bodies by
+`bash scripts/sh/token-budget.sh --table` (tokens are approximated as
+characters divided by four). The validator fails when this table and the
+script disagree, so the numbers cannot drift from the tree.
+
+<!-- token-budget-table:start -->
+| What loads | Words | Approx tokens |
+| --- | --- | --- |
+| The router, every session | 843 | 1312 |
+| One skill body, when its skill fires | | 580 to 4639 |
+| The bug-fix chain, 7 skills | 7533 | 11834 |
+| The new-feature chain, 12 skills | 15485 | 24618 |
+| The plan-execution chain, 8 skills | 10560 | 16844 |
+| The delegated-execution chain, 7 skills | 10185 | 16365 |
+| The incident chain, 5 skills | 5154 | 8076 |
+| The release chain, 5 skills | 5609 | 9084 |
+<!-- token-budget-table:end -->
+
+A full feature chain costs the price of a long design document before any
+code is read, so a plan is handed to a fresh session or to subagents instead
+of being executed in the window that produced it. One more lever is the
+summary itself: when a harness summarizes a long conversation, it re-attaches
+the skill bodies in use, and the smallest cut seen on a re-attached body is
+about 20,000 characters. Every body is kept under 19,000 bytes
+(`docs/reference/agent-skills-conformance.md` records the largest), and
+`using-sdlc-skills` tells the agent to reload a body that comes back
+truncated rather than act on the part it can see.
+
 ## Installation
 
 Installation differs by agent. If you use more than one, install the library

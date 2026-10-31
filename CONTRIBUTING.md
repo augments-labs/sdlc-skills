@@ -118,10 +118,10 @@ does with a skill.
 
 | Gate | What it checks |
 | --- | --- |
-| `validate-skills.sh` | Frontmatter, body and description size limits, the ban on external references and vendor model names, where templates and references live, that every manifest lists every skill, that the adapters are in sync, that `docs/` and `tests/` Markdown paths and skill reference paths resolve, and that the conformance record matches the tree |
+| `validate-skills.sh` | Frontmatter, body and description size limits, the ban on external references and vendor model names, where templates and references live, that every manifest lists every skill, that the adapters are in sync, that `docs/` and `tests/` Markdown paths and skill reference paths resolve, that the conformance record matches the tree, and that the context-cost table in `README.md` matches `token-budget.sh --table` |
 | `validate-skill-graph.sh` | Pairs of skills that hand off to each other. A pair listed in `scripts/sh/data/allowed-cycles.txt` is allowed |
 | `validate-trigger-collisions.sh` | Trigger phrases of two or more words that more than one description shares |
-| `token-budget.sh` | With `--chain NAME`, the total body words of one chain against its budget. With `--max N`, the approximate token size of each `SKILL.md` against a ceiling. CI runs both, the second with `--max 5000` |
+| `token-budget.sh` | With `--chain NAME`, the total body words of one chain against its budget. With `--max N`, the approximate token size of each `SKILL.md` against a ceiling. CI runs both, the second with `--max 5000`. With `--table`, the measured cost of the router, one body, and each chain as the markdown table `README.md` carries between its `token-budget-table` markers; paste its output there after any body edit |
 
 ### Choose the check for your change
 
@@ -164,6 +164,10 @@ skills in each chain, the recorded word count of each body, and the chain's
 budget. `token-budget.sh --chain NAME` adds up the bodies in the chain,
 leaving out their reference files, and fails when the total is over budget.
 CI runs it for every chain.
+`token-budget.sh --table` prints the same sums as a markdown table, with the
+router and the body range; `README.md` carries a copy between marker comments
+that `validate-skills.sh` compares against the script, so a body edit that
+moves a number is followed by pasting the table again.
 
 ### Cutting text from a skill
 

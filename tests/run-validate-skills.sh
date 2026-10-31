@@ -13,7 +13,8 @@
 # outer fence pairs — get their own fixtures alongside the five above.
 #
 # A third copy adds an arrow to one skill body and checks that --strict fails
-# it on prose-arrows.
+# it on prose-arrows. A fourth grows one body so README.md's context-cost
+# table no longer matches token-budget.sh --table.
 #
 # Deterministic on purpose: file in, file out, exit code out. No model runs,
 # no network. The copies of the tree live under a temporary directory and
@@ -29,8 +30,9 @@ has the house shape" gate and the prose-arrows check in
 scripts/sh/validate-skills.sh.
 
 Takes no arguments; copies the repository tree into a temporary directory
-three times (once to break one or more fixtures per Shape rule, once left
-untouched, once to add an arrow to a skill body), runs
+four times (once to break one or more fixtures per Shape rule, once left
+untouched, once to add an arrow to a skill body, once to make the README
+context-cost table stale), runs
 scripts/sh/validate-skills.sh against each copy, and asserts the check names
 the broken file or skill and stays silent on the untouched tree. Never
 mutates the checkout.
@@ -279,6 +281,23 @@ rc=$?
 grep -B1000 'FAIL: prose-arrows' "$arrows_out" | grep '^•' | tail -1 | grep -q '/yagni/' \
   && ok "the prose-arrows failure is named under yagni" \
   || bad "no prose-arrows failure under yagni"
+
+# ---------------------------------------------------------------------------
+# A fourth copy edits one body so the README context-cost table no longer
+# matches token-budget.sh --table.
+stale="$tmp/stale"
+copy_tree "$stale"
+printf '\nOne more sentence, so the router body measures differently.\n' >>"$stale/skills/common/using-sdlc-skills/SKILL.md"
+
+echo "--- validate-skills.sh: a README context-cost table that no longer matches the tree fails"
+stale_out="$tmp/stale.out"
+( cd "$stale" && bash scripts/sh/validate-skills.sh ) >"$stale_out" 2>&1
+rc=$?
+[ "$rc" -ne 0 ] && ok "exit code is non-zero with a stale table ($rc)" \
+  || bad "exit code is 0 with a stale table"
+grep -q 'README.md: the context-cost table is stale' "$stale_out" \
+  && ok "the failure names the README table" \
+  || bad "no stale-table failure named"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "validate-skills.sh tests: PASS"; exit 0; }

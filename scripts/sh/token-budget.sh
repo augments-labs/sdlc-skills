@@ -40,6 +40,10 @@ scripts/sh/token-budget.sh — approximate context cost of the always-loaded sur
   --max N        flag any SKILL.md body over N approx-tokens (default: report only)
   --chain NAME   sum the body words of chain NAME's skills from the chains file
                  (references excluded) and exit 1 over its budget_words
+  --table        print the measured context cost as a markdown table: the
+                 router injection, one skill body, and every chain in the
+                 chains file (words and approx tokens); README.md carries a
+                 copy that validate-skills.sh checks against this output
   --help         this text
 
 Environment:
@@ -59,15 +63,15 @@ esac
 max=0
 [ "${1:-}" = "--max" ] && max="${2:-0}"
 
-# --chain NAME: the summed body words of one chain from scripts/sh/data/chains.toml,
-# checked against its budget_words. Word counts, not the chars/4 estimate above.
-if [ "${1:-}" = "--chain" ]; then
-  chain="${2:-}"; toml="${CHAINS_TOML:-scripts/sh/data/chains.toml}"
-  case "$chain" in ''|*[!a-z0-9-]*) echo "--chain takes a chain name of a-z, 0-9 and -" >&2; exit 2 ;; esac
-  [ -r "$toml" ] || { echo "cannot read $toml" >&2; exit 2; }
-  # The chains file is a small TOML subset: [name] tables holding a skills array
-  # (on one line or several) and the integers recorded_words and budget_words.
-  parsed="$(awk -v want="$chain" '
+body_words() { awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$1" | wc -w | tr -d ' '; }
+body_tokens() { local c; c=$(awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$1" | wc -m); echo $(((c + 3) / 4)); }
+
+# The chains file is a small TOML subset: [name] tables holding a skills array
+# (on one line or several) and the integers recorded_words and budget_words.
+# chain_parse NAME prints one "kind<TAB>value" line per skill and per integer,
+# or "missing" when there is no [NAME] table.
+chain_parse() {  # <chain> <toml>
+  awk -v want="$1" '
     function names(s) { while (match(s, /"[^"]*"/)) { print "skill\t" substr(s, RSTART + 1, RLENGTH - 2); s = substr(s, RSTART + RLENGTH) } }
     /^[[:space:]]*\[/ { t = $0; gsub(/[[:space:]]/, "", t); in_t = (t == "[" want "]"); if (in_t) found = 1; arr = 0; next }
     !in_t { next }
@@ -75,7 +79,42 @@ if [ "${1:-}" = "--chain" ]; then
     /^[[:space:]]*skills[[:space:]]*=/ { names($0); if ($0 !~ /\]/) arr = 1; next }
     /^[[:space:]]*(recorded|budget)_words[[:space:]]*=/ { k = $0; sub(/_words.*/, "", k); gsub(/[[:space:]]/, "", k); v = $0; sub(/^[^=]*=[[:space:]]*/, "", v); sub(/[[:space:]]*$/, "", v); print k "\t" v; next }
     END { if (!found) print "missing" }
-  ' "$toml")" || { echo "cannot parse $toml" >&2; exit 2; }
+  ' "$2"
+}
+
+# --table: the measured context cost as a markdown table, for README.md.
+if [ "${1:-}" = "--table" ]; then
+  toml="${CHAINS_TOML:-scripts/sh/data/chains.toml}"
+  [ -r "$toml" ] || { echo "cannot read $toml" >&2; exit 2; }
+  router=skills/common/using-sdlc-skills/SKILL.md
+  mn=9999999; mx=0
+  for f in skills/*/*/SKILL.md; do
+    t=$(body_tokens "$f"); [ "$t" -lt "$mn" ] && mn=$t; [ "$t" -gt "$mx" ] && mx=$t
+  done
+  echo "| What loads | Words | Approx tokens |"
+  echo "| --- | --- | --- |"
+  printf '| The router, every session | %s | %s |\n' "$(body_words "$router")" "$(body_tokens "$router")"
+  printf '| One skill body, when its skill fires | | %s to %s |\n' "$mn" "$mx"
+  for chain in $(sed -n 's/^\[\([a-z0-9-]*\)\]$/\1/p' "$toml"); do
+    words=0; toks=0; count=0
+    while IFS=$'\t' read -r kind val; do
+      [ "$kind" = skill ] || continue
+      f=""; for c in skills/*/"$val"/SKILL.md; do [ -f "$c" ] && f="$c"; done
+      [ -n "$f" ] || { echo "[$chain] lists $val, which has no SKILL.md" >&2; exit 2; }
+      words=$((words + $(body_words "$f"))); toks=$((toks + $(body_tokens "$f"))); count=$((count + 1))
+    done < <(chain_parse "$chain" "$toml")
+    printf '| The %s chain, %s skills | %s | %s |\n' "$chain" "$count" "$words" "$toks"
+  done
+  exit 0
+fi
+
+# --chain NAME: the summed body words of one chain from scripts/sh/data/chains.toml,
+# checked against its budget_words. Word counts, not the chars/4 estimate above.
+if [ "${1:-}" = "--chain" ]; then
+  chain="${2:-}"; toml="${CHAINS_TOML:-scripts/sh/data/chains.toml}"
+  case "$chain" in ''|*[!a-z0-9-]*) echo "--chain takes a chain name of a-z, 0-9 and -" >&2; exit 2 ;; esac
+  [ -r "$toml" ] || { echo "cannot read $toml" >&2; exit 2; }
+  parsed="$(chain_parse "$chain" "$toml")" || { echo "cannot parse $toml" >&2; exit 2; }
   budget=""; skills=()
   while IFS=$'\t' read -r kind val; do
     case "$kind" in
@@ -92,7 +131,7 @@ if [ "${1:-}" = "--chain" ]; then
     case "$s" in ''|*[!a-z0-9-]*) echo "[$chain] lists a skill name outside a-z, 0-9 and -" >&2; exit 2 ;; esac
     f=""; for c in skills/*/"$s"/SKILL.md; do [ -f "$c" ] && f="$c"; done
     [ -n "$f" ] || { echo "[$chain] lists $s, which has no SKILL.md" >&2; exit 2; }
-    w=$(awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$f" | wc -w | tr -d ' ')
+    w=$(body_words "$f")
     printf '  %6d  %s\n' "$w" "$s"
     total=$((total + w))
   done

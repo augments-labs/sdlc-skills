@@ -563,6 +563,18 @@ else
   conf_claim "scripts/ count"       "$n_scripts"  '\| [0-9]+ skills \(see below\)'
 fi
 
+# README.md carries the measured context cost of the tree between two marker
+# comments. The numbers are copied from token-budget.sh --table; a copy that
+# no longer matches the tree reads as checked while being stale.
+echo "• README context-cost table matches token-budget.sh --table"
+if ! grep -q '^<!-- token-budget-table:start -->$' README.md || ! grep -q '^<!-- token-budget-table:end -->$' README.md; then
+  err "README.md: the token-budget-table markers are missing"
+else
+  readme_table=$(sed -n '/^<!-- token-budget-table:start -->$/,/^<!-- token-budget-table:end -->$/p' README.md | sed '1d;$d')
+  tree_table=$(bash scripts/sh/token-budget.sh --table)
+  [ "$readme_table" = "$tree_table" ] || err "README.md: the context-cost table is stale — paste the output of 'bash scripts/sh/token-budget.sh --table' between its markers"
+fi
+
 echo ""
 if [ "$fail" -eq 0 ]; then echo "✓ all skills pass structural validation"; else echo "✗ violations found"; fi
 exit "$fail"
