@@ -149,9 +149,9 @@ true and how that is judged, not the code.
    task's. A consumer no task owns is a gap: fix it before presenting. A
    task whose `Objective` rests on a claim about the current code (a command
    exists, a format carries a field) resolves that claim against the base
-   revision; if it does not hold, stop planning and invoke `writing-specs`
-   or `system-architecture` for a successor of the document that made the
-   claim, as Step 3.2 does for a spec.
+   revision; if it does not hold, stop planning: a spec claim gets a
+   successor through Step 3.2, and a design claim returns to the owner of
+   `system-architecture` for a successor design before planning resumes.
 8. Resolve every path and symbol the plan cites against the current
    revision, and replace any that does not resolve. Cite a path or a
    symbol, never a line number.

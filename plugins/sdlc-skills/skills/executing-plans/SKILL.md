@@ -154,8 +154,8 @@ In the task workspace recorded in Step 2, in order:
 4. Close with "Findings not built": every `finding` row with no `admitted`
    row, with its evidence, one line each. The user decides which become work.
    If the index's `Plan set` names a next slice, name it and ask the
-   `Approval rule` owner whether to invoke `writing-plans` for it now;
-   invoke nothing from here.
+   `Approval rule` owner whether `writing-plans` runs on it now; start
+   nothing from here.
 
 | Thought | Reality |
 | --- | --- |
