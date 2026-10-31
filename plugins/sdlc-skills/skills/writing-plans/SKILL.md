@@ -197,20 +197,22 @@ true and how that is judged, not the code.
    `assets/mode-question.md` when this version's row in the
    `External decision ledger` (the ledger: add to it, never rewrite it; it
    sits outside the plan) records no `mode:`. Because the approved plan and
-   its ledger row live on disk, delegated mode (or starting the executor from
-   the plan path in a fresh session) leaves planning-phase context behind.
-   That file owns the block, the subagent-action condition (when it may offer
-   the delegated options), and how to ask it.
+   its ledger row live on disk, delegated mode and an inline run started in a
+   new session both leave planning-phase context behind. That file owns the
+   block, the subagent-action condition (when it may offer the delegated
+   options), when to recommend the new session, and how to ask it.
 5. Add one row to that ledger: `Identity` = the printed version, `Location`
    = the index path, `State` = approved, `Bound evidence` = the
    `Approval rule` owner and their answer, any review report path, then the
    mode the Step 4.4 question records for the answer: `mode: inline`,
    `mode: delegated`, or `mode: delegated` plus `waves: yes`. Write nothing
    about approval into the index.
-6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke the executor that
-   mode names against the approved version before any workspace or
-   implementation action: `executing-plans` for inline,
-   `subagent-driven-development` for delegated. This skill writes no code.
+6. **REQUIRED SUB-SKILL:** on a direct answer choosing option 1, 2, or 3,
+   invoke the executor that mode names against the approved version before
+   any workspace or implementation action: `executing-plans` for inline,
+   `subagent-driven-development` for delegated. On option 4, print the
+   prompt the mode question gives and end the turn: the executor runs in the
+   session the user starts, never in this one. This skill writes no code.
 
 ## Gotchas
 

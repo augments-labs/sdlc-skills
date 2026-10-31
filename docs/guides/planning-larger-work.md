@@ -88,10 +88,15 @@ resolved first. For other plans, the agent offers the review and you decide.
 
 ## Executing a plan
 
-When you approve, the agent asks one more question: inline or delegated.
+When you approve, the agent asks one more question: inline here, inline
+in a new session, or delegated.
 
 - **Inline** runs the plan in this session through `executing-plans`, task by
   task, through each task's own check.
+- **Inline, in a new session** prints a one-line prompt; paste it into a
+  fresh session and the plan runs there through `executing-plans`, with the
+  planning conversation left behind. The agent recommends this for a large
+  plan or when this session has already been summarized.
 - **Delegated** runs it through `subagent-driven-development`: a fresh
   subagent implements each task, a reviewer checks its diff, and a bounded
   fix loop handles what the reviewer finds. The agent in your session keeps

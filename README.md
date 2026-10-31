@@ -135,7 +135,7 @@ script disagree, so the numbers cannot drift from the tree.
 | The router, every session | 843 | 1312 |
 | One skill body, when its skill fires | | 580 to 4639 |
 | The bug-fix chain, 7 skills | 7533 | 11834 |
-| The new-feature chain, 12 skills | 15485 | 24618 |
+| The new-feature chain, 12 skills | 15521 | 24664 |
 | The plan-execution chain, 8 skills | 10560 | 16844 |
 | The delegated-execution chain, 7 skills | 10185 | 16365 |
 | The incident chain, 5 skills | 5154 | 8076 |
