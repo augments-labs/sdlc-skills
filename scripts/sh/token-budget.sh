@@ -25,7 +25,8 @@
 #
 # This is the chars/4 estimator. check-skill.sh scores bodies against the
 # house 5000-token limit using words x 1.3; compare each estimator only with
-# its own prior values. This script measures full SKILL.md files.
+# its own prior values. The report mode measures full SKILL.md files;
+# --chain and --table measure bodies, frontmatter excluded.
 
 set -uo pipefail
 # CHAINS_TOML is read relative to the caller, before moving to the repo root.
@@ -64,7 +65,10 @@ max=0
 [ "${1:-}" = "--max" ] && max="${2:-0}"
 
 body_words() { awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$1" | wc -w | tr -d ' '; }
-body_tokens() { local c; c=$(awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$1" | wc -m); echo $(((c + 3) / 4)); }
+# Characters are counted as bytes minus UTF-8 continuation bytes, so the count
+# is the same under every locale; wc -m counts bytes under a C locale on some
+# systems, and this count is gated against the README copy.
+body_tokens() { local c; c=$(awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$1" | LC_ALL=C tr -d '\200-\277' | wc -c); echo $(((c + 3) / 4)); }
 
 # The chains file is a small TOML subset: [name] tables holding a skills array
 # (on one line or several) and the integers recorded_words and budget_words.
@@ -95,7 +99,7 @@ if [ "${1:-}" = "--table" ]; then
   echo "| --- | --- | --- |"
   printf '| The router, every session | %s | %s |\n' "$(body_words "$router")" "$(body_tokens "$router")"
   printf '| One skill body, when its skill fires | | %s to %s |\n' "$mn" "$mx"
-  for chain in $(sed -n 's/^\[\([a-z0-9-]*\)\]$/\1/p' "$toml"); do
+  for chain in $(sed -n 's/^[[:space:]]*\[[[:space:]]*\([a-z0-9-]*\)[[:space:]]*\][[:space:]]*$/\1/p' "$toml"); do
     words=0; toks=0; count=0
     while IFS=$'\t' read -r kind val; do
       [ "$kind" = skill ] || continue

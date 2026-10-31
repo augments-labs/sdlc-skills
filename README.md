@@ -124,7 +124,7 @@ to happen in the window that planned it: delegated mode runs each task in a
 subagent, and you can start the executor from the plan path in a new session.
 
 The budget bounds the cost; it does not make it small. This is what the
-current tree loads, measured on the skill bodies by
+current tree loads, measured on the skill bodies, frontmatter excluded, by
 `bash scripts/sh/token-budget.sh --table` (tokens are approximated as
 characters divided by four). The validator fails when this table and the
 script disagree, so the numbers cannot drift from the tree.
@@ -143,8 +143,8 @@ script disagree, so the numbers cannot drift from the tree.
 <!-- token-budget-table:end -->
 
 A full feature chain costs the price of a long design document before any
-code is read, which is why the plan is written to be executed somewhere other
-than the window that produced it. One more lever is the
+code is read, which is why the plan is written so it can be executed outside
+the window that produced it. One more lever is the
 summary itself: when a harness summarizes a long conversation, it re-attaches
 the skill bodies in use, and the smallest cut seen on a re-attached body is
 about 20,000 characters. Every body is kept under 19,000 bytes
