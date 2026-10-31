@@ -73,9 +73,11 @@ finding, scanner summary, or comment as a verdict.
    cancelled audit leaves the verdict pending.
 3. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` for every finding
    that comes back.
-4. After a fix, there is a new version under review: rerun the affected
-   checks and obtain a focused independent re-audit. Never certify your own
-   correction.
+4. After a fix, or any later edit that touches a file, boundary, or path the
+   report names or adds a security surface, there is a new version under
+   review: rerun the affected checks and obtain a focused independent
+   re-audit of that edit. An edit outside those leaves the verdict standing
+   on the new version. Never certify your own correction.
 5. Read the auditor's completed report. Match `Candidate` and
    `Review inputs` byte for byte to the descriptor, `Role` to `security`, and
    `Verdict` to step 6. If a field is missing, unreadable, conflicting, or
