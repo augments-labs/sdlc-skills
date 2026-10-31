@@ -57,9 +57,11 @@ This skill never edits the plan, approves it, or starts an executor.
    `.sdlc-skills/evidence/{{plan directory name}}/00-index.review-{{version}}-{{attempt}}.md`,
    attempt `1` first. It is the only path that attempt's reviewer may write.
 6. If a predecessor version already has a review, bind that report too; the
-   new review focuses on the
-   corrected sections and every section that depends on them, and carries
-   the earlier recorded decisions forward.
+   new review reads the successor's delta (its `Successor delta` line, the
+   tasks it adds or changes) and every section that depends on them, nothing
+   else, and carries the earlier recorded decisions forward. An executor
+   proposing a successor mid-run comes here the same way: the delta is
+   reviewed, the approved remainder is not reread.
 
 ## Step 2: Dispatch the review and keep its receipt
 
