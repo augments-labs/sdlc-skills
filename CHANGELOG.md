@@ -2,6 +2,18 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [11.0.3] — 2026-10-31
+
+Planning a change can now run inline in a fresh session: the mode question
+offers a prompt to paste, so a large plan executes without the planning
+context behind it. A plan is checked against the bound base, not the design,
+and a mid-run gap collects into one successor; the security audit runs once
+at convergence with a focused re-audit per fix.
+
+The README prints the measured context cost of every always-loaded layer and
+each chain, checked against the tree by the gate, and `handoff` no longer
+fires for the session that resumes from one.
+
 ## [11.0.2] — 2026-10-29
 
 Plan verification, worktree inspection, and section hashing now run through
