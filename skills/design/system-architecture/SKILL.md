@@ -36,6 +36,12 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    retry and idempotency, what still works when it is degraded, how it
    recovers, and how each is exercised (the test, fault injection,
    or drill).
+5. Every sentence that states what the existing system does today (a
+   component exists, a call site handles a case, a format carries a field)
+   names the path and symbol it was checked against at the current
+   revision. Rewrite one you cannot cite to what is known, or invoke
+   `clarifying-intent` for it. The plan's tasks are written against these
+   sentences as facts.
 
 ## Step 2: Operational views and seams
 
@@ -64,7 +70,9 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    stable ID delta. The identity goes in the ledger row, never the header.
 2. Fill the high-risk classification block. If any answer is off the ordinary
    route, or the user marks the work high-risk, run
-   `assets/design-review.md` before presenting. That review is blocking.
+   `assets/design-review.md` before presenting. That review is blocking. A
+   `NEEDS_CONTEXT` return keeps it pending: supply the path it names and
+   run the review again.
 3. Present:
 
    ```text
@@ -85,6 +93,10 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 
 ## Gotchas
 
+- A design sentence about the existing system that cites nothing is
+  planned as a fact: a design that said a command launched a flow reached
+  implementation before a worker found nothing launched it on the base,
+  and the plan grew a task mid-run. Step 1.5 cites the path and symbol.
 - Step 1's mapping table needs a real owning gate for every row, but this
   skill defines no assurance gates itself. A row that names a placeholder, or
   a gate its owner never defined, still reads as mapped on the page; only the

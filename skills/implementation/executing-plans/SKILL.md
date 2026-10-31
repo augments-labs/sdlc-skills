@@ -122,6 +122,18 @@ mode; switching needs the `Approval rule` owner's direct answer.
    - If a high-risk entry gate has not passed and no ready task can advance
      without it, report it and end the turn.
 
+A successor proposed because a task cannot be built as written (a finding
+without which its `Evaluator` cannot pass; any other finding stays a
+`finding` row) is a `gap` row in the execution ledger. On the second `gap`
+row in one run, start no task: apply `writing-plans` Step 3.6 and 3.7 to
+every remaining task against the current base, in one pass, and propose one
+successor carrying every gap, its `Bound inputs` naming that base revision.
+A claim that fails Step 3.7 is a `gap` row and a finding for the owner of
+the document that made it; invoke nothing from here. On a high-risk route,
+**REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a proposed successor
+before asking for reapproval; it binds the predecessor's report and reviews
+the delta and what depends on it (its Step 1.6).
+
 ## Step 5: Finish the plan
 
 In the task workspace recorded in Step 2, in order:
@@ -141,6 +153,9 @@ In the task workspace recorded in Step 2, in order:
    executes the answer. Run no push, PR, merge, or delete here.
 4. Close with "Findings not built": every `finding` row with no `admitted`
    row, with its evidence, one line each. The user decides which become work.
+   If the index's `Plan set` names a next slice, name it and ask the
+   `Approval rule` owner whether `writing-plans` runs on it now; start
+   nothing from here.
 
 | Thought | Reality |
 | --- | --- |
@@ -151,6 +166,10 @@ In the task workspace recorded in Step 2, in order:
 
 ## Gotchas
 
+- A gap found mid-task reads as one successor to write now, and the next
+  task finds the next: one run wrote fifteen successors this way, each
+  reapproved on the earlier reviews, before the plan was walked against the
+  base once. The second `gap` row batches the rest.
 - An instruction to fix whatever turns up reads as licence to queue every
   advisory as a task, and each fix's review then raises more — reproduced
   by a plan run that carried that instruction with no budget: its 14-row

@@ -73,8 +73,10 @@ finding, scanner summary, or comment as a verdict.
    cancelled audit leaves the verdict pending.
 3. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` for every finding
    that comes back.
-4. After a fix, there is a new version under review: rerun the affected
-   checks and obtain a focused independent re-audit. Never certify your own
+4. After a fix, or any later edit, there is a new version under review:
+   rerun the affected checks and obtain a focused independent re-audit of
+   that edit and what it reaches, never a new audit of the whole version.
+   Its `security clear` binds to the new version. Never certify your own
    correction.
 5. Read the auditor's completed report. Match `Candidate` and
    `Review inputs` byte for byte to the descriptor, `Role` to `security`, and
@@ -84,8 +86,8 @@ finding, scanner summary, or comment as a verdict.
    `inconclusive`, bound to the identities of the version under review and
    of the review inputs. `security clear` requires the independent auditor.
 7. Return the report or its location to the requesting review. Leave
-   releasability to `release-readiness`. Any security-relevant edit voids the
-   verdict.
+   releasability to `release-readiness`. Any later edit voids the verdict
+   until Step 3.4 rebinds it.
 
 ## Step 4: When a category cannot be covered
 
@@ -102,7 +104,8 @@ production state you cannot touch. Do not approve the omission yourself.
 4. If there is no answer, or the reply is silence or urgency, the verdict
    stays `inconclusive`.
 5. An accepted omission is bound to this exact version under review and is
-   voided, with the verdict, by any security-relevant edit.
+   voided, with the verdict, by any later edit; the Step 3.4 re-audit
+   rebinds both, or records the omission as a blocker again.
 6. A lack of auditor independence is not on this menu; Step 3 settles it.
 
 ## Gotchas

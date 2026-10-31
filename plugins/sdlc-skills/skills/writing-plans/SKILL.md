@@ -25,7 +25,11 @@ true and how that is judged, not the code.
   unsettled facts as
   evidence, never as accepted deviations.
 - Write separate plans for independent subsystems unless one cutover or
-  rollback makes them one initiative.
+  rollback makes them one initiative. If the approved design orders the
+  work in dependency-ordered slices (a later part builds on what an earlier
+  one lands), write the first slice's plan now and each later one after its
+  predecessor lands, against the base then current; the index's `Plan set`
+  line names the order.
 
 ## Available scripts
 
@@ -35,21 +39,24 @@ true and how that is judged, not the code.
 
 1. Open `assets/index-template.md` when starting the index. Fill the header
    first.
-2. Leave `Integration cadence` at `plan end`. Write `per task` only when the
+2. Fill `Plan set`: `none`, or the slices in order, this plan's position,
+   its predecessor plan's path, and the next slice's name. Write only this
+   slice's tasks; the next slice is planned when this one lands.
+3. Leave `Integration cadence` at `plan end`. Write `per task` only when the
    user directly asked for per-task integration, and quote the instruction.
-3. Leave `Out-of-task findings` at `log and report`. If the request says to
+4. Leave `Out-of-task findings` at `log and report`. If the request says to
    fix whatever turns up along the way, write `fix when admitted`, quote the
    instruction, and fill its budget. Plan an instruction with no end as that
    bounded policy; never copy it into a task or the goal.
-4. If the approved UI design carries **Selected visual references**, copy
+5. If the approved UI design carries **Selected visual references**, copy
    the complete keyed collection into the index, filling `Approved design
    artifact version` with the design's identity from its ledger row, and map
    every Reference ID to an owning task and a conformance evaluator ID in
    **Visual reference coverage**. If a reference is missing or an ID has no
    owner, return the plan to `ui-ux-design`.
-5. Give every file and side effect exactly one owning task. If two tasks
+6. Give every file and side effect exactly one owning task. If two tasks
    fall on the same one, add a dependency and name a single transition owner.
-6. If one transformation runs across many items, bind the machine-readable
+7. If one transformation runs across many items, bind the machine-readable
    inventory and the output pattern instead of listing the items.
 
 ## Step 2: Write the tasks
@@ -128,23 +135,36 @@ true and how that is judged, not the code.
    where their traits live, the error type that crosses a module boundary.
    If two tasks each define the same fact, give it one owner and make the
    others consume it.
-6. Walk the tasks in dependency order. At each task boundary, confirm that
-   every input the next task reads already exists, that every deleted or
-   renamed artifact has no surviving consumer, and that the task's own
-   Evaluator can run on that state.
-7. Resolve every path and symbol the plan cites against the current
+6. Walk the tasks in dependency order against the bound base revision, not
+   against the design's description of it. At each task boundary, confirm
+   that every path in `Files` exists at the base or is created by this or an
+   earlier task, that every input the next task reads already exists, that
+   every deleted or renamed artifact has no surviving consumer, and that the
+   task's own Evaluator can run on that state.
+7. For every interface a task changes or removes (a type, a kind in a set of
+   kinds, a trait, a signature, an exported name, a stored format), search
+   the base revision for its consumers: callers, exhaustive matches,
+   implementations, serialized copies, in every package of the repository.
+   Confirm each consumer sits in this task's `Files` or in a dependent
+   task's. A consumer no task owns is a gap: fix it before presenting. A
+   task whose `Objective` rests on a claim about the current code (a command
+   exists, a format carries a field) resolves that claim against the base
+   revision; if it does not hold, stop planning: a spec claim gets a
+   successor through Step 3.2, and a design claim returns to the owner of
+   `system-architecture` for a successor design before planning resumes.
+8. Resolve every path and symbol the plan cites against the current
    revision, and replace any that does not resolve. Cite a path or a
    symbol, never a line number.
-8. Confirm every selected Reference ID has a carrying task and a matching
+9. Confirm every selected Reference ID has a carrying task and a matching
    conformance evaluator.
-9. Fill **Review focus** with up to five spec-implied inputs or failure
+10. Fill **Review focus** with up to five spec-implied inputs or failure
    modes that no task Evaluator exercises, or mark it `none`; give every
    `none yet` row a check or name it in the PR. If a task tells things
    apart by the shape of a string (a key, slug, name, or path used as an
    identity), name two different inputs that produce the same string and
    the task test that separates them, or have the task carry the identity
    as structured data.
-10. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
+11. **REQUIRED SUB-SKILL:** invoke `reviewing-plans` when the route is
     high-risk, and bring every blocker it returns to a recorded decision as
     that skill says; for any other plan, ask
     the offer question `reviewing-plans` states.
@@ -196,3 +216,13 @@ true and how that is judged, not the code.
 
 - A row keyed to the index's `Normative version` line survives a task-file
   edit; key rows to the printed version.
+- One plan for a design of several slices plans every later slice against
+  a base the earlier slices will change: a 37-task plan over a sliced
+  design grew through successors until it finished. A slice
+  planned after its predecessor lands is planned against the code it will
+  meet.
+- A `Files` list written from the design names the files the design
+  discusses, not the ones the change breaks: a plan that added a kind to a
+  set of kinds listed its owning module and missed seven exhaustive matches
+  in another package, each found by a worker mid-task and each a successor
+  version. Step 3.7 searches the base, not the design.
