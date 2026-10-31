@@ -13,6 +13,7 @@ This skill never edits the plan, approves it, or starts an executor.
   classification route is high-risk: `writing-plans` requires this review.
 - The user asks for an independent look at a plan, or accepts the review that
   `writing-plans` offers for a plan that is not high-risk.
+- An executor proposes a high-risk successor mid-run (Step 1.6).
 - **Skip** a plan with no printed version yet: its index or task files are not
   written.
 - **Skip** editing the plan. Corrections belong to the plan's author, as a
@@ -94,7 +95,8 @@ This skill never edits the plan, approves it, or starts an executor.
    version, or the report is missing or unreadable, the review stays
    pending. If the reviewer returned `NEEDS_CONTEXT` with a question, the
    review stays pending; return that exact question to the plan's author, at
-   the caller's pending `writing-plans` step, as a `decision` item. A
+   the caller's pending step (`writing-plans` Step 3.11, or the executor
+   step that proposed the successor), as a `decision` item. A
    high-risk plan is not presented until the question is answered and the
    review is run again on the answered version.
 2. Print the plan's version again. If it changed during the review, the
@@ -115,8 +117,8 @@ This skill never edits the plan, approves it, or starts an executor.
    `Bound evidence`.
 5. Return to the caller's pending step with the report path and its recorded
    decisions:
-   - If a blocker is `accepted`, return to the pending `writing-plans` step;
-     the correction is a proposed successor, and a high-risk successor comes
+   - If a blocker is `accepted`, return to the caller's pending step; the
+     correction is a proposed successor, and a high-risk successor comes
      back here before it is presented.
    - If no blocker is open, return to the caller, or to the user who asked.
    - On a high-risk route, the caller presents nothing until this review has

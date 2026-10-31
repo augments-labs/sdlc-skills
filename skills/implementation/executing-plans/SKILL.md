@@ -120,11 +120,13 @@ mode; switching needs the `Approval rule` owner's direct answer.
      evaluator, phase, ownership), write the proposed successor, ask for
      reapproval, and end the turn. A successor proposed because a task
      cannot be built as written (a consumer no task owns, a path or claim
-     that does not hold on the base) is a `gap` row in the ledger. On the
-     second `gap` row in one run, start no task: walk every remaining task
-     against the current base as `writing-plans` Step 3.6 and 3.7 say, in
-     one pass, and propose one successor carrying every gap found. On a
-     high-risk route, **REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a
+     that does not hold on the base: a finding without which the task's
+     `Evaluator` cannot pass; any other finding stays a `finding` row) is a
+     `gap` row in the execution ledger. On the second `gap` row in one run,
+     start no task: apply `writing-plans` Step 3.6 and 3.7 to every
+     remaining task against the current base, in one pass, and propose one
+     successor carrying every gap found, its `Bound inputs` naming that
+     base revision. On a high-risk route, **REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a
      proposed successor before asking for reapproval; it binds the
      predecessor's report and reviews the delta and what depends on it
      (its Step 1.6).
@@ -150,8 +152,9 @@ In the task workspace recorded in Step 2, in order:
    executes the answer. Run no push, PR, merge, or delete here.
 4. Close with "Findings not built": every `finding` row with no `admitted`
    row, with its evidence, one line each. The user decides which become work.
-   If the index's `Plan set` names a next slice, name it: `writing-plans`
-   plans it against the landed base.
+   If the index's `Plan set` names a next slice, name it and ask the
+   `Approval rule` owner whether to invoke `writing-plans` for it now;
+   invoke nothing from here.
 
 | Thought | Reality |
 | --- | --- |

@@ -149,8 +149,9 @@ true and how that is judged, not the code.
    task's. A consumer no task owns is a gap: fix it before presenting. A
    task whose `Objective` rests on a claim about the current code (a command
    exists, a format carries a field) resolves that claim against the base
-   revision; if it does not hold, stop planning as Step 3.2 says, returning
-   the claim to the skill that owns the document that made it.
+   revision; if it does not hold, stop planning and invoke `writing-specs`
+   or `system-architecture` for a successor of the document that made the
+   claim, as Step 3.2 does for a spec.
 8. Resolve every path and symbol the plan cites against the current
    revision, and replace any that does not resolve. Cite a path or a
    symbol, never a line number.
@@ -216,8 +217,8 @@ true and how that is judged, not the code.
 - A row keyed to the index's `Normative version` line survives a task-file
   edit; key rows to the printed version.
 - One plan for a design of several slices plans every later slice against
-  a base the earlier slices will change: a 37-task plan over a 7-revision
-  design reached 47 tasks through successors before it finished. A slice
+  a base the earlier slices will change: a 37-task plan over a sliced
+  design grew through successors until it finished. A slice
   planned after its predecessor lands is planned against the code it will
   meet.
 - A `Files` list written from the design names the files the design

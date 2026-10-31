@@ -143,12 +143,11 @@ tool-issued dispatch ID).
     If a retry is permitted and the candidate or its bound inputs changed,
     restart at Step 1 with fresh identities and a fresh receipt. Carry prior
     coverage and recorded decisions forward; focus the successor review on
-    fixes, affected paths, and regressions. A recorded `security clear`
-    carries forward too, unless the round edited a file, boundary, or path
-    the audit report names, or added a security surface; then obtain the
-    focused re-audit of that edit that `security-audits` Step 3.4 describes,
-    never a new audit of the candidate. The Deep security role reruns under
-    the same rule.
+    fixes, affected paths, and regressions. A `security clear` recorded on an
+    earlier candidate is rebound to the successor only by the focused
+    independent re-audit of the round's edit that `security-audits` Step 3.4
+    describes, never by a new audit of the candidate. The Deep security role
+    reruns the same way.
 11. **REQUIRED — continue a `ready` verdict through the recorded owner:**
     - If a caller is awaiting this review, return to its pending step; never
       invoke the caller recursively.
@@ -191,9 +190,9 @@ tool-issued dispatch ID).
   as advice to reach `ready` ships a boundary nobody audited.
 - Each fix round restarts at Step 1 with a fresh candidate, and a fresh
   candidate reads as needing a fresh audit: one run audited every round of
-  every task, 102 audits in 193 dispatches, most of them of edits the audit
-  report never named. The audit runs once at convergence and is voided only
-  by an edit it names.
+  every task, 102 audits in 193 dispatches. The audit runs once at
+  convergence; a fix round after it gets a focused re-audit of its edit, not
+  a new audit.
 
 ## Common mistakes
 

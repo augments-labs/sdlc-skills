@@ -73,11 +73,11 @@ finding, scanner summary, or comment as a verdict.
    cancelled audit leaves the verdict pending.
 3. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` for every finding
    that comes back.
-4. After a fix, or any later edit that touches a file, boundary, or path the
-   report names or adds a security surface, there is a new version under
-   review: rerun the affected checks and obtain a focused independent
-   re-audit of that edit. An edit outside those leaves the verdict standing
-   on the new version. Never certify your own correction.
+4. After a fix, or any later edit, there is a new version under review:
+   rerun the affected checks and obtain a focused independent re-audit of
+   that edit and what it reaches, never a new audit of the whole version.
+   Its `security clear` binds to the new version. Never certify your own
+   correction.
 5. Read the auditor's completed report. Match `Candidate` and
    `Review inputs` byte for byte to the descriptor, `Role` to `security`, and
    `Verdict` to step 6. If a field is missing, unreadable, conflicting, or
@@ -86,8 +86,8 @@ finding, scanner summary, or comment as a verdict.
    `inconclusive`, bound to the identities of the version under review and
    of the review inputs. `security clear` requires the independent auditor.
 7. Return the report or its location to the requesting review. Leave
-   releasability to `release-readiness`. Any security-relevant edit voids the
-   verdict.
+   releasability to `release-readiness`. Any later edit voids the verdict
+   until Step 3.4 rebinds it.
 
 ## Step 4: When a category cannot be covered
 
