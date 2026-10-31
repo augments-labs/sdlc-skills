@@ -803,11 +803,19 @@ if printf '%s\n' "$pf_nofiles" | grep -qF "task T-1 has no Files line"; then
 else
   bad "plan-files.sh did not name the task with no Files line (got: $pf_nofiles)"
 fi
+if printf '%s\n' "$pf_nofiles" | grep -v '^gap:' | grep -q .; then
+  bad "plan-files.sh wrote something other than gap lines to stderr (got: $pf_nofiles)"
+else
+  ok "plan-files.sh writes only gap lines to stderr for a task with no Files line"
+fi
 printf '**Files:** `src/b.sh` (edit)\n' > "$frepo/plan/01-first.md"
 # A task row inside a fenced example is not a task
 printf '\n```text\n- [ ] `T-9` — Example · `09-example.md` · `todo`\n```\n' >> "$frepo/plan/00-index.md"
 bash "$D/plan-files.sh" "$frepo/plan" >/dev/null 2>&1
 check "plan-files.sh ignores a task row inside a fenced block" "$?" "0"
+printf '\n````text\n```\n- [ ] `T-8` — Nested · `08-nested.md` · `todo`\n```\n````\n' >> "$frepo/plan/00-index.md"
+bash "$D/plan-files.sh" "$frepo/plan" >/dev/null 2>&1
+check "plan-files.sh ignores a task row inside a nested fenced block" "$?" "0"
 # --repo resolves a plan directory kept outside the repository
 cp -r "$frepo/plan" "$tmp/outside-plan"
 bash "$D/plan-files.sh" "$tmp/outside-plan" >/dev/null 2>&1

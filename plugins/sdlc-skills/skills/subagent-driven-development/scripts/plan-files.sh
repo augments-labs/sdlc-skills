@@ -65,7 +65,12 @@ rev="$(git -C "$repo" rev-parse --verify --quiet "${base}^{commit}")" ||
 
 # Task rows under "## Tasks": "- [ ] `ID` — title · `file.md` · `state`".
 rows="$(awk '
-  /^[[:space:]]*(```|~~~)/ { in_fence = !in_fence; next }
+  /^[[:space:]]*(```|~~~)/ {
+    match($0, /(`+|~+)/); run = substr($0, RSTART, RLENGTH)
+    if (!in_fence) { in_fence = 1; fence = run; next }
+    if (substr(run, 1, 1) == substr(fence, 1, 1) && length(run) >= length(fence)) { in_fence = 0 }
+    next
+  }
   in_fence { next }
   /^## / { in_tasks = ($0 ~ /^## Tasks[[:space:]]*$/) }
   in_tasks && /^- \[[ xX]\] `[^`]+`/ {
@@ -111,16 +116,16 @@ flush() { [ -n "$cur" ] && { ntasks=$((ntasks + 1)); echo "$cur $([ "$cur_ok" = 
 while IFS=$'\t' read -r id act fp; do
   [ -n "$id" ] || continue
   if [ "$id" != "$cur" ]; then flush; cur="$id"; cur_ok=1; fi
+  if [ "$act" = none ]; then
+    echo "gap: task $id has no Files line naming a path." >&2
+    gaps=$((gaps + 1)); cur_ok=0; continue
+  fi
   npaths=$((npaths + 1))
   at_base=0; git -C "$repo" cat-file -e "$rev:$fp" 2>/dev/null && at_base=1
   live=0
   if [ -n "${created[$fp]+x}" ]; then live=1
   elif [ "$at_base" = 1 ] && [ -z "${deleted[$fp]+x}" ]; then live=1; fi
   case "$act" in
-    none)
-      npaths=$((npaths - 1))
-      echo "gap: task $id has no Files line naming a path." >&2
-      gaps=$((gaps + 1)); cur_ok=0;;
     edit)
       if [ "$live" = 0 ]; then
         if [ -n "${deleted[$fp]+x}" ]; then echo "gap: task $id edits $fp, which task ${deleted[$fp]} deletes." >&2
