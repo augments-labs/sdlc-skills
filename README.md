@@ -118,9 +118,10 @@ People call this context rot. Tackling it takes work in three places:
 `sdlc-skills` applies the library-level fixes directly, and uses subagents
 where your harness supports them (`subagent-driven-development`). Every skill
 and workflow chain is checked against a word budget
-(`scripts/sh/token-budget.sh`), state lives on disk under `.sdlc-skills/`, and
-once a plan is approved you can hand it to a fresh session or to subagents so
-implementation starts with a clean context window.
+(`scripts/sh/token-budget.sh`), and state lives on disk under `.sdlc-skills/`.
+An approved plan and its approval record are files, so execution does not have
+to happen in the window that planned it: delegated mode runs each task in a
+subagent, and you can start the executor from the plan path in a new session.
 
 The budget bounds the cost; it does not make it small. This is what the
 current tree loads, measured on the skill bodies by
@@ -142,8 +143,8 @@ script disagree, so the numbers cannot drift from the tree.
 <!-- token-budget-table:end -->
 
 A full feature chain costs the price of a long design document before any
-code is read, so a plan is handed to a fresh session or to subagents instead
-of being executed in the window that produced it. One more lever is the
+code is read, which is why the plan is written to be executed somewhere other
+than the window that produced it. One more lever is the
 summary itself: when a harness summarizes a long conversation, it re-attaches
 the skill bodies in use, and the smallest cut seen on a re-attached body is
 about 20,000 characters. Every body is kept under 19,000 bytes
