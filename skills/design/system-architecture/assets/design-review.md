@@ -27,7 +27,7 @@ Review the design in Inputs. Flag **only** issues that would lead to building th
 - Approved requirements: {{paths and exact versions}}
 - Domain input: {{approved model where required, or established concepts and
   invariants with source evidence; do not require a new artifact for unchanged semantics}}
-- Codebase evidence: {{relevant paths and revisions}}
+- Codebase evidence: {{the repository path and the exact current revision, plus any relevant paths}}
 - Review boundary: {{reviewer role ID, allowed artifact access, worker/provider/storage/egress authority, and report location}}
 - Terminal control: {{deadline and timeout/cancel owner}}
 
@@ -50,6 +50,10 @@ Review the design in Inputs. Flag **only** issues that would lead to building th
    component boundaries match the named interfaces.
 7. **Vocabulary and scope** — domain terms are consistent and no unrequested
    feature or future-only abstraction appears.
+8. **Current-code claims** — every sentence stating what the existing
+   system does today cites a path and symbol; open the repository at the
+   revision named under Codebase evidence and confirm or refute each one.
+   An unconfirmed claim is a finding.
 
 ## Boundary
 
