@@ -207,13 +207,12 @@ true and how that is judged, not the code.
    mode the Step 4.4 question records for the answer: `mode: inline`,
    `mode: delegated`, or `mode: delegated` plus `waves: yes`. Write nothing
    about approval into the index.
-6. **REQUIRED SUB-SKILL:** on a direct mode answer, invoke the executor that
-   mode names against the approved version before any workspace or
-   implementation action: `executing-plans` for inline,
-   `subagent-driven-development` for delegated. On the new-session answer,
-   print the prompt the mode question gives and end the turn: the executor
-   runs in the session the user starts, never in this one. This skill
-   writes no code.
+6. **REQUIRED SUB-SKILL:** on a direct answer choosing option 1, 2, or 3,
+   invoke the executor that mode names against the approved version before
+   any workspace or implementation action: `executing-plans` for inline,
+   `subagent-driven-development` for delegated. On option 4, print the
+   prompt the mode question gives and end the turn: the executor runs in the
+   session the user starts, never in this one. This skill writes no code.
 
 ## Gotchas
 
