@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Writes a handoff so a fresh session or another agent can continue unfinished work. Use when a session is ending mid-work, the context is getting full, the user is heading out, or someone else is taking over. Skip finished tasks and bounded worker assignments whose coordinator stays responsible."
+description: "Writes a handoff so a fresh session or another agent can continue unfinished work. Use when a session is ending mid-work, the context is getting full, the user is heading out, or someone else is taking over. Skip resuming or continuing from a handoff someone else wrote: the new session reads that file and needs no skill. Skip finished tasks and bounded worker assignments whose coordinator stays responsible."
 ---
 
 # Handoff
@@ -13,6 +13,9 @@ says it may go.
 
 - A conversation is ending mid-work, or responsibility for continuing it passes
   to a fresh session or a different agent.
+- **Skip** when this session is the one resuming: a handoff is read, not
+  invoked, and a session that loads this skill to continue from one spends
+  a turn setting it aside.
 - **Skip** when the task is finished and self-contained.
 - **Skip** bounded worker assignments while the coordinator retains the task;
   those use the dispatch packet and return contract instead.
