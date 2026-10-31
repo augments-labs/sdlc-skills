@@ -23,6 +23,7 @@ they may not take. This skill never decides what happens to the branch.
 ## Available scripts
 
 - **`scripts/plan-version.sh`** — prints the plan's version, or with `--check-contract` and `--verify` checks task-contract invariants and the decision ledger.
+- **`scripts/plan-files.sh`** — checks each task's `Files` paths against a base revision. Read-only.
 - **`scripts/sdd-workspace.sh`** — opens the plan-scoped ledger and re-checks
   that it still binds to the plan. Run it before the first dispatch, and again
   after every compaction.

@@ -204,8 +204,8 @@ A few things the gate enforces:
   `scripts/sh/*.sh`, and `.github/workflows/`. The check does not read
   `CONTRIBUTING.md`, and it does not follow relative links such as
   `../reference/agents.md`; check those by hand when you move a page.
-- Copies that several skills bundle must stay byte-identical: `plan-version.sh`
-  and `assets/mode-question.md` in `writing-plans`, `executing-plans`, and
+- Copies that several skills bundle must stay byte-identical: `plan-version.sh`,
+  `plan-files.sh`, and `assets/mode-question.md` in `writing-plans`, `executing-plans`, and
   `subagent-driven-development`, and the preview scripts (`serve.py` and its
   wrappers) in `viewing-artifacts`, `ui-ux-design`, and `diagnosing-a-session`. Edit the
   `writing-plans` copy (for the first two) or the `viewing-artifacts` copy
