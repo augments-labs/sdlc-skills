@@ -14,16 +14,20 @@ usage() {
   cat <<'USAGE'
 Usage: bash scripts/plan-files.sh [--base REV] [--repo DIR] PLAN_DIR
 
-Read PLAN_DIR/00-index.md, take its task rows in order (cancelled tasks
-skipped), and for each task file read the **Files:** line. Every backticked
-path on it is resolved against REV in the repository, in task order:
+Read PLAN_DIR/00-index.md, take its task rows in order, and for each task
+file read the **Files:** line. A task whose state is cancelled, superseded,
+done, or done with concerns is skipped: its effects are in REV or never
+will be. Every backticked path on the line is resolved against REV in the
+repository, in task order:
 
   `path` or `path (edit)`      must exist at REV or be created by an earlier task
   `path (new)`                 must not exist at REV nor be created earlier
   `path (delete)`              must exist; no later task may name it without (new)
 
-Prints one line per task, "ok" or "gap", then a summary line. Each gap is
-also written to stderr with the task that owns it. Writes nothing.
+Prints one line per walked task, "ok" or "gap", then a summary line. Each
+gap is also written to stderr with the task that owns it. A walked task
+with no **Files:** line, or none that names a path, is a gap. Writes
+nothing.
 
 Options:
   --base REV   the revision to resolve against (default: HEAD)
@@ -61,6 +65,8 @@ rev="$(git -C "$repo" rev-parse --verify --quiet "${base}^{commit}")" ||
 
 # Task rows under "## Tasks": "- [ ] `ID` — title · `file.md` · `state`".
 rows="$(awk '
+  /^[[:space:]]*(```|~~~)/ { in_fence = !in_fence; next }
+  in_fence { next }
   /^## / { in_tasks = ($0 ~ /^## Tasks[[:space:]]*$/) }
   in_tasks && /^- \[[ xX]\] `[^`]+`/ {
     line = $0
@@ -75,7 +81,7 @@ rows="$(awk '
 # One record per path, in task order: id<TAB>action<TAB>path.
 paths=""
 while IFS=$'\t' read -r id tf st; do
-  [ "$st" = "cancelled" ] && continue
+  case "$st" in cancelled|superseded|done|"done with concerns") continue;; esac
   f="$dir/$tf"
   [ -f "$f" ] || { echo "Error: task $id lists $tf, which is missing from $dir." >&2; exit 2; }
   rec="$(awk -v id="$id" '
@@ -93,7 +99,8 @@ while IFS=$'\t' read -r id tf st; do
         if (fp != "" && fp !~ /^\{\{/) print id "\t" act "\t" fp
       }
     }' "$f")"
-  [ -n "$rec" ] && paths="${paths}${rec}"$'\n'
+  [ -n "$rec" ] || rec="$id"$'\t'"none"$'\t'
+  paths="${paths}${rec}"$'\n'
 done <<ROWS
 $rows
 ROWS
@@ -110,6 +117,10 @@ while IFS=$'\t' read -r id act fp; do
   if [ -n "${created[$fp]+x}" ]; then live=1
   elif [ "$at_base" = 1 ] && [ -z "${deleted[$fp]+x}" ]; then live=1; fi
   case "$act" in
+    none)
+      npaths=$((npaths - 1))
+      echo "gap: task $id has no Files line naming a path." >&2
+      gaps=$((gaps + 1)); cur_ok=0;;
     edit)
       if [ "$live" = 0 ]; then
         if [ -n "${deleted[$fp]+x}" ]; then echo "gap: task $id edits $fp, which task ${deleted[$fp]} deletes." >&2

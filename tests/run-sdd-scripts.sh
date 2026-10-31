@@ -783,6 +783,41 @@ bash "$D/plan-files.sh" "$tmp/no-such-plan" >/dev/null 2>&1
 check "plan-files.sh exits 2 when the index is missing" "$?" "2"
 bash "$D/plan-files.sh" --help >/dev/null 2>&1
 check "plan-files.sh --help exits 0" "$?" "0"
+# A done task is skipped: its created file is already at the base when an executor re-walks
+printf '**Files:** `src/b.sh` (new)\n' > "$frepo/plan/01-first.md"
+sed -i 's/`T-1` — First · `01-first.md` · `todo`/`T-1` — First · `01-first.md` · `done`/' "$frepo/plan/00-index.md"
+pf_done="$(bash "$D/plan-files.sh" "$frepo/plan" 2>/dev/null)"
+check "plan-files.sh exits 0 when a done task's (new) path already exists at the base" "$?" "0"
+if printf '%s\n' "$pf_done" | grep -qx "tasks=1 paths=1 gaps=0 base=HEAD"; then
+  ok "plan-files.sh leaves a done task out of the walk and the count"
+else
+  bad "plan-files.sh counted the done task (got: $pf_done)"
+fi
+sed -i 's/`T-1` — First · `01-first.md` · `done`/`T-1` — First · `01-first.md` · `todo`/' "$frepo/plan/00-index.md"
+# A walked task with no Files line is a gap
+printf '# Task 01\n' > "$frepo/plan/01-first.md"
+pf_nofiles="$(bash "$D/plan-files.sh" "$frepo/plan" 2>&1 >/dev/null)"
+check "plan-files.sh exits 1 when a walked task has no Files line" "$?" "1"
+if printf '%s\n' "$pf_nofiles" | grep -qF "task T-1 has no Files line"; then
+  ok "plan-files.sh names the task with no Files line"
+else
+  bad "plan-files.sh did not name the task with no Files line (got: $pf_nofiles)"
+fi
+printf '**Files:** `src/b.sh` (edit)\n' > "$frepo/plan/01-first.md"
+# A task row inside a fenced example is not a task
+printf '\n```text\n- [ ] `T-9` — Example · `09-example.md` · `todo`\n```\n' >> "$frepo/plan/00-index.md"
+bash "$D/plan-files.sh" "$frepo/plan" >/dev/null 2>&1
+check "plan-files.sh ignores a task row inside a fenced block" "$?" "0"
+# --repo resolves a plan directory kept outside the repository
+cp -r "$frepo/plan" "$tmp/outside-plan"
+bash "$D/plan-files.sh" "$tmp/outside-plan" >/dev/null 2>&1
+check "plan-files.sh exits 2 for a plan outside any repository without --repo" "$?" "2"
+bash "$D/plan-files.sh" --repo "$frepo" "$tmp/outside-plan" >/dev/null 2>&1
+check "plan-files.sh --repo resolves a plan kept outside the repository (exit 0)" "$?" "0"
+# A listed task file that is missing exits 2
+rm "$frepo/plan/02-second.md"
+bash "$D/plan-files.sh" "$frepo/plan" >/dev/null 2>&1
+check "plan-files.sh exits 2 when a listed task file is missing" "$?" "2"
 
 echo "--- worktree-state.sh: read-only checkout, linked worktree, and branch collision checks"
 WT_SCRIPT="skills/common/using-git-worktrees/scripts/worktree-state.sh"
