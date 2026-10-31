@@ -103,8 +103,8 @@ is evidence; one argued from the skill text is not.
   say the body is unchanged.
 - **Chain budgets:** when a body edit pushes a chain over its `budget_words`
   in `scripts/sh/data/chains.toml`, cut the body first. Raise the budget only
-  with a line in the PR naming the words added and what they buy, so the
-  ratchet moves by decision, never by habit.
+  with a line in the PR naming the words added to the budget and what they
+  buy, so the budget moves by decision, never by habit.
 
 ## What belongs here
 

@@ -170,7 +170,7 @@ that `validate-skills.sh` compares against the script, so a body edit that
 moves a number is followed by pasting the table again.
 A budget is a ratchet: when an edit pushes a chain over it, cut the body
 first, and raise `budget_words` only with a line in the PR naming the words
-added and what they buy.
+added to the budget and what they buy.
 
 ### Cutting text from a skill
 
