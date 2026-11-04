@@ -42,7 +42,7 @@ Each section is a decision you approve. The agent skips `feasibility-check`
 when the path is well trodden and the risk is plainly low.
 
 When the goal is settled but more than one way to reach it is plausible,
-`brainstorming` writes a fourth section: several approaches, each produced
+`brainstorming` writes its own section: several approaches, each produced
 under a different constraint (the smallest change, a clean slate, not
 building at all), each checked against the same cited facts about your code,
 and a comparison against the goals you approved. It uses parallel agents when

@@ -113,6 +113,3 @@ other cannot see:
   established cause.
 - `define-goals`, `scoping`, and `feasibility-check` write three sections of
   one project brief, and each is a separate decision you approve.
-- `brainstorming` writes a fourth section of that brief, after the goal is
-  settled and before the spec, when more than one approach is plausible; the
-  approach you choose there is what `writing-specs` specifies.

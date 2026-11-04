@@ -35,19 +35,26 @@ of it.
 1. Write the question as one sentence: the decision this section settles.
    Take the objective from the brief's Goals section, the captured ticket, or
    the user's words, and quote it. If no objective is settled, **REQUIRED
-   SUB-SKILL:** invoke `define-goals` for a new initiative or
-   `clarifying-intent` for a feature, and resume here when it returns. Never
-   re-ask what that skill already answered.
-2. Fill the shared facts table: every fact about the current code,
+   SUB-SKILL:** invoke `clarifying-intent` for a feature and resume here when
+   it returns, or `define-goals` for a new initiative; that skill hands off
+   onward, not back, so start this skill again once its Goals section is
+   approved. Never re-ask what that skill already answered.
+2. Take the decision owner from the Goals section's decision rule. If there
+   is none and the user is the only stakeholder, the user owns it; otherwise
+   ask once, and never invent one.
+3. Fill the shared facts table: every fact about the current code,
    environment, and constraints that an approach could rest on. Cite each
    against a path and symbol at the current revision, or a quoted
    constraint. If a boundary is unfamiliar, invoke `mapping-the-codebase`
    first. A fact you cannot cite goes in the open questions, not the table.
-3. Fill the criteria table from the Goals section's outcomes, guardrails,
+4. Fill the criteria table from the Goals section's outcomes, guardrails,
    and failure criteria, and from any constraint the user stated. Each row
    names where it came from. If the brief has no Goals section, write the
    criteria from the user's words and quote them.
-4. Record the base revision the facts were checked against.
+5. Record the base revision the facts were checked against, then write the
+   question, facts, criteria, and base revision to
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/approach-inputs.md`. The
+   writers read that file, never this conversation.
 
 ## Step 2: Produce the approaches
 
@@ -65,36 +72,36 @@ of it.
    Default to the first three. Add a row only when a criterion names its
    concern, and stop at five: each approach is one `large`-tier run.
 2. Fill `assets/approach-prompt.md` once per perspective before any
-   approach is written. Every fill carries the same question, facts,
-   criteria, and base revision; only the perspective line differs. The writer reads the brief from disk and never
-   this conversation.
-3. If a dispatch action is callable, dispatch each fill as
-   `dispatching-parallel-agents` Step 2 says: read-only, `large` tier, one
-   packet per perspective, all in one wave. Record each returned ID in the
-   approach's `Produced by` line.
+   approach is written. Every fill names the same inputs file, brief, base
+   revision, and report directory; only the perspective line differs. The
+   report path is `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/approach-{{perspective}}.md`,
+   the one write a fill allows.
+3. If a dispatch action is callable, freeze the packet count, the deadline,
+   and the cancel owner as `dispatching-parallel-agents` Step 1.4 says, then
+   dispatch each fill as its Step 2 says: `large` tier, one packet per
+   perspective, all in one wave. Record each returned ID in the approach's
+   `Produced by` line.
 4. If the action is unavailable, is refused, or returns no ID, ask the
-   question `dispatching-parallel-agents` Step 2 states, once for the whole
-   set, and end the turn. On option 1, write the approaches yourself, one
-   perspective at a time, each under its own fill, and finish writing one
-   before opening the next perspective; label every one `self pass, not
-   independent`. On option 2, hand each fill to the named agent and accept
-   only a report that arrives from outside this session. On option 3, the
-   section stays pending.
+   question `dispatching-parallel-agents` Step 2 states, once: the set is
+   one work item. End the turn. On option 1, write the approaches yourself,
+   one perspective at a time, each under its own fill, and finish writing
+   one before opening the next perspective; label every one `self pass, not
+   independent`. Options 2 and 3 follow that step.
 5. Accept a returned approach only when it answers every heading the prompt
-   asks for. Return one that is missing a heading to its writer once, with
-   the missing heading named; after that, record it as `incomplete` under
-   Rejected.
+   asks for and passes the fact check in Step 3.1. Return one that fails
+   either to its writer once, naming every missing heading and quoting
+   every contradicted fact; after a second failure, record it under
+   Rejected as `incomplete`, or with the claim it rested on.
 
 ## Step 3: Check facts, then compare
 
 1. Check every claim each approach makes about the current code or
-   environment against the shared facts and the base revision. A claim that
-   contradicts a fact, or cites a path or symbol that does not resolve, fails
-   the approach's fact check. Name the claim in its `Fact check` line, give
-   the writer one correction round with the fact quoted, and compare only
-   the corrected version. A second failure moves it to Rejected. Two
-   approaches that disagree about design are not a failure; that is the
-   point.
+   environment, including those under its `Claims not checked` heading,
+   against the shared facts and the base revision. A claim that contradicts
+   a fact, or cites a path or symbol that does not resolve, fails the fact
+   check; name it in the approach's `Fact check` line. A claim nobody can
+   check goes to Open questions. Two approaches that disagree about design
+   are not a failure; that is the point.
 2. Fill the comparison table: one row per criterion, one column per
    surviving approach, each cell an observation that cites the approach's
    own text. Never a score or a rank. If a criterion cannot be judged
@@ -112,7 +119,8 @@ of it.
 1. Append the section to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md`
    or the user-set path, keeping every approved section already there.
    The section is immutable once presented: a change is a successor section
-   naming this one as its predecessor.
+   headed `## Approaches (successor)` that names this one as its
+   predecessor.
 2. Add a `pending` row for it to the brief's ledger, then present:
 
    ```text
@@ -131,16 +139,21 @@ of it.
    Ask this and end the turn; `clarifying-intent` owns what closes it. This
    skill writes no spec, design, plan, prototype, or code, and the
    recommendation is never the choice.
-3. On option 1 or 2, add an `approved` row naming the chosen approach, and
-   the rejected ones stay in the section as the record of what was not
-   chosen. **REQUIRED SUB-SKILL:** when the choice is hard to reverse, invoke
-   `architecture-decisions` with the surviving approaches as its options;
-   otherwise invoke the next missing precondition, `feasibility-check` for
-   an initiative whose Feasibility section is not yet written, else
+3. On option 1 or 2, add an `approved` row naming the chosen approach; the
+   rejected ones stay in the section as the record of what was not chosen.
+   Naming a rejected approach is a change: treat it as option 3.
+   **REQUIRED SUB-SKILL:** when the choice is hard to reverse, invoke
+   `architecture-decisions` with the chosen approach and every other one,
+   rejected included, as its options. If the record it returns rejects the
+   choice in favor of another approach, add a superseding `approved` row
+   naming that approach and the record's identity. Then, as when the choice
+   is easy to reverse, invoke the next missing precondition:
+   `feasibility-check` for an initiative whose Feasibility section is not
+   yet written, `scoping` while the boundary is not yet approved, else
    `writing-specs`.
 4. On option 3, write a successor section from Step 1 with the change named
-   and present it again, at most twice; after that, report the question as
-   unresolved and end the turn.
+   and present it again. Each round ends the turn; the user decides when
+   the question is settled.
 
 ## Gotchas
 
@@ -149,14 +162,16 @@ of it.
   confirms the first idea; the perspective line in each fill is what makes
   them differ. Reproduced by asking for "three options" with no constraint.
 - A comparison judges design, so an approach resting on a wrong claim about
-  the current code wins on elegance: one that assumed a lookup existed in
-  the service ranked first until the claim was checked. Step 3.1 runs
-  before the table is filled, never after.
+  the current code wins on elegance. Reproduced by filling the table before
+  Step 3.1 with one approach citing a symbol absent at the base revision;
+  Step 3.1 runs before the table is filled, never after.
 - Writing the second approach with the first one open converges on the
-  first; a self pass finishes each approach before opening the next
-  perspective, and the comparison waits until all are written.
-- A recommendation with no objection reads as a choice; the ledger row
-  stays `pending` until the user answers, and nothing downstream reads a
+  first. Reproduced by a self pass that writes two approaches in one
+  context; it finishes each approach before opening the next perspective,
+  and the comparison waits until all are written.
+- A recommendation with no objection reads as a choice. Reproduced by a
+  reply of "makes sense" to the decision block; the ledger row stays
+  `pending` until the user names an option, and nothing downstream reads a
   pending row.
 
 ## Common mistakes

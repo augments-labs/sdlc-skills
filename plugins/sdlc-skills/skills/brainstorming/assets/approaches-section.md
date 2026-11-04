@@ -6,7 +6,9 @@ and do not repeat a header the brief already carries. Step 1 fills the
 question, facts, and criteria before any approach is written; Step 3 fills the
 comparison, recommendation, and rejected rows from the approaches as returned.
 An empty Rejected table means every approach survived the fact check; an empty
-Open questions list means every criterion could be judged from a cited fact.
+Open questions list means every criterion could be judged from a cited fact. A
+successor section is headed `## Approaches (successor)` so the two never share
+a heading.
 
 ```markdown
 ## Approaches
