@@ -27,7 +27,7 @@ Every skill is checked against the format on every change.
 | `name` is 1 to 64 lowercase letters, digits, or hyphens | Length and character checks |
 | No leading, trailing, or consecutive hyphens | Pattern check |
 | `name` matches its directory | Compared for each directory |
-| `description` is not empty and at most 1024 characters | Extracted field length; longest is 501 |
+| `description` is not empty and at most 1024 characters | Extracted field length; longest is 582 |
 | Only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` | `frontmatter-fields` policy check |
 | `compatibility`, when present, is at most 500 characters | `compatibility-length` policy check |
 
@@ -69,7 +69,7 @@ written, not about what your agent needs to support.
 | Directory | House use |
 | --- | --- |
 | `references/` | 26 skills; rubrics, checklists, worked examples, and lookup guidance |
-| `assets/` | 39 skills; every fill-in template and other static resources |
+| `assets/` | 40 skills; every fill-in template and other static resources |
 | `scripts/` | 11 skills (see below) |
 
 The repository classifies a document by how it is used. A file that is
