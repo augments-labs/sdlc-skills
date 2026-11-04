@@ -85,8 +85,9 @@ The page carries state, not documents.
 ## Step 3: Deliver
 
 1. Deliver the file path and offer to serve the page, root `.sdlc-skills/`,
-   entry `views/index.html`. Start it from `$root`, only after the user
-   accepts:
+   entry `views/index.html`; when the invoking skill holds an open decision,
+   deliver the path only and leave the offer to it. Start the server from
+   `$root`, only after the user accepts:
 
    ```bash
    bash scripts/start-server.sh --root .sdlc-skills --entry views/index.html

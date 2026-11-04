@@ -128,8 +128,8 @@
   .meta a { color: var(--accent); }
   .conn { margin: -8px 0 14px; padding: 6px 12px; font-size: 12.5px; border: 1px dashed var(--drift); color: var(--drift); background: var(--drift-bg); border-radius: 8px; }
 
-  /* tier-2 blocks inside nodes: ADR chain, embedded visuals, task table, assurance matrix */
-  .adr { font-size: 13px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  /* tier-2 blocks inside nodes: approaches, ADR chain, embedded visuals, task table, assurance matrix */
+  .adr, .apr { font-size: 13px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
   .vis { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
   .vis .vis-head { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 8px; }
   .vis .vis-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
@@ -170,12 +170,13 @@
        class blocked  ▲ blocked
        class drift    ⚠ drift / stale
        class pending  … pending / decision open / unknown · ○ not started
-     Glyph first, then a short lowercase label. Approval states come from
-     the decision ledger only: no ledger row means "… unknown" (class
+     Glyph first, then a short lowercase label. A tier-2 block keeps its
+     artifact's own state words as the label, mapped onto these classes.
+     Approval states come from the decision ledger only: no ledger row means "… unknown" (class
      pending) — never a guessed approval.
-  4. Omit optional blocks when their condition fails (drift connector, ADR
-     chain, visuals, task table, closed-tasks details, assurance
-     matrix). A phase not reached
+  4. Omit optional blocks when their condition fails (drift connector,
+     approaches, ADR chain, visuals, task table, closed-tasks details,
+     assurance matrix). A phase not reached
      renders as a pending node naming what produces it — never fabricated
      dates or counts.
   5. Self-containment: no http(s) URLs anywhere, no external assets, no
@@ -198,6 +199,9 @@
                {{PHASE-node-class}} · {{PHASE-pill-class}}
                {{PHASE-pill-content}} · {{PHASE-meta}} · {{PHASE-source-path}}
     drift:     {{drift-explanation}}
+    approaches: {{approaches-pill-class}} · {{approaches-pill-content}}
+               {{approach-name}} · {{approach-perspective}}
+               {{approach-pill-class}} · {{approach-pill-content}}
     adr chain: {{adr-id}} · {{adr-title}} · {{adr-pill-class}}
                {{adr-pill-content}} · {{adr-superseded-id}} · {{adr-superseded-title}}
     visuals:   {{visual-source-label}} · {{visual-file-name}} · {{visual-file-path}}
@@ -262,11 +266,32 @@
         <div class="spine">
 
           <!-- NODE · Brief — meta pattern: approved 2026-07-28 · goals + scope sections · decision ledger: 1 entry.
-               No ledger row: pill is class pending, content "… unknown". -->
+               No ledger row: pill is class pending, content "… unknown".
+               The approaches block attaches INSIDE this node; omit it when
+               the brief has no Approaches section. -->
           <div class="node {{brief-node-class}}">
             <div class="card">
               <h4>Brief <span class="pill {{brief-pill-class}}">{{brief-pill-content}}</span></h4>
               <p class="meta">{{brief-meta}} · <a href="{{brief-source-path}}" target="_blank" rel="noopener">open file ↗</a></p>
+
+              <!-- TIER-2 · Approaches — one .apr block when the brief holds
+                   an Approaches section (the one no successor names as its
+                   predecessor). One row per approach in the section, EVERY
+                   approach, rejected ones included. The section pill is its
+                   ledger state; an approach pill is "✓ chosen" (class done)
+                   only when the section's latest approved ledger row names
+                   it in Bound evidence, "rejected" (class pending) when the
+                   section's Rejected table lists it, else "… candidate"
+                   (class pending). A recommendation is never a chosen pill.
+                   The name is the text after the colon in the approach
+                   heading and the perspective is its name only, never the
+                   constraint sentence; both are entity-encoded labels. The
+                   comparison stays in the brief, behind the node's
+                   open-file link. -->
+              <div class="apr">
+                <div>Approaches · <span class="pill {{approaches-pill-class}}">{{approaches-pill-content}}</span></div>
+                <div>{{approach-name}} · <span class="ts">{{approach-perspective}}</span> · <span class="pill {{approach-pill-class}}">{{approach-pill-content}}</span></div>
+              </div>
             </div>
           </div>
 
