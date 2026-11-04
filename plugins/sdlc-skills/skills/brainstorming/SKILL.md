@@ -74,6 +74,7 @@ of it.
 2. Fill `assets/approach-prompt.md` once per perspective before any
    approach is written. Every fill names the same inputs file, brief, base
    revision, and report directory; only the perspective line differs. The
+   workspace is the project root at the base revision, read-only. The
    report path is `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/approach-{{perspective}}.md`,
    the one write a fill allows.
 3. If a dispatch action is callable, freeze the packet count, the deadline,
@@ -91,7 +92,14 @@ of it.
    asks for and passes the fact check in Step 3.1. Return one that fails
    either to its writer once, naming every missing heading and quoting
    every contradicted fact; after a second failure, record it under
-   Rejected as `incomplete`, or with the claim it rested on.
+   Rejected as `incomplete`, or with the claim it rested on. A perspective
+   whose packet failed or timed out goes under Rejected as `not produced`
+   with the attempt named; the comparison runs over the approaches that
+   returned, and the recommendation says the set is short.
+6. A `NEEDS_CONTEXT` return is not a failure and uses no retry: the inputs
+   are ambiguous for every writer. Answer its question, asking the user
+   once when the inputs file cannot settle it, write a successor inputs
+   file, and dispatch the whole wave again from Step 2.2.
 
 ## Step 3: Check facts, then compare
 
@@ -146,12 +154,16 @@ of it.
    `architecture-decisions` with the chosen approach and every other one,
    rejected included, as its options. If the record it returns rejects the
    choice in favor of another approach, add a superseding `approved` row
-   naming that approach and the record's identity. Then, as when the choice
-   is easy to reverse, invoke the next missing precondition:
-   `feasibility-check` for an initiative whose Feasibility section is not
-   yet written, `scoping` while the boundary is not yet approved, else
+   naming that approach and the record's identity. On any outcome other
+   than accepted or rejected in favor of another approach, the choice is
+   not settled: add a `changes requested` or `cancelled` row naming the
+   record's identity and end the turn.
+4. Once the choice is settled, invoke the next missing precondition:
+   `feasibility-check` for an initiative, unless an existing Feasibility
+   section fills every dimension row from evidence and no row is unknown;
+   `scoping` for an initiative whose boundary is not yet approved; else
    `writing-specs`.
-4. On option 3, write a successor section from Step 1 with the change named
+5. On option 3, write a successor section from Step 1 with the change named
    and present it again. Each round ends the turn; the user decides when
    the question is settled.
 
