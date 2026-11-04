@@ -22,6 +22,9 @@ each against the same facts, and let the comparison pick.
   request. Return here once that is settled.
 - **Skip** when the approach is settled and only its reversibility is in
   question: `architecture-decisions` owns that.
+- **Skip** when the question is which layout, arrangement, or visual
+  direction to take: `ui-ux-design` owns a comparison the user judges by
+  seeing it.
 - **Skip** while a presented section awaits a direct answer.
 
 ## Step 1: Fix the question and the facts
