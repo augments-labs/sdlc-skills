@@ -137,7 +137,7 @@ script disagree, so the numbers cannot drift from the tree.
 | The bug-fix chain, 7 skills | 7533 | 11834 |
 | The new-feature chain, 12 skills | 15519 | 24687 |
 | The plan-execution chain, 8 skills | 10573 | 16870 |
-| The delegated-execution chain, 7 skills | 10198 | 16390 |
+| The delegated-execution chain, 7 skills | 10225 | 16428 |
 | The incident chain, 5 skills | 5154 | 8076 |
 | The release chain, 5 skills | 5609 | 9084 |
 <!-- token-budget-table:end -->
