@@ -47,7 +47,7 @@ tool-issued dispatch ID).
    generator and adds `api/retry.ts`, typed by the agent. Both go in the
    complete inventory. Only the first is generated: the schema and generator
    reproduce it, so the inventory binds it by identity. The second is
-   human-authored for review, agent-typed or not; leaving it out as
+   human-authored for review; leaving it out as
    "generated" ships it unreviewed under a `ready` verdict.
 
 5. Compare its result identity with the state identity the verification
@@ -84,6 +84,8 @@ tool-issued dispatch ID).
      equivalence
    - `assets/yagni-reviewer.md` when enduring surface is new or expanded, or
      a simplification review is requested
+   - `assets/problem-reviewer.md` when the change claims to fix a reported
+     problem; it sees the problem and the result, never the diff
 4. Report what another skill owns as a finding with a suggested owner; the
    caller routes it, and review ends at its report:
    - If a trust boundary changed, the suggested owner is `security-audits`.
@@ -184,8 +186,7 @@ tool-issued dispatch ID).
   frozen state twice, and a second run that disagrees gets argued away instead
   of diagnosed. Reuse the row; review is where it gets challenged.
 - A reviewer sees only what the descriptor inventories. An untracked or
-  generated file left out of the inventory ships unreviewed under a `ready`
-  verdict.
+  generated file left out of the inventory ships unreviewed.
 - A trust-boundary finding without `security clear` is not advisory. Filing it
   as advice to reach `ready` ships a boundary nobody audited.
 - Each fix round restarts at Step 1 with a fresh candidate, and a fresh
