@@ -46,7 +46,7 @@ Review the requirements spec in Inputs. Flag **only** issues that would lead to 
    paths, target-derived preservation oracles, unauthorized project mutation,
    and prose only when the chosen acceptance form cannot honestly judge the
    requirement.
-7. **Current-code claims** — every sentence stating what the code does today cites a path and symbol; open the repository at the revision named under Codebase evidence and confirm or refute each one. An unconfirmed claim is a finding.
+7. **Current-code claims** — every sentence stating what the code does today cites a path and symbol; open the repository at the revision named under Codebase evidence and confirm or refute each one. Every sentence stating what stored data holds cites the query and its recorded result; a schema or migration file alone does not confirm it. Check that the query and its result are recorded, and rerun it only where your access allows. An unconfirmed claim is a finding.
 
 ## Boundary
 

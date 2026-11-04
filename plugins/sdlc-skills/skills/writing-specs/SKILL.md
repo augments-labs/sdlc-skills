@@ -55,11 +55,12 @@ its sections.
    owner, and the handoff. Never invent an interface.
 5. List the edge cases and scenarios that break a naive build.
    Every sentence in the spec that states what the code does today (a
-   command exists, a format carries a field, a path handles a case) names
-   the path and symbol it was checked against at the current revision.
-   Rewrite one you cannot cite to what is known, or move it to the open
-   questions. A requirement built on an unchecked claim is planned against
-   code that is not there.
+   command exists, a format carries a field) names the path and symbol it
+   was checked against at the current revision. One that states what stored
+   data holds (a column is never empty) names the smallest query over real
+   rows that showed it, with its result and never the rows; cite no schema
+   for it, since a schema says only what rows may hold. Rewrite one you
+   cannot cite to what is known, or move it to open questions.
 6. Fill every column of the template's assumptions-and-dependencies table,
    one row per assumption or dependency.
 7. List the open questions, the requirement-level risks, and what is out of
@@ -73,9 +74,9 @@ its sections.
 2. Fill the template's high-risk classification section. If any answer there
    is off the ordinary route, or the user marks the work high-risk, run the
    review in `assets/spec-review.md` before presenting, with a reviewer who is
-   not the spec's sole author. That review is blocking: do not present the
-   spec (Step 3.3) before it is done. A `NEEDS_CONTEXT` return keeps it
-   pending: supply the path it names and run the review again.
+   not the spec's sole author. That review blocks presenting the spec
+   (Step 3.3). A `NEEDS_CONTEXT` return keeps it pending: supply the path
+   it names and run the review again.
 3. Present:
 
    ```text
