@@ -362,7 +362,8 @@ A large project may touch every phase. Most tasks use a few skills.
 
 1. **Planning.** `define-goals`, `scoping`, and `feasibility-check` turn an
    idea into a project brief: what it is for, what is in and out, and whether
-   it can be delivered.
+   it can be delivered. `brainstorming` adds the approaches considered when
+   more than one is plausible, so the one chosen was compared, not assumed.
 2. **Analysis.** `writing-specs` turns settled intent into requirements and
    acceptance criteria. `working-from-a-ticket` captures a ticket you hand
    over, criteria as written, so the work binds to it.
