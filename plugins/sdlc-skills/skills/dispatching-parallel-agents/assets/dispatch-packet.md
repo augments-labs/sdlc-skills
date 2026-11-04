@@ -50,7 +50,7 @@ anything but the dispatch action's own returned identifiers and the model the
 harness reports for the spawned agent.
 
 - **Dispatch receipt:** {{fill only from the callable action's returned nonempty
-  agent/job IDs; otherwise "not dispatched" plus unavailable/refused/empty result}}
+  agent/job IDs; otherwise "not dispatched" plus unavailable/refused/fork-only/empty result}}
 - **Model read back:** {{the model the harness reports for the spawned agent,
   or "none reported"; add "mismatch" and the model set when the two differ}}
 - **Terminal outcome:** {{not dispatched | running | cancellation requested |
