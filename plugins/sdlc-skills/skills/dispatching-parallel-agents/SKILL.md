@@ -75,14 +75,16 @@ user's main-session model and any model reserved for orchestration untouched.
 
 ## Step 2: Dispatch
 
-1. Dispatch through the real callable action. Work is dispatched only when the
+1. Dispatch through the real callable action, starting the agent fresh,
+   never as a fork of this session: on a harness that forks by default,
+   choose the option that starts new. Work is dispatched only when the
    action has returned a non-empty tool-issued ID; record each ID in the
    packet's `Dispatch receipt` field. Naming an agent or writing a prompt is
    not dispatch. Then fill the packet's `Model read back` from the model the
    harness reports for that agent, or `none reported`; on a mismatch or none,
    never report the chosen tier as the one that ran.
-2. If the action is unavailable, refused, or returns no tool-issued ID, write
-   `not dispatched`, and name the action tried and what would make it
+2. If the action is unavailable, refused, can only fork, or returns no
+   tool-issued ID, write `not dispatched`, and name the action tried and what would make it
    callable. Never describe a fan-out that has no tool-issued IDs behind it,
    and never quietly do the work yourself instead.
    Ask the user once per work item; the answer covers only that work:

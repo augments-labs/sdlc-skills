@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "name": "sdlc-skills",
   "displayName": "SDLC Skills",
-  "version": "11.0.4",
+  "version": "11.1.0",
   "description": "A cross-platform SDLC skills library for coding agents: planning, design, TDD, debugging, review, and delivery workflows.",
   "compat": {
     "source": "native",
@@ -153,6 +153,10 @@
       {
         "id": "refactor-architecture",
         "path": "skills/maintenance/refactor-architecture/SKILL.md"
+      },
+      {
+        "id": "brainstorming",
+        "path": "skills/planning/brainstorming/SKILL.md"
       },
       {
         "id": "define-goals",

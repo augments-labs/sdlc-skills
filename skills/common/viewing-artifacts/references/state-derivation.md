@@ -79,6 +79,22 @@ puts it; non-table content; an ambiguous parse; or no matching row. When the poi
 honored — present but unparsable, or ambiguous — the report names that cause
 class rather than a bare `unknown`.
 
+## Approaches
+
+A brief's `## Approaches` section renders as a block inside the Brief node;
+omit the block when the brief has none. When successor sections exist, render
+only the one that no other Approaches section names as its `Predecessor`;
+whatever row a predecessor holds does not render. The block's pill is the
+section's own ledger row, matched by the section name and identity like any
+other section, in the decision-ledger vocabulary. One row per `### Approach`
+heading, every one, showing the name after the colon and the perspective name
+only (never its constraint sentence): an approach is `✓ chosen` (pill `done`)
+only when the section's latest `approved` row names it in `Bound evidence`;
+`rejected` (pill `pending`) when the section's Rejected table lists it;
+otherwise `… candidate` (pill `pending`). Each match is on the exact heading
+name. The Recommendation never sets a pill: a recommendation nobody chose is
+still pending. The comparison table is document prose and stays in the brief.
+
 ## ADR chains
 
 A chain exists only through `Predecessor` links plus ledger state, rendered
