@@ -45,10 +45,9 @@ tool-issued dispatch ID).
 
    A change regenerates `api/client.ts` from a schema through the project's
    generator and adds `api/retry.ts`, typed by the agent. Both go in the
-   complete inventory. Only the first is generated: the schema and generator
-   reproduce it, so the inventory binds it by identity. The second is
-   human-authored for review; leaving it out as
-   "generated" ships it unreviewed under a `ready` verdict.
+   complete inventory. Only the first is generated, so the inventory binds
+   it by identity. The second is human-authored for review; leaving it out
+   as "generated" ships it unreviewed under a `ready` verdict.
 
 5. Compare its result identity with the state identity the verification
    evidence carries. If they differ, go back to Step 1.
@@ -184,7 +183,7 @@ tool-issued dispatch ID).
 
 - Rerunning a caller's matching rows looks like rigor, but it verifies one
   frozen state twice, and a second run that disagrees gets argued away instead
-  of diagnosed. Reuse the row; review is where it gets challenged.
+  of diagnosed.
 - A reviewer sees only what the descriptor inventories. An untracked or
   generated file left out of the inventory ships unreviewed.
 - A trust-boundary finding without `security clear` is not advisory. Filing it
