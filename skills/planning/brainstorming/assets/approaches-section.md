@@ -7,8 +7,8 @@ question, facts, and criteria before any approach is written; Step 3 fills the
 comparison, recommendation, and rejected rows from the approaches as returned.
 An empty Rejected table means every approach survived the fact check; an empty
 Open questions list means every criterion could be judged from a cited fact. A
-successor section is headed `## Approaches (successor)` so the two never share
-a heading.
+successor section is headed `## Approaches (successor)`, the next
+`## Approaches (successor 2)`, and so on, so no two share a heading.
 
 ```markdown
 ## Approaches
@@ -22,9 +22,9 @@ a heading.
 - **Decision owner:** {{person or accountable role}}
 - **External decision ledger:** {{ledger path: the brief's path with .ledger.md
   for .md, rows naming this section, unless the user sets another; holds
-  pending / changes requested / approved with the chosen approach / rejected /
-  cancelled / superseded, bound to the identity above — lifecycle never mutates
-  this section}}
+  pending / changes requested / approved, with the chosen approach named in
+  Bound evidence / rejected / cancelled / superseded, bound to the identity
+  above — lifecycle never mutates this section}}
 
 **Question:** {{one sentence: the decision this section settles}}
 

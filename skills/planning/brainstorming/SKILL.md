@@ -127,8 +127,8 @@ of it.
 1. Append the section to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md`
    or the user-set path, keeping every approved section already there.
    The section is immutable once presented: a change is a successor section
-   headed `## Approaches (successor)` that names this one as its
-   predecessor.
+   with a heading of its own, as the template says, that names this one as
+   its predecessor.
 2. Add a `pending` row for it to the brief's ledger, then present:
 
    ```text
@@ -147,7 +147,8 @@ of it.
    Ask this and end the turn; `clarifying-intent` owns what closes it. This
    skill writes no spec, design, plan, prototype, or code, and the
    recommendation is never the choice.
-3. On option 1 or 2, add an `approved` row naming the chosen approach; the
+3. On option 1 or 2, add an `approved` row whose `Bound evidence` names
+   the chosen approach by the name after the colon in its heading; the
    rejected ones stay in the section as the record of what was not chosen.
    Naming a rejected approach is a change: treat it as option 3.
    **REQUIRED SUB-SKILL:** when the choice is hard to reverse, invoke
@@ -163,9 +164,10 @@ of it.
    section fills every dimension row from evidence and no row is unknown;
    `scoping` for an initiative whose boundary is not yet approved; else
    `writing-specs`.
-5. On option 3, write a successor section from Step 1 with the change named
-   and present it again. Each round ends the turn; the user decides when
-   the question is settled.
+5. On option 3, write a successor section from Step 1 with the change named,
+   add a `superseded` row to the predecessor naming the successor, and
+   present it again. Each round ends the turn; the user decides when the
+   question is settled.
 
 ## Gotchas
 
