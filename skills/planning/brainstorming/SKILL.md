@@ -146,7 +146,11 @@ of it.
 
    Ask this and end the turn; `clarifying-intent` owns what closes it. This
    skill writes no spec, design, plan, prototype, or code, and the
-   recommendation is never the choice.
+   recommendation is never the choice. If the user asks to see the
+   approaches as a page, **REQUIRED SUB-SKILL:** invoke `viewing-artifacts`;
+   it shows each approach's state inside the Brief node. When it returns,
+   present the block above again as the one open question, and offer to
+   serve the page only after an option is named.
 3. On option 1 or 2, add an `approved` row whose `Bound evidence` names
    the chosen approach by the name after the colon in its heading; the
    rejected ones stay in the section as the record of what was not chosen.
