@@ -135,7 +135,7 @@ script disagree, so the numbers cannot drift from the tree.
 | The router, every session | 843 | 1312 |
 | One skill body, when its skill fires | | 580 to 4664 |
 | The bug-fix chain, 7 skills | 7533 | 11834 |
-| The new-feature chain, 12 skills | 15518 | 24687 |
+| The new-feature chain, 12 skills | 15533 | 24709 |
 | The plan-execution chain, 8 skills | 10572 | 16870 |
 | The delegated-execution chain, 7 skills | 10224 | 16428 |
 | The incident chain, 5 skills | 5154 | 8076 |
@@ -362,7 +362,8 @@ A large project may touch every phase. Most tasks use a few skills.
 
 1. **Planning.** `define-goals`, `scoping`, and `feasibility-check` turn an
    idea into a project brief: what it is for, what is in and out, and whether
-   it can be delivered.
+   it can be delivered. `brainstorming` adds the approaches considered when
+   more than one is plausible, so the one chosen was compared, not assumed.
 2. **Analysis.** `writing-specs` turns settled intent into requirements and
    acceptance criteria. `working-from-a-ticket` captures a ticket you hand
    over, criteria as written, so the work binds to it.

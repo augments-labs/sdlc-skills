@@ -14,6 +14,7 @@ a few skills.
 | Skill | What it does |
 | --- | --- |
 | `define-goals` | Pins down what a project is for: the objective, the stakeholders, how success is measured |
+| `brainstorming` | Generates several approaches to a settled goal under different constraints, checks each against the same facts, and compares them before one is chosen |
 | `scoping` | Draws the boundary: what is in, what is out, and what is enough for the goal |
 | `feasibility-check` | Checks whether an initiative can be delivered before you commit to it |
 

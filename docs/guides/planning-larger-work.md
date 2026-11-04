@@ -41,6 +41,15 @@ section:
 Each section is a decision you approve. The agent skips `feasibility-check`
 when the path is well trodden and the risk is plainly low.
 
+When the goal is settled but more than one way to reach it is plausible,
+`brainstorming` writes its own section: several approaches, each produced
+under a different constraint (the smallest change, a clean slate, not
+building at all), each checked against the same cited facts about your code,
+and a comparison against the goals you approved. It uses parallel agents when
+your harness has them and asks before writing the approaches itself when it
+does not. You choose the approach; the agent only recommends one, and nothing
+is specified or built until you do.
+
 ## A spec
 
 With intent settled, `writing-specs` turns it into requirements and
