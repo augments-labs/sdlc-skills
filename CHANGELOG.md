@@ -2,6 +2,19 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [11.1.0] — 2026-11-04
+
+`brainstorming` is a new planning skill: it freezes the question, the facts,
+and the criteria, writes three to five approaches under independent
+perspectives (dispatched, or as a labelled self pass where nothing can be
+dispatched), fact-checks each against the base revision, and puts one
+recommendation to the decision owner before anything is specified; the
+project view shows each approach's state inside the Brief node. Specs now
+cite a query over real rows for any claim about stored data, a dispatched
+agent starts fresh rather than as a fork of the session, and
+`requesting-code-review` gains a reviewer that judges whether the reported
+problem is gone without ever seeing the diff.
+
 ## [11.0.4] — 2026-10-31
 
 `writing-plans`, `executing-plans`, and `subagent-driven-development` ship
