@@ -69,10 +69,16 @@ state under check. Never return "looks good".
    capture screenshots or recordings. For a TUI, use a PTY at the declared
    dimensions and a VT-capable renderer, and keep the raw terminal stream and
    the rendered frame.
-3. End each row at a stable, named observation, not at a successful launch.
-4. Write one `Scenario matrix` row per observation: hash the raw bytes and
+3. If no capture tool is available (screenshot, browser driver, PTY
+   renderer), or one is refused, the verdict is pending. Name the missing
+   tool and what would provide it, and ask the user to provide it or to take
+   the rows as human-owned checks under Step 3.7. Reading the source, the
+   markup, or the DOM shows what was asked for, not what rendered; it never
+   stands in for a frame.
+4. End each row at a stable, named observation, not at a successful launch.
+5. Write one `Scenario matrix` row per observation: hash the raw bytes and
    the rendered media, record the capture tool and the row's inputs.
-5. Never overwrite an earlier frame. Keep retries, duplicates, late output,
+6. Never overwrite an earlier frame. Keep retries, duplicates, late output,
    and superseded frames, and record a decision for each. Each required row
    has one accepted result.
 
@@ -86,7 +92,11 @@ state under check. Never return "looks good".
    restoration. If the probe is unsafe or was missed, this check is pending.
 4. Inspect every frame with a media-capable observer against the accepted UI
    criteria: hierarchy, legibility, clipping and overflow, focus, contrast,
-   content extremes, state feedback, visible recovery controls.
+   content extremes, state feedback, visible recovery controls. If you cannot
+   view images, a TUI frame is inspected from its rendered screen text, with
+   color and attributes read from the raw stream; a GUI frame goes to an
+   observer that can view it (a dispatched agent with image input, or the
+   user under Step 3.7). Until one has, that row is pending.
 5. Judge the finished state under check against every mapped design
    obligation and selected reference. Matching the preview does not pass an
    untested flow, recovery state or condition. An unapproved layout or

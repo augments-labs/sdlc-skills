@@ -134,12 +134,12 @@ script disagree, so the numbers cannot drift from the tree.
 | --- | --- | --- |
 | The router, every session | 843 | 1312 |
 | One skill body, when its skill fires | | 638 to 4744 |
-| The bug-fix chain, 7 skills | 7573 | 11892 |
-| The new-feature chain, 13 skills | 16137 | 25662 |
-| The plan-execution chain, 8 skills | 10744 | 17136 |
-| The delegated-execution chain, 7 skills | 10275 | 16508 |
-| The incident chain, 5 skills | 5154 | 8076 |
-| The release chain, 5 skills | 5608 | 9084 |
+| The bug-fix chain, 7 skills | 7579 | 11898 |
+| The new-feature chain, 13 skills | 16143 | 25668 |
+| The plan-execution chain, 8 skills | 10750 | 17142 |
+| The delegated-execution chain, 7 skills | 10281 | 16514 |
+| The incident chain, 5 skills | 5160 | 8082 |
+| The release chain, 5 skills | 5614 | 9090 |
 <!-- token-budget-table:end -->
 
 A full feature chain costs the price of a long design document before any
