@@ -38,26 +38,32 @@ true and how that is judged, not the code.
 
 ## Step 1: Write the index
 
-1. Open `assets/index-template.md` when starting the index. Fill the header
+1. **REQUIRED SUB-SKILL:** invoke `mapping-the-codebase` on every region the
+   plan will change, unless a boundary record inside its freshness limit
+   covers that region at the base revision. Draw each task's `Files` from
+   the record, and list the record's path in every task's `Context`. Never
+   put the record in the index's `Bound inputs`: an executor updates it,
+   and that update is not bound-input drift.
+2. Open `assets/index-template.md` when starting the index. Fill the header
    first.
-2. Fill `Plan set`: `none`, or the slices in order, this plan's position,
+3. Fill `Plan set`: `none`, or the slices in order, this plan's position,
    its predecessor plan's path, and the next slice's name. Write only this
    slice's tasks; the next slice is planned when this one lands.
-3. Leave `Integration cadence` at `plan end`. Write `per task` only when the
+4. Leave `Integration cadence` at `plan end`. Write `per task` only when the
    user directly asked for per-task integration, and quote the instruction.
-4. Leave `Out-of-task findings` at `log and report`. If the request says to
+5. Leave `Out-of-task findings` at `log and report`. If the request says to
    fix whatever turns up along the way, write `fix when admitted`, quote the
    instruction, and fill its budget. Plan an instruction with no end as that
    bounded policy; never copy it into a task or the goal.
-5. If the approved UI design carries **Selected visual references**, copy
+6. If the approved UI design carries **Selected visual references**, copy
    the complete keyed collection into the index, filling `Approved design
    artifact version` with the design's identity from its ledger row, and map
    every Reference ID to an owning task and a conformance evaluator ID in
    **Visual reference coverage**. If a reference is missing or an ID has no
    owner, return the plan to `ui-ux-design`.
-6. Give every file and side effect exactly one owning task. If two tasks
+7. Give every file and side effect exactly one owning task. If two tasks
    fall on the same one, add a dependency and name a single transition owner.
-7. If one transformation runs across many items, bind the machine-readable
+8. If one transformation runs across many items, bind the machine-readable
    inventory and the output pattern instead of listing the items.
 
 ## Step 2: Write the tasks
@@ -233,4 +239,4 @@ true and how that is judged, not the code.
   discusses, not the ones the change breaks: a plan that added a kind to a
   set of kinds listed its owning module and missed seven exhaustive matches
   in another package, each found by a worker mid-task and each a successor
-  version. Step 3.7 searches the base, not the design.
+  version. The map comes first; Step 3.7 searches the base, not the design.

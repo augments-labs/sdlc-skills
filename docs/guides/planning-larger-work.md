@@ -80,7 +80,11 @@ you approve:
 ## A plan
 
 `writing-plans` breaks approved work into ordered tasks, each with its
-dependencies and a way to know it is done. The plan is a directory with an
+dependencies and a way to know it is done. Before writing any task, the
+agent maps the code the plan will change with `mapping-the-codebase`: who
+calls it, what it owns, and where its boundaries are, including callers
+reached through configuration or generated code. Each task's files come from
+that map, not from the design. The plan is a directory with an
 index and one file per task. The agent shows you the index, with the plan's
 path and version on the first line, followed by this choice:
 
