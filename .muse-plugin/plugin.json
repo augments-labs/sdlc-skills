@@ -143,6 +143,10 @@
         "path": "skills/maintenance/diagnosing-a-session/SKILL.md"
       },
       {
+        "id": "eliminating-corrections",
+        "path": "skills/maintenance/eliminating-corrections/SKILL.md"
+      },
+      {
         "id": "large-scale-changes",
         "path": "skills/maintenance/large-scale-changes/SKILL.md"
       },

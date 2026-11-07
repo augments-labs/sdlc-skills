@@ -399,6 +399,9 @@ A large project may touch every phase. Most tasks use a few skills.
    mechanical change (a codemod, a dependency bump, a lint rule) across many
    files with a script, and splits the result into one shard per owner that
    you decide once whether to open all or as a pilot first.
+   `eliminating-corrections` runs when you correct the agent: it names the
+   class of mistake and proposes the strongest proportionate way to close
+   it, from a design that cannot hold it down to a reviewer's checklist.
 
 The [skill catalogue](docs/reference/skills.md) lists every skill with one
 line on what it does, including the common skills that belong to no phase.
