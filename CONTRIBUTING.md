@@ -93,10 +93,15 @@ proves and which test to run for which change.
 3. If the change alters what a skill makes an agent do, name the failure or
    the gap it answers. No live agent runs in this repository, so the pull
    request argues from the skill text and the checks.
-4. Say who orchestrated the change (a human, an agent, or both) and which
-   agent wrote it, if any: its model, harness, and harness version. A pull
-   request that hides this is closed.
-5. Read the complete diff yourself before you submit it.
+4. Say who orchestrated the change (a human, an agent, or both), every model
+   that wrote any of it and the part it wrote, and the harness and its
+   version. A pull request that hides this is closed.
+5. Have the complete diff reviewed before you submit it, by you or by an
+   agent, including the agent that wrote it, and report an agent's review in
+   the template's *Human review* section. Tick the human-review box only for
+   a person who read the diff at the commit it names; an authorization is not
+   a read.
+6. Merging and closing follow AGENTS.md's *Merging or closing a PR*.
 
 ## Testing and the gates
 
