@@ -21,11 +21,15 @@ You MUST:
 1. Fill every section of `.github/PULL_REQUEST_TEMPLATE.md` with specific,
    true answers.
 2. Search open **and** closed PRs and issues for the same problem. If it exists
-   or was rejected, stop and tell the human. If a prior attempt was closed, say
-   what is different.
+   or was rejected, stop and say so to whoever orchestrated the change. If a
+   prior attempt was closed, say what is different.
 3. Confirm it belongs in core (*What belongs here*).
 4. Meet every bullet in *Contributing*.
-5. Show the human the complete diff and get explicit approval.
+5. Review the complete diff yourself or with another agent, and report that
+   review in the template's *Human review* section. Show a human the diff
+   and wait for their approval only when one asked to see it first. Tick the
+   box only once the person named in the table has said they read the diff
+   or authorized the PR.
 
 If any check fails, do not open the PR; explain why it would be rejected.
 
@@ -118,8 +122,9 @@ your own library.
   theoretically break" is not a problem statement.
 - **One change per PR.**
 - **Identify yourself.** Say whether a human, an agent, or both orchestrated
-  the change, and which agent wrote it, if any: disclose its model, and the
-  harness and its version.
+  the change, every model that wrote any of it and the part it wrote, and the
+  harness and its version. Hiding it closes the PR; an empty human-review box
+  does not.
   Plugins loaded during a run go in the PR template's *Environments tested*
   table.
 - **Target `dev` from a task branch.** `main` takes release PRs only.
