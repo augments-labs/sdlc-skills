@@ -38,8 +38,8 @@ Every Applicable visual reference has a gate row, and every gate ID matches the
 plan index's Visual reference coverage. Cover the task's full approved UI
 obligations, including those outside the preview, in its Evaluator and relevant
 visual observations. A UI task's required gate set is its task
-Evaluator, every applicable VCONF row, and, for an integrated UI, the verdict
-returned by `visual-ui-verification`. Every required gate must pass on the same
+Evaluator, every applicable VCONF row, and, for a change visible in a running GUI or TUI, the
+verdict returned by `visual-ui-verification`. Every required gate must pass on the same
 accepted state before the task can be `done`; a `mismatch`, failed VCONF, `unavailable` or
 `error` evaluator result, or any pending gate keeps it non-done.
 

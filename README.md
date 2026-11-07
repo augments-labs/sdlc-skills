@@ -133,13 +133,13 @@ script disagree, so the numbers cannot drift from the tree.
 | What loads | Words | Approx tokens |
 | --- | --- | --- |
 | The router, every session | 843 | 1312 |
-| One skill body, when its skill fires | | 580 to 4664 |
-| The bug-fix chain, 7 skills | 7533 | 11834 |
-| The new-feature chain, 12 skills | 15533 | 24709 |
-| The plan-execution chain, 8 skills | 10572 | 16870 |
-| The delegated-execution chain, 7 skills | 10224 | 16428 |
-| The incident chain, 5 skills | 5154 | 8076 |
-| The release chain, 5 skills | 5608 | 9084 |
+| One skill body, when its skill fires | | 638 to 4745 |
+| The bug-fix chain, 7 skills | 7579 | 11898 |
+| The new-feature chain, 13 skills | 16149 | 25674 |
+| The plan-execution chain, 8 skills | 10756 | 17148 |
+| The delegated-execution chain, 7 skills | 10282 | 16515 |
+| The incident chain, 5 skills | 5160 | 8082 |
+| The release chain, 5 skills | 5614 | 9090 |
 <!-- token-budget-table:end -->
 
 A full feature chain costs the price of a long design document before any
@@ -399,6 +399,9 @@ A large project may touch every phase. Most tasks use a few skills.
    mechanical change (a codemod, a dependency bump, a lint rule) across many
    files with a script, and splits the result into one shard per owner that
    you decide once whether to open all or as a pilot first.
+   `eliminating-corrections` runs when you correct the agent: it names the
+   class of mistake and proposes the strongest proportionate way to close
+   it, from a design that cannot hold it down to a reviewer's checklist.
 
 The [skill catalogue](docs/reference/skills.md) lists every skill with one
 line on what it does, including the common skills that belong to no phase.

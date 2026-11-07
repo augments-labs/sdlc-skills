@@ -76,6 +76,7 @@ a few skills.
 | `debugging` | Finds the cause of a bug before any fix is proposed |
 | `post-mortem` | Explains how a failure got past the safeguards and what prevents a repeat |
 | `diagnosing-a-session` | Reconstructs what an agent session did from its transcript, as a report and an interactive trace page |
+| `eliminating-corrections` | Turns a correction you made to the agent's work into the strongest proportionate way of closing that class of mistake, from a design that cannot hold it down to a reviewer's checklist, and asks you to choose before building |
 | `complexity-audit` | Audits existing code for complexity it does not need |
 | `refactor-architecture` | Restructures code whose shape makes every change expensive |
 | `deprecating-an-api` | Retires an interface others call: the replacement first, a signal callers see, measured use, and the removal as its own change the owner accepts |

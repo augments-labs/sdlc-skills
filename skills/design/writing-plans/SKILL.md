@@ -38,26 +38,32 @@ true and how that is judged, not the code.
 
 ## Step 1: Write the index
 
-1. Open `assets/index-template.md` when starting the index. Fill the header
+1. **REQUIRED SUB-SKILL:** invoke `mapping-the-codebase` on every region the
+   plan will change, unless a boundary record inside its freshness limit
+   covers that region at the base revision. Draw each task's `Files` from
+   the record, and list the record's path in every task's `Context`. Never
+   put the record in the index's `Bound inputs`: an executor updates it,
+   and that update is not bound-input drift.
+2. Open `assets/index-template.md` when starting the index. Fill the header
    first.
-2. Fill `Plan set`: `none`, or the slices in order, this plan's position,
+3. Fill `Plan set`: `none`, or the slices in order, this plan's position,
    its predecessor plan's path, and the next slice's name. Write only this
    slice's tasks; the next slice is planned when this one lands.
-3. Leave `Integration cadence` at `plan end`. Write `per task` only when the
+4. Leave `Integration cadence` at `plan end`. Write `per task` only when the
    user directly asked for per-task integration, and quote the instruction.
-4. Leave `Out-of-task findings` at `log and report`. If the request says to
+5. Leave `Out-of-task findings` at `log and report`. If the request says to
    fix whatever turns up along the way, write `fix when admitted`, quote the
    instruction, and fill its budget. Plan an instruction with no end as that
    bounded policy; never copy it into a task or the goal.
-5. If the approved UI design carries **Selected visual references**, copy
+6. If the approved UI design carries **Selected visual references**, copy
    the complete keyed collection into the index, filling `Approved design
    artifact version` with the design's identity from its ledger row, and map
    every Reference ID to an owning task and a conformance evaluator ID in
    **Visual reference coverage**. If a reference is missing or an ID has no
    owner, return the plan to `ui-ux-design`.
-6. Give every file and side effect exactly one owning task. If two tasks
+7. Give every file and side effect exactly one owning task. If two tasks
    fall on the same one, add a dependency and name a single transition owner.
-7. If one transformation runs across many items, bind the machine-readable
+8. If one transformation runs across many items, bind the machine-readable
    inventory and the output pattern instead of listing the items.
 
 ## Step 2: Write the tasks
@@ -109,7 +115,8 @@ true and how that is judged, not the code.
    `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/` or the user-set path. No
    approval, execution state, or evidence goes in these files, except the
    task checkbox and its state label, which mirror the execution ledger.
-   Every later change to what they specify is a successor file.
+   After approval, a change the index's `Invalidation triggers` names is a
+   successor file; any other is an executor's ruling.
 
 ## Step 3: Self-review against the inputs, by name
 
@@ -177,48 +184,46 @@ true and how that is judged, not the code.
 
 ## Step 4: Present, then stop
 
-1. Run `bash scripts/plan-version.sh` on the plan directory before presenting.
-   Show the complete index and the printed version to the `Approval rule`
-   owner:
+1. Run `bash scripts/plan-version.sh` on the plan directory. Read
+   `assets/mode-question.md` before presenting, for which modes to offer and
+   recommend. Show the complete index and the printed version to the
+   `Approval rule` owner:
 
    ```text
    Plan {{absolute path of the plan directory}} — version {{printed version}}
    {{goal, architecture, constraints, acceptance, trace, task list, review findings}}
 
-   1. Approve, then choose an execution mode
-   2. Request changes
-   3. Reject
-   4. Cancel
+   1. Approve — inline, in this session
+   2. Approve — delegated, a subagent per task
+   3. Approve — delegated, in waves
+   4. Approve — inline, in a new session
+   5. Request changes
+   6. Reject
+   7. Cancel
 
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
-   Ask this and end the turn; `clarifying-intent` owns what closes it.
+   Omit modes it does not offer, keeping the numbers. Ask this and end
+   the turn; `clarifying-intent` owns what closes it.
 2. Do not invoke either executor, create a workspace, or write code in this
    turn.
 3. Under a standing order, proceed without the pause only when its scope,
    owner, constraints, and mode explicitly cover unseen plan versions. First
    bind the exact version to that receipt.
-4. On approval, in a separate turn, ask the mode question from
-   `assets/mode-question.md` when this version's row in the
-   `External decision ledger` (the ledger: add to it, never rewrite it; it
-   sits outside the plan) records no `mode:`. Because the approved plan and
-   its ledger row live on disk, delegated mode and an inline run started in a
-   new session both leave planning-phase context behind. That file owns the
-   block, the subagent-action condition (when it may offer the delegated
-   options), when to recommend the new session, and how to ask it.
-5. Add one row to that ledger: `Identity` = the printed version, `Location`
-   = the index path, `State` = approved, `Bound evidence` = the
-   `Approval rule` owner and their answer, any review report path, then the
-   mode the Step 4.4 question records for the answer: `mode: inline`,
-   `mode: delegated`, or `mode: delegated` plus `waves: yes`. Write nothing
-   about approval into the index.
+4. If an approval names no mode, ask the mode question in a separate turn.
+5. Add one row to the `External decision ledger` (the ledger: add to it,
+   never rewrite it; it sits outside the plan): `Identity` = the printed
+   version, `Location` = the index path, `State` = approved, `Bound
+   evidence` = the `Approval rule` owner and their answer, any review report
+   path, then the `mode:` the mode question maps the answer to. Write
+   nothing about approval into the index.
 6. **REQUIRED SUB-SKILL:** on a direct answer choosing option 1, 2, or 3,
    invoke the executor that mode names against the approved version before
    any workspace or implementation action: `executing-plans` for inline,
    `subagent-driven-development` for delegated. On option 4, print the
-   prompt the mode question gives and end the turn: the executor runs in the
-   session the user starts, never in this one. This skill writes no code.
+   prompt the mode question gives and end the turn. This skill writes no
+   code.
 
 ## Gotchas
 
@@ -233,4 +238,4 @@ true and how that is judged, not the code.
   discusses, not the ones the change breaks: a plan that added a kind to a
   set of kinds listed its owning module and missed seven exhaustive matches
   in another package, each found by a worker mid-task and each a successor
-  version. Step 3.7 searches the base, not the design.
+  version. The map comes first; Step 3.7 searches the base, not the design.

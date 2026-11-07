@@ -80,16 +80,27 @@ you approve:
 ## A plan
 
 `writing-plans` breaks approved work into ordered tasks, each with its
-dependencies and a way to know it is done. The plan is a directory with an
+dependencies and a way to know it is done. Before writing any task, the
+agent maps the code the plan will change with `mapping-the-codebase`: who
+calls it, what it owns, and where its boundaries are, including callers
+reached through configuration or generated code. Each task's files come from
+that map, not from the design. The plan is a directory with an
 index and one file per task. The agent shows you the index, with the plan's
-path and version on the first line, followed by this choice:
+path and version on the first line, followed by one choice that covers both
+approval and how the plan runs:
 
 ```text
-1. Approve, then choose an execution mode
-2. Request changes
-3. Reject
-4. Cancel
+1. Approve — inline, in this session
+2. Approve — delegated, a subagent per task
+3. Approve — delegated, in waves
+4. Approve — inline, in a new session
+5. Request changes
+6. Reject
+7. Cancel
 ```
+
+Options 2 and 3 appear only when your agent has a subagent tool and the plan
+has no phases or shards.
 
 For a high-risk plan, `reviewing-plans` sends the plan to an independent
 reviewer before you see this block, and every blocker it returns is
@@ -97,8 +108,7 @@ resolved first. For other plans, the agent offers the review and you decide.
 
 ## Executing a plan
 
-When you approve, the agent asks one more question: inline here, inline
-in a new session, or delegated.
+The option you approve with sets how the plan runs:
 
 - **Inline** runs the plan in this session through `executing-plans`, task by
   task, through each task's own check.
@@ -106,16 +116,25 @@ in a new session, or delegated.
   fresh session and the plan runs there through `executing-plans`, with the
   planning conversation left behind. The agent recommends this for a large
   plan or when this session has already been summarized.
-- **Delegated** runs it through `subagent-driven-development`: a fresh
+- **Delegated**, one task at a time or in waves, runs it through
+  `subagent-driven-development`: a fresh
   subagent implements each task, a reviewer checks its diff, and a bounded
   fix loop handles what the reviewer finds. The agent in your session keeps
   every decision. This needs an agent with a subagent tool; see
   [Supported agents](../reference/agents.md).
 
 An approved plan authorizes every task in it, so the agent does not stop to
-check in after each one. It stops when a task needs a change to what was
-approved, when no task can move forward, or when a high-risk entry gate has
-not passed. A defect it finds outside
+check in after each one. When the code differs from what the plan
+expected, such as a file the plan missed, a different signature, or a check
+that needs correcting, the agent makes the change, records it as a ruling,
+and keeps going, as long as every requirement the task traces still holds.
+You get the list of rulings, each with what it costs if wrong, when the plan
+finishes. The agent stops to ask you again only when a task needs a change
+to the plan's goal, a requirement, its acceptance check, its constraints, or
+an approved migration or assurance contract, or, on a high-risk plan, any
+change its migration rules treat as normative, such as an interface or
+ownership change; when no task can move forward;
+or when a high-risk entry gate has not passed. A defect it finds outside
 a task is logged and listed when the plan finishes, not fixed on the spot,
 unless the plan says otherwise.
 

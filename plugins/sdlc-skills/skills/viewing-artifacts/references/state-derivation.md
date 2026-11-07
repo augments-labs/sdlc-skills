@@ -29,8 +29,8 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
   beside the index, or the path its pointer names): each task's state is its
   latest task-state row (the task ID in `Section`, a task state in `State`)
   bound to the plan's current identity (in `Identity`), and a task with no
-  such row is `todo`. A `finding`, `admitted`, or `cancellation requested` row
-  sets no task state. Only the exact state `done` counts complete; `done with
+  such row is `todo`. A `finding`, `admitted`, `ruling`, or `cancellation
+  requested` row sets no task state. Only the exact state `done` counts complete; `done with
   concerns`, `blocked`, `in progress`, `needs context`, `cancelled`,
   `superseded`, and `todo` each count separately. The index checkbox rows are
   a navigation mirror, never the source: a task whose mirror disagrees with

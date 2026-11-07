@@ -21,13 +21,43 @@ You MUST:
 1. Fill every section of `.github/PULL_REQUEST_TEMPLATE.md` with specific,
    true answers.
 2. Search open **and** closed PRs and issues for the same problem. If it exists
-   or was rejected, stop and tell the human. If a prior attempt was closed, say
-   what is different.
+   or was rejected, stop and say so to whoever orchestrated the change. If a
+   prior attempt was closed, say what is different.
 3. Confirm it belongs in core (*What belongs here*).
 4. Meet every bullet in *Contributing*.
-5. Show the human the complete diff and get explicit approval.
+5. Review the complete diff yourself or with another agent, and report that
+   review in the template's *Human review* section. Show a human the diff
+   and wait for their approval only when one asked to see it first. Tick the
+   box only once the person named in the table has said they read the diff
+   at the commit it names; an authorization is not a read.
 
 If any check fails, do not open the PR; explain why it would be rejected.
+
+## Merging or closing a PR
+
+Anyone, human or agent, may open a PR. Only a maintainer (a person with
+write access to this repository) merges one, or an agent a maintainer has
+authorized to merge that PR. Orchestrating a change grants no merge right,
+and green checks authorize nothing. Even then, merge into `dev` only when
+all of these hold on the PR's current head commit, whoever merges:
+
+1. Every CI check that gates a merge is green. A job marked
+   `continue-on-error`, such as the reference validator, gates nothing.
+2. Its *Human review* section reports a review of the complete diff at that
+   commit, naming the commit, or a maintainer approved that commit in a
+   GitHub review. Every finding is fixed or refuted with evidence; one left
+   open needs a maintainer's answer, recorded in the PR.
+3. Anyone who asked to see the diff before merge has approved it.
+
+A review covers only the commit it names: after a push, review the new diff
+and update the section before merging. Merge into `main` only as
+`RELEASING.md` says.
+
+Only a maintainer closes a PR without merging, or an agent a maintainer has
+authorized to close it; its author may also withdraw their own. Say why in
+a comment: a closing condition in the template, a duplicate of an open PR,
+or the author's or a maintainer's request. These rules grant no skill more
+than it states: `reviewing-a-pr` still never merges or closes.
 
 Local checkpoint commits on a task branch are authorized; `using-git-worktrees`
 owns when to make one.
@@ -118,8 +148,9 @@ your own library.
   theoretically break" is not a problem statement.
 - **One change per PR.**
 - **Identify yourself.** Say whether a human, an agent, or both orchestrated
-  the change, and which agent wrote it, if any: disclose its model, and the
-  harness and its version.
+  the change, every model that wrote any of it and the part it wrote, and the
+  harness and its version. Hiding it closes the PR; an empty human-review box
+  does not.
   Plugins loaded during a run go in the PR template's *Environments tested*
   table.
 - **Target `dev` from a task branch.** `main` takes release PRs only.

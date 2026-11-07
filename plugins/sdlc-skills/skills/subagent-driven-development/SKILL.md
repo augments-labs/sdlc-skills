@@ -12,8 +12,8 @@ they may not take. This skill never decides what happens to the branch.
 ## When to use
 
 - An approved plan is about to be built by dispatched workers rather than
-  here: the user asked for workers, or answered the execution-mode question
-  with delegated.
+  here: the user asked for workers, or approved the plan with a delegated
+  mode.
 - **Skip** building the tasks in this session (`executing-plans` owns that)
   and a lone task with no plan directory.
 - **Skip** a plan whose index holds phases or shards: its queues, leases, and
@@ -104,24 +104,30 @@ and ask the user only when the next act would be:
   architecture choice the approved artifacts do not settle;
 - or the plan is broken on every path you can see, not merely the first one.
 
-Everything else is a ruling. Write it in the ledger with its reason and carry it
-into the next brief. A change to what was approved — scope, interface, evaluator,
-ownership — is never a ruling: write the proposed successor, ask for
-reapproval, end the turn. A mode change is never a ruling either: it takes the
-`Approval rule` owner's direct answer, as Step 1.4 says.
+Everything else is a ruling: a ledger row carried into the next brief. A
+task that cannot be built as written gets one when every requirement it
+traces still holds: another signature, a file outside its `Files`, a changed
+owner, a new way to run its `Evaluator`. Never edit plan files.
+Write and bound it as `executing-plans`' *Rulings* items 1 and 2 say:
+the task ID in `Task`, the requirement it keeps, its cost if wrong, each
+later task it touches, and an `Evaluator` change only to how the check
+runs, RED first, never loosening an assertion or a judge its `Evaluator
+identity/owner` or the spec keeps from the task.
 
-A successor proposed because a task cannot be built as written (a finding
-without which its `Evaluator` cannot pass; any other finding stays a
-`finding` row) is a `gap` row in the execution ledger. On the second `gap`
-row in one run, dispatch nothing more: apply `writing-plans` Step 3.6 and
-3.7 to every remaining task against the current base, in one pass, and
-propose one successor carrying every gap, its `Bound inputs` naming that
-base revision. A claim that fails Step 3.7 is a `gap` row and a finding for
-the owner of the document that made it; invoke nothing from here. On a
-high-risk route,
-**REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a proposed successor
-before asking for reapproval; its Step 1.6 binds the predecessor's report
-and reviews the delta and what depends on it.
+A change to the `Goal`, a traced requirement, `Acceptance`, `Constraints`,
+or an approved migration or assurance contract is never a ruling, nor, on a
+high-risk route, a change `writing-plans`' `scalable-transformation.md`
+calls normative. Write its proposed successor (on a high-risk route,
+**REQUIRED SUB-SKILL:** `reviewing-plans` first), ask for reapproval, end
+the turn. A mode change is neither: Step 1.4 owns it.
+
+On the second ruling caused by a plan claim the code disproves,
+dispatch nothing until `writing-plans` Step 3.6 and 3.7 have walked every
+remaining task against the current base once. A gap every traced
+requirement survives gets a ruling; every other gap goes into one
+successor, its `Bound inputs` naming that base revision. A claim that fails
+Step 3.7 is a finding for the owner of the document that made it; invoke
+nothing from here.
 
 ## Step 4: Dispatch one task
 
@@ -193,8 +199,7 @@ and reviews the delta and what depends on it.
      or remove the dependency on the unrun environment; "check at deploy" is
      no decision.
    - a `## Discoveries for later tasks` entry is copied into the ledger as a
-     ruling naming the later task; one that changes that task's approved
-     contract goes to Step 3's reapproval instead.
+     ruling naming the later task, unless Step 3 says it needs a successor.
 
    The rounds are the task's repair budget from `receiving-code-review`:
    five unless the user or the plan sets another number, and the `per task`
@@ -217,8 +222,8 @@ and reviews the delta and what depends on it.
    the user that row. Never open a round past the budget.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision, with the task's
-   `Evaluator`, every `VCONF` row, and `visual-ui-verification` for an
-   integrated UI.
+   `Evaluator`, every `VCONF` row, and `visual-ui-verification` for a
+   visible UI change.
 
    For a wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
    those branches into the plan worktree (a blocked task's branch stays out)
@@ -260,7 +265,8 @@ In the worktree from Step 2, in order:
 3. **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the workspace
    record from Step 2. It asks the integration question and executes the
    answer. Run no push, PR, merge, or delete here.
-4. Close with "Rulings I made": every ruling in the ledger, one line each,
+4. Close with "Rulings I made": every ruling in the ledger with its cost if
+   wrong, one line each,
    then "Findings not built": every `finding` row with no `admitted` row,
    with its evidence, one line each. The user decides which become work.
    If the index's `Plan set` names a next slice, name it and ask the
@@ -285,9 +291,10 @@ the evidence. It is never a task because someone wrote it down.
 
 ## Gotchas
 
-- A gap found mid-task reads as one successor to write now: one run wrote
-  fifteen this way before the plan was walked against the base once. The
-  second `gap` row batches the rest.
+- A gap found mid-task, written as a successor, stops the run for
+  reapproval: one run wrote fifteen this way. A gap every traced
+  requirement survives is a ruling, and the second one walks the rest of
+  the plan once.
 - An instruction to fix whatever turns up reads as licence to queue every
   advisory as a task, and each fix's review then raises more — reproduced
   by a plan run that carried that instruction with no budget: its 14-row
