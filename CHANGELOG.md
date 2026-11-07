@@ -2,6 +2,20 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [11.2.0] — 2026-11-07
+
+`eliminating-corrections` is a new maintenance skill: when a human corrects
+the agent, it saves the wrong state, applies the correction, names the class
+of mistake, and proposes the strongest proportionate way to close it, from a
+design that cannot hold the wrong state down to a reviewer checklist item,
+building nothing before the user chooses. Visual verification now fires for
+any change visible in a running GUI or TUI, and says what to do when the
+agent cannot capture or view a frame. Plans map the code they change before
+writing tasks, an executor rules on a plan gap instead of asking for
+reapproval, approval and execution mode are one question, and the
+contribution rules let humans and agents open PRs while only a maintainer
+or an authorized agent merges or closes one.
+
 ## [11.1.0] — 2026-11-04
 
 `brainstorming` is a new planning skill: it freezes the question, the facts,
