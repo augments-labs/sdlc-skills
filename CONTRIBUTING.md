@@ -99,7 +99,9 @@ proves and which test to run for which change.
 5. Have the complete diff reviewed before you submit it, by you or by an
    agent, including the agent that wrote it, and report an agent's review in
    the template's *Human review* section. Tick the human-review box only for
-   a person who read the diff or authorized the pull request.
+   a person who read the diff at the commit it names; an authorization is not
+   a read.
+6. Merging and closing follow AGENTS.md's *Merging or closing a PR*.
 
 ## Testing and the gates
 

@@ -157,18 +157,22 @@ paste the complete transcript here
 
 ## Human review
 
-- [ ] A human has read the **complete** diff before this PR was opened.
+- [ ] A human has read the **complete** diff at head commit: <!-- the commit
+  they read; after a push, untick until they read the new diff -->
 
-<!-- Required while the box is empty, since a reader weighs this review in
+<!-- Required unless the box is ticked, since a reader weighs this review in
 place of a human one; who reviewed is the table's "Agent that reviewed this
-diff" row. For each reviewer there: what it read (the complete diff, and
-which skills, callers, or docs it checked against), what it found, and what
-became of each finding: fixed, refuted with the evidence, or left with the
-reason. "None" is an answer. -->
+diff" row. For each reviewer there: the head commit it reviewed, what it
+read (the complete diff, and which skills, callers, or docs it checked
+against), what it found, and what became of each finding: fixed, refuted
+with the evidence, or left with the reason. "None" is an answer. After each
+push, review the new diff and add it here with its commit; a review covers
+only the commit it names. -->
 
 <!--
 Tick the box only once the person named in the table has said they read the
-complete diff or authorized this PR. Otherwise leave it empty, with `-` in the
+complete diff at that commit; authorizing the PR, or authorizing an agent to
+open or merge it, is not a read. Otherwise leave it empty, with `-` in the
 table: a name goes there only when a human wrote this PR or asked the agent
 to put their name there, never on an agent's own initiative. An empty box is
 a complete answer, not a defect: no human read the diff, which is acceptable
@@ -178,7 +182,7 @@ review reported here instead. The person whose account opens the PR still
 answers for it. A tick nobody gave is a false statement about a person.
 
 A PR is closed without review when it:
-- ticks the box for a person who has neither read the diff nor authorized it;
+- ticks the box for a person who has not read the diff at the named commit;
 - hides who orchestrated it, which models wrote it, or where it ran;
 - leaves the box empty and reports no agent review above;
 - bundles unrelated changes;
