@@ -120,11 +120,12 @@ No, don't build the query string by hand. Use the query builder. I've told you t
 How do we make sure nobody hard-codes the tenant ID again?
 ```
 
-The agent applies your correction first. It then names the class of mistake
+The agent saves what it did wrong, then applies your correction; a finding
+from a reviewer is verified first. It then names the class of mistake
 behind the instance, from what it did and what you corrected, and climbs a
 ladder from the strongest answer down: a design or data structure that
-cannot hold the wrong state; a generator, formatter, or default that writes
-the right one; a test or lint rule that fails on the wrong one and runs in
+cannot hold the wrong state; a default, or a formatter that CI runs, that
+writes the right one; a test or lint rule that fails on the wrong one and runs in
 CI; a runtime assertion or alert, for a class only real data shows; a rule
 for the agent, placed next to the code or in the skill step where the
 mistake happens; and last, an item for a reviewer to look for. It proposes

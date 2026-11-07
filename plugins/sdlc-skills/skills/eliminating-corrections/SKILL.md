@@ -1,6 +1,6 @@
 ---
 name: eliminating-corrections
-description: "Turns a correction a human made to the agent's work into the strongest proportionate way of making that class of mistake impossible, automatic, or caught, with each stronger option that was rejected and why, put to the user as one choice before anything is built. Use when the user corrects what the agent did or how it did it, says no, don't do that, that's wrong, it should be like this, I told you this before, or stop doing this, reverts an edit the agent made, repeats a review comment on a later change, or asks how to stop this kind of mistake from happening again. Skip a bug whose cause is unknown, a failure that reached production, and a one-off preference that cannot recur."
+description: "Turns a correction a human made to the agent's work into the strongest proportionate way of making that class of mistake impossible, automatic, or caught. Use when the user corrects what the agent did or how it did it, says no, don't do that, that's wrong, it should be like this, I told you this before, or stop doing this, reverts an edit the agent made, repeats a review comment on a later change, or asks how to stop this kind of mistake from happening again. Skip a bug whose cause is unknown, a failure that reached production, and a one-off preference that cannot recur."
 ---
 
 # Eliminating Corrections
@@ -28,18 +28,24 @@ the class, in writing, and build nothing until the user chooses.
 
 ## Step 1: Honor the correction
 
-1. Apply the correction to the instance in front of you, as given, before
-   anything below. A correction is a user instruction: it outranks the
-   plan, skill, or file text that led you the other way.
-2. If it cannot be applied as given (the thing it names does not exist, or
+1. Before applying anything, record the wrong state: the commit that holds
+   it, or its hunk saved to a scratch file outside the work tree. It is the
+   one input a check in Step 5 must fail on, and applying the correction
+   overwrites it.
+2. **REQUIRED SUB-SKILL:** when the correction arrives as review findings
+   (a reviewer's report, a PR comment), invoke `receiving-code-review`
+   first; it verifies them and owns their fix. Only a finding it records as
+   verified enters Step 2.
+3. Otherwise, apply the correction to the instance in front of you, as
+   given, before anything below. A correction the user gives is a user
+   instruction: it outranks the plan, skill, or file text that led you the
+   other way.
+4. If it cannot be applied as given (the thing it names does not exist, or
    it contradicts a check that is green), say what blocks it in one sentence
    and end the turn. Never argue past that sentence.
-3. If applying it changes behavior, invoke `test-driven-development` and
+5. If applying it changes behavior, invoke `test-driven-development` and
    `yagni` first, as for any edit.
-4. Keep the state you corrected: the diff you applied the correction over is
-   the one input a check in Step 5 must fail on. Note where it is (the
-   reverted hunk, the stash, the earlier commit).
-5. The apology is not the end of the turn. Go to Step 2 in the same task.
+6. The apology is not the end of the turn. Go to Step 2 in the same task.
 
 ## Step 2: Name the class
 
@@ -78,17 +84,22 @@ for every rung above the one you choose; "not possible" needs its reason.
    a constructor that demands the field, a function that takes the right
    thing so the wrong thing has no entry, a surface deleted. Nobody
    remembers anything.
-2. **Make the right result automatic.** A generator, formatter, codemod,
-   scaffold, safe default, or auto-fix that writes the right output, so the
-   mistake is overwritten instead of noticed. Fixing beats detecting:
-   nothing stops the work, and nobody is asked to remember.
+2. **Make the right result automatic.** A safe default, a derived value, or
+   a formatter or auto-fix that writes the right output on the path where
+   the mistake is made, so it is overwritten instead of noticed. It counts
+   only when nobody chooses to run it: in the code path itself, or run by
+   CI. A generator or codemod someone must remember to run is a one-time
+   fix; keep the class closed with a lower rung, usually rung 3.
 3. **Catch it with a deterministic check.** A test, lint rule, type check,
    or validator that fails on the wrong state and passes on the right one,
    run where nobody can skip it: CI, on every change. Run the same check
    earlier too when a late catch is expensive, as a pre-commit hook or as a
    hook in the harness that refuses the tool call, where the harness has
    one. The earlier run shortens the loop; the CI run is the enforcement. A
-   hook without the CI run is not this rung.
+   hook without the CI run is not this rung, with one exception: a mistake
+   in how you acted (a command run without asking) leaves no file state for
+   CI to fail on. A harness hook that refuses the action is then the
+   strongest check; propose it with a rung-5 rule for harnesses without one.
 4. **Assert or watch at runtime.** An assertion, a guard that fails loudly,
    or an alert, only for a class no fixture can show because it depends on
    real data, real volume, or real time. It catches after shipping, so it
@@ -115,8 +126,7 @@ session's tenant, and the same comment came back on an earlier change. Rung
 the raw-ID helper removed, touches thirty call sites: proportionate to a
 class seen twice whose instances each leak data across tenants. Rung 3, a
 lint rule for the raw-ID helper, is cheaper but leaves the helper callable;
-it is the fallback if the user declines the refactor. Rung 5, a line in the
-instructions file, is what the earlier comment produced: it came back.
+it is the fallback if the user declines the refactor.
 
 ## Step 4: Put the choice to the user
 
@@ -130,7 +140,7 @@ instructions file, is what the earlier comment produced: it came back.
    Rejected above the recommendation: {{rung}}: {{reason, one line}}; {{one entry per rung}}
 
    1. Build rung {{n}}: {{what gets built}}, {{cost to build, run, and keep}}
-   2. Build rung {{n+1}} instead: {{what gets built}}, {{cost}}
+   2. Build rung {{the next lower rung that fits}} instead: {{what gets built}}, {{cost}}
    3. Build rung {{m}}, the highest that is possible, at its cost: {{cost}}
    4. Close this instance only: no class to close
 
@@ -156,7 +166,7 @@ instructions file, is what the earlier comment produced: it came back.
 2. Rung 3 is a detector. **REQUIRED SUB-SKILL:** invoke
    `test-driven-development`; its detector rule applies: in the same test,
    pin the input the check must flag and a near-miss it must pass. The input
-   it must flag is the state from Step 1.4, not a made-up example. A check
+   it must flag is the state from Step 1.1, not a made-up example. A check
    never seen red on that state does not close the class. When the rung adds
    a job to CI or changes what CI runs for the whole project, invoke
    `verification-strategy`; one more test in an existing suite does not.
@@ -196,21 +206,22 @@ Stop and go back to the step named:
   edit and no class sentence: Step 2.
 - You chose a rung with no written line for the rungs above it: Step 3.
 - You are building before the user answered: Step 4.
-- The check exists but was never run on the state from Step 1.4: Step 5.
+- The check exists but was never run on the state from Step 1.1: Step 5.
 - The rule is going into a general instructions file while the mistake
   happens inside one module: Step 3, rung 5.
 
 ## Gotchas
 
 - A check written from the corrected code passes on its first run and has
-  never met the mistake. The failing input is in the history, the hunk the
-  correction replaced; restore it in a scratch copy for the red run, then
+  never met the mistake. The failing input is where Step 1.1 saved it;
+  restore it in a scratch copy for the red run, then
   run the check on the corrected state for the green. Prevents a detector
   that has only ever seen good input.
 - A pre-commit hook is absent on a fresh clone and skipped with
-  `--no-verify`; a harness hook runs only in that harness. Either shortens
-  the loop; neither enforces. Prevents a hook proposed as "the check" that
-  leaves the class open everywhere the hook is not installed.
+  `--no-verify`; a harness hook runs only in that harness. Where the
+  mistake leaves file state, either shortens the loop and neither enforces.
+  Prevents a hook proposed as "the check" that leaves the class open
+  everywhere the hook is not installed.
 - A correction that contradicts a skill, plan, or doc you followed is
   evidence that the text is wrong, not that you misread it. Left alone, the
   next session follows it the same way. Prevents a rule added beside the
