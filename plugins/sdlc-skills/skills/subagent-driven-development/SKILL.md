@@ -119,7 +119,7 @@ or an approved migration or assurance contract is never a ruling, nor, on a
 high-risk route, a change `writing-plans`' `scalable-transformation.md`
 calls normative. Write its proposed successor (on a high-risk route,
 **REQUIRED SUB-SKILL:** `reviewing-plans` first), ask for reapproval, end
-the turn. Neither is a mode change: Step 1.4 owns it.
+the turn. A mode change is neither: Step 1.4 owns it.
 
 On the second ruling caused by a plan claim the code disproves,
 dispatch nothing until `writing-plans` Step 3.6 and 3.7 have walked every
