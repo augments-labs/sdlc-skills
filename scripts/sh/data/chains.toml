@@ -9,17 +9,17 @@ budget_words = 7583
 
 [new-feature]
 skills = ["using-sdlc-skills", "working-from-a-ticket", "clarifying-intent", "writing-specs", "mapping-the-codebase", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 16143
+recorded_words = 16149
 budget_words = 16187
 
 [plan-execution]
 skills = ["using-sdlc-skills", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 10750
+recorded_words = 10756
 budget_words = 10794
 
 [delegated-execution]
 skills = ["using-sdlc-skills", "subagent-driven-development", "using-git-worktrees", "dispatching-parallel-agents", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 10281
+recorded_words = 10282
 budget_words = 10325
 
 [incident]
