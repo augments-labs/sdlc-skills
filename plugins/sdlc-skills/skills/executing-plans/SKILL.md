@@ -11,8 +11,8 @@ what happens to the branch.
 
 ## When to use
 
-- The user asks to execute, continue, or resume a plan directory, or answers
-  its execution-mode question with inline.
+- The user asks to execute, continue, or resume a plan directory, or approves
+  it with an inline mode.
 - **Skip** a single task with no plan directory: use `test-driven-development`
   and `yagni` directly.
 - **Skip** a plan whose approval row records `mode: delegated`:
@@ -80,15 +80,17 @@ edit. If any check fails, report the field and the task; do not start it.
 Take the next task whose `Depends on` tasks are all `done`. Keep the approved
 mode; switching needs the `Approval rule` owner's direct answer.
 
-1. Read the task file, its `Context` paths, its evaluator, and the ledger's
-   learnings. Never work from memory of the plan.
+1. Read the task file, its `Context` paths, its evaluator, the ledger's
+   learnings, and the rulings that touch this task. Never work from memory
+   of the plan.
 2. Write the attempt row before any edit: task ID, attempt ID, current
    revision, evaluator identity, expected observable.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
    invocation; the loading action must appear in this session.
 4. Inspect the result yourself: diff against the attempt's starting revision;
-   compare with `Files` and `Exclusive ownership/effects`. For a dispatched
+   compare with `Files`, `Exclusive ownership/effects`, and this task's
+   rulings. For a dispatched
    task, read
    its raw diff, result revision, and evaluator output, never its summary. A
    defect or gap outside the task's contract goes to *Findings outside the
@@ -117,23 +119,42 @@ mode; switching needs the `Approval rule` owner's direct answer.
      ledger decision, go to Step 5.
    - If no authorized ready task can advance, report the unresolved states,
      their blockers, and the next conditions they require.
-   - If a task needs a change to what was approved (scope, interface,
-     evaluator, phase, ownership), write the proposed successor, ask for
-     reapproval, and end the turn.
+   - If a task needs a change to the index's `Goal`, a traced requirement,
+     `Acceptance`, `Constraints`, or an approved migration or assurance
+     contract, or any change *Rulings* says is never a ruling, write the
+     proposed successor, ask for reapproval, and end
+     the turn. On a high-risk route, **REQUIRED SUB-SKILL:** invoke
+     `reviewing-plans` on it first (its Step 1.6).
    - If a high-risk entry gate has not passed and no ready task can advance
      without it, report it and end the turn.
 
-A successor proposed because a task cannot be built as written (a finding
-without which its `Evaluator` cannot pass; any other finding stays a
-`finding` row) is a `gap` row in the execution ledger. On the second `gap`
-row in one run, start no task: apply `writing-plans` Step 3.6 and 3.7 to
-every remaining task against the current base, in one pass, and propose one
-successor carrying every gap, its `Bound inputs` naming that base revision.
-A claim that fails Step 3.7 is a `gap` row and a finding for the owner of
-the document that made it; invoke nothing from here. On a high-risk route,
-**REQUIRED SUB-SKILL:** invoke `reviewing-plans` on a proposed successor
-before asking for reapproval; it binds the predecessor's report and reviews
-the delta and what depends on it (its Step 1.6).
+### Rulings
+
+A task that cannot be built as written gets a ruling, not a successor,
+when every requirement it traces still holds: another signature, a file
+outside its `Files`, a changed owner, a corrected way to run its
+`Evaluator`. A ruling covers only what this task's `Evaluator` needs. On a
+high-risk route, a change `writing-plans`' `scalable-transformation.md`
+calls normative is never a ruling.
+
+1. Before the edit it permits, append a `ruling` row with the task ID in
+   `Section`: the change, the requirement it still satisfies, each later
+   task it touches (through a changed `Produces` or a file that task owns),
+   and its cost if wrong. For a file another task owns, also record the
+   ordering. Never edit the plan files.
+2. An `Evaluator` ruling changes only how the check runs (command, path,
+   fixture, an `Expected` re-printed from the current tree), never drops or
+   loosens an assertion a requirement needs; the corrected check goes RED
+   on the task's starting state before its GREEN counts. A judge its
+   `Evaluator identity/owner` bars this task from editing, or a test the
+   spec shipped, changes only by that owner's decision or a successor.
+3. After the second ruling caused by a plan claim the code disproves, start
+   no task until `writing-plans` Step 3.6 and 3.7 walk every remaining task
+   against the current base, once. A gap every traced requirement survives
+   gets a ruling; every other gap goes into one successor, its `Bound
+   inputs` naming that base revision. A claim that fails Step 3.7 is a
+   finding for the owner of the document that made it; invoke nothing from
+   here.
 
 ## Step 5: Finish the plan
 
@@ -152,8 +173,9 @@ In the task workspace recorded in Step 2, in order:
    Otherwise, **REQUIRED SUB-SKILL:** invoke `finishing-a-branch` with the
    workspace record from Step 2. It asks the integration question and
    executes the answer. Run no push, PR, merge, or delete here.
-4. Close with "Findings not built": every `finding` row with no `admitted`
-   row, with its evidence, one line each. The user decides which become work.
+4. Close with "Rulings I made": every `ruling` row with its cost if wrong.
+   Then "Findings not built": every `finding` row with no `admitted` row,
+   with its evidence, one line each. The user decides which become work.
    If the index's `Plan set` names a next slice, name it and ask the
    `Approval rule` owner whether `writing-plans` runs on it now; start
    nothing from here.
@@ -164,13 +186,13 @@ In the task workspace recorded in Step 2, in order:
 | "Tests are green — a PR is the natural next step" | Green is task-local evidence. Review and integration are separate checks with their own owners. |
 | "The plan says approved, so it is" | A plan cannot authenticate itself. Read the ledger entry or get the answer in this conversation. |
 | "Subagents are available, but inline is what I'm already in" | The row's mode decides, and the `Approval rule` owner chose it. A delegated row here is a redirect, not a loop to run. |
+| "The plan missed a file, so I need reapproval" | `Files` is the planner's map, not the spec. If every traced requirement holds, rule and keep going. |
+| "A ruling lets me fix this too" | Only what this `Evaluator` needs; the rest is a `finding`. |
 
 ## Gotchas
 
-- A gap found mid-task reads as one successor to write now, and the next
-  task finds the next: one run wrote fifteen successors this way, each
-  reapproved on the earlier reviews, before the plan was walked against the
-  base once. The second `gap` row batches the rest.
+- A gap written as a successor halts the run for reapproval: one run wrote
+  fifteen this way.
 - An instruction to fix whatever turns up reads as licence to queue every
   advisory as a task, and each fix's review then raises more — reproduced
   by a plan run that carried that instruction with no budget: its 14-row
@@ -213,6 +235,3 @@ what, the evidence. It is never a task because someone wrote it down.
   version, the workspace's base, HEAD, and dirty state through
   `using-git-worktrees`, the execution ledger, and whether each `done` row
   still matches the current revision.
-- When reality contradicts the plan: a change to what was approved gets a
-  proposed successor and direct reapproval; a runtime fact goes into the
-  execution ledger only.

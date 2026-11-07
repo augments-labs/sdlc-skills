@@ -6,7 +6,8 @@ exact identity of every approved input, the rule that makes each stale, the
 00-index.md in `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`, alongside one
 file per task. No approval, execution state, or evidence goes in this file,
 except the task checkbox and its state label, which mirror the execution
-ledger; every later change to what it specifies is a successor file.
+ledger. A change named under `Invalidation triggers` is a successor file; any
+other adjustment is an executor's ruling in the execution ledger.
 
 ```markdown
 # Plan: {{topic}}
@@ -58,8 +59,12 @@ conformance evaluator; no row may be inferred from task prose.
 - **External execution ledger:** {{ledger path: the same 00-index.ledger.md
   unless the user sets another, or returned directly; outside normative identity;
   append-only task states/evidence bind this version}}
-- **Invalidation triggers:** {{any bound-input drift or normative scope/interface/
-  evaluator/phase/ownership/cutover/rollback/decommission change}}
+- **Invalidation triggers:** {{any bound-input drift, or a change to the Goal, a
+  traced requirement, Acceptance, Constraints, or an approved migration or
+  assurance contract (phase, cutover, rollback, decommission); on a high-risk
+  route, also every normative change `references/scalable-transformation.md`
+  lists. Interface, Files, ownership, and Evaluator adjustments that keep them
+  are rulings.}}
 - **Required executor:** `executing-plans` for `inline`,
   `subagent-driven-development` for `delegated`, after this exact version has
   direct approval and an explicit mode. A mode reply triggers that skill; it
@@ -82,7 +87,8 @@ conformance evaluator; no row may be inferred from task prose.
   becomes an added task only on an observed failure, a finding raised by an
   added task is never admitted, and at the budget the rest are listed.
 
-Every normative change creates a proposed successor with an exact delta. An
+Every change named under Invalidation triggers creates a proposed successor
+with an exact delta. An
 approved successor invalidates predecessor-bound consumers until each owner
 revalidates or reconciles. Never write approval, execution mode, or evidence
 into normative fields. Task checkbox markers and adjacent status labels are the
