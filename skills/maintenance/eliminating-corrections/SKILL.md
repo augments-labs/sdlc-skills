@@ -19,8 +19,9 @@ the class, in writing, and build nothing until the user chooses.
   reverted, a review comment that comes back on a later change.
 - The user asks how to stop a kind of mistake from happening again.
 - **Skip** a bug whose technical cause is unknown; invoke `debugging`.
-- **Skip** a failure that reached users or production; `post-mortem` owns
-  why the safeguards missed it and runs its own audit of them.
+- **Skip** a failure that reached users or production, lost work, or
+  failed a whole work cycle; `post-mortem` owns why the safeguards missed it
+  and runs its own audit of them.
 - **Skip** when the user wants to know what the session did and why;
   `diagnosing-a-session` reconstructs that from the transcript.
 - **Skip** a one-off: a preference stated for this task with no second
