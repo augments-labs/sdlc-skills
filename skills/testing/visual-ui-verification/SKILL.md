@@ -86,21 +86,21 @@ state under check. Never return "looks good".
 
 ## Step 3: Calibrate, then inspect
 
-1. Fill `Calibration` before any pass: freeze the rubric and the observer.
-   The observer must be able to see every frame: you, if you can view
+1. Fill `Calibration` before any pass: freeze the rubric and each row's
+   observer. An observer must be able to see its rows: you, if you can view
    images; for a TUI if you cannot, you reading the rendered screen text,
    with color and attributes from the raw stream; otherwise a dispatched
    agent with image input, or the user.
 2. Produce one deliberately broken frame with a reversible fault or a
    known-bad fixture outside the state under check. Confirm the same
-   observer and inspection mark it red; a user who observes live marks the
-   broken state red under a receipt.
+   observer and inspection mark it red, once per observer; a user who
+   observes live marks the broken state red under a receipt.
 3. Restore the probe. Record the receipts for the red and for the
    restoration. If the probe is unsafe or was missed, this check is pending.
-4. Inspect every frame against the accepted UI
-   criteria: hierarchy, legibility, clipping and overflow, focus, contrast,
-   content extremes, state feedback, visible recovery controls. Every frame
-   goes to the observer frozen in Step 3.1; until it has inspected a frame,
+4. Inspect every frame against the accepted UI criteria: hierarchy,
+   legibility, clipping and overflow, focus, contrast, content extremes,
+   state feedback, visible recovery controls. Every frame goes to the
+   observer frozen for its row in Step 3.1; until it has inspected a frame,
    that row is pending.
 5. Judge the finished state under check against every mapped design
    obligation and selected reference. Matching the preview does not pass an
