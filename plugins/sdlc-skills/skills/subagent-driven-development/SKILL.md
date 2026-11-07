@@ -222,8 +222,8 @@ nothing from here.
    the user that row. Never open a round past the budget.
 5. Read the diff yourself against the task, then **REQUIRED SUB-SKILL:** invoke
    `verification-before-completion` on the result revision, with the task's
-   `Evaluator`, every `VCONF` row, and `visual-ui-verification` for an
-   integrated UI.
+   `Evaluator`, every `VCONF` row, and `visual-ui-verification` for a
+   visible UI change.
 
    For a wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
    those branches into the plan worktree (a blocked task's branch stays out)

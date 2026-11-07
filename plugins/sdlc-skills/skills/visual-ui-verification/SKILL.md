@@ -69,24 +69,39 @@ state under check. Never return "looks good".
    capture screenshots or recordings. For a TUI, use a PTY at the declared
    dimensions and a VT-capable renderer, and keep the raw terminal stream and
    the rendered frame.
-3. End each row at a stable, named observation, not at a successful launch.
-4. Write one `Scenario matrix` row per observation: hash the raw bytes and
+3. If no capture tool is available (screenshot, browser driver, PTY
+   renderer), one is refused, or the available one cannot reach a row (its
+   size, theme, platform, or input method), that row is pending. Name the
+   missing tool and what would provide it, and ask the user to provide it or
+   to observe those rows live as human-owned checks under Step 3.7. A row
+   the user observed live is captured by their receipt. Reading the source,
+   the markup, or the DOM shows what was asked for, not what rendered; it
+   never stands in for a frame.
+4. End each row at a stable, named observation, not at a successful launch.
+5. Write one `Scenario matrix` row per observation: hash the raw bytes and
    the rendered media, record the capture tool and the row's inputs.
-5. Never overwrite an earlier frame. Keep retries, duplicates, late output,
+6. Never overwrite an earlier frame. Keep retries, duplicates, late output,
    and superseded frames, and record a decision for each. Each required row
    has one accepted result.
 
 ## Step 3: Calibrate, then inspect
 
-1. Fill `Calibration` before any pass: freeze the rubric and observer.
+1. Fill `Calibration` before any pass: freeze the rubric and each row's
+   observer. An observer must be able to see its rows: you, if you can view
+   images; for a TUI if you cannot, you reading the rendered screen text,
+   with color and attributes from the raw stream; otherwise a dispatched
+   agent with image input, or the user.
 2. Produce one deliberately broken frame with a reversible fault or a
    known-bad fixture outside the state under check. Confirm the same
-   inspection marks it red.
+   observer and inspection mark it red, once per observer; a user who
+   observes live marks the broken state red under a receipt.
 3. Restore the probe. Record the receipts for the red and for the
    restoration. If the probe is unsafe or was missed, this check is pending.
-4. Inspect every frame with a media-capable observer against the accepted UI
-   criteria: hierarchy, legibility, clipping and overflow, focus, contrast,
-   content extremes, state feedback, visible recovery controls.
+4. Inspect every frame against the accepted UI criteria: hierarchy,
+   legibility, clipping and overflow, focus, contrast, content extremes,
+   state feedback, visible recovery controls. Every frame goes to the
+   observer frozen for its row in Step 3.1; until it has inspected a frame,
+   that row is pending.
 5. Judge the finished state under check against every mapped design
    obligation and selected reference. Matching the preview does not pass an
    untested flow, recovery state or condition. An unapproved layout or

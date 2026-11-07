@@ -97,7 +97,7 @@ mode; switching needs the `Approval rule` owner's direct answer.
    task*; never fix it inside this task.
 5. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on that
    exact state: the `Evaluator`, every `VCONF` row, and
-   `visual-ui-verification` for an integrated UI.
+   `visual-ui-verification` for a change visible in a running GUI or TUI.
 6. Append the task state to the ledger and mirror the index checkbox:
    - `done`: every check passed on the inspected state
    - `done with concerns`: a check raised something not yet proved

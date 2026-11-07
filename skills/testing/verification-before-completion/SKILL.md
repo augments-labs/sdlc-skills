@@ -10,8 +10,8 @@ description: "Runs the checks and reads their output before any claim that work 
 - **Never skip**, even before a plan's next task. Step 1.3 decides which
   checks run, not the size of the change: a one-line fix still runs the
   smallest check that could fail.
-- An integrated UI adds `visual-ui-verification` to the checks Step 1.3
-  picks.
+- A change visible in a running GUI or TUI adds `visual-ui-verification` to
+  the checks Step 1.3 picks.
 
 ## Available scripts
 
