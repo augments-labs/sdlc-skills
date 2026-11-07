@@ -104,6 +104,51 @@ When the diagnosis finds a failure that reached your users or lost your
 work, the agent follows up with `post-mortem`, using the report as evidence:
 how the failure got past the safeguards, and what prevents a repeat.
 
+## When you correct the agent
+
+A correction is smaller than a diagnosis: the agent did something, you said
+"no, not like that", and it fixes it. What keeps that mistake from coming
+back is `eliminating-corrections`. It loads when you correct the agent's
+work or its behavior, revert an edit it made, repeat a review comment, or
+ask how to stop a kind of mistake from recurring:
+
+```text
+No, don't build the query string by hand. Use the query builder. I've told you this before.
+```
+
+```text
+How do we make sure nobody hard-codes the tenant ID again?
+```
+
+The agent saves what it did wrong, then applies your correction; a finding
+from a reviewer is verified first. It then names the class of mistake
+behind the instance, from what it did and what you corrected, and climbs a
+ladder from the strongest answer down: a design or data structure that
+cannot hold the wrong state; a default, or a formatter that CI runs, that
+writes the right one; a test or lint rule that fails on the wrong one and runs in
+CI; a runtime assertion or alert, for a class only real data shows; a rule
+for the agent, placed next to the code or in the skill step where the
+mistake happens; and last, an item for a reviewer to look for. It proposes
+the highest rung whose cost fits the class and tells you why each stronger
+rung was not taken:
+
+```text
+Correction: tenant ID taken from the request body instead of the session
+Class: a query scoped by a tenant the caller supplied
+Cause: the raw-ID helper is the only query helper
+Rejected above the recommendation: none
+
+1. Build rung 1: a query helper that takes the session, raw-ID helper removed; one afternoon, thirty call sites
+2. Build rung 3 instead: a lint rule for the raw-ID helper; one hour, the helper stays callable
+4. Close this instance only: no class to close
+
+Recommendation: option 1 — the class has already recurred and each instance leaks data across tenants.
+```
+
+Nothing is built until you choose. A check it builds is run on the state
+you corrected and seen to fail there before it counts. A one-off preference
+with no chance of recurring gets applied and nothing more.
+
 ## The quick fix mid-session
 
 If you only need the agent to get back on track, you do not need a
