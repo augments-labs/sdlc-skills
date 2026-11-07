@@ -1,6 +1,6 @@
 ---
 name: mapping-the-codebase
-description: "Maps how a region of code fits together — its callers, owners, and boundaries — before it is changed. Use when code whose structure and callers have not been established for this task is about to be changed or debugged, or when asked how a change travels through the codebase. Skip only when a current boundary record covers the region and its inputs."
+description: "Maps how a region of code fits together — its callers, owners, and boundaries — before it is changed. Use when code whose structure and callers have not been established for this task is about to be planned, changed, or debugged, or when asked how a change travels through the codebase. Skip only when a current boundary record covers the region and its inputs."
 ---
 
 # Mapping the Codebase
@@ -10,7 +10,8 @@ its boundaries are.
 
 ## When to use
 
-- You're about to change, debug, or extend a part of the codebase you don't know well.
+- You're about to plan, change, debug, or extend a part of the codebase you
+  don't know well.
 - **Skip** only when a Step 3 boundary record for this region exists and is
   inside its freshness limit.
 
@@ -28,8 +29,9 @@ its boundaries are.
    runtime entry points, callers, collaborators, data between them.
 2. As risk warrants, trace: generated code and build inputs; persistent
    state and migrations; public contracts and consumers; configuration,
-   deployment, operational paths; tests, CI, proof surfaces; ownership and
-   change history. Give an evidence-based reason for each surface on that
+   deployment, operational paths; the toolchain and the commands that build,
+   run, and check it; tests, CI, proof surfaces; ownership and change
+   history. Give an evidence-based reason for each surface on that
    list you leave out.
 3. Use the domain's vocabulary, never "service / handler / util".
 4. Attach each conclusion to current files, symbols, searches, commands, or
@@ -45,7 +47,9 @@ its boundaries are.
 2. Set a freshness limit. Once it has passed, or a pinned input has changed,
    revalidate the affected claims before relying on them.
 3. If implementation finds a caller or surface the map never covered, stop
-   and reorient. Never extend the map from memory.
+   editing and return to Step 1 with it: recheck that the boundary holds the
+   change's reach, map the surface from the code, and update the record
+   before the next edit. Never extend the map from memory.
 
 ## Gotchas
 
