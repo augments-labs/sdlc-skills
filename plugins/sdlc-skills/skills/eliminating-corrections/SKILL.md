@@ -29,9 +29,11 @@ the class, in writing, and build nothing until the user chooses.
 ## Step 1: Honor the correction
 
 1. Before applying anything, record the wrong state: the commit that holds
-   it, or its hunk saved to a scratch file outside the work tree. It is the
-   one input a check in Step 5 must fail on, and applying the correction
-   overwrites it.
+   it, or its hunk saved to a scratch file outside the work tree. For a
+   mistake in how you acted, record the exact command or tool call. If the
+   user already reverted it, recover the hunk from the history or from your
+   own earlier output. It is the one input a check in Step 5 must fail on,
+   and applying the correction overwrites it.
 2. **REQUIRED SUB-SKILL:** when the correction arrives as review findings
    (a reviewer's report, a PR comment), invoke `receiving-code-review`
    first; it verifies them and owns their fix. Only a finding it records as
