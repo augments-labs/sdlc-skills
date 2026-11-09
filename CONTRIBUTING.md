@@ -126,7 +126,7 @@ does with a skill.
 | `validate-skills.sh` | Frontmatter, body and description size limits, the ban on external references and vendor model names, where templates and references live, that every manifest lists every skill, that the adapters are in sync, that `docs/` and `tests/` Markdown paths and skill reference paths resolve, that the conformance record matches the tree, and that the context-cost table in `README.md` matches `token-budget.sh --table` |
 | `validate-skill-graph.sh` | Pairs of skills that hand off to each other. A pair listed in `scripts/sh/data/allowed-cycles.txt` is allowed |
 | `validate-trigger-collisions.sh` | Trigger phrases of two or more words that more than one description shares |
-| `token-budget.sh` | With `--chain NAME`, the total body words of one chain against its budget. With `--max N`, the approximate token size of each `SKILL.md` against a ceiling. CI runs both, the second with `--max 5000`. With `--table`, the measured cost of the router, one body, and each chain as the markdown table `README.md` carries between its `token-budget-table` markers; paste its output there after any body edit |
+| `token-budget.sh` | With `--chain NAME`, the total body words of one chain against its budget. With `--max N`, the approximate token size of each `SKILL.md` against a ceiling. CI runs both, the second with `--max 5000`. With `--table`, the measured cost of every name and description, the router, one body, and each chain, plus a ceiling column that adds every file under `references/` and `assets/`, as the markdown table `README.md` carries between its `token-budget-table` markers; paste its output there after any edit to a body, a description, a reference, or an asset |
 
 ### Choose the check for your change
 
@@ -170,9 +170,12 @@ budget. `token-budget.sh --chain NAME` adds up the bodies in the chain,
 leaving out their reference files, and fails when the total is over budget.
 CI runs it for every chain.
 `token-budget.sh --table` prints the same sums as a markdown table, with the
-router and the body range; `README.md` carries a copy between marker comments
-that `validate-skills.sh` compares against the script, so a body edit that
-moves a number is followed by pasting the table again.
+names and descriptions of every skill, the router, and the body range. Its
+last column adds every file under each skill's `references/` and `assets/`:
+the ceiling a chain reaches only if every support file is read. `README.md`
+carries a copy between marker comments that `validate-skills.sh` compares
+against the script, so an edit to a body, a description, a reference, or an
+asset that moves a number is followed by pasting the table again.
 A budget is a ratchet: when an edit pushes a chain over it, cut the body
 first, and raise `budget_words` only with a line in the PR naming the words
 added to the budget and what they buy.
@@ -573,8 +576,9 @@ content checklist are judged by a person.
 
 `check-skill.sh` estimates tokens as words × 1.3. `scripts/sh/token-budget.sh`
 uses characters ÷ 4 over full `SKILL.md` files and its own configured
-maximum. Both are rough text budgets. They are not interchangeable, and
-neither is a billing figure. Compare each estimate only with earlier values
+maximum; its `--chain` and `--table` modes count bodies without frontmatter.
+Both are rough text budgets. They are not interchangeable, and neither is a
+billing figure. Compare each estimate only with earlier values
 from the same tool.
 
 ### Running the checks

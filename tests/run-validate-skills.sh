@@ -14,7 +14,8 @@
 #
 # A third copy adds an arrow to one skill body and checks that --strict fails
 # it on prose-arrows. A fourth grows one body so README.md's context-cost
-# table no longer matches token-budget.sh --table.
+# table no longer matches token-budget.sh --table; a fifth grows one reference
+# file, and a sixth one description, since the table counts both.
 #
 # Deterministic on purpose: file in, file out, exit code out. No model runs,
 # no network. The copies of the tree live under a temporary directory and
@@ -298,6 +299,34 @@ rc=$?
 grep -q 'README.md: the context-cost table is stale' "$stale_out" \
   && ok "the failure names the README table" \
   || bad "no stale-table failure named"
+
+# ---------------------------------------------------------------------------
+# A fifth copy grows one reference file, and a sixth one description: the
+# table's ceiling column and its names-and-descriptions row count them, so
+# either edit leaves the README copy stale. The description gains characters
+# inside its closing quote and stays well under its size limit.
+stale_ref="$tmp/stale-ref"
+copy_tree "$stale_ref"
+printf '\nOne more sentence in a reference file.\n' >>"$stale_ref/skills/common/using-sdlc-skills/references/control-vocabulary.md"
+
+echo "--- validate-skills.sh: a grown reference file leaves the README context-cost table stale"
+stale_ref_out="$tmp/stale-ref.out"
+( cd "$stale_ref" && bash scripts/sh/validate-skills.sh ) >"$stale_ref_out" 2>&1
+grep -q 'README.md: the context-cost table is stale' "$stale_ref_out" \
+  && ok "a grown reference file fails the README table check" \
+  || bad "a grown reference file did not fail the README table check"
+
+stale_desc="$tmp/stale-desc"
+copy_tree "$stale_desc"
+sed -i.bak '1,/^description:/ s/^\(description: ".*\)"$/\1 More."/' "$stale_desc/skills/common/handoff/SKILL.md"
+rm -f "$stale_desc/skills/common/handoff/SKILL.md.bak"
+
+echo "--- validate-skills.sh: a grown description leaves the README context-cost table stale"
+stale_desc_out="$tmp/stale-desc.out"
+( cd "$stale_desc" && bash scripts/sh/validate-skills.sh ) >"$stale_desc_out" 2>&1
+grep -q 'README.md: the context-cost table is stale' "$stale_desc_out" \
+  && ok "a grown description fails the README table check" \
+  || bad "a grown description did not fail the README table check"
 
 echo "---"
 [ "$fails" -eq 0 ] && { echo "validate-skills.sh tests: PASS"; exit 0; }
