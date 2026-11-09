@@ -176,9 +176,14 @@ the ceiling a chain reaches only if every support file is read. `README.md`
 carries a copy between marker comments that `validate-skills.sh` compares
 against the script, so an edit to a body, a description, a reference, or an
 asset that moves a number is followed by pasting the table again.
-A budget is a ratchet: when an edit pushes a chain over it, cut the body
-first, and raise `budget_words` only with a line in the PR naming the words
-added to the budget and what they buy.
+A budget is a fixed ceiling. When an edit takes a chain over it, cut as many
+words elsewhere in that chain in the same change, so the chain's total does
+not grow. `budget_words` rises only with an eval record, its `results/` path
+and pinned plugin commit, showing that the added words change what an agent
+does. A line in the pull request arguing for the words is not enough, since
+one can be written for any addition. The one other move is a change of
+membership: a chain that gains or loses a skill moves its ceiling by that
+body's words and no more.
 
 ### Cutting text from a skill
 

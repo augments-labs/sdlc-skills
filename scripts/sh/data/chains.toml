@@ -1,6 +1,12 @@
 # The ordered skills the router loads for each chain: bodies only, references
 # excluded. `token-budget.sh --chain NAME` sums their words and fails over
 # budget_words. A rename or merge edits this file in the same change.
+#
+# budget_words is a fixed ceiling. An edit that takes a chain over it cuts as
+# many words elsewhere in that chain. The ceiling rises only with an eval
+# record showing the added words change what an agent does, or by exactly a
+# body's words when the chain gains that skill; it falls the same way when
+# the chain loses one.
 
 [bug-fix]
 skills = ["using-sdlc-skills", "using-git-worktrees", "mapping-the-codebase", "debugging", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
