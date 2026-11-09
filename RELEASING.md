@@ -14,6 +14,8 @@ The tie-breaker when unsure: does a user gain something *new to reach for* (mino
 
 A release versions the cumulative `dev` diff since the last tag, not any single PR: the highest tier reached by any change in it decides.
 
+Breaking changes are batched. Because one breaking change on `dev` makes the next release a major, a PR that renames or removes a skill, changes the invocation or manifest structure, or changes an artifact a skill reads back does not merge on its own. It stays open until the maintainer schedules a major, and every breaking change ready by then lands in that one release, so users adapt once instead of once per change. A breaking change that can be made compatible instead (the old artifact still read, the old field still accepted) is made compatible and ships without a major.
+
 ## Who bumps, and when
 
 Nobody bumps in a contribution PR. Versioning is decided once per release, by the maintainer, in the release commit — a PR that edits manifest versions or adds a CHANGELOG version heading will be asked to drop it (two parallel PRs cannot both own the next number).
