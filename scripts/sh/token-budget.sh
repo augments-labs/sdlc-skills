@@ -169,7 +169,7 @@ if [ "${1:-}" = "--chain" ]; then
     total=$((total + w))
   done
   printf '  total %d words · budget %d\n' "$total" "$budget"
-  [ "$total" -le "$budget" ] || { echo "✗ chain $chain is over budget by $((total - budget)) words"; exit 1; }
+  [ "$total" -le "$budget" ] || { echo "✗ chain $chain is over budget by $((total - budget)) words: cut that many elsewhere in the chain"; exit 1; }
   exit 0
 fi
 
