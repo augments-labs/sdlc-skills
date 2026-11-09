@@ -82,8 +82,8 @@ break_a_skill() {  # <fixture dir>
 # edit (kept in sync with its plugins/ mirror in the INDEX, so no incidental
 # mirror-drift failure) to a skill that is not a member of any chain in
 # chains.toml (so a few extra words cannot trip a chain budget sitting at its
-# limit — scripts/sh/data/chains.toml's [bug-fix] chain has zero slack at
-# 5898/5898 words), then breaks only the unstaged working-tree copy on top,
+# limit — the chains in scripts/sh/data/chains.toml keep only a few words of
+# slack), then breaks only the unstaged working-tree copy on top,
 # without re-staging.
 stage_clean_then_break_tree() {  # <fixture dir>
   local dest="$1"

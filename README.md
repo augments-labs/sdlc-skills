@@ -75,9 +75,12 @@ rename or removal only comes in a major version, with the
 
 Two things are worth knowing up front:
 
-- **It is a toolbox.** Nothing forces a task through every phase. A one-line
-  fix does not get a project brief. Each skill states when it applies and when
-  to skip it.
+- **It is a toolbox, with a fixed core.** Nothing forces a task through every
+  phase. A one-line fix does not get a project brief. It does still get an
+  isolated checkout, a failing test first, checks that are run and read, a
+  review, and a question about what to do with the branch: those apply to any
+  change to behavior, whatever its size. Each skill states when it applies and
+  when to skip it.
 - **The skills guide the agent. Your checks decide the result.** These are
   instructions to a non-deterministic agent, and nothing enforces that a skill
   is invoked. A skill can steer an agent toward running the tests, but only
@@ -134,7 +137,7 @@ script disagree, so the numbers cannot drift from the tree.
 | --- | --- | --- |
 | The router, every session | 843 | 1312 |
 | One skill body, when its skill fires | | 638 to 4745 |
-| The bug-fix chain, 7 skills | 7579 | 11898 |
+| The bug-fix chain, 9 skills | 10296 | 16470 |
 | The new-feature chain, 13 skills | 16149 | 25674 |
 | The plan-execution chain, 8 skills | 10756 | 17148 |
 | The delegated-execution chain, 7 skills | 10282 | 16515 |

@@ -77,6 +77,11 @@ The skills are a toolbox. Nothing requires a task to walk through every
 phase; each skill says when it applies and how it scales down for small
 work. A one-line fix does not get a project brief.
 
+A fixed core applies to any change to behavior, whatever its size: an
+isolated checkout, a failing test first, a review, and a question about what
+to do with the branch. Each of those skills names its own skips, such as
+staying in your checkout when you say so.
+
 A few checks have no skip. Checking a claim that work is done is one of
 them. Even there, the rule is the smallest check that could prove the claim
 wrong.
