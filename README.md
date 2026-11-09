@@ -127,22 +127,29 @@ to happen in the window that planned it: delegated mode runs each task in a
 subagent, and you can start the executor from the plan path in a new session.
 
 The budget bounds the cost; it does not make it small. This is what the
-current tree loads, measured on the skill bodies, frontmatter excluded, by
-`bash scripts/sh/token-budget.sh --table` (tokens are approximated as
-characters divided by four). The validator fails when this table and the
-script disagree, so the numbers cannot drift from the tree.
+current tree loads, measured by `bash scripts/sh/token-budget.sh --table`
+(tokens are approximated as characters divided by four). The first row is the
+name and description of every skill, which the harness lists in each session
+so the agent can pick one; a harness with a small listing budget may shorten
+it. The other rows count skill bodies, frontmatter excluded. The last column
+is a ceiling: it adds every file under those skills' `references/` and
+`assets/`, which load only when a step says to read one, so a real session
+lands between the two token columns. Scripts are run, not read, and are not
+counted. The validator fails when this table and the script disagree, so the
+numbers cannot drift from the tree.
 
 <!-- token-budget-table:start -->
-| What loads | Words | Approx tokens |
-| --- | --- | --- |
-| The router, every session | 843 | 1312 |
-| One skill body, when its skill fires | | 638 to 4745 |
-| The bug-fix chain, 9 skills | 10296 | 16470 |
-| The new-feature chain, 13 skills | 16149 | 25674 |
-| The plan-execution chain, 8 skills | 10756 | 17148 |
-| The delegated-execution chain, 7 skills | 10282 | 16515 |
-| The incident chain, 5 skills | 5160 | 8082 |
-| The release chain, 5 skills | 5614 | 9090 |
+| What loads | Words | Approx tokens | With every reference and asset |
+| --- | --- | --- | --- |
+| The names and descriptions of all 48 skills, every session | 3201 | 5037 | |
+| The router, every session | 843 | 1312 | 4547 |
+| One skill body, when its skill fires | | 638 to 4745 | 638 to 21916 |
+| The bug-fix chain, 9 skills | 10296 | 16470 | 46476 |
+| The new-feature chain, 13 skills | 16149 | 25674 | 66795 |
+| The plan-execution chain, 8 skills | 10756 | 17148 | 48048 |
+| The delegated-execution chain, 7 skills | 10282 | 16515 | 50684 |
+| The incident chain, 5 skills | 5160 | 8082 | 20002 |
+| The release chain, 5 skills | 5614 | 9090 | 36021 |
 <!-- token-budget-table:end -->
 
 A full feature chain costs the price of a long design document before any
