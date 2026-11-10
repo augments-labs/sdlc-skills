@@ -4,8 +4,8 @@ Some runs have nobody at the keyboard: a scheduled job, a step in a
 pipeline, a batch of tasks left overnight. The skills put certain decisions
 to you and end the turn. With nobody there, the run ends at the first of
 them, with the question as its last message. This page shows how to answer
-those decisions before the run starts, and what an answer given beforehand
-cannot do.
+those decisions before the run starts, and what a line given beforehand
+does not cover.
 
 ## "Don't ask" answers nothing
 
@@ -27,28 +27,34 @@ mean and what the answer is, in the prompt that starts the run:
 ```text
 Fix the rounding error in invoice totals. Nobody will answer during this
 run, so:
+- You may commit locally as you go.
 - If a layer has no test harness, record its wiring as an unverified
   exception. Do not add a harness.
 - If you cannot dispatch a reviewer, review the change in this session and
   label it a self-review.
-- When the checks and the review pass, push the branch and open a pull
-  request against `dev`. Otherwise keep the branch as it is.
+- When the checks and the review pass, push the branch to `origin` and
+  open a pull request against `dev`. Otherwise keep the branch as it is.
 ```
 
 Each line covers only the decision it names. These are the ones a single
-change most often meets:
+change can meet:
 
 | Decision | Which skill asks | What to say beforehand |
 | --- | --- | --- |
-| Where to work, the base branch, and whether the agent may commit locally | `using-git-worktrees` | Put the lines in your agent instructions file; [Setting up for a team](setting-up-for-a-team.md) has them |
+| Whether the agent may commit locally as it works | `using-git-worktrees` | Yes or no, in the prompt or in your agent instructions file; [Setting up for a team](setting-up-for-a-team.md) has the line |
 | A layer with no test harness | `test-driven-development` | Add a harness, or accept the wiring as an unverified exception |
 | Work that needs an independent agent when none can be dispatched | `dispatching-parallel-agents` | Do it in this session, labelled not independent; or name who will do it; or keep it pending |
-| What happens to the branch | `finishing-a-branch` | The action, the branch, and the base it goes to |
+| What happens to the branch | `finishing-a-branch` | The action, the branch, the remote, and the base it goes to |
+| Where a handoff note goes, when the work will not fit one session | `handoff` | `.sdlc-skills/handoffs/` in the project, a path you name, or the reply only |
 
-The branch line has to cover what is sent and where. If the target or the
-content changes materially after you wrote it, the instruction no longer
-covers the action, and the agent shows the changed choice instead of
-acting.
+Where the agent works and which branch it starts from have defaults: a new
+worktree, cut from the branch the task began on. Lines in your instructions
+file change them.
+
+The branch line has to describe what is sent and where. If what is about to
+be sent, or where it goes, is not what your line describes (another remote
+or base, a new branch name, a merge method), the agent shows that choice
+instead of acting.
 
 ## Larger work: approve it while you are there
 
@@ -61,60 +67,77 @@ answer in the plan's record.
 
 The simpler route is to split the work in two:
 
-1. With you there, the agent writes the plan. You approve it and choose how
-   it is executed. [Planning larger work](planning-larger-work.md) covers
-   this part.
-2. The unattended run starts from that plan:
+1. With you there, the agent writes the plan.
+   [Planning larger work](planning-larger-work.md) covers this part.
+   Approve it with the entry `Approve — inline, in a new session`. The
+   agent records the approval, prints a prompt, and runs nothing. Every
+   other approve entry starts the run at once, in the session where you
+   answered.
+2. Start the unattended run with the prompt it printed, and add your
+   branch line:
 
    ```text
-   Execute the plan in .sdlc-skills/plans/2031-04-02-invoice-rounding/.
-   When every task is done and the review passes, push the branch and open
-   a pull request against `dev`.
+   Run the approved plan at /work/shop/.sdlc-skills/plans/2031-04-02-invoice-rounding in inline mode.
+   When the checks and the review pass, push the branch to `origin` and
+   open a pull request against `dev`.
    ```
 
 The agent first checks the plan's current version against the approval on
 record. If they differ, or no execution mode was chosen, it stops there.
-Otherwise it works through the tasks without pausing after each one. It
-stops early in three cases:
+Otherwise it does not stop to check in after each task. The branch decision
+comes up when the plan ends, or after each task where the plan integrates
+per task. The run stops before the plan ends when:
 
-- No remaining task can advance. It reports what blocks each one.
-- A task needs a change to the plan's goal, a requirement, its acceptance,
-  or its constraints. It writes the proposed new version and asks you to
-  approve it.
+- A task needs a change to the plan's goal, a requirement, its acceptance
+  check, its constraints, or an approved migration or assurance contract.
+  It writes the proposed new version and asks you to approve it.
+- No remaining task can move forward. It reports what blocks each one.
 - A high-risk task's entry check has not passed and nothing else can
   proceed without it.
+- The remaining work will not fit the session. It writes a handoff for the
+  next session to resume from.
 
-## What an answer given beforehand cannot do
+A delegated run, one subagent per task, has two more stops. It needs
+commits, so unless permission to commit locally is on record it asks before
+the first task and, on a no, does not run. It also stops before an act that
+cannot be undone, one that touches secrets, permissions, or a trust
+boundary, one that takes effect outside the worktree, and a requirement
+that reads two ways or a product or architecture choice the approved
+documents do not settle.
 
-- **Discard work.** The agent discards only on a direct request, and only
-  after you type a confirmation that names an identity it computes when it
-  prints the list of what would be deleted. With no reply, it touches
-  nothing.
-- **Make a self-review independent.** Where independence is required (a
+## What a line given beforehand does not cover
+
+- **Discarding work.** The agent discards only on a direct request, and
+  only after you type a confirmation that names an identity it computes
+  when it prints the list of what would be deleted. With no reply, it
+  touches nothing.
+- **Making a self-review independent.** Where independence is required (a
   security clear, a role a skill requires to be independent, or an audit
   you asked to be independent), doing the work in the same session is not
   offered. The work stays pending until someone outside the session does
   it.
-- **Accept risks nobody listed.** Permission to draft the project's checks
-  is not permission to accept thresholds, omissions, or exceptions you have
-  not seen.
-- **Promote a release.** The agent reports whether the release is ready and
-  promotes nothing itself. Promotion is a separate action that needs its
-  own authority.
-- **Stand in for authority on a live system.** During an incident, the
-  agent acts on a system only where you, the incident owner, or a runbook
-  your project designates gives it authority for that action on that
-  target. Having the access is not having the authority, so it escalates
-  instead.
+- **Accepting risks nobody listed.** Permission to draft the project's
+  checks is not permission to accept thresholds, omissions, or exceptions
+  you have not seen.
+- **Promoting a release.** The agent reports whether the release is ready
+  and waits for you to choose promote, hold, or cancel. Even on promote,
+  the promotion is a separate action that needs its own authority, never
+  the verdict alone.
+- **Acting on a live system.** During an incident, a general line gives the
+  agent no authority. It acts only where you, the incident owner, or a
+  runbook your project designates gives it authority for that action on
+  that target. Having the access is not having the authority; without it,
+  the agent escalates instead.
 
 ## When the run stops anyway
 
-The last message is the question, with its choices and a recommendation.
-Nothing was chosen, and the work it controls is still pending.
+The last message is the question the skill put, with its choices, or a
+report of what blocks the work. No decision was made for you, and the work
+it controls is still pending.
 
-To continue, start a session and give the answer there. A note in a file
-saying a document is approved does not count in a new session: the agent
-needs your answer, or a record that your project or the agent's own
-tooling issued, tying the answer to you and to that exact version. For a
-plan, the agent re-reads the plan's record and the workspace before it
-trusts what the earlier run left.
+To continue, start a session and give the answer there. A line inside a
+document saying it is approved does not count in a new session: the agent
+needs your answer, or a record that your project or the agent's harness
+issued, tying the answer to you and to that exact version. For a plan, the
+agent re-reads the plan's record and the workspace before it trusts what
+the earlier run left.

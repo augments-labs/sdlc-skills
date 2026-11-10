@@ -35,7 +35,7 @@ does along the way, with example prompts.
 | [Reworking existing code](guides/reworking-existing-code.md) | Auditing for complexity nothing needs, restructuring, retiring an interface others call, and one mechanical change across many files |
 | [When a session goes wrong](guides/when-a-session-goes-wrong.md) | Getting a cited account of what a session did, as a report and a trace page |
 | [Setting up for a team](guides/setting-up-for-a-team.md) | What a team writes once in its agent instructions file: checkout, base branch, branch names, local commits, review depth, PR rules |
-| [Running without someone to answer](guides/running-unattended.md) | Scheduled and pipeline runs: how to answer the agent's decisions before the run starts, and what an answer given beforehand cannot do |
+| [Running without someone to answer](guides/running-unattended.md) | Scheduled and pipeline runs: how to answer the agent's decisions before the run starts, and what a line given beforehand does not cover |
 | [Using the skills on another agent](guides/other-agents.md) | What to do when your agent is not in the supported list |
 
 ## Concepts
