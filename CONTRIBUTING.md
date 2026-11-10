@@ -91,8 +91,9 @@ proves and which test to run for which change.
 2. Fill in every section of the pull request template with specific, true
    answers.
 3. If the change alters what a skill makes an agent do, name the failure or
-   the gap it answers. No live agent runs in this repository, so the pull
-   request argues from the skill text and the checks.
+   the gap it answers, and name the eval records that measured the new text.
+   A pull request that argues from the skill text alone fails CI. See
+   [Eval records](#eval-records).
 4. Say who orchestrated the change (a human, an agent, or both), every model
    that wrote any of it and the part it wrote, and the harness and its
    version. A pull request that hides this is closed.
@@ -109,14 +110,16 @@ This repository runs deterministic checks only. Each one knows the right
 answer before it runs, needs no model, and costs nothing, so a red result
 means something is broken. No live agent runs here or in CI: the checks tell
 you the library is well formed and packaged correctly, not what an agent
-does with a skill.
+does with a skill. What an agent does is measured in the evals repository,
+and CI checks that a pull request names a record of it
+([Eval records](#eval-records)).
 
 ### What runs where
 
 | Where | What a result proves | Commands |
 | --- | --- | --- |
-| `scripts/sh/`, all run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
-| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, and, on Linux, macOS, and Windows, `run-check-skill.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
+| `scripts/sh/`, all run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh`, and, on pull requests into `dev`, `check-eval-record.sh` |
+| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-check-eval-record.sh`, and, on Linux, macOS, and Windows, `run-check-skill.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-check-eval-record.sh`, `run-trace-viewer.sh` |
 | `tests/harnesses/` | Nothing on its own. These files hold how each CLI installs the plugin, and the smoke test drives them | One file per supported CLI |
 
 ### The four gates
@@ -144,6 +147,7 @@ does with a skill.
 | `scripts/sh/validate-skills.sh` | `tests/run-validate-skills.sh` |
 | `check-skill.sh` | `tests/run-check-skill.sh` |
 | `state-identity.sh` | `tests/run-state-identity.sh` |
+| `scripts/sh/check-eval-record.sh` or its workflow | `tests/run-check-eval-record.sh` |
 | The git hook installer | `tests/run-git-hooks.sh` |
 | A page under `docs/` | `bash scripts/sh/validate-skills.sh`, which checks that `docs/` paths named in skills, docs, tests, README, and AGENTS still exist. It does not check relative links between pages, so follow those by hand |
 
@@ -178,9 +182,8 @@ against the script, so an edit to a body, a description, a reference, or an
 asset that moves a number is followed by pasting the table again.
 A budget is a fixed ceiling. When an edit takes a chain over it, cut as many
 words elsewhere in that chain in the same change, so the chain's total does
-not grow. `budget_words` rises only with an eval record, its `results/` path
-and pinned plugin commit, showing that the added words change what an agent
-does. A line in the pull request arguing for the words is not enough, since
+not grow. `budget_words` rises only with an eval record, named by its
+`results/` path, showing that the added words change what an agent does. A line in the pull request arguing for the words is not enough, since
 one can be written for any addition. The one other move is a change of
 membership: a chain that gains or loses a skill moves its ceiling by that
 body's words and no more.
@@ -199,8 +202,48 @@ Hard stops and guards on destructive actions are never cut.
 
 A green run here says the files are well formed, the manifests agree, and the
 scripts behave. Whether a skill changes what an agent does is a separate
-question, and nothing in this repository answers it. A pull request that
-changes a skill's behavior argues from the skill text and these checks.
+question that only an eval record answers.
+
+### Eval records
+
+A pull request into `dev` that changes a skill's `SKILL.md`, `assets/`, or
+`references/` names the records that measured it, one line each in its body:
+
+```text
+Eval record: results/2026-11-12-handoff-claude-code
+```
+
+The `eval-record` workflow runs `scripts/sh/check-eval-record.sh` against a
+fresh clone of the public evals repository, so each record must be merged
+there first. For each changed skill, the script works out from the git
+trees which records the change needs:
+
+| The pull request changes | It needs |
+| --- | --- |
+| The skill's `description:` line | A triggering record (`triggering.json`) whose `description_sha256` is the SHA-256 of that line at the head, with 3 or more runs and a scored validation split |
+| Anything else in `SKILL.md`, `assets/`, or `references/` | An evaluation record (`benchmark.json`) whose `plugin.skill_tree` is the skill's tree at the head, and whose second arm is `old_skill` with `baseline.skill_tree` the skill's tree at the base. Every run is scored: 3 or more per eval, no null pass rate, no indeterminate run, no assertion awaiting review |
+| A new skill | Both, with `without_skill` as the second arm |
+| A removed skill | The `no-eval` label: no record can measure a skill that is gone |
+| `scripts/` only | Nothing; the script's offline test is the proof |
+
+The records are matched by content, not by commit. `skill_tree` is
+`git rev-parse <commit>:skills/<phase>/<name>`, which a squash merge leaves
+unchanged, so a record made from the task branch still matches on `dev`. An
+edit to the skill after the eval changes the tree and turns the check red.
+
+The job prints each record's pass rates for the reviewer and stops there: it
+proves a scored run exists on exactly this text, not that the numbers are
+good. Reading the delta is review's job.
+
+It re-runs when the body or the labels change, so adding a record line, or
+the label, needs no new commit. Only a maintainer applies `no-eval`, for a
+typo fix or a removed skill, and says why in the pull request. To check a
+branch before pushing, clone the evals repository and run:
+
+```bash
+bash scripts/sh/check-eval-record.sh --base origin/dev --head HEAD \
+  --evals ../sdlc-skills-evals --body pr-body.md
+```
 
 ## Writing documentation
 

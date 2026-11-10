@@ -12,6 +12,7 @@ in this repository.
 ```text
 tests/
   run-check-skill.sh         offline check for check-skill.sh's reference-depth rule. (offline)
+  run-check-eval-record.sh   offline unit check for check-eval-record.sh, the eval-record CI job. (offline)
   run-git-hooks.sh           offline unit check for the local git hook installer. (offline)
   run-hermes-plugin.sh       offline unit check for the Hermes adapter. (offline)
   run-opencode-plugin.sh     offline unit check for the OpenCode adapter. (offline)
@@ -40,6 +41,7 @@ tests/run-serve-preview.sh
 tests/run-check-skill.sh
 tests/run-git-hooks.sh
 tests/run-state-identity.sh
+tests/run-check-eval-record.sh
 tests/run-trace-viewer.sh
 ```
 
