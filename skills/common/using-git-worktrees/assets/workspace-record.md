@@ -34,6 +34,10 @@ column may ever be cleaned up.
 Unknown provenance goes in the right column. It is not a placeholder to resolve
 later — unknown provenance blocks cleanup and any change to that checkout.
 
+A new worktree holds none of the shared checkout's uncommitted or untracked
+files. When the task builds on one of them, ask the user whether to copy it
+in, and end the turn; never stash, move, or commit it to carry it over.
+
 ## Gate inputs outside the source tree
 
 Ignored, generated, and external inputs the baseline and later gates depend on.

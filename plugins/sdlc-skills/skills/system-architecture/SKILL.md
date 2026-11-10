@@ -73,7 +73,10 @@ with what this work has; the template says what an empty one carries.
    not-dispatched question omits the self-review option. That review is
    blocking. On `NEEDS_CONTEXT`, supply the path it names and rerun once. A
    blocking finding takes one successor section and one re-review; report
-   what is still open to the decision owner and end the turn.
+   what is still open to the decision owner and end the turn. The owner
+   accepts a finding only by naming it: record `accepted by {{owner}}` with
+   the finding in the ledger, and present once every open finding is
+   accepted or corrected. A reply that names none accepts none.
 3. Present:
 
    ```text

@@ -36,7 +36,8 @@ sample, regenerate instead of merging, and ship one shard per owner.
 4. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees` for one workspace
    on the base the shards will target. Commit the script and its fixtures
    there, under the project's scripts path; every shard runs it from this
-   workspace at the revision the manifest records.
+   workspace at the revision the manifest records. That branch is the
+   manifest's evidence and merges only when the user asks for it.
 
 ## Step 2: Write the script, then prove it on a sample
 

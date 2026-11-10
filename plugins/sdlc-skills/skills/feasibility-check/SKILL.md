@@ -59,12 +59,15 @@ section.
    1. Go
    2. Go-if every named condition is met
    3. No-go
-   4. Cancel
+   4. Request changes
+   5. Cancel
 
    Recommendation: {{option}} — {{one sentence of evidence}}.
    ```
 
-   Ask this and end the turn; `clarifying-intent` owns what closes it.
+   Ask this and end the turn; `clarifying-intent` owns what closes it. On
+   option 4, record `changes requested`, write a successor section with the
+   change, and present it again.
 4. On a go-if, **REQUIRED SUB-SKILL:** invoke `prototyping` for a condition
    whose evidence is a spike. Only the named evidence and owner move a
    condition's external state (its state in the ledger the template names:

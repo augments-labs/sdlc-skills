@@ -25,6 +25,11 @@ git commit -m "{{message}}" -- {{task-changed-paths}}
 git show --stat --format= HEAD   # expect: only {{task-changed-paths}}
 ```
 
+A closing keyword in the message (`Closes #N`, `Fixes #N`) closes the ticket
+when the commit reaches the default branch. Write one only when the user or
+the project's contribution rules ask for it; otherwise reference the ticket
+without one.
+
 ## The authority is recorded once per task
 
 A local commit needs the user's answer or a project policy. Neither recorded →

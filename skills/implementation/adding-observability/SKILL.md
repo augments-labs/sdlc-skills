@@ -109,8 +109,8 @@ renames a signal something already reads, and never decides who gets paged.
 
 - Adding a telemetry library or vendor the project does not already use
   without the user's answer to the Step 1 question.
-- A secret, credential, token, or personal data in any signal's value,
-  label, or log field.
+- A secret, credential, token, request body, header, query string, or
+  personal data in any signal's value, label, or log field.
 - Renaming or removing a metric, label, or log field a dashboard or alert
   reads, outside `deprecating-an-api`.
 - Calling a signal or an alert done when nobody has seen it emitted or fired.

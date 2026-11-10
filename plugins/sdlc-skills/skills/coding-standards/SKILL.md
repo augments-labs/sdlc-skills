@@ -73,7 +73,9 @@ Open `assets/standards-template.md` before starting. Fill a section only with wh
    exemplar gate (the exemplar's checks and rubric from Step 2.3) have run.
    Record `in force / suspended / superseded` outside the section, in the
    external adoption ledger the template names (its record of adoption),
-   with fresh evidence.
+   with fresh evidence. Then print the one line that points the project's
+   agent instruction file at this path, for the user to add; never edit
+   that file.
 
 ## Gotchas
 

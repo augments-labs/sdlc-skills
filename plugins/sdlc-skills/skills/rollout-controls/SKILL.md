@@ -77,14 +77,16 @@ expands a rollout.
 3. List every path the change adds: request handler, background job, event
    consumer, scheduled work, migration step, retry, cache fill. Put the
    switch in front of each.
-4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` in this order:
-   the on-state test, failing, then the new path that passes it; then the
-   off-state test, which asserts that the side effect of every path in item
-   3 is absent and fails because the paths still run; then the switch,
-   which passes it by restoring the prior behaviour. Start one off-state
-   test from what the on state leaves behind (a queued message, a row or
-   cache entry in the new form, a scheduled job): the prior path must handle
-   it.
+4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` in this order.
+   The on-state test, with the switch on, fails; then write the new path
+   behind the switch, which stays off by default, so the project's whole
+   test command is green when that cycle closes. Then the off-state test,
+   under that skill's preserved-behaviour cycle: it asserts that the side
+   effect of every path in item 3 is absent, is seen green, is watched red
+   with the guard taken off one path at a time, and is green again with the
+   guard back. Start one off-state test from what the on state leaves
+   behind (a queued message, a row or cache entry in the new form, a
+   scheduled job): the prior path must handle it.
 5. Make turning it off change behaviour without a deploy or a restart: read
    the switch each time the path runs, never as a build-time constant or a
    value loaded once at process start. Record the exact off action.

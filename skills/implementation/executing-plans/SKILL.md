@@ -40,10 +40,10 @@ what happens to the branch.
 
 ## Step 2: Set up the workspace
 
-If every task's `Files` lies outside any git-tracked project, or the index says
-the deliverable is not a repository change, record `workspace: not applicable`
-in the ledger, with `plan` in `Section`, and skip 2.2. If even one task is
-inside a repository, Step 2.2 and Step 5.3 apply to the whole plan.
+If every task's `Files` lies outside any git-tracked project, record
+`workspace: not applicable` in the ledger, with `plan` in `Section`, and skip
+2.2. If even one task is inside a repository, Step 2.2 and Step 5.3 apply to
+the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -87,7 +87,9 @@ mode; switching needs the `Approval rule` owner's direct answer.
    attempt ID, current revision, evaluator identity, expected observable.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
-   invocation; the loading action must appear in this session.
+   invocation; the loading action must appear in this session. A carve-out
+   in the task's `Implementation disciplines` stands only where the loaded
+   skill's own Skip covers the task; otherwise the skill applies.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files`, `Exclusive ownership/effects`, and this task's
    rulings. A defect or gap outside the task's contract goes to *Findings

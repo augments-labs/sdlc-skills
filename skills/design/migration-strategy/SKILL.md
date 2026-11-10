@@ -21,7 +21,8 @@ description: "Plans how a rewrite or migration preserves behavior through cutove
   is approved and `verification-strategy`'s entry gates have passed. If the
   answers are uncertain, record `pending classification` in the `Route`
   field of the spec, design section, or plan index that carries the change.
-  Classify it again whenever the inputs change.
+  Classify it again whenever the inputs change. Until it is resolved, only
+  work that settles those answers proceeds: nothing on the target changes.
 - **Skip** a bounded change whose behavior and diff can still be reviewed
   directly; such work stays on its ordinary route.
 - Write the facts about the source and the strategy for the transition here.
@@ -100,7 +101,10 @@ the section of it that the step names.
    `clear`. `revise` takes one successor contract and one re-challenge by
    that role; `inconclusive`, the missing input and one rerun. If a role is
    still not `clear`, report its open findings to the `Approval rule` owner
-   and end the turn.
+   and end the turn. The owner accepts a finding only by naming it: record
+   `accepted by {{owner}}` with the finding in the ledger, and present the
+   contract once every open finding is accepted or corrected. A reply that
+   names none accepts none.
 4. Present the contract:
 
    ```text

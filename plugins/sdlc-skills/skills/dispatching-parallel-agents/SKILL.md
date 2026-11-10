@@ -88,13 +88,14 @@ user's main-session model and any model reserved for orchestration untouched.
    tool-issued ID, write `not dispatched`, and name the action tried and what would make it
    callable. Never describe a fan-out that has no tool-issued IDs behind it,
    and never quietly do the work yourself instead.
-   Ask the user once per work item; the answer covers only that work:
+   Ask once for every work item the same cause stopped, naming each; the
+   answer covers only those items:
 
    ```text
-   {{work}} needs an independent agent, and {{action}} is not callable here.
+   {{work items}} need an independent agent, and {{action}} is not callable here.
 
-   1. I do it myself, labelled as a self-review, not an independent one
-   2. Name the reviewer or agent who will do it
+   1. I do it in this session, labelled not independent (for a review: a self-review)
+   2. Name the person or agent who will do it
    3. Keep it pending
 
    Recommendation: {{option}} — {{one sentence}}.
@@ -105,7 +106,8 @@ user's main-session model and any model reserved for orchestration untouched.
    be independent), omit option 1 and say why.
    Ask this and end the turn; `clarifying-intent` owns what closes it.
    Record the answer as the written assignment and continue under it. A named
-   reviewer's report counts only when it arrives from outside this session,
+   person's or agent's result counts only when it arrives from outside this
+   session,
    bound to the exact identities; the recorded answer stands in for the
    tool-issued ID. With no answer, the work stays pending.
 3. Poll exactly those IDs until the frozen deadline. Never poll a target that

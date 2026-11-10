@@ -59,7 +59,10 @@ written and needs comparing against a filled example.
    owner accepting a labelled self-challenge. `revise` takes one successor
    ADR and one re-challenge; `inconclusive`, the missing input and one
    rerun. If still not `clear`, report the open findings to the decision
-   owner and end the turn. Skip both the dispatched challenge and the
+   owner and end the turn. The owner accepts a finding only by naming it:
+   record `accepted by {{owner}}` with the finding in the ledger, and
+   present Step 3 once every open finding is accepted or corrected. A reply
+   that names none accepts none. Skip both the dispatched challenge and the
    self-challenge only when a current independent design review covers this
    exact ADR identity.
 

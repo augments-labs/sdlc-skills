@@ -2,7 +2,9 @@
 
 The independent auditor fills this report for the exact candidate; the author
 never fills it. Copy both full identities from its
-descriptor. Write only to the assigned location — under
+descriptor, and compute `State read` yourself before reading anything: if it
+differs from `Candidate`, stop and report only that. Write only to the
+assigned location — under
 `.sdlc-skills/evidence/`, which the content digest leaves out, or outside the
 candidate workspace — or return the report directly. Include no secret values.
 
@@ -10,6 +12,7 @@ candidate workspace — or return the report directly. Include no secret values.
 # Security review
 
 - Candidate: {{exact result identity}}
+- State read: {{the identity you computed yourself where you read the files: the full revision you read by, or in working-tree mode the digest printed by rerunning the descriptor's verification-state command there; never copied from the descriptor}}
 - Review inputs: {{exact review-input identity}}
 - Role: security
 - Verdict: {{security clear | security blocked | inconclusive}}
