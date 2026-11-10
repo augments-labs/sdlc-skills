@@ -153,6 +153,24 @@ step in more detail.
   anything. This is not the flag `yagni` stops:
   someone asked for it. `release-readiness` later binds those terms instead
   of inventing them.
+- **Signals for operators.** Ask for logs, metrics, traces, or an alert and
+  `adding-observability` starts from the two questions an operator asks: is
+  it working for users, and if not, why? It emits through the logging and
+  metrics facility your project already has, under your naming, and asks
+  before it adds a library or a vendor. A signal counts only once it has
+  been seen, by a test or in a real environment. Each alert is on a symptom
+  users feel, has an owner and a first action, and is fired once on purpose.
+  Where firing it would reach a person or a shared environment, the agent
+  gets the owner's go-ahead first or fires it through a route that pages no
+  one; whether the alert pages anyone at all is the owner's decision. No
+  secret or personal data goes into a label or a log field.
+- **A change you can see.** For a screen or a terminal interface,
+  `visual-ui-verification` checks the running interface before the work is
+  called done. See
+  [Reviewing and shipping](reviewing-and-shipping.md#checking-a-running-interface).
+- **A change near a trust boundary.** Login, permissions, uploads, secrets,
+  or user input that reaches a query or a shell bring in `security-audits`.
+  See [Reviewing and shipping](reviewing-and-shipping.md#a-security-audit).
 - **A change to stored data.** If the feature adds, renames, or drops a
   column or field, adds an index or constraint, or backfills data on a store
   your running system reads, `changing-a-live-schema` builds it in phases:
