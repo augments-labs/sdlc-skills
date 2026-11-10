@@ -107,7 +107,7 @@ other cannot see:
 - `test-driven-development` and `yagni` both load before the first edit. The
   first catches a change with no observed failure behind it; the second
   catches a change that is larger than the task, which a green test cannot
-  see.
+  see. A small edit you name exactly loads only the first.
 - `mapping-the-codebase` and `debugging` both load for a bug in unfamiliar
   code. The first catches a boundary drawn too small, such as a caller
   reached through configuration; the second catches a fix with no

@@ -36,9 +36,12 @@ The routing skill gives starting points, not a fixed sequence. Once a skill
 is loaded, that skill decides what happens next, and the agent sets a skill
 aside only when the skill's own scope or skip conditions say it does not
 fit. The agent is not meant to decide "this task is too simple for process"
-on its own; each skill says how small it scales.
+on its own; each skill says how small it scales. The one route the routing
+skill shortens itself is a small edit you name exactly:
+[Scale to the work](skills-and-gates.md#scale-to-the-work) says what
+qualifies.
 
-The routing body is kept to about 700 words, because every session loads all
+The routing body is kept under 900 words, because every session loads all
 of it.
 
 ## Long sessions and compaction
