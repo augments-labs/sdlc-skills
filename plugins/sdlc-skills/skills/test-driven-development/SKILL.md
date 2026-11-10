@@ -40,6 +40,11 @@ description: "Drives behavior changes through a failing test before implementati
    reject a negative amount is two cycles: Step 3 for the move, Step 2 for
    the rejection. One test that fails because the import path moved proves
    neither.
+4. If the layer has no test harness, move its rules into units and
+   test-drive those. The wiring left without a RED stays pending under the
+   hard stops: report it and how you checked it, then ask whether to add a
+   harness (naming its dependencies and config cost) or to accept the wiring
+   as an unverified exception, and end the turn.
 
 ## Step 2: New behavior, RED then GREEN
 
@@ -157,7 +162,6 @@ description: "Drives behavior changes through a failing test before implementati
 | "I'd lose the code I wrote" | Revert only your out-of-cycle implementation; sunk cost is not evidence. |
 | "The test is hard to write" | The interface or oracle is exposing a design problem; fix that seam. |
 | "There's no test framework" | Use the smallest executable assertion that can fail. |
-| "This layer has no test harness" | Move its rules into units and test-drive those. The wiring left without a RED stays pending under the hard stops: report it and how you checked it, then ask whether to add a harness (naming its dependencies and config cost) or to accept the wiring as an unverified exception, and end the turn. |
 | "It's just generated/config code" | Test the behavioral source and regeneration contract, not text presence. |
 
 ## Common mistakes
