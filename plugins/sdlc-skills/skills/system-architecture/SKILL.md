@@ -17,8 +17,8 @@ description: "Designs the target system for approved requirements: components, b
 
 ## Step 1: Trace and structure
 
-Open `assets/architecture-section.md` before starting and fill every section
-of it.
+Open `assets/architecture-section.md` before starting. Fill a section only
+with what this work has; the template says what an empty one carries.
 
 1. Map every requirement, preserved obligation, and significant risk to the
    component, the interface, and the owning gate reference that cover it.

@@ -26,6 +26,14 @@ The "commit it" column describes a project that keeps its delivery trail in
 the repository. If your project keeps planning out of the repository, ignore
 `.sdlc-skills/` as a whole; the layout inside does not change.
 
+## Sections with nothing to hold
+
+A brief, a spec, a design section, or an audit report keeps every heading
+of its template. When a heading has nothing to say for your work, the agent
+writes one line under it, `None:` and the reason, and does not invent a row
+to fill the table. Read that reason when you review: it is a claim that
+nothing applies, and you can send it back.
+
 ## Ledgers
 
 Beside each artifact sits a ledger, `<name>.ledger.md`, with one table row

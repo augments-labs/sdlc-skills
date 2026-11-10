@@ -19,7 +19,8 @@ Name the boundary before anyone starts building.
 
 ## Step 1: Cut the scope
 
-Open `assets/scope-section.md` before starting and fill every section of it.
+Open `assets/scope-section.md` before starting. Fill a section only with
+what this work has; the template says what an empty one carries.
 
 1. Carry the non-negotiables forward first: goal guardrails, existing
    contracts, preserved behavior and data, security, accessibility,

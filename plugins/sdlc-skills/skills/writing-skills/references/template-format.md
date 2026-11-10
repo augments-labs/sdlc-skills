@@ -76,7 +76,10 @@ work to agents they cannot watch.
 - Give an owner and decision-ledger line naming where the artifact is
   approved.
 - Name every section the consuming skill reads by name.
-- State the meaning of an empty section.
+- State what a section with nothing to hold carries: its heading and one
+  line saying why, never an invented row and never a dropped heading. A
+  record whose empty section means "not measured" or "not built" says that
+  instead.
 
 ### Question
 

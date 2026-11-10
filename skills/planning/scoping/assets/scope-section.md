@@ -2,6 +2,8 @@
 
 Copy this section into the brief, replacing every `{{placeholder}}`. It is one
 `##` section of a shared brief — leave the other approved sections untouched.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
 ## Scope

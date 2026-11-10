@@ -3,7 +3,8 @@
 Fill this in before presenting a structural change. Its identity covers the
 content below and nothing else: the approval outcome, slice progress, and any
 execution receipts stay outside it, so recording progress never rewrites the
-proposal.
+proposal. A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
 # Structural proposal {{proposal-id}}

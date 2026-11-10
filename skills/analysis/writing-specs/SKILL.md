@@ -28,7 +28,8 @@ the *how* (architecture, schemas, code) to design.
 
 ## Step 2: Write the requirements
 
-Open `assets/spec-template.md` before you start and fill every section of it.
+Open `assets/spec-template.md` before you start. Fill a section only with
+what this work has; the template says what an empty one carries.
 
 1. Write each functional requirement as an observable behavior with a stable
    ID that no successor spec ever gives to a different requirement:

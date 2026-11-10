@@ -21,7 +21,8 @@ it.
 
 ## Step 1: Find the objective
 
-Open `assets/goals-section.md` before starting and fill every section of it.
+Open `assets/goals-section.md` before starting. Fill a section only with
+what this work has; the template says what an empty one carries.
 
 1. Ask "why this, why now?" until the answer is what the world does
    differently afterward, not code that exists.

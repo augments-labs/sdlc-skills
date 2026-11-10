@@ -4,6 +4,8 @@
 section it names. Use this template for
 `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`, replacing every
 placeholder; remove an inapplicable row only with a recorded rationale.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
 ## Normative control
