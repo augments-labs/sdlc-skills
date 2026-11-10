@@ -9,9 +9,11 @@ before results.
 ## Investigation descriptor and ledger
 
 Before a probe or intervention, draft then issue an immutable investigation
-descriptor:
+descriptor at `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/descriptor.md`,
+beside the ledger:
 
-- stable investigation and failure-class IDs; exact source/artifact, symptom,
+- stable investigation and failure-class IDs; exact source/artifact, the
+  symptom as you observed it and as someone reported it in separate fields,
   inputs, environment/topology/time boundary, baseline, and expected behavior;
 - frozen loop/judge identity, discovery rule, expected observation, controls,
   evaluator edit authority, and falsification/calibration case;
@@ -29,11 +31,15 @@ Only the descriptor's trusted action contract grants tool, data, secret,
 network, or mutation access.
 
 Calibrate before inference: the frozen loop observes the known failing state and
-rejects the good/neighbor control at the intended observation. Keep a stable-ID,
+rejects the good/neighbor control at the intended observation. Before a null
+result kills a hypothesis, show that the loop ran the edited code: a stale
+build or cache, an installed copy shadowing the source, another worktree, or
+a container not rebuilt all return the old behavior, and a marker the edit
+prints is enough. Keep a stable-ID,
 append-only hypothesis/intervention/attempt ledger outside the descriptor. Run
 actions through `verification-before-completion`; overlapping effects are sequential unless
 proved disjoint. Failure, deadline, cancellation, or lost response stays
-`cancellation-requested` until worker, descendants, and effects quiesce. Quarantine
+`cancellation requested` until worker, descendants, and effects quiesce. Quarantine
 partial/late output and link a retry only after reconciling actual state.
 
 Ranked, tightest first:

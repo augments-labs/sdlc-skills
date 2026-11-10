@@ -17,16 +17,15 @@ enter this skill.
 - A failure reached users or production, escaped far downstream, caused real
   loss, or exposed a process failure worth correcting.
 - **Skip** an ordinary reproduced bug. For a technical incident, establish the
-  technical cause and immediate containment first; if the technical cause is
-  unknown, invoke `debugging`.
+  technical cause and immediate containment first: invoke `debugging` if the
+  cause is unknown, `containing-an-incident` if impact is ongoing.
 
 ## Step 1: Control the record
 
 1. Open `assets/post-mortem-template.md` when starting the analysis. Fill
-   `Control and evidence handling` first: readers, lifetime, redaction,
-   expected reviewers, and approver rules.
-2. Fill `Summary and impact` and `Timeline` from artifacts, not from memory.
-   Mark every time `observed` or `estimated`.
+   `Control and evidence handling` first.
+2. Fill `Summary and impact` and `Timeline` from artifacts (any containment
+   record first), not from memory. Mark every time `observed` or `estimated`.
 
 ## Step 2: Find the structural cause
 
@@ -35,25 +34,27 @@ enter this skill.
    then each condition that made the introduction or the impact more likely.
    Name conditions, never a person. When there are several conditions, keep
    them separate.
-2. Fill `Escape-path audit`: freeze the inventory of gates and surfaces with
-   the hash of its source, then fill every column for each entry, and for each
-   omission record a decision that someone is accountable for.
+2. Fill `Escape-path audit`: freeze the inventory of gates and surfaces live
+   when the failure escaped, with the hash of its source, then fill every
+   column for each entry, and for each omission record a decision that
+   someone is accountable for.
 3. Fill every bullet of `Risk-reduction claim` for each action. Never claim
    that recurrence is impossible.
 4. Fill the `Corrective actions` rows, each mapped to a structural cause;
    receipts and `External state` stay `pending` and live in the ledger.
 5. Challenge the draft. Fill `assets/escape-path-challenger.md` before
-   dispatching it read-only as `dispatching-parallel-agents` Step 2 says. A
-   serious incident without a challenger needs the omission the
-   `Expected reviewers` field requires. Record a decision on every finding; a
+   dispatching it read-only as `dispatching-parallel-agents` Step 2 says.
+   Without a challenger, record the omission the `Expected reviewers` field
+   requires, approved if the failure reached users or caused loss; a
+   self-review never stands in. Record a decision on every finding. A
    `findings` verdict blocks issuing the analysis until the corrected draft
-   is challenged again.
+   is challenged again, twice at most; findings still open then go to the
+   approver.
 6. Issue the analysis, which is never edited after issue, with its
-   `External lifecycle ledger` (the ledger: add to it, never rewrite it; it
-   sits outside the issued analysis), to the user-set path or the template's
-   path, under the storage authority held now, and record its identity as the
-   template says. If the record is in the repository, it is a new state under
-   check.
+   `External lifecycle ledger` (the ledger: add to it, never rewrite it), to
+   the user-set path or the template's path, under the storage authority held
+   now, and record its identity as the template says. If the record is in the
+   repository, it is a new state under check.
 
 ## Step 3: Propose and get the actions accepted
 
@@ -76,9 +77,9 @@ enter this skill.
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. Move an action out of `proposed` only on a complete trusted receipt (proof,
    from a trusted source outside the state under check, that an action or
-   decision really happened) for the exact scope and dates. Record a
-   rejection, cancellation, or supersession with its residual risk and
-   replacement.
+   decision really happened) for the exact scope and dates. Option 2 issues
+   a successor analysis and asks again; 3 and 4 record each action rejected
+   or cancelled, with its residual risk.
 
 ## Step 4: Prove and track the controls
 
@@ -97,25 +98,22 @@ enter this skill.
    and confirm that the gate ran. Write `effective`, `ineffective`, or
    `inconclusive`. If it is `ineffective` or `inconclusive`, reopen, unless
    the exact approver rule accepts closure with the residual risk.
-5. Append every action state, proof, rollout result, and effectiveness
-   verdict to the ledger; never edit the issued analysis.
 
 ## Action states
 
-Record in the external ledger, outside the issued analysis, each action's
+Record in the ledger, outside the issued analysis, each action's
 move from `proposed` to one of `{owner-accepted | rejected | cancelled |
 superseded}`, and, for an accepted action, from there through `implemented`,
 `falsified`, `deployed/enforced`, `effectiveness reviewed`, then `effective`
 or `ineffective` or `inconclusive`, and `closed`, in that order; an
 `ineffective` or `inconclusive` action closes only as Step 4.4 allows, else
-it is `reopened`. Let no prose, merge, or local green skip a state.
+it is `reopened`, then `superseded` by a replacement at `proposed`.
+Let no prose, merge, or local green skip a state.
 
 ## Gotchas
 
-- An escape-path audit taken from today's list of gates instead of the frozen
-  inventory pinned to its source hash can end up describing the battery after
-  the fix already landed, which makes every gate look fine and the audit
-  worthless.
+- An escape-path audit taken from today's list of gates describes the
+  battery after the fix landed, so every gate looks fine.
 - A `Risk-reduction claim` of "prevent" with no baseline, target, or horizon
   can never be marked `effective` or `ineffective` at the review date, only
   `inconclusive`, permanently.

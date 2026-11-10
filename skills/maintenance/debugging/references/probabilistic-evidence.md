@@ -44,7 +44,7 @@ the redaction still reproduces, and leave cleanup pending without exact authorit
 
 ## Causal and fix comparison
 
-Keep hypothesis and fix ledgers separate:
+One ledger; count hypothesis tests and fix attempts separately:
 
 | ID | Kind | Prediction/criterion | Probe/change | Trials/window | Raw result | Confidence/status |
 | --- | --- | --- | --- | --- | --- | --- |

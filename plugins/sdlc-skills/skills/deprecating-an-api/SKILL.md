@@ -6,10 +6,10 @@ description: "Retires a public function, method, class, endpoint, response field
 # Deprecating an API
 
 Deprecating and removing are two changes, and only the second one breaks
-anyone. This skill produces the completed deprecation that `yagni` and
-`refactor-architecture` wait for before they delete: a record with the
-measured remaining use and the owner's removal decision. It never removes
-an interface itself; removal ships as its own change after the decision.
+anyone. This skill produces what `yagni` and `refactor-architecture` wait
+for before they delete: a record with the measured remaining use and the
+owner's `remove` row (*removal approved*). It never removes an interface in
+the change that marks it, and never without that row.
 
 ## When to use
 
@@ -29,7 +29,7 @@ an interface itself; removal ships as its own change after the decision.
 ## Step 1: Measure the old path first
 
 Open `assets/deprecation-record.md` before the actions below; they fill its
-Interface and Use sections.
+header, Callers, and Use sections.
 
 1. Record the interface, its owner, and every caller a search finds. A
    search is a lower bound: external consumers, other repositories,
@@ -45,7 +45,8 @@ Interface and Use sections.
 ## Step 2: Ship the replacement first
 
 1. The replacement exists, is tested, and is documented before the old
-   interface is marked. If there is no replacement, say so in the record;
+   interface is marked; fill the record's Interface section as it ships. If
+   there is no replacement, say so in the record;
    the signal in Step 3 then names the end of support, not a replacement.
 2. Where the old path can call the new one, make it do so, so the two
    cannot drift apart.
@@ -67,9 +68,16 @@ Interface and Use sections.
      or key is read;
    - an event or message type: a warning logged by the producer where it is
      built, since consumers cannot see a marker;
+   - an interface clients are generated from (an API schema or interface
+     definition): the schema's own deprecation field, since a marker in the
+     handler never reaches a generated client;
    - a metric name, label, or log field: emit both the old and the new
      name until the sunset date, and name the old one in the record's
      Signal section, since a dashboard or alert cannot see a marker.
+
+   Read `references/signal-mechanics.md` before writing an HTTP header, a
+   schema deprecation, or a Python, Java, TypeScript, or Go marker: each has
+   a form that looks right and signals nothing.
 2. A runtime warning fires once per process, or once per caller identity,
    never once per call: a warning on every call floods the logs and gets
    silenced along with the signal.
@@ -85,6 +93,8 @@ Interface and Use sections.
    Recommendation: {{option}} — {{one sentence}}.
    ```
 
+   Record the date and its source, the policy or the answer, as the
+   sunset-date row in the ledger beside the record.
 4. Ship the deprecation as its own change through the ordinary chain. It
    removes nothing. If a caller is in another team's hands, the record's
    Callers table names who was told and how.
@@ -94,10 +104,10 @@ Interface and Use sections.
 1. After the sunset date, read the per-caller count over a span that covers
    every caller's cycle (a monthly job calls once a month) and update the
    Use section with the current number and who is behind it.
-2. If use is still above zero and the system can switch the old path off
-   and on, the default is one brownout: switch the old path off for a
-   short stated window, back on, and read who complained or errored. The
-   escape hatch is the owner saying no brownout; record either.
+2. If use is above zero or `unknown` and the system can switch the old path
+   off and on, ask the owner for one brownout and end the turn: the old path
+   off for a short stated window, back on, then read who complained or
+   errored. Run it only on their yes; record the answer and the result.
 3. Removal is the point of no return. Put it to the owner with the measured
    use and who breaks, and end the turn; `clarifying-intent` owns what
    closes it:
@@ -119,12 +129,11 @@ Interface and Use sections.
    `test-driven-development`: the old path's tests go in the same change
    as the old path, not before. **REQUIRED SUB-SKILL:** at the release
    step, invoke `release-readiness` and hand it the record.
-5. The removal change may proceed on this record plus the owner's `remove`
-   row in the ledger; that is what a skill asking for a completed
-   deprecation accepts for the removal change. The deprecation is complete
-   only when the record's Status is `removed` and names the ledger row;
-   until then, any other skill that asks for a completed deprecation gets
-   "in progress" and this record's path.
+5. *Removal approved* is this record plus the owner's `remove` row in the
+   ledger: the removal change may proceed on it, and a skill that asks for a
+   completed deprecation before it deletes accepts it. The deprecation is
+   complete only when the record's Status is `removed` and names the ledger
+   row; until then, any other ask gets "in progress" and this record's path.
 
 ## Hard stops
 
@@ -137,28 +146,7 @@ Interface and Use sections.
 
 ## Gotchas
 
-- The HTTP `Deprecation` header's value is a structured-field date such as
-  `@1688169599`, never an HTTP-date and never `true`; older drafts used
-  those forms and clients built on them misparse it. The `Sunset` header
-  uses an HTTP-date (`Sun, 30 Jun 2024 23:59:59 GMT`), and its date must
-  not be earlier than the `Deprecation` date — shows when a client library
-  that reads both rejects the response, or logs the deprecation as unset.
-- Python hides `DeprecationWarning` by default except for code run from
-  `__main__`, so a warning raised inside a library is never seen by an
-  application's users; use `FutureWarning` when end users must see it, and
-  pass `stacklevel=2` so the warning points at the caller, not at the
-  deprecated function — shows when a deprecated call runs through a test
-  suite and a production service for a month and nobody saw a line.
-- Java emits no deprecation warning for a use inside the same outermost
-  class or inside a declaration that is itself `@Deprecated`, so a chain of
-  deprecated wrappers goes silent; `@Deprecated(forRemoval = true)` emits a
-  removal warning that ignores the deprecated-caller exemption — shows when
-  a caller behind an old adapter reports it never saw a warning.
-- A TypeScript `@deprecated` JSDoc tag surfaces only as an editor
-  suggestion and a strike-through; the build neither fails nor warns, so a
-  caller who never opens the file in an editor gets no signal — shows when
-  a generated or scripted caller keeps using the old export past sunset.
-- Go reads a deprecation only from a doc-comment paragraph that begins
-  `Deprecated:`; the compiler never warns on use, only a separate static
-  checker does — shows when a `// deprecated` comment without the colon is
-  picked up by nothing.
+- Where the build treats warnings as errors, the marker turns callers and
+  the old path's own tests red. Exempt those tests and each known call site
+  by name; never switch the warning class off project-wide or delete the
+  tests — shows when the deprecation change itself fails CI.

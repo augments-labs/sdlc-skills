@@ -14,8 +14,11 @@ under the handoff store's rule.
 - **Who was affected:** {{scope — all users, one region, one tenant, one plan}}
 - **From:** {{first observation, with timezone}} **to:** {{when the signal returned to normal, or "ongoing"}}
 - **Observed in:** {{the signal that showed it — error rate, failing request, report}}
+- **How badly:** {{the rate, count, or share of requests or users failing}}
 
 ## Lever pulled
+
+One table per lever, in the order pulled.
 
 | | |
 | --- | --- |
@@ -24,6 +27,13 @@ under the handoff store's rule.
 | By | {{who, and under whose authority if it was not theirs to make}} |
 | Blast radius | {{what else this affects, stated as one sentence}} |
 | Alternatives rejected | {{wider or slower levers, and why this one instead}} |
+| Still holds | {{yes; or when it was reversed and why. Reverse a lever that changed nothing before the next one, unless reversing adds risk}} |
+
+## Hard-containment fallback
+
+{{Only when no safe authorized lever remains: the levers exhausted, the
+impact that remains, and who owns the escalation. Otherwise "None: a lever
+held".}}
 
 ## Proof it worked
 

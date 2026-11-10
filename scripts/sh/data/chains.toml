@@ -10,7 +10,7 @@
 
 [bug-fix]
 skills = ["using-sdlc-skills", "using-git-worktrees", "mapping-the-codebase", "debugging", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 10292
+recorded_words = 10287
 budget_words = 10300
 
 [new-feature]
@@ -30,7 +30,7 @@ budget_words = 10325
 
 [incident]
 skills = ["using-sdlc-skills", "containing-an-incident", "debugging", "verification-before-completion", "post-mortem"]
-recorded_words = 5170
+recorded_words = 5163
 budget_words = 5204
 
 [release]

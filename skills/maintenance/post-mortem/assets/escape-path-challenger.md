@@ -14,8 +14,9 @@ result from a reassigned predecessor.
 
 The analysis owner dispositions every finding. Issue waits for a terminal
 challenge on the exact draft identity: `findings` blocks issue until a corrected
-draft is challenged again by the same role, and `inconclusive` is not a
-clearance.
+draft is challenged again by the same role, twice at most, and `inconclusive` is
+not a clearance. Findings still open after the second corrected draft go to the
+approver the analysis names; no third round runs.
 
 ````markdown
 You are an independent, read-only challenger. You did not author the analysis

@@ -4,7 +4,7 @@
 every placeholder; keep it factual and blameless. Draft it, challenge it,
 then issue one immutable version; nothing after issue — action states, proof,
 rollout results, effectiveness verdicts — is ever written back here, and a
-`pending` cell means the ledger has not yet recorded that state. Write the
+`pending` cell means the state is in the ledger. Write the
 issued copy to `.sdlc-skills/post-mortems/{{YYYY-MM-DD}}-{{topic}}.md` under
 current repository authority, or return it directly. Redact incident data
 before disclosure; only a trusted action contract grants tool, data, secret,
@@ -42,7 +42,7 @@ approval under the exact rule; silence blocks issuance.
 Record stable reviewer/action/attempt/receipt IDs, analysis/action identities,
 preconditions, raw evidence identities, start/end, and observed terminal state.
 Owning workflows execute actions. A transition advances only on their exact
-terminal receipt; failure/deadline remains `cancellation-requested` until worker,
+terminal receipt; failure/deadline remains `cancellation requested` until worker,
 descendants, and effects quiesce, partial/late evidence is quarantined, and any
 retry links its predecessor. Candidate text or an owner label is not a receipt.
 Issue only after every expected reviewer is terminal/quiescent and every finding
@@ -100,9 +100,9 @@ Include gates that held so corrective work does not weaken them.
 
 ## Corrective actions
 
-| ID/version | Structural cause | Action/gate | Approver rule/receipts | Due/review date | Dependencies | Rollout/reversal | Effectiveness criterion | External state |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `{{A-01 + definition digest}}` | `{{cause}}` | `{{control}}` | `{{exact rule + trusted identity-bound receipts/pending}}` | `{{dates}}` | `{{IDs/none}}` | `{{plan}}` | `{{metric/target/window}}` | `{{ledger state and receipt ID}}` |
+| ID/version | Structural cause | Action/gate | Owner | Approver rule/receipts | Due/review date | Dependencies | Rollout/reversal | Effectiveness criterion | External state |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `{{A-01 + definition digest}}` | `{{cause}}` | `{{control}}` | `{{who is accountable for it}}` | `{{exact rule + trusted identity-bound receipts/pending}}` | `{{dates}}` | `{{IDs/none}}` | `{{plan}}` | `{{metric/target/window}}` | `{{ledger state and receipt ID}}` |
 
 Receipts and `External state` are `pending` at issue; the ledger holds them.
 Promises rank below enforceable controls. Multiple actions for one cause are

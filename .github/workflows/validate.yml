@@ -81,7 +81,7 @@ jobs:
           awk --version 2>&1 | head -1 || true
           got=$(bash skills/common/writing-skills/scripts/check-skill.sh --tokens skills/maintenance/diagnosing-a-session/SKILL.md)
           echo "estimate: $got"
-          [ "$got" = 3676 ]
+          [ "$got" = 3612 ]
 
   reference-validator:
     # A parser cross-check with the Agent Skills reference validator, never a
