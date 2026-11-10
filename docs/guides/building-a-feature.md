@@ -159,9 +159,11 @@ step in more detail.
   metrics facility your project already has, under your naming, and asks
   before it adds a library or a vendor. A signal counts only once it has
   been seen, by a test or in a real environment. Each alert is on a symptom
-  users feel, has an owner and a first action, and is fired once on purpose;
-  whether it pages anyone is the owner's decision. No secret or personal
-  data goes into a label or a log field.
+  users feel, has an owner and a first action, and is fired once on purpose.
+  Where firing it would reach a person or a shared environment, the agent
+  gets the owner's go-ahead first or fires it through a route that pages no
+  one; whether the alert pages anyone at all is the owner's decision. No
+  secret or personal data goes into a label or a log field.
 - **A change you can see.** For a screen or a terminal interface,
   `visual-ui-verification` checks the running interface before the work is
   called done. See

@@ -163,9 +163,12 @@ requests is then your decision, asked once for the whole batch, with the
 shard manifest (under `.sdlc-skills/designs/`) in front of you:
 
 ```text
-1. Open one pilot shard first; open the rest after it merges
+1. Open one pilot shard first ({{shard}}); open the rest after it merges
 2. Open every shard now
 ```
+
+Your answer covers each shard as the manifest recorded it. A shard that is
+regenerated afterwards is put to you again before its pull request changes.
 
 While shards are open, the agent keeps them current by rerunning the script
 when the base branch moves; it never merges generated changes by hand. After

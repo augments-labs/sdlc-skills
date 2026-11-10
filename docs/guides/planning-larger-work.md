@@ -97,7 +97,9 @@ this project?" or "what should CI run?". It writes an assurance matrix under
 A check counts as executable only after the agent has watched it fail: green,
 red on a defect introduced on purpose, green again once the defect is
 removed. Anything else is recorded as planned or blocked. An independent
-reviewer challenges the matrix before you see it, and then you choose:
+reviewer challenges the matrix first. If the challenge cannot be brought to
+a clear verdict, the agent returns the open blockers and offers nothing to
+approve. Once it is clear, you choose:
 
 ```text
 1. Approve the battery
