@@ -192,7 +192,9 @@ What depends on you: accepting the actions, and the review date.
 ## What you did not see
 
 This change touched most of the library because it had a ticket, a live
-table, a release policy, and an incident. Fix an off-by-one in a date check
-and you typically see the workspace check, a failing test, the checks, a
-review, and the branch menu. In both cases the skills guide the agent, and
-your checks and your decisions decide the result.
+table, a release policy, and an incident. Ask for a fix to an off-by-one in
+a date check and you typically see the workspace check, a failing test, the
+checks, a review, and the branch menu. Name the exact edit, such as changing
+`<` to `<=` in that check, and you see only the failing test and the checks,
+in your current checkout. In every case the skills guide the agent, and your
+checks and your decisions decide the result.

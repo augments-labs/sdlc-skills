@@ -77,10 +77,18 @@ The skills are a toolbox. Nothing requires a task to walk through every
 phase; each skill says when it applies and how it scales down for small
 work. A one-line fix does not get a project brief.
 
-A fixed core applies to any change to behavior, whatever its size: an
-isolated checkout, a failing test first, a review, and a question about what
-to do with the branch. Each of those skills names its own skips, such as
-staying in your checkout when you say so.
+A fixed core applies to a change to behavior: an isolated checkout, a
+failing test first, a review, and a question about what to do with the
+branch. Each of those skills names its own skips, such as staying in your
+checkout when you say so.
+
+A small edit takes a short route. When your request names the exact edit,
+and the edit changes no public interface, stored data, dependency,
+permission, or deployment setting, the agent edits your current checkout,
+writes a failing test first if behavior changes, and runs the checks. It
+commits only when you ask. A push, a pull request, or a merge still brings
+the review and the branch question. When the agent cannot tell whether an
+edit qualifies, it takes the full route.
 
 A few checks have no skip. Checking a claim that work is done is one of
 them. Even there, the rule is the smallest check that could prove the claim

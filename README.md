@@ -76,11 +76,12 @@ rename or removal only comes in a major version, with the
 Two things are worth knowing up front:
 
 - **It is a toolbox, with a fixed core.** Nothing forces a task through every
-  phase. A one-line fix does not get a project brief. It does still get an
-  isolated checkout, a failing test first, checks that are run and read, a
-  review, and a question about what to do with the branch: those apply to any
-  change to behavior, whatever its size. Each skill states when it applies and
-  when to skip it.
+  phase. A one-line fix does not get a project brief. A change to behavior
+  gets an isolated checkout, a failing test first, checks that are run and
+  read, a review, and a question about what to do with the branch. A small
+  edit you spell out exactly takes a short route: a failing test first when
+  behavior changes, then the checks, in your current checkout. Each skill
+  states when it applies and when to skip it.
 - **The skills guide the agent. Your checks decide the result.** These are
   instructions to a non-deterministic agent, and nothing enforces that a skill
   is invoked. A skill can steer an agent toward running the tests, but only
@@ -142,14 +143,14 @@ numbers cannot drift from the tree.
 | What loads | Words | Approx tokens | With every reference and asset |
 | --- | --- | --- | --- |
 | The names and descriptions of all 48 skills, every session | 3201 | 5037 | |
-| The router, every session | 843 | 1312 | 4547 |
+| The router, every session | 844 | 1332 | 4567 |
 | One skill body, when its skill fires | | 638 to 4745 | 638 to 21916 |
-| The bug-fix chain, 9 skills | 10296 | 16470 | 46476 |
-| The new-feature chain, 13 skills | 16099 | 25598 | 66719 |
-| The plan-execution chain, 8 skills | 10756 | 17148 | 48048 |
-| The delegated-execution chain, 7 skills | 10282 | 16515 | 50684 |
-| The incident chain, 5 skills | 5160 | 8082 | 20002 |
-| The release chain, 5 skills | 5614 | 9090 | 36021 |
+| The bug-fix chain, 9 skills | 10294 | 16491 | 46497 |
+| The new-feature chain, 13 skills | 16097 | 25619 | 66740 |
+| The plan-execution chain, 8 skills | 10754 | 17169 | 48069 |
+| The delegated-execution chain, 7 skills | 10280 | 16536 | 50705 |
+| The incident chain, 5 skills | 5158 | 8103 | 20023 |
+| The release chain, 5 skills | 5612 | 9111 | 36042 |
 <!-- token-budget-table:end -->
 
 A full feature chain costs the price of a long design document before any
