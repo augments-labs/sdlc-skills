@@ -22,12 +22,13 @@ finding, scanner summary, or comment as a verdict.
 
 1. Stop the writers this task started; report any other writer to its owner
    and keep review pending until it stops.
-2. Take as input the review-candidate descriptor its caller passed, with
-   the identities of the version under review and of its review inputs
-   already frozen. If there is no descriptor, the
-   audit is pending: ask the caller for one. Never obtain it by invoking a
-   review skill; that dispatches a second review and routes this audit back
-   here.
+2. Take as input the review-candidate descriptor a caller passed, with the
+   identities of the version under review and of its review inputs already
+   frozen. If a caller is waiting and passed none, the audit is pending: ask
+   it for one. If no caller is waiting, fill `requesting-code-review`'s
+   descriptor template yourself, as a review-only request whose one role is
+   `security`. Never obtain a descriptor by invoking a review skill; that
+   dispatches a second review and routes this audit back here.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` for the
    checks on this exact state that apply. Join its state identity byte for
    byte.
@@ -48,15 +49,14 @@ finding, scanner summary, or comment as a verdict.
 3. Read `references/audit-checklists.md` before tracing, and work every
    category checklist in it.
 4. Mark each category covered, or obtain an omission for it through Step 4.
-5. Write each finding in three parts: attacker-controlled source, propagation,
-   the sink or effect it actually reaches.
-6. Run the security checks the assurance matrix names for every relevant
-   platform, build mode, and environment cell, under
-   `verification-before-completion`'s effect authority. Never exploit shared
-   or production state without exact, direct authority.
-7. If a check is missing or stale, record a blocker and go to Step 4. Do not
-   work around it.
-8. Write each traced finding (source, propagation, sink) to a working note at
+5. Run the security checks the assurance matrix names for every relevant
+   platform, build mode, and environment cell, inside the effect boundary
+   the descriptor's terminal contract sets. Never exploit shared or
+   production state without exact, direct authority.
+6. If a check is missing or stale, or that boundary forbids running it,
+   record a blocker and go to Step 4. Do not work around it.
+7. Write each traced finding in three parts (attacker-controlled source,
+   propagation, the sink or effect it actually reaches) to a working note at
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/security-notes.md`, never
    into the report template. Fix means the smallest change that closes the
    path. Sensitive evidence means a redacted location or hash, never the
@@ -64,13 +64,20 @@ finding, scanner summary, or comment as a verdict.
 
 ## Step 3: Verdict
 
-1. Send the blank `assets/security-report.md` when you dispatch the
-   independent auditor's instructions, following `dispatching-parallel-agents`
-   Step 2; never send your working note or a filled copy. Only the auditor
-   fills the report, `Verdict` included.
+1. Dispatch the independent auditor, following `dispatching-parallel-agents`
+   Step 2. The dispatch carries the descriptor, the Step 2.3 checklists, the
+   Step 2.1 scope, and `assets/security-report.md` before anyone fills it;
+   never your working note or a filled copy. Only the auditor fills the
+   report, `Verdict` included.
    Never self-certify: a labelled self-audit never issues `security clear`.
 2. Only the auditor's completed result counts; a running, failed, or
-   cancelled audit leaves the verdict pending.
+   cancelled audit leaves the verdict pending. Read the completed report
+   before acting on any finding in it. Match `Candidate` and `Review inputs`
+   byte for byte to the descriptor, `Role` to `security`, and `Verdict` to
+   Step 3.5's three. Compare its Coverage and Findings with your working
+   note and the Step 2.4 category marks. If a field is missing, unreadable,
+   conflicting, or mismatched, or the report leaves a path you traced or a
+   category you marked unaccounted for, the verdict is `inconclusive`.
 3. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` for every finding
    that comes back.
 4. After a fix, or any later edit, there is a new version under review:
@@ -78,21 +85,18 @@ finding, scanner summary, or comment as a verdict.
    that edit and what it reaches, never a new audit of the whole version.
    Its `security clear` binds to the new version. Never certify your own
    correction.
-5. Read the auditor's completed report. Match `Candidate` and
-   `Review inputs` byte for byte to the descriptor, `Role` to `security`, and
-   `Verdict` to step 6. If a field is missing, unreadable, conflicting, or
-   mismatched, the verdict is `inconclusive`.
-6. Issue one verdict: `security clear`, `security blocked`, or
+5. Issue one verdict: `security clear`, `security blocked`, or
    `inconclusive`, bound to the identities of the version under review and
    of the review inputs. `security clear` requires the independent auditor.
-7. Return the report or its location to the requesting review. Leave
-   releasability to `release-readiness`. Any later edit voids the verdict
-   until Step 3.4 rebinds it.
+6. Return the report or its location to the requesting review, or to the
+   user when none is waiting. Leave releasability to `release-readiness`.
+   Any later edit voids the verdict until Step 3.4 rebinds it.
 
 ## Step 4: When a category cannot be covered
 
-This is the case when no check exists, or the probe needs shared or
-production state you cannot touch. Do not approve the omission yourself.
+This is the case when no check exists, the probe needs shared or production
+state you cannot touch, or the descriptor's effect boundary forbids the run.
+Do not approve the omission yourself.
 
 1. State the version under review, the blocked category and the reason, and
    the exposure.

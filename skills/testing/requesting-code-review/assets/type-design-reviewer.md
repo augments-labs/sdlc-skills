@@ -61,6 +61,7 @@ Repeat this block for each finding:
 ### {{finding title}}
 
 - Category: {{Critical: silently violated invariant causing corruption/security exposure | Important: weak boundary causing future bugs | Minor: expressiveness/naming/needless type ceremony}}
+- Disposition: {{blocking | advisory}}
 - Evidence: {{file:line and observed problem}}
 - Invariant: {{rule and concrete call that can violate it}}
 - Correction: {{concrete recommendation}}

@@ -16,6 +16,8 @@ paths and record each expansion; one named check per named risk.
   review artifact location. Account for the complete inventory and read every
   human-authored change. For generated/unreviewable ranges, follow the
   descriptor's mapping, structural gates, and risk-based samples.
+- **Role:** {{`breadth`; or `adversarial`, with the one risk or partition
+  this pass tries to prove against the candidate}}.
 - **Originating requirement:** {{requirement}}.
 - **Accepted contracts and evidence:** {{requirements/design/migration/assurance
   versions plus raw gate results}}.
@@ -64,9 +66,11 @@ paths and record each expansion; one named check per named risk.
   and exact delta. Verify fixes and affected paths, including new regressions.
   Reopen a disposed finding only on new evidence or changed binding; a wording
   preference or different reviewer is not a new requirement.
-- **Breadth, not rabbit holes.** This is the broad pass. If one axis needs real
-  depth—error paths, type invariants, test coverage, comment accuracy, or
-  accidental complexity—request its specialist rather than half-running it.
+- **Breadth, not rabbit holes.** A breadth pass is the broad one. If one axis
+  needs real depth—error paths, type invariants, test coverage, comment
+  accuracy, or accidental complexity—request its specialist rather than
+  half-running it. An adversarial pass goes as deep as its one risk needs and
+  tries to prove the candidate wrong on it.
 - A requirement or contract you can read two ways is not yours to settle: log
   it under Declined to judge with the exact question and both readings, and
   hold the verdict at `not_ready`; never guess.
@@ -75,7 +79,7 @@ paths and record each expansion; one named check per named risk.
 
 ## Output
 
-Complete the supplied report template with Role `breadth` and Verdict
+Complete the supplied report template with the Role from Inputs and Verdict
 `ready`, `not_ready`, or `ready_after_fixes`. Report Standards and Spec
 separately, including supported strengths. Repeat this finding block:
 

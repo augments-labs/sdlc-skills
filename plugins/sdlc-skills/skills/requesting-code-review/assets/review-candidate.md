@@ -26,7 +26,8 @@ never copied anywhere else in the workspace.
 - **Verification state identity:** `{{the value the verification ledger
   recorded: in checkpoint-range and integrated-result modes, the full revision
   captured with state-identity.sh --quiet --committed; in working-tree mode,
-  the digest from --quiet; either way equal to Result identity byte-for-byte}}`
+  the digest from --quiet; either way equal to Result identity byte-for-byte.
+  Give the command with the script's full path, so a reviewer can rerun it}}`
 - **Review-input identity:** `{{immutable identity over result/base, requirement
   and contract versions, complete inventory, evidence set/freshness, deviations,
   and every bound external state supplied to reviewers}}`
@@ -61,7 +62,7 @@ the coordinator into prose or this descriptor are not a receipt. Do not
 say dispatched or running until the callable action itself returns nonempty
 identities recorded unaltered in the external ledger. Never poll empty targets.
 Unavailable/refused/empty dispatch leaves review pending. Poll the exact receipt;
-never wait indefinitely. Failure/deadline remains cancellation-requested until
+never wait indefinitely. Failure/deadline remains cancellation requested until
 worker, descendants, and effects are quiescent; quarantine partial evidence.
 A retry links its predecessor and rejects late results/mutations. "Returned"
 requires one current revision-bound report.
