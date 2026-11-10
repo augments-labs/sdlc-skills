@@ -14,8 +14,9 @@ nonempty report bound to that design version; failed, timed out, and cancelled
 all stay pending.
 
 The design owner resolves every blocking finding and records its disposition.
-Every normative correction creates a proposed successor and requires a focused
-re-review of affected and dependent sections. Direct approval applies only to
+Every normative correction creates a proposed successor and requires one focused
+re-review of affected and dependent sections; a blocking finding still open
+after it is reported to the decision owner. Direct approval applies only to
 the reviewed version.
 
 ````markdown

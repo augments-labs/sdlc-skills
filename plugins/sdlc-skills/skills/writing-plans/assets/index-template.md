@@ -6,8 +6,11 @@ exact identity of every approved input, the rule that makes each stale, the
 00-index.md in `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/`, alongside one
 file per task. No approval, execution state, or evidence goes in this file,
 except the task checkbox and its state label, which mirror the execution
-ledger. A change named under `Invalidation triggers` is a successor file; any
-other adjustment is an executor's ruling in the execution ledger.
+ledger. Once a version is bound to a review or presented, any other change to
+these files is a successor version: edit them in this directory, fill `Predecessor`
+and `Successor delta`, and print the new version. After approval, only a
+change named under `Invalidation triggers` takes one; any other adjustment is
+an executor's ruling in the execution ledger.
 
 ```markdown
 # Plan: {{topic}}

@@ -29,13 +29,15 @@ with what this work has; the template says what an empty one carries.
    approval is blocked.
 2. Name each module by what it does and by what it does not do. If removing it
    would spread its complexity across its callers, it stays. If the complexity
-   would merely move elsewhere, merge it.
+   would merely move elsewhere, merge it. Before adding a module, search the
+   tree for one already doing that job and record the search.
 3. For each dependency and each asynchronous path, write its timeout, its
    retry and idempotency, what still works when it is degraded, how it
    recovers, and how each is exercised (the test, fault injection,
    or drill).
 4. Every sentence that states what the existing system does today (a
-   component exists, a call site handles a case, a format carries a field)
+   component exists, a call site handles a case, a format carries a field,
+   a dependency defaults to a value at its pinned version)
    names the path and symbol it was checked against at the current
    revision. Rewrite one you cannot cite to what is known, or invoke
    `clarifying-intent` for it. The plan's tasks are written against these
@@ -53,22 +55,25 @@ with what this work has; the template says what an empty one carries.
    change friction, or for one real volatile or external boundary with
    measured impedance, a failure policy, or test isolation. Variation that
    is only hypothetical earns none.
-4. If a choice is hard to reverse, invoke `architecture-decisions`. If a
-   choice that would change the design is unresolved, invoke
-   `clarifying-intent`.
+4. If a choice is hard to reverse, invoke `architecture-decisions`; a choice
+   it skips stays in the `Load-bearing decisions` row. If a choice that
+   would change the design is unresolved, invoke `clarifying-intent`.
 
 ## Step 3: Write, review, present
 
 1. Write the section to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`
-   or the user-set path and fill every field of the template's header; once
-   its identity is issued, the section is never edited. Record that identity
+   or the user-set path and fill every field of the template's header and
+   its high-risk classification block; once its identity is issued, the
+   section is never edited. Record that identity
    in its ledger (the decision record: add to it, never rewrite it, and keep
    it outside the design).
-2. Fill the high-risk classification block. If any answer is off the ordinary
-   route, or the user marks the work high-risk, run
-   `assets/design-review.md` before presenting. That review is blocking. A
-   `NEEDS_CONTEXT` return keeps it pending: supply the path it names and
-   run the review again.
+2. If any answer in that block is off the ordinary route, or the user marks
+   the work high-risk, fill `assets/design-review.md` before presenting and
+   dispatch it as `dispatching-parallel-agents` Step 2 says; its
+   not-dispatched question omits the self-review option. That review is
+   blocking. On `NEEDS_CONTEXT`, supply the path it names and rerun once. A
+   blocking finding takes one successor section and one re-review; report
+   what is still open to the decision owner and end the turn.
 3. Present:
 
    ```text
@@ -85,7 +90,8 @@ with what this work has; the template says what an empty one carries.
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 4. If option 1 is chosen and every design section the work needs is approved,
-   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version. If a
+   needed section is not approved yet, invoke its owning skill instead.
 
 ## Gotchas
 

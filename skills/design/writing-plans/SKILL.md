@@ -21,8 +21,9 @@ true and how that is judged, not the code.
   the user marks the work high-risk. For a high-risk target, read the
   approved migration and assurance contracts before writing a task. If they
   are missing, plan only the gate that is missing, taking the exact proposed
-  contract as its input, and put no target work in the plan; record
-  unsettled facts as
+  contract as its input, and put no target work in the plan; with none
+  proposed, write no plan: report that `migration-strategy` or
+  `verification-strategy` must produce it. Record unsettled facts as
   evidence, never as accepted deviations.
 - Write separate plans for independent subsystems unless one cutover or
   rollback makes them one initiative. If the approved design orders the
@@ -70,8 +71,8 @@ true and how that is judged, not the code.
 
 1. Slice vertically: one evaluable capability per task. Split only at a real
    check boundary. For high-risk target work, read
-   `references/scalable-transformation.md` before slicing, and copy the
-   transition policy from the migration contract.
+   `references/scalable-transformation.md` before slicing, and cite, never
+   copy, the migration contract's `Transition and translation` section.
 
    A request: let the existing `report` command also write CSV. Splitting it
    into "add a CSV serializer" and "wire a `--csv` flag" cuts one capability
@@ -85,11 +86,11 @@ true and how that is judged, not the code.
    List the plan's `00-index.md` in every task's `Context`, so a dispatched
    worker reads the Constraints and Review focus the task inherits.
 3. Fill **Consumes** from earlier tasks' exact **Produces** names and types.
-   Put existing code and external input artifacts in **Context**; do not invent
-   producer tasks for inputs that already exist.
-4. Fill `Implementation disciplines` with `test-driven-development` and
-   `yagni`, or with the exact carve-out that makes them inapplicable.
-5. Fill `Evaluator`: a command that returns a verdict, or a rubric with its
+   Backtick every name on both lines and every `Depends on` ID: Step 3.4's
+   script checks no other token. Existing code and external inputs go in
+   **Context**, never under an invented producer task.
+4. Fill `Evaluator`: a command that ends on its own, asks for nothing, fails
+   when it selects no tests, and returns a verdict, or a rubric with its
    accountable judge and deciding observations. For a UI task, copy
    `Applicable visual references` and give every Reference ID a **Visual
    conformance gates** row.
@@ -106,17 +107,13 @@ true and how that is judged, not the code.
    sent without the client's normalisation. For a counting limit, it also
    sends more simultaneous attempts than the limit and expects at most the
    limit to pass.
-6. Fill `Evaluator identity/owner` so the check lives outside what the task
+5. Fill `Evaluator identity/owner` so the check lives outside what the task
    may change. If a task may edit its own check, write the permitted scope
    and require RED or deliberate falsification before GREEN counts.
-7. Fill `Suggested tier` with the **Model selection** section of
+6. Fill `Suggested tier` with the **Model selection** section of
    `dispatching-parallel-agents`.
-8. Write `00-index.md` plus one file per task to
-   `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/` or the user-set path. No
-   approval, execution state, or evidence goes in these files, except the
-   task checkbox and its state label, which mirror the execution ledger.
-   After approval, a change the index's `Invalidation triggers` names is a
-   successor file; any other is an executor's ruling.
+7. Write `00-index.md` plus one file per task to
+   `.sdlc-skills/plans/{{YYYY-MM-DD}}-{{topic}}/` or the user-set path.
 
 ## Step 3: Self-review against the inputs, by name
 
@@ -138,8 +135,9 @@ true and how that is judged, not the code.
    against; rewrite a claim with no such citation to what is known, or
    remove it.
 4. Run `bash scripts/plan-version.sh --check-contract` on the plan directory;
-   it checks `Consumes`, `Depends on`, `Implementation disciplines`, and
-   file overlap. Then confirm every task has an executable Evaluator or a
+   it checks `Consumes`, `Depends on`, and `Implementation disciplines`. It
+   only prints file overlap: settle each `overlap=` line by Step 1.7. Then
+   confirm every task has an executable Evaluator or a
    controlled rubric, that the index has one top-level **Acceptance** check,
    and that its Constraints block holds across every task.
 5. Name in the index's **Architecture** the one type or module that owns
@@ -172,7 +170,8 @@ true and how that is judged, not the code.
    conformance evaluator.
 10. Fill **Review focus** with up to five spec-implied inputs or failure
    modes that no task Evaluator exercises, or mark it `none`; give every
-   `none yet` row a check or name it in the PR. If a task tells things
+   `none yet` row a check, or name it as uncovered in Step 4.1's
+   presentation. If a task tells things
    apart by the shape of a string (a key, slug, name, or path used as an
    identity), name two different inputs that produce the same string and
    the task test that separates them, or have the task carry the identity
@@ -208,9 +207,9 @@ true and how that is judged, not the code.
    the turn; `clarifying-intent` owns what closes it.
 2. Do not invoke either executor, create a workspace, or write code in this
    turn.
-3. Under a standing order, proceed without the pause only when its scope,
-   owner, constraints, and mode explicitly cover unseen plan versions. First
-   bind the exact version to that receipt.
+3. Under a standing default, proceed without the pause only when its scope,
+   owner, constraints, and mode explicitly cover unseen plan versions; quote
+   it as the answer in the Step 4.5 row.
 4. If an approval names no mode, ask the mode question in a separate turn.
 5. Add one row to the `External decision ledger` (the ledger: add to it,
    never rewrite it; it sits outside the plan): `Identity` = the printed

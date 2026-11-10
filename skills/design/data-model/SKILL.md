@@ -18,7 +18,9 @@ description: "Defines domain concepts, relationships, state transitions, and inv
 Open `assets/data-model-section.md` before the steps below fill it in.
 
 1. Fill the Concepts, Attributes, Relationships, and State transitions
-   tables, following the template's note on each.
+   tables, following the template's note on each. Read an existing model's
+   constraints, defaults, triggers, and indexes from its migrations or live
+   schema, never from the code's model classes alone.
 2. For each invariant that must never break, name what enforces it (a
    constraint, a transaction boundary, a test, or a reconciliation) and who
    owns failures.
@@ -29,16 +31,19 @@ Open `assets/data-model-section.md` before the steps below fill it in.
    risk. If a lens is omitted, write a skip record with that row's fields.
    Never drop one as "inapplicable" without it.
 2. If anything persists, note denormalized or cached data with its source of
-   truth, update boundary, and drift repair. If the change is to an existing
-   model, fill the template's High-risk classification block. If the route is
-   the ordinary one, define migration, mixed-version, and rollback behavior
-   (`changing-a-live-schema` builds them). If any answer is off the ordinary
-   route, record the domain constraints; `migration-strategy` owns the
-   contract.
+   truth, update boundary, and drift check. Fill the template's High-risk
+   classification block; a `pending classification` route goes in Step 3's
+   summary lines with the answer it waits on. For a change to an existing
+   model on the ordinary route, define migration, mixed-version, and rollback
+   behavior (`changing-a-live-schema` builds them). If any answer is off the
+   ordinary route, record the domain constraints; `migration-strategy` owns
+   the contract.
 3. Trace representative reads, writes, transitions, concurrent operations,
    deletions, and existing-data migrations. When a runnable query exists,
    record it and its result. Otherwise name the check that will run later and
-   who owns it; never pretend it ran.
+   who owns it; never pretend it ran. Where a new invariant, uniqueness rule,
+   or required attribute lands on existing data, count the rows that break
+   it today and record what happens to them.
 
 ## Step 3: Write and present
 
@@ -63,7 +68,8 @@ Open `assets/data-model-section.md` before the steps below fill it in.
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. If option 1 is chosen and every design section the work needs is approved,
-   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version. If a
+   needed section is not approved yet, invoke its owning skill instead.
 
 ## Gotchas
 
@@ -72,7 +78,7 @@ Open `assets/data-model-section.md` before the steps below fill it in.
   not in this file. Working from memory instead of the template's list is how
   a lens gets skipped with no skip record, because nothing here tells you
   which eighth lens you forgot.
-- Cardinality has a steady-state value and a momentary one: during creation,
+- Cardinality has a steady-state value and a transitional one: during creation,
   before a required relationship holds, and during deletion, when a cascade
   fires into one. One recorded cardinality does not separate the two, so
   documenting only the steady state leaves the code free to do anything at

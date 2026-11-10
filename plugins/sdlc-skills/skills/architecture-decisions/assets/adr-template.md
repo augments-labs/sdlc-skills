@@ -5,7 +5,9 @@ fields the steps below fill. Append the drafted, `proposed` ADR to
 `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
 preserving what is already there. Fill every field; one with nothing to hold
 says `none` and why. Never invent content to fill one, and never omit a
-decision input, risk, authority, or recovery fact to hit a size target.
+decision input, risk, authority, or recovery fact to hit a size target. A
+successor ADR never reuses its predecessor's heading: head it
+`## ADR: {{decision-title}} (successor)`, the next `(successor 2)`.
 
 ```markdown
 ## ADR: {{decision-title}}
@@ -33,11 +35,13 @@ external invalidation state, and revalidation/reconciliation gate}}
 current design-review identity that covers this ADR; deadline and
 timeout/cancel owner/action; the report uses the shipped ADR challenger prompt,
 and approval waits for its clear verdict; actual dispatch receipts stay in the
-External challenge ledger. Reversible choice, or no dispatch action → the
-author's own counter-case against that same contract, labelled self-challenge}}
+External challenge ledger. A reversible choice takes the author's own
+counter-case against that same contract, labelled self-challenge; with no
+callable dispatch action, that self-challenge is written only when the user
+chooses it at the `dispatching-parallel-agents` Step 2 question}}
 
 **External challenge ledger:** {{reviewer-owned location; attempt lineage,
-cancellation-requested/quiescent state, quarantined partials, report, findings,
+cancellation requested/quiescent state, quarantined partials, report, findings,
 and dispositions bound to this identity}}
 
 **Challenge artifact controls:** {{data class, allowed access, worker/provider/

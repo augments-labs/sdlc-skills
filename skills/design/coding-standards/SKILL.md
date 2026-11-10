@@ -23,15 +23,23 @@ Open `assets/standards-template.md` before starting. Fill a section only with wh
    can see.
 3. Ban a generic label wherever a domain term exists. Keep the glossary
    current.
-4. Give one short example of each pattern the template names.
+4. Give the one short pattern example the template asks for.
+5. Where one thing is done several ways, count each form across the whole
+   tree by search, not from sampled files, and record the counts with the
+   form chosen.
 
 ## Step 2: Assign enforcement
 
-1. Assign enforcement to each rule. If the rule can be detected statically,
+1. Read the project's formatter, linter, and type-check configuration
+   first: a rule that disagrees with it changes that configuration in this
+   proposal or is dropped. Assign enforcement to each rule. If the rule can
+   be detected statically,
    assign a formatter, linter, type or static check, or repository check
    that fails. If the rule is about vocabulary, architecture, or judgement,
    assign a named review rubric and a named owner.
-2. The warning budget is zero. Never leave a permissive default.
+2. The warning budget is zero. Never leave a permissive default. Where
+   warnings already exist, record each rule's count today as a Step 2.4
+   exception; a change may lower it, never raise it.
 3. Point to the exemplar (the file that does all of the above right). Run
    its checks and rubric now. If the project is greenfield and has no
    exemplar, name the first artifact and its owner; adoption stays pending.

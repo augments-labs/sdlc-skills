@@ -1,9 +1,10 @@
 # Coding-standards section template
 
 Copy this into the project's coding-standards section and fill every
-`{{placeholder}}`. Delete the guidance italics as you fill; what remains is
-the standard itself. A pattern or section the project has no rule for keeps
-its label and one line, `None: {{why}}`; never invent a rule to fill one.
+`{{placeholder}}`. A pattern or section the project has no rule for keeps
+its label and one line, `None: {{why}}`; never invent a rule to fill one. A
+successor is headed `## Coding standards (successor)`, the next
+`(successor 2)`.
 
 ````markdown
 ## Coding standards

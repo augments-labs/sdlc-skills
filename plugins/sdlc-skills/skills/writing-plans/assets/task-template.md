@@ -12,7 +12,7 @@ stays a placeholder rather than a guess.
 
 **Task ID:** `{{stable non-positional ID; never renumber or recycle}}`
 **Objective:** {{what this task accomplishes — one sentence}}
-**Depends on:** {{none, or stable task IDs that must finish first}}
+**Depends on:** {{none, or each stable task ID that must finish first, in backticks}}
 **Files:** `path/to/file` (new) · `path/to/other` (edit)
 **Exclusive ownership/effects:** {{files, generated outputs, data, processes,
 external state, and evaluator artifacts this task may mutate; overlaps require
@@ -57,8 +57,8 @@ homogeneous item.}}
 
 **Interface** — the contract that lets other tasks build against this one without reading it:
 
-- **Consumes:** {{names, signatures, data shapes this task takes from earlier tasks — or "nothing"}}
-- **Produces:** {{the exact names and types later tasks will rely on — another task's executor sees only this line to learn them}}
+- **Consumes:** {{names, signatures, data shapes this task takes from earlier tasks, each name in backticks — or "nothing"}}
+- **Produces:** {{the exact names and types later tasks will rely on, each name in backticks — another task's executor sees only this line to learn them}}
 
 List existing code, approved documents and external fixtures in **Context**.
 **Consumes** records only dependencies on outputs of earlier plan tasks.

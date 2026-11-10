@@ -85,27 +85,30 @@ This skill never edits the plan, approves it, or starts an executor.
    cause that attempt named; a late result from the failed attempt, or a
    file at its path, is rejected. On a second failure, return the pending
    review and both receipts to the caller.
-6. If the reviewer returned `NEEDS_CONTEXT`, that is not a failure and does
-   not use the one retry; Step 3.1 says what to do with it.
+6. `NEEDS_CONTEXT` is not a failure and does not use that retry; Step 3.1
+   handles it. Its rerun happens once, at the next attempt number; a second
+   `NEEDS_CONTEXT` returns to the caller as blocked, with its question.
 
 ## Step 3: Receive the report, decide each finding, return
 
 1. Read the report at the current attempt's location, opening the file when
-   only its location came back. If its `Plan version` differs from the bound
+   only its location came back and writing it there first when it came back
+   inline. If its `Plan version` differs from the bound
    version, or the report is missing or unreadable, the review stays
    pending. If the reviewer returned `NEEDS_CONTEXT` with a question, the
    review stays pending; return that exact question to the plan's author, at
    the caller's pending step (`writing-plans` Step 3.11, or the executor
-   step that proposed the successor), as a `decision` item. A
-   high-risk plan is not presented until the question is answered and the
-   review is run again on the answered version.
+   step that proposed the successor). A high-risk plan is not presented
+   until the question is answered and the review is run again on the
+   answered version.
 2. Print the plan's version again. If it changed during the review, the
    review is void; report the edit to the caller and keep the review
    pending.
 3. Give every finding one recorded decision (the report calls these its
    dispositions):
    - `accepted`: the author corrects it in a successor version.
-   - `rejected`: record the evidence that refutes it.
+   - `rejected`: record the path and symbol or the command result that
+     refutes it; an argument alone makes it a `decision`.
    - `decision`: the index's `Approval rule` owner decides it, at
      presentation.
    - A finding that cites no task ID, section, or `path:line`: record it as
@@ -119,7 +122,8 @@ This skill never edits the plan, approves it, or starts an executor.
    decisions:
    - If a blocker is `accepted`, return to the caller's pending step; the
      correction is a proposed successor, and a high-risk successor comes
-     back here before it is presented.
+     back here before it is presented. That re-review is the last: a blocker
+     it still raises is recorded as a `decision`.
    - If no blocker is open, return to the caller, or to the user who asked.
    - On a high-risk route, the caller presents nothing until this review has
      returned and every blocker has a recorded decision; a pending or void
@@ -138,6 +142,3 @@ This skill never edits the plan, approves it, or starts an executor.
 - A reviewer that edits the plan voids the review: the version it read no
   longer exists, and its findings describe text nobody approved. Step 3.2
   catches it by printing the version again.
-- A finding without a section citation is not a finding. It cannot be given
-  a recorded decision, traced into a successor, or checked by the next
-  review.
