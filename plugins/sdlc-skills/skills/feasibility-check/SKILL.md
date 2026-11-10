@@ -24,16 +24,13 @@ bound to its evidence to the accountable owner.
 Open `assets/feasibility-section.md` before starting; each step fills its
 section.
 
-1. Fill every dimension row with its accountable owner: technical, delivery
-   and budget, operations and recovery, security and compliance, data,
-   external dependencies. "Technically possible" answers one row, not the
-   others. Every owner this section names, go-if conditions included, comes
-   from the approved goals' decision rule and stakeholder roles. If no owner
-   is named there, ask the user who owns it; never invent one.
-2. List the killer assumptions: the assumptions that sink the goal if they
-   are false. Rank them by likelihood × impact. For each risk, record the
-   evidence source, its freshness, and the confidence. `unknown` is a valid
-   confidence.
+1. Fill every dimension row with its accountable owner. "Technically
+   possible" answers one row, not the others. Every owner this section
+   names, go-if conditions included, comes from the approved goals' decision
+   rule and stakeholder roles. If no owner is named there, ask the user who
+   owns it; never invent one.
+2. For each killer risk, record the evidence source, its freshness, and the
+   confidence. `unknown` is a valid confidence.
 3. Turn the top unknown into a bounded question for `prototyping`. One
    spike answers one dimension.
 4. Fill Option Zero with evidence for whether not building, an existing
