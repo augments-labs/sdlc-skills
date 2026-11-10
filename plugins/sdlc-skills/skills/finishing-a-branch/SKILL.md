@@ -92,8 +92,8 @@ authorize no change to history or to a remote, and no discard or cleanup.
 2. If the workspace is detached or host-owned, offer only *publish as a new
    branch* and *keep as-is*.
 3. If a PR already exists, offer only the transitions its state and its
-   policy permit. Never conflate, retarget, rewrite, delete, or duplicate a
-   PR.
+   policy permit: for a merged PR, *clean up owned resources* or *keep
+   as-is*. Never conflate, retarget, rewrite, delete, or duplicate a PR.
 4. Never put discard on this menu.
 5. Wait for one listed entry. If the reply is praise, a constraint, a partial
    answer, silence, "looks good", or a decision about something adjacent,

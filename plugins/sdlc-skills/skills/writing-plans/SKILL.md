@@ -46,7 +46,10 @@ true and how that is judged, not the code.
    put the record in the index's `Bound inputs`: an executor updates it,
    and that update is not bound-input drift.
 2. Open `assets/index-template.md` when starting the index. Fill the header
-   first.
+   first. If `Architecture` needs more than its few sentences (a new
+   subsystem, several components, real integration) and `Bound inputs`
+   holds no approved architecture section, stop and report that
+   `system-architecture` owns it.
 3. Fill `Plan set`: `none`, or the slices in order, this plan's position,
    its predecessor plan's path, and the next slice's name. Write only this
    slice's tasks; the next slice is planned when this one lands.

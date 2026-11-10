@@ -2,7 +2,9 @@
 
 Ask this when a plan version is approved and its `External decision ledger`
 row records no `mode:`. Offer options 2 and 3 only when the harness has a
-subagent action and the index holds no phases or shards. Recommend by the
+subagent action, the index holds no phases or shards, and at least one task's
+`Files` lies inside a git-tracked project: a delegated run needs commits.
+Recommend by the
 plan's shape, the first offered option that holds, never by default: option
 3 when the plan's task list shows two or more ready tasks that each span
 several files and whose files, state, and outputs are disjoint; option 2

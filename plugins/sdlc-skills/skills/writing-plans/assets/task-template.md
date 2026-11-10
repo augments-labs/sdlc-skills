@@ -45,7 +45,8 @@ accepted state before the task can be `done`; a `mismatch`, failed VCONF, `unava
 
 **Suggested tier:** {{small | medium | large}} — {{reason under the Model selection criteria}}
 **Implementation disciplines:** {{`test-driven-development` + `yagni` for
-behavior-affecting work, or the exact carve-out that makes them inapplicable}}
+behavior-affecting work, or the exact carve-out: which of that skill's own
+skip conditions this task meets}}
 
 {{For a high-risk transformation, also fill the shard/phase fields from
 `../references/scalable-transformation.md`; do not clone one task file per

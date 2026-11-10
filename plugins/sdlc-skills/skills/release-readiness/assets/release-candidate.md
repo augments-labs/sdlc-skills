@@ -8,6 +8,11 @@ durable release-evidence store outside the frozen source/artifacts. A
 repository record is a separate candidate to verify and review. A later
 promotion gets a new descriptor and ledger.
 
+Compute each identity slot the same way, so anyone can recompute it: write
+the values the slot lists, one per line in the order the template gives
+them, and take the first 7 characters of `git hash-object --stdin` over those
+lines. The slot's own value and anything written later stay out.
+
 ```markdown
 ## Immutable release-input descriptor
 

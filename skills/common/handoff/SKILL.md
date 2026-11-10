@@ -36,7 +36,8 @@ says it may go.
    ```
 
 3. "Wherever is easiest", approval of the content, or silence names no
-   destination. Ask again.
+   destination. Ask again. While a verification or review is bound to this
+   checkout's working tree, recommend a destination outside it.
 4. For a scratch path outside the workspace, fill `Storage controls`: data
    class, readers, lifetime, exact cleanup target and owner, and whether
    cleanup is still pending. Write nothing into the repository.
@@ -57,7 +58,9 @@ Read `references/handoff-example.md` when the first draft is written and needs c
    Never write an assumption as approval.
 4. In `Evidence`, give for each check: the command, where it ran, the tree,
    when, and the result. If a result is stale or the check never ran, say so.
-   Leave no weak result out.
+   Leave no weak result out. A note written into the checkout a check ran
+   on changes that tree after the check: take the tree's identity before
+   writing, and name the note and its ledger as the only paths added since.
 5. `Suggested skills` lists possibilities only. It is not proof that any was
    invoked, and not a sequence to follow.
 6. `References` holds paths or URLs to specs, plans, ADRs, issues, commits.

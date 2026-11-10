@@ -56,7 +56,7 @@ Repeat this block for each finding:
 
 ### {{finding title}}
 
-- Category: {{Critical: data loss/security/silent corruption | Important: failure hidden from operator/user | Minor: log quality or low-impact broad scope}}
+- Severity: {{Critical: data loss/security/silent corruption | Important: failure hidden from operator/user | Minor: log quality or low-impact broad scope}}
 - Disposition: {{blocking | advisory}}
 - Evidence: {{file:line and observed problem}}
 - Hidden failure / affected party: {{error swallowed; caller, operator, or user harmed}}

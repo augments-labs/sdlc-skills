@@ -36,7 +36,8 @@ reviewable and recoverable.
   independently (**failure surfaces**)? {{answer and evidence}}
 - **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
   the ordinary route, or the user marking the work high-risk, makes it
-  high-risk. Reclassify when inputs change.
+  high-risk. Reclassify when inputs change. `pending classification` holds
+  every change to the target until it is resolved.
 
 ## Problem
 

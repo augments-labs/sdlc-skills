@@ -105,10 +105,12 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
 ## Step 3: Build each phase under test
 
 1. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each phase
-   this change needs. Four tests are new behaviour, each red before its code:
+   this change needs. Five tests are new behaviour, each red before its code:
    - the migration applies to the previous schema version;
    - the backfill run twice changes nothing the second time;
    - the backfill interrupted mid-run resumes to the same end state;
+   - a live write landing between a backfill batch's read and its write is
+     not overwritten;
    - reads handle a row not yet backfilled.
 
    The compatibility test, the previous code version's suite against the

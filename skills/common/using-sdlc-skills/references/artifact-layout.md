@@ -6,7 +6,12 @@ finds it.
 
 ## Directories
 
-Every path sits under `.sdlc-skills/` at the project root. Run
+Every path sits under `.sdlc-skills/` at the project root. The project root
+is the main checkout, also when you work in a linked task worktree: one task
+then has one trail, and a write to it never changes the state a worktree's
+verification is bound to. `git worktree list` prints the main checkout
+first; when that entry is marked `bare`, the root is the current checkout's
+top. From a worktree, cite an artifact by its absolute path. Run
 `bash scripts/artifact-layout.sh` from the root to create them; a second run changes
 nothing.
 

@@ -17,7 +17,7 @@ A successor section is headed `## Feasibility (successor)`, the next
 - **External condition and decision ledger:** {{ledger path: the brief's path
   with .ledger.md for .md, rows naming this section, unless the user sets
   another; holds each condition's pending / satisfied / failed state and the go /
-  go-if / no-go / cancel outcome, bound to the version above — lifecycle never
+  go-if / no-go / changes requested / cancel outcome, bound to the version above — lifecycle never
   mutates this section}}
 - **Accountable decision owner:** {{who commits the project}}
 

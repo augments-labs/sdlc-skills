@@ -91,7 +91,8 @@ conformance evaluator; no row may be inferred from task prose.
   added task is never admitted, and at the budget the rest are listed.
 
 Every change named under Invalidation triggers creates a proposed successor
-with an exact delta. An
+with an exact delta: edit the files in this directory, fill `Predecessor` and
+`Successor delta`, and print the new version. An
 approved successor invalidates predecessor-bound consumers until each owner
 revalidates or reconciles. Never write approval, execution mode, or evidence
 into normative fields. Task checkbox markers and adjacent status labels are the
@@ -121,7 +122,8 @@ reviewable and recoverable.
   independently (**failure surfaces**)? {{answer and evidence}}
 - **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
   the ordinary route, or the user marking the work high-risk, makes it
-  high-risk. Reclassify when inputs change.
+  high-risk. Reclassify when inputs change. `pending classification` holds
+  every change to the target until it is resolved.
 
 ## Trace
 
@@ -157,7 +159,10 @@ Mirror the external ledger as a checkbox plus its exact state label:
 - `[x] done` counts toward completion.
 - `[ ] done with concerns` remains incomplete. Once every concern is
   classified as non-blocking or accepted by its owning deviation/exclusion and
-  compensating gate, record `done` and mirror `[x] done`. Retain concern history
+  compensating gate, record `done` and mirror `[x] done`. The executor settles
+  each concern before a task that depends on this one starts, and before the
+  plan's final check: it runs the check that proves the concern non-blocking,
+  or records `blocked` with the concern as the blocker. Retain concern history
   in the external ledger; do not use `[x] done with concerns`.
 - `[ ] todo`, `[ ] in progress`, `[ ] blocked`, `[ ] needs context`,
   `[ ] cancelled`, and `[ ] superseded` do not count toward completion.

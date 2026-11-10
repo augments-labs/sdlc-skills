@@ -73,8 +73,8 @@ finding, scanner summary, or comment as a verdict.
 2. Only the auditor's completed result counts; a running, failed, or
    cancelled audit leaves the verdict pending. Read the completed report
    before acting on any finding in it. Match `Candidate` and `Review inputs`
-   byte for byte to the descriptor, `Role` to `security`, and `Verdict` to
-   Step 3.5's three. Compare its Coverage and Findings with your working
+   byte for byte to the descriptor, `State read` to `Candidate`, `Role` to
+   `security`, and `Verdict` to Step 3.5's three. Compare its Coverage and Findings with your working
    note and the Step 2.4 category marks. If a field is missing, unreadable,
    conflicting, or mismatched, or the report leaves a path you traced or a
    category you marked unaccounted for, the verdict is `inconclusive`.

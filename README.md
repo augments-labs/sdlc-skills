@@ -143,14 +143,14 @@ numbers cannot drift from the tree.
 | What loads | Words | Approx tokens | With every reference and asset |
 | --- | --- | --- | --- |
 | The names and descriptions of all 49 skills, every session | 3299 | 5183 | |
-| The router, every session | 843 | 1333 | 4623 |
+| The router, every session | 843 | 1333 | 4718 |
 | One skill body, when its skill fires | | 638 to 4736 | 638 to 21889 |
-| The bug-fix chain, 9 skills | 10287 | 16477 | 47050 |
-| The new-feature chain, 13 skills | 16011 | 25485 | 67309 |
-| The plan-execution chain, 8 skills | 10670 | 17052 | 48450 |
-| The delegated-execution chain, 7 skills | 10275 | 16549 | 51396 |
-| The incident chain, 5 skills | 5163 | 8104 | 20464 |
-| The release chain, 5 skills | 5617 | 9090 | 36523 |
+| The bug-fix chain, 9 skills | 10298 | 16493 | 47738 |
+| The new-feature chain, 13 skills | 16063 | 25581 | 68317 |
+| The plan-execution chain, 8 skills | 10692 | 17091 | 49185 |
+| The delegated-execution chain, 7 skills | 10296 | 16582 | 52163 |
+| The incident chain, 5 skills | 5163 | 8104 | 20559 |
+| The release chain, 5 skills | 5628 | 9106 | 37167 |
 <!-- token-budget-table:end -->
 
 A full feature chain costs the price of a long design document before any

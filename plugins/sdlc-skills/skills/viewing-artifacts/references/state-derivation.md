@@ -57,12 +57,9 @@ vocabulary:
   suspended, or superseded.
 - `**External lifecycle ledger:**` on an ADR — pending, changes requested,
   accepted, in force, rejected, cancelled, retired, or superseded.
-- `**External lifecycle ledger:**` on a post-mortem — per action: proposed,
-  owner-accepted, rejected, cancelled, superseded, implemented, falsified,
-  deployed/enforced, effectiveness reviewed, effective, ineffective,
-  inconclusive, reopened, or closed.
 - `**External condition and decision ledger:**` on feasibility — go, go-if,
-  no-go, or cancel, plus each condition's pending, satisfied, or failed state.
+  no-go, changes requested, or cancel, plus each condition's pending,
+  satisfied, or failed state.
   Render go-if with its unmet conditions; recording the decision does not
   satisfy them. Unknown conditions stay unknown, not ready.
 - `**Decision ledger:**` on a deprecation record (the sunset date and the
