@@ -3,7 +3,10 @@
 Fill this in before presenting a structural change. Its identity covers the
 content below and nothing else: the approval outcome, slice progress, and any
 execution receipts stay outside it, so recording progress never rewrites the
-proposal. A section with nothing to hold keeps its heading and one line,
+proposal. Write it to
+`.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-structure.md` unless the user
+names another place; those outside records are rows in the ledger beside it.
+A section with nothing to hold keeps its heading and one line,
 `None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
@@ -41,8 +44,9 @@ reviewable and recoverable.
 
 ## Now
 
-{{current structure, and the friction actually measured — which change bounced
-across which files, how often}}
+{{current structure; the friction actually measured — which change bounced
+across which files, how often; and the performance and resource profile no
+slice may fall below}}
 
 ## Proposed
 
@@ -66,7 +70,7 @@ Why the alternatives lose: {{the reason, not the preference}}
 
 This proposal declares removal-entry criteria; it does not claim their results.
 After consumers move, record actual absence and preservation evidence in the
-execution ledger before removal. Existing consumers do not block proposing
+ledger beside this proposal before removal. Existing consumers do not block proposing
 their migration, and approval of the proposal does not authorize early deletion.
 
 ## Slices
@@ -76,7 +80,7 @@ tree green.
 
 | ID | Change | Depends on | Effects beyond the code | Gate it must pass | Rollback |
 | --- | --- | --- | --- | --- | --- |
-| {{S1}} | {{one structural move}} | {{slice ids}} | {{data, config, deploy, or consumer effects}} | {{the bound gate plus the project gate}} | {{how this slice alone is undone}} |
+| {{S1}} | {{one structural move}} | {{slice ids}} | {{data, config, deploy, or consumer effects}} | {{the preservation tests this slice must keep green, plus the project's own checks}} | {{how this slice alone is undone}} |
 
 ## Rollback for the whole change
 

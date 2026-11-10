@@ -23,7 +23,7 @@ to `debugging`.
 
 ## Step 1: Bound the impact
 
-1. Write three lines from the signal users are hitting, not from source:
+1. Write four lines from the signal users are hitting, not from source:
    what fails, for whom, since when, how badly.
 2. Do not diagnose. Do not open product code.
 
@@ -34,7 +34,8 @@ to `debugging`.
    - shedding or redirecting traffic, draining an instance, opening a breaker
    - raising or lowering a limit, quota, or concurrency
    - blocking the triggering input, tenant, or job
-   - rolling back to the last known-good release — wide, needs approval
+   - rolling back to the last known-good release — wide, needs approval,
+     unsafe once data was migrated
 2. Read the runbook, deploy log, and config for them. Reading is not pulling.
 3. A lever is yours only when the user, the incident owner, or a runbook the
    project designates gives you scoped authority for that lever on that target;
@@ -42,9 +43,21 @@ to `debugging`.
    escalate now with the Step 1 lines; that is the containment step. This
    includes every deploy, rollback, production-data change, and customer-facing
    block such as a tenant block, whatever access you hold.
-4. Pull the narrowest lever that works. If its effect cannot be stated in one
+4. If no safe authorized lever remains, or a lever risks evidence or other
+   users, read `references/hard-containments.md` before anything else. Record
+   the exhausted options, residual impact, and escalation as the record's
+   hard-containment fallback; do not keep selecting the same lever.
+5. If capturing is cheap, and the user, the incident owner, or a designated
+   runbook currently authorizes keeping that data, redact credentials and
+   personal data, then save a failing example, the logs, or the current
+   configuration to `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/` before
+   a rollback or restart erases it. Seconds, not minutes. Never delay
+   containment for evidence.
+   If there is no such authority, keep nothing, and name what was lost in
+   the record.
+6. Pull the narrowest lever that works. If its effect cannot be stated in one
    sentence, do not pull it. Open `assets/containment-record.md` when you pull
-   it, with the impact, the lever, and when it was pulled.
+   it.
 
    Checkout fails for every user since a deploy that, the deploy log shows,
    put a new discount-code path behind a flag. Blocking the tenant that first
@@ -53,34 +66,24 @@ to `debugging`.
    narrowest lever that works, and its effect fits one sentence: checkout
    runs without discount codes. Pull it if Step 2.3 makes it yours.
 
-5. If no safe authorized lever remains, or a lever risks evidence or other
-   users, read `references/hard-containments.md` before anything else. Record
-   the exhausted options, residual impact, and escalation; do not keep
-   selecting the same lever.
-
 ## Step 3: Prove it stopped
 
 1. Read the signal from Step 1 again. If it has returned to normal, the
    impact is contained.
 2. If the signal is unchanged, the impact is not contained. Record the
-   attempted lever and result; return to Step 2 only for a different
-   justified intervention. If the options are exhausted, take its
-   hard-containment fallback. The action taken proves nothing.
-3. If capturing is cheap, and the user, the incident owner, or a designated
-   runbook currently authorizes keeping that data, redact credentials and
-   personal data, then save a failing example, the logs, or the current
-   configuration to `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/` before
-   a rollback or restart erases it. Seconds, not minutes. Never delay
-   containment for evidence.
-   If there is no such authority, keep nothing, and name what was lost in
-   the record.
+   attempted lever, its result, and whether it still holds; return to Step 2
+   only for a different justified intervention. If the options are
+   exhausted, take Step 2.4's hard-containment fallback. The action taken
+   proves nothing.
+3. Any other signal (partial, delayed, unreadable, returning): read
+   `references/hard-containments.md` before deciding.
 
 ## Step 4: Record and hand off
 
-1. Complete the containment record from Step 2.4: cost while it holds, how to
-   reverse, who owns reversal. Open `assets/containment-record.md` here when
-   no lever was pulled, because Step 2.3 escalated or Step 2.5 exhausted the
-   options, and put the escalation in its lever table.
+1. Complete the containment record from Step 2.6. Open
+   `assets/containment-record.md` here when no lever was pulled, because
+   Step 2.3 escalated or Step 2.4 exhausted the options, and put the
+   escalation in its lever table.
 2. Report three things and call nothing resolved:
 
    ```text
@@ -92,10 +95,9 @@ to `debugging`.
 3. **REQUIRED SUB-SKILL:** invoke `debugging` for the cause. Once cause and
    containment are known, invoke `post-mortem`. Write both into the record's
    `Still open` lines. Diagnose nothing from this skill.
-4. Under the hard-containment fallback, pass residual impact, exhausted safe
-   levers, and incident/escalation owner to `debugging`. New or worsened
-   impact or a newly available lever reopens containment; unchanged residual
-   impact does not.
+4. Pass any hard-containment fallback to `debugging`. New or worsened impact
+   or a newly available lever reopens containment; unchanged residual impact
+   does not.
 
 ## Gotchas
 

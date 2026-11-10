@@ -6,11 +6,9 @@ description: "Turns a correction a human made to the agent's work into the stron
 # Eliminating Corrections
 
 A correction fixes one instance. The class of mistake behind it stays open
-until something that needs nobody's memory closes it: a shape that cannot
-hold the wrong state, a tool that writes the right one, or a check that
-fails on the wrong one. A rule is what remains when none of those fits, and
-a reviewer is what remains after that. Propose the highest rung that fits
-the class, in writing, and build nothing until the user chooses.
+until something that needs nobody's memory closes it. Propose the highest
+rung of Step 3's ladder that fits the class, in writing, and build nothing
+until the user chooses.
 
 ## When to use
 
@@ -40,15 +38,14 @@ the class, in writing, and build nothing until the user chooses.
    first; it verifies them and owns their fix. Only a finding it records as
    verified enters Step 2.
 3. Otherwise, apply the correction to the instance in front of you, as
-   given, before anything below. A correction the user gives is a user
+   given, before anything below, through `test-driven-development` and
+   `yagni` when it changes behavior. A correction the user gives is a user
    instruction: it outranks the plan, skill, or file text that led you the
    other way.
 4. If it cannot be applied as given (the thing it names does not exist, or
    it contradicts a check that is green), say what blocks it in one sentence
    and end the turn. Never argue past that sentence.
-5. If applying it changes behavior, invoke `test-driven-development` and
-   `yagni` first, as for any edit.
-6. The apology is not the end of the turn. Go to Step 2 in the same task.
+5. The apology is not the end of the turn. Go to Step 2 in the same task.
 
 ## Step 2: Name the class
 
@@ -57,7 +54,7 @@ the class, in writing, and build nothing until the user chooses.
    ```text
    Did: {{what you produced or did, with its path or command}}
    Corrected to: {{what the user wants instead, in their words}}
-   Cause: {{missing context | misleading text in a skill, plan, doc, or comment | no check on the path | a design that allows both | a default that chose wrong}}, at {{where}}
+   Cause: {{missing context | misleading text in a skill, plan, doc, or comment | an existing rule that did not hold | no check on the path | a design that allows both | a default that chose wrong}}, at {{where}}
    Class: {{one sentence that matches the next instance of this mistake and not its neighbours}}
    ```
 
@@ -113,6 +110,8 @@ for every rung above the one you choose; "not possible" needs its reason.
    instructions file is the last place: it is read once at session start,
    far from the mistake, among everything else read then. Text that caused
    the mistake is corrected or removed before any rule is added beside it. A
+   rule that already forbade the mistake has failed: propose a higher rung,
+   or move that rule to where the mistake is made, never a second rule. A
    rule holds only as well as it is read; that is why it is this low.
 6. **Ask a reviewer to look for it.** An item in a review checklist or in
    the brief the project hands its reviewers. It holds only while someone
@@ -169,22 +168,30 @@ it is the fallback if the user declines the refactor.
 2. Rung 3 is a detector. **REQUIRED SUB-SKILL:** invoke
    `test-driven-development`; its detector rule applies: in the same test,
    pin the input the check must flag and a near-miss it must pass. The input
-   it must flag is the state from Step 1.1, not a made-up example. A check
-   never seen red on that state does not close the class. When the rung adds
-   a job to CI or changes what CI runs for the whole project, invoke
-   `verification-strategy`; one more test in an existing suite does not.
+   it must flag is the state from Step 1.1, restored in a scratch copy for
+   the red run, not a made-up example; add the same mistake spelled a second
+   way, so the check matches the class and not the saved literal. A check
+   never seen red on that state does not close the class. If it is red on
+   instances that already exist, report the count and ask the user whether
+   to fix them now or exempt each by name; never narrow the check or add a
+   blanket ignore unasked. When the rung adds a job to CI or changes what CI
+   runs for the whole project, invoke `verification-strategy`; one more test
+   in an existing suite does not.
 3. Rung 4 is a signal. **REQUIRED SUB-SKILL:** invoke `adding-observability`
    for an alert or a metric; an assertion in product code is a behavior
    change under rung 1's owners.
 4. Rung 5 in a skill goes through **REQUIRED SUB-SKILL:** `writing-skills`,
-   which owns the format and the proof that it changes behavior. A comment
-   or module doc is a plain edit: put it on the line read before the
-   mistake, and name the mistake it prevents, not the correction's date.
+   which owns the format and the proof that it changes behavior. A comment,
+   a module doc, or a line in a general instructions file is a plain edit:
+   put a comment or doc on the line read before the mistake, and name the
+   mistake the rule prevents, not the correction's date.
 5. Rung 6 is an edit to the project's review checklist or reviewer brief.
    Say in the reply that it holds only while someone reads it.
 6. Write the four lines and the chosen rung into the commit message of
-   what you built, so the next instance of the class starts from them. Then
-   return to the task the correction interrupted.
+   what you built, so the next instance of the class starts from them; with
+   no commit (a harness hook outside the repository), write them as a
+   comment in what you built. Then return to the task the correction
+   interrupted.
 
 ## When you are tempted to just remember
 
@@ -215,29 +222,8 @@ Stop and go back to the step named:
 
 ## Gotchas
 
-- A check written from the corrected code passes on its first run and has
-  never met the mistake. The failing input is where Step 1.1 saved it;
-  restore it in a scratch copy for the red run, then
-  run the check on the corrected state for the green. Prevents a detector
-  that has only ever seen good input.
 - A pre-commit hook is absent on a fresh clone and skipped with
   `--no-verify`; a harness hook runs only in that harness. Where the
   mistake leaves file state, either shortens the loop and neither enforces.
   Prevents a hook proposed as "the check" that leaves the class open
   everywhere the hook is not installed.
-- A correction that contradicts a skill, plan, or doc you followed is
-  evidence that the text is wrong, not that you misread it. Left alone, the
-  next session follows it the same way. Prevents a rule added beside the
-  text that caused the mistake.
-- "Remember this" names the outcome the user wants, not the rung. Taking it
-  as a request for a memory note skips the ladder. Prevents a rung-5 answer
-  to a rung-1 problem.
-
-## Common mistakes
-
-- Instead of running the ladder on an ordinary bug with an unknown cause,
-  find the cause first; the ladder needs a named class, and a guess at the
-  cause names the wrong one.
-- Instead of carrying the ladder into a production escape, let
-  `post-mortem` run its audit of every safeguard; this skill looks at one
-  class and one correction.

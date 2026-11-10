@@ -21,8 +21,7 @@ diagnosis, not permission to change code.
 ## Step 1: Freeze
 
 1. Open `assets/audit-report.md` before the inventory. Fill *What was
-   frozen* first: identity, goal, path boundary, guarantees in force, and the
-   evidence allowed.
+   frozen* first.
 2. Declare the report path up front:
    `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`. The coordinator owns
    it, and it sits outside the audited target's identity. Identify the
@@ -33,44 +32,44 @@ diagnosis, not permission to change code.
    ignored or out-of-repository report path. If the target drifts, stop or
    restart.
 3. Fill every row of the template's inventory table.
-4. Prefer one bounded audit. If the surface is large, split it into
-   partitions with stable IDs, exclusive inventories, and cross-boundary
-   edges. Invoke `dispatching-parallel-agents` only when read sets,
-   resources, data boundaries, and outputs reconcile independently.
+4. Prefer one bounded audit: one partition, dispatched as Step 2 says. If
+   the surface is large, split it into partitions with stable IDs, exclusive
+   inventories, and cross-boundary edges. Invoke
+   `dispatching-parallel-agents` only when read sets, resources, data
+   boundaries, and outputs reconcile independently.
 
 ## Step 2: Challenge read-only
 
-1. Fill `assets/yagni-auditor.md` with `assets/partition-report.md` before
+1. Fill the template's `Audit-input identity` once the partitions are written.
+   Fill `assets/yagni-auditor.md` with `assets/partition-report.md` before
    dispatching each exact partition, then dispatch as
    `dispatching-parallel-agents` Step 2 says.
 2. If the dispatch is empty, refused, or unavailable, follow the no-dispatch
    rule in `dispatching-parallel-agents` Step 2.
-3. Fill every line of the template's coverage-reconciliation block before any
-   finding.
-4. Read each returned partition report; open its file if only a location was
+3. Read each returned partition report; open its file if only a location was
    returned. Match Target, Audit inputs, Partition, and Verdict to the frozen
    request and to the auditor's allowed verdicts. If a field is missing,
    unreadable, conflicting, or mismatched, that partition is inconclusive.
    Keep the report unchanged; never infer a repository-wide conclusion from
    partial coverage.
+4. Fill every line of the template's coverage-reconciliation block from
+   those reports before any finding.
 
 ## Step 3: Publish decisions
 
 1. Fill every column of the template's findings table, one row per finding.
-   Line count is not authority.
 2. Apply or approve nothing. If a structural change is accepted, invoke
    `refactor-architecture` for it. Behavior work goes to its feature or bug
    route.
-3. Verify the report's coverage, then stop. Review or branch finishing runs
-   only if the user separately asks to ship the report.
+3. Check that Step 2.4's block accounts for every partition, then stop.
+   Review or branch finishing runs only if the user separately asks to ship
+   the report.
 
 ## Gotchas
 
-- Code with no static caller can still be reached through reflection,
-  registration, or configuration. A search that finds no caller has not proved
-  a removal safe.
-- A reconciliation that lists no failed or inconclusive area reads as full
-  coverage. Count what was not examined, or a silent gap passes as clean.
+- A caller search that returns only the candidate's own tests reads as
+  "used", and the row becomes `keep`. Tests are not use: treat it as having
+  no caller.
 - A working-tree hash captured before the audit reports DRIFT once the
   report lands at an unignored path under the audited tree, though no audited
   code changed.
@@ -80,6 +79,7 @@ diagnosis, not permission to change code.
 - “No direct caller”: dynamic, configured, generated, or external use remains
   `investigate` until disproved or deprecated.
 - “One implementation”: a seam containing real impedance, policy, or test
-  isolation may be justified; apply the deletion test, not a slogan.
+  isolation may be justified; apply the deletion test (inline it into every
+  caller: it stays only if that spreads complexity), not a slogan.
 - “Tests and rollback are overhead”: a current assurance or recovery guarantee
   owns them; duplicate machinery with no distinct guarantee is the candidate.
