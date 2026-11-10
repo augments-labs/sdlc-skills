@@ -77,26 +77,33 @@ expands a rollout.
 3. List every path the change adds: request handler, background job, event
    consumer, scheduled work, migration step, retry, cache fill. Put the
    switch in front of each.
-4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` in this order:
-   the on-state test, failing, then the new path that passes it; then the
-   off-state test, which fails because the path still runs; then the switch,
-   which passes it by restoring the prior behaviour.
-5. Make turning it off change behaviour without a deploy: read the switch at
-   runtime, never as a build-time constant. Record the exact off action.
+4. **REQUIRED SUB-SKILL:** invoke `test-driven-development` in this order.
+   The on-state test, with the switch on, fails; then write the new path
+   behind the switch, which stays off by default, so the project's whole
+   test command is green when that cycle closes. Then the off-state test,
+   under that skill's preserved-behaviour cycle: it asserts that the side
+   effect of every path in item 3 is absent, is seen green, is watched red
+   with the guard taken off one path at a time, and is green again with the
+   guard back. Start one off-state test from what the on state leaves
+   behind (a queued message, a row or cache entry in the new form, a
+   scheduled job): the prior path must handle it.
+5. Make turning it off change behaviour without a deploy or a restart: read
+   the switch each time the path runs, never as a build-time constant or a
+   value loaded once at process start. Record the exact off action.
 6. Write the removal follow-up: an owner, and the condition after which the
    switch and the prior path are deleted.
 
 ## Step 3: Build the signals
 
-1. For each new path, emit the signals the accepted thresholds read: the
-   correctness or error outcome, safety (data integrity, security or privacy
-   violations), latency or resource use, and the business or operational
-   outcome the change exists to move. Liveness serves no threshold.
+1. For each new path, emit the signals the accepted thresholds read.
+   Liveness serves no threshold.
 2. Emit through the project's existing telemetry facility, under its naming
    convention. Add no vendor, library, or dashboard tool.
 3. Carry the switch state or cohort on every signal.
-4. No secret, credential, token, or personal data in a signal's value or
-   labels.
+4. No secret, credential, token, request body, header, query string, or
+   personal data in a signal's value, label, or log field. Build each metric
+   by `adding-observability` Step 2's rules for labels, counters, and
+   histograms.
 5. **REQUIRED SUB-SKILL:** invoke `test-driven-development` for each signal:
    a test that fails when the signal is missing or carries the wrong state.
 6. Confirm the baseline source exists: the prior behaviour is already
@@ -105,17 +112,16 @@ expands a rollout.
 
 ## Step 4: Record and hand off
 
-1. Open `assets/rollout-record.md` before filling it, and fill every section:
-   policy source, switch, guarded paths, signals, baseline, kill action with
-   who may pull it, removal follow-up. If the terms were drafted, add the
-   acceptance row to the ledger beside the record: who accepted, when, and
-   the terms they saw. Terms copied from a policy need no row.
+1. Open `assets/rollout-record.md` before filling it, and fill every
+   section. If the terms were drafted, add the acceptance row to the ledger
+   beside the record: who accepted, when, and the terms they saw. Terms
+   copied from a policy need no row.
 2. Report three lines and decide nothing:
 
    ```text
    Switch: {{name}}, default {{state}}, guards {{n}} paths, off-state test {{path}}
    Signals: {{n}} emitted, {{n}} thresholds served, baseline {{source | none}}
-   Policy: {{from policy, source | accepted by whom, when | declined}}
+   Policy: {{from policy, source | accepted by whom, when}}
    ```
 
 3. Continue the ordinary chain to verification, review, and the branch

@@ -65,11 +65,16 @@ state under check. Never return "looks good".
    crossed with viewport, theme, input method, platform, and content
    pressure. Include the empty, loading, error, overflow, and no-permission
    states the UI contract contains. Record a decision for each omission.
-2. Drive the real interface through its real input boundary. For a GUI,
+2. Start the interface yourself from the state under check, by the recorded
+   launch path, and record under `Launch path` the process it started and
+   the port or window that process serves. Capture only from that one: a
+   server already running, or one on another port, renders another state
+   under this hash.
+3. Drive the real interface through its real input boundary. For a GUI,
    capture screenshots or recordings. For a TUI, use a PTY at the declared
    dimensions and a VT-capable renderer, and keep the raw terminal stream and
    the rendered frame.
-3. If no capture tool is available (screenshot, browser driver, PTY
+4. If no capture tool is available (screenshot, browser driver, PTY
    renderer), one is refused, or the available one cannot reach a row (its
    size, theme, platform, or input method), that row is pending. Name the
    missing tool and what would provide it, and ask the user to provide it or
@@ -77,10 +82,10 @@ state under check. Never return "looks good".
    the user observed live is captured by their receipt. Reading the source,
    the markup, or the DOM shows what was asked for, not what rendered; it
    never stands in for a frame.
-4. End each row at a stable, named observation, not at a successful launch.
-5. Write one `Scenario matrix` row per observation: hash the raw bytes and
+5. End each row at a stable, named observation, not at a successful launch.
+6. Write one `Scenario matrix` row per observation: hash the raw bytes and
    the rendered media, record the capture tool and the row's inputs.
-6. Never overwrite an earlier frame. Keep retries, duplicates, late output,
+7. Never overwrite an earlier frame. Keep retries, duplicates, late output,
    and superseded frames, and record a decision for each. Each required row
    has one accepted result.
 
@@ -107,8 +112,9 @@ state under check. Never return "looks good".
    untested flow, recovery state or condition. An unapproved layout or
    interaction fails, however polished, unless an approved successor replaces
    the binding.
-6. File each defect in `Defects`: severity, requirement violated, matrix row
-   and frame, impact, reproduction.
+6. File each defect in `Defects`, filling every column. A defect is
+   `blocking` when it violates an accepted criterion or a mapped design
+   obligation.
 7. For a human-owned criterion or exception, follow
    `verification-before-completion`'s manual-acceptance contract. Only its
    trusted user-origin receipt passes that row.
@@ -122,13 +128,13 @@ state under check. Never return "looks good".
    change that could alter the render, invalidates the affected passes.
 3. Write the `Verdict`. Pass only when all four hold: the calibrated probe was
    caught and restored; every required row was captured and inspected; there
-   is no blocking defect; every human-owned row has its trusted receipt.
-   Otherwise the verdict is fail or pending.
+   is no open blocking defect; every human-owned row has its trusted receipt.
+   An open blocking defect makes the verdict fail; any other miss makes it
+   pending.
 4. Return the verdict to the skill that requested it. Authorize no
    acceptance, integration, or promotion here.
 5. When the project battery is being established, add this check as a row
-   in `verification-strategy`'s matrix with its own cells, action, evidence,
-   owner, cadence, promotion, and failure response.
+   in `verification-strategy`'s matrix.
 6. For a release, take a fresh verdict against the exact immutable artifact.
    A verdict on source or a working tree is acceptance evidence only.
 

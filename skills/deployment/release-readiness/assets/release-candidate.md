@@ -8,6 +8,11 @@ durable release-evidence store outside the frozen source/artifacts. A
 repository record is a separate candidate to verify and review. A later
 promotion gets a new descriptor and ledger.
 
+Compute each identity slot the same way, so anyone can recompute it: write
+the values the slot lists, one per line in the order the template gives
+them, and take the first 7 characters of `git hash-object --stdin` over those
+lines. The slot's own value and anything written later stay out.
+
 ```markdown
 ## Immutable release-input descriptor
 
@@ -30,7 +35,8 @@ network, mutation, or publication access.
   required state or proposed omission}}`
 - **Requirements/migration/assurance versions:** `{{identities}}`
 - **Migration source/live state:** `{{source revision and queue digest/count/lag;
-  snapshot/high-water identity, applied ranges, reconciliation and threshold}}`
+  snapshot/high-water identity, applied ranges, reconciliation and threshold;
+  the migration contract's decommission ledger location and its latest state}}`
 - **Review/security inputs:** `{{candidate-bound identities}}`
 - **Prior-stage/deviation inputs:** `{{identities and required dispositions}}`
 - **Action contracts:** `{{environment or authorized copy, data boundary,
@@ -55,7 +61,7 @@ pre/post effects. Shared or production mutation needs exact direct authority;
 otherwise use an isolated representative copy or block.
 
 A failure, deadline, cancellation, or lost response remains
-`cancellation-requested` until worker, descendants, and effects are quiescent.
+`cancellation requested` until worker, descendants, and effects are quiescent.
 Quarantine partial/late outputs and link any retry; never retry an unknown
 non-idempotent outcome before reconciling actual state. Only terminal successful
 build attempts enter the frozen artifact set. A later rebuild creates a new

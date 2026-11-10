@@ -28,7 +28,7 @@ project sets another durable location.
   receipts and outcomes stay in the External challenge ledger; or exact
   accountable exception with consequence, compensating gate, and expiry}}`
 - **External challenge ledger:** `{{predeclared reviewer-owned location outside
-  the matrix candidate; predecessor/successor attempts, cancellation-requested/
+  the matrix candidate; predecessor/successor attempts, cancellation requested or
   quiescent state, quarantined partials, reports/findings/dispositions, and late-
   result rejection bind to the identity}}`
 - **Challenge artifact controls:** `{{data class, access, worker/provider/

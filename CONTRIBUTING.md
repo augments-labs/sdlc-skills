@@ -116,7 +116,7 @@ does with a skill.
 | Where | What a result proves | Commands |
 | --- | --- | --- |
 | `scripts/sh/`, all run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
-| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, and `run-state-identity.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
+| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, and, on Linux, macOS, and Windows, `run-check-skill.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
 | `tests/harnesses/` | Nothing on its own. These files hold how each CLI installs the plugin, and the smoke test drives them | One file per supported CLI |
 
 ### The four gates
@@ -126,7 +126,7 @@ does with a skill.
 | `validate-skills.sh` | Frontmatter, body and description size limits, the ban on external references and vendor model names, where templates and references live, that every manifest lists every skill, that the adapters are in sync, that `docs/` and `tests/` Markdown paths and skill reference paths resolve, that the conformance record matches the tree, and that the context-cost table in `README.md` matches `token-budget.sh --table` |
 | `validate-skill-graph.sh` | Pairs of skills that hand off to each other. A pair listed in `scripts/sh/data/allowed-cycles.txt` is allowed |
 | `validate-trigger-collisions.sh` | Trigger phrases of two or more words that more than one description shares |
-| `token-budget.sh` | With `--chain NAME`, the total body words of one chain against its budget. With `--max N`, the approximate token size of each `SKILL.md` against a ceiling. CI runs both, the second with `--max 5000`. With `--table`, the measured cost of the router, one body, and each chain as the markdown table `README.md` carries between its `token-budget-table` markers; paste its output there after any body edit |
+| `token-budget.sh` | With `--chain NAME`, the total body words of one chain against its budget. With `--max N`, the approximate token size of each `SKILL.md` against a ceiling. CI runs both, the second with `--max 5000`. With `--table`, the measured cost of every name and description, the router, one body, and each chain, plus a ceiling column that adds every file under `references/` and `assets/`, as the markdown table `README.md` carries between its `token-budget-table` markers; paste its output there after any edit to a body, a description, a reference, or an asset |
 
 ### Choose the check for your change
 
@@ -165,17 +165,25 @@ where the CLI can list them.
 
 A chain is the ordered set of skills the router loads for one kind of task,
 such as a bug fix or a new feature. `scripts/sh/data/chains.toml` lists the
-skills in each chain, the recorded word count of each body, and the chain's
+skills in each chain, the chain's recorded word total, and the chain's
 budget. `token-budget.sh --chain NAME` adds up the bodies in the chain,
 leaving out their reference files, and fails when the total is over budget.
 CI runs it for every chain.
 `token-budget.sh --table` prints the same sums as a markdown table, with the
-router and the body range; `README.md` carries a copy between marker comments
-that `validate-skills.sh` compares against the script, so a body edit that
-moves a number is followed by pasting the table again.
-A budget is a ratchet: when an edit pushes a chain over it, cut the body
-first, and raise `budget_words` only with a line in the PR naming the words
-added to the budget and what they buy.
+names and descriptions of every skill, the router, and the body range. Its
+last column adds every file under each skill's `references/` and `assets/`:
+the ceiling a chain reaches only if every support file is read. `README.md`
+carries a copy between marker comments that `validate-skills.sh` compares
+against the script, so an edit to a body, a description, a reference, or an
+asset that moves a number is followed by pasting the table again.
+A budget is a fixed ceiling. When an edit takes a chain over it, cut as many
+words elsewhere in that chain in the same change, so the chain's total does
+not grow. `budget_words` rises only with an eval record, its `results/` path
+and pinned plugin commit, showing that the added words change what an agent
+does. A line in the pull request arguing for the words is not enough, since
+one can be written for any addition. The one other move is a change of
+membership: a chain that gains or loses a skill moves its ceiling by that
+body's words and no more.
 
 ### Cutting text from a skill
 
@@ -213,7 +221,7 @@ A few things the gate enforces:
   `plan-files.sh`, and `assets/mode-question.md` in `writing-plans`, `executing-plans`, and
   `subagent-driven-development`, and the preview scripts (`serve.py` and its
   wrappers) in `viewing-artifacts`, `ui-ux-design`, and `diagnosing-a-session`. Edit the
-  `writing-plans` copy (for the first two) or the `viewing-artifacts` copy
+  `writing-plans` copy (for the first three) or the `viewing-artifacts` copy
   (for the preview), then copy it to the others; the gate compares against
   those.
 - No shipped skill may reference a `docs/` path, because `docs/` does not
@@ -436,8 +444,11 @@ check a cell with the CLI before you rely on it.
 
 When the action is not available, the skills require the agent to treat the
 work as not dispatched, name the action it attempted and what the
-environment would need, and ask the user once, offering a self-review
-labelled as one, a named reviewer or agent, or keeping the work pending.
+environment would need, and ask the user one question that covers every
+work item the same cause stopped. The choices are doing it in the session,
+labelled not independent (for a review, a self-review), a named person or
+agent, or keeping the work pending; the first is left out where independence
+is required.
 
 `subagent-driven-development` adds a role binding. Its three role briefs
 (`assets/implementer.md`, `assets/task-reviewer.md`, `assets/re-reviewer.md`)
@@ -514,6 +525,7 @@ not to merge.
 | --- | --- | --- |
 | `test-driven-development` and `yagni` | Kept separate | TDD catches a change with no observed failure behind it (a test that passed first run, a test that checks generated text, a preserved behavior never made to fail on purpose). `yagni` catches what a green test cannot see: a speculative flag or abstraction, a fix placed at the symptom, a stub on a path no test reaches, code deleted because it looked unused |
 | `mapping-the-codebase` and `debugging` | Kept separate | Mapping catches a boundary drawn too small (a caller reached through configuration, reflection, a generated route, or a scheduler; a stale boundary record), none of which needs a failure. `debugging` catches a fix with no established cause: a patched symptom, an intermittent failure called fixed after one green run, fixes repeated past the circuit breaker |
+| `runtime-evidence`, `debugging`, `prototyping`, and `verification-before-completion` | Kept separate | `runtime-evidence` runs on a question about code that exists and works, with no change asked, and catches what the other three never see: an answer given from reading where a run would settle it, a definition that is not the one that runs, a source default overridden at runtime, a speed claim with no measured baseline. `debugging` needs a failure and looks for its cause. `prototyping` builds something that does not exist yet to answer one question. `verification-before-completion` checks the claims made about a change before it is called done |
 | `define-goals`, `scoping`, and `feasibility-check` | Kept separate | Each is a distinct decision with its own approval question. Goals catches features listed as goals and a target with no baseline; scoping catches a missing out-of-scope list and compatibility or rollback cut to shrink a release; feasibility catches a go decided on optimism and a skipped "do not build" option. Sharing one brief is no reason to merge |
 | `brainstorming`, `feasibility-check`, and `architecture-decisions` | Kept separate | `brainstorming` runs once the goal is settled and before anything is specified, for a feature as much as an initiative, and catches the approach nobody argued against: it produces several under different constraints, checks each against the same cited facts, and compares them. `feasibility-check` judges whether one initiative can be delivered at all; its Option Zero row asks whether not building meets the goal, as one line of a go or no-go, never as a compared approach. `architecture-decisions` records and challenges one hard-to-reverse choice among options, taking brainstorming's approaches as those options when they exist; it catches an undefended assumption and an unpriced reversal, not a missing alternative. |
 | Analysis | `writing-specs`, with `working-from-a-ticket` beside it | Gathering requirements, finding the difficult parts, and writing the spec is one interleaved pass. "Identify the risks in the requirements" cannot be invoked on its own. Capturing a ticket is invoked on its own, the moment a ticket arrives and again before the work is called done, and writes no requirement: it records what the ticket says, so a plan has something in the repository to bind |
@@ -571,10 +583,13 @@ content checklist are judged by a person.
 
 ### Two token estimates
 
-`check-skill.sh` estimates tokens as words × 1.3. `scripts/sh/token-budget.sh`
+`check-skill.sh` estimates tokens piece by piece: it splits a body into
+words, numbers, symbols, and line breaks and charges each at a fixed rate.
+`scripts/sh/token-budget.sh`
 uses characters ÷ 4 over full `SKILL.md` files and its own configured
-maximum. Both are rough text budgets. They are not interchangeable, and
-neither is a billing figure. Compare each estimate only with earlier values
+maximum; its `--chain` and `--table` modes count bodies without frontmatter.
+Both are rough text budgets. They are not interchangeable, and neither is a
+billing figure. Compare each estimate only with earlier values
 from the same tool.
 
 ### Running the checks
@@ -613,7 +628,8 @@ is intentional and labelled as one.
 
 `validate-skills.sh` re-measures the numbers in the record against the tree
 on every run: the longest description, the longest body and its share of the
-ceiling, the largest estimated body, and how many skills have `references/`,
+ceiling, the largest estimated body, the largest body in bytes, and how many
+skills have `references/`,
 `assets/`, and `scripts/` directories. It finds each number by matching a
 phrase unique to its row, so a stale number fails the gate, and so does a
 rewording that breaks the match. When a skill change moves one of those
@@ -621,8 +637,8 @@ numbers, update the record in the same pull request. When you reword the
 record, keep the matched phrases intact; the regexes are in the
 "conformance record matches the tree" block of `scripts/sh/validate-skills.sh`.
 
-The ceilings themselves (1024, 500, 5000) live in `check-skill.sh` alone and
-are deliberately not restated in the gate.
+The ceilings themselves (1024, 500, 5000, 19000) live in `check-skill.sh`
+alone and are deliberately not restated in the gate.
 
 ## Releases
 

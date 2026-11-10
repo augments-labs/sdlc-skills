@@ -65,7 +65,7 @@ a few skills.
 
 | Skill | What it does |
 | --- | --- |
-| `finishing-a-branch` | Takes a finished branch through the choice you make: push, PR, merge, keep, or discard |
+| `finishing-a-branch` | Takes a finished branch through the choice you make: commit and keep, push, open a PR, integrate locally, or keep as-is. Discards unmerged work only on a direct request you confirm by typing a token; removes a merged branch only when you choose the cleanup |
 | `release-readiness` | Decides whether a build is safe to release, deploy, or publish |
 
 ## Maintenance
@@ -92,11 +92,12 @@ These skills are not tied to a phase. They live in `skills/common/`.
 | `clarifying-intent` | Asks the questions that settle what you want before work is built on a guess |
 | `prototyping` | Answers an uncertain question with a throwaway prototype |
 | `mapping-the-codebase` | Maps how a region of code fits together before it is changed |
+| `runtime-evidence` | Answers a question about how code behaves by running it, and backs a claim about speed, memory, or size with a controlled measurement |
 | `using-git-worktrees` | Creates an isolated worktree for a task and checkpoints work there |
 | `dispatching-parallel-agents` | Splits independent work across parallel agents |
 | `yagni` | Keeps a change to what the task needs, and makes sure that part is complete |
 | `handoff` | Writes a handoff so another session or agent can continue unfinished work |
-| `viewing-artifacts` | Shows the state of briefs, specs, designs, plans, and execution in a local viewer |
+| `viewing-artifacts` | Builds one page showing the state of briefs, specs, designs, plans, and execution, and offers a local preview of it |
 | `writing-skills` | Guides writing and editing the skills in this library |
 
 ## Which skills load together
@@ -107,7 +108,7 @@ other cannot see:
 - `test-driven-development` and `yagni` both load before the first edit. The
   first catches a change with no observed failure behind it; the second
   catches a change that is larger than the task, which a green test cannot
-  see.
+  see. A small edit you name exactly loads only the first.
 - `mapping-the-codebase` and `debugging` both load for a bug in unfamiliar
   code. The first catches a boundary drawn too small, such as a caller
   reached through configuration; the second catches a fix with no

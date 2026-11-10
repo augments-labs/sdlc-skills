@@ -25,7 +25,8 @@ the claim of done bind to one recorded text.
    comments included.
 2. If you were given a link or an identifier, read it only through a tool
    the harness already provides for that source and the user is entitled to
-   use. Note the tool and the time of the read.
+   use, and write nothing to the tracker. Note the tool and the time of the
+   read.
 3. If there is no such tool, or the tool fails or returns only part of the
    ticket, stop reading, write down exactly what could not be read, and ask
    once:
@@ -41,8 +42,9 @@ the claim of done bind to one recorded text.
    ```
 
    Ask this and end the turn.
-4. Read linked tickets, attachments, and comments that carry criteria or
-   constraints the same way. List the rest; do not read them.
+4. Read every comment. Read a linked ticket or attachment the same way only
+   when the ticket cites it for criteria or constraints; list the rest
+   unread.
 5. Never fill a gap from memory, from a similar ticket, or from the title.
 
 ## Step 2: Capture it
@@ -56,16 +58,13 @@ the claim of done bind to one recorded text.
    Right: 2. "Should respond within 2 seconds" (as written; no load stated)
    Wrong: 2. Responds within 2 seconds under normal load
    ```
-
-   If the ticket states none, write `none stated`; the done condition is
-   then an unclear point.
 3. Search the codebase before listing a point as unclear; never list what the
    code answers. List one line per point the text and the code together do
    not settle: which component, where a boundary sits, a criterion with
    nothing observable to check it by, a comment that contradicts the
-   description. A comment that narrows or contradicts the description goes
-   into the capture verbatim and becomes one `Unclear` line; never settle
-   it yourself.
+   description. A comment that narrows, widens, or contradicts the
+   description goes into the capture verbatim and becomes one `Unclear`
+   line; never settle it yourself.
 4. Write the capture to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{slug}}-ticket.md` or the user-set
    path. The slug is the identifier lowercased, with each run of other
@@ -109,7 +108,8 @@ the claim of done bind to one recorded text.
 
 ## Step 4: Before the work is called done
 
-1. Re-read the ticket the way Step 1 read it.
+1. Re-read the ticket the way Step 1 read it. For a pasted ticket, ask the
+   user once whether it changed since the recorded read time.
 2. If the text, the criteria, or the comments differ from the capture, the
    capture is stale. Write a successor capture (Step 2) in its own new file,
    naming the predecessor; add a `superseded` row to the predecessor's
@@ -132,8 +132,3 @@ the claim of done bind to one recorded text.
 - A criterion written as "should" or "ideally" still binds; dropping it as
   optional can ship a change the ticket's owner rejects — shows when a ticket's
   only latency requirement is phrased as "ideally".
-
-## Common mistakes
-
-- Paraphrasing the ticket into the capture: copy the text instead; a
-  paraphrase belongs under `Unclear`, as a question.

@@ -21,7 +21,7 @@ dimension to one line, and put anything you could not search under
 
 | Line | Time | What happened |
 | --- | --- | --- |
-| {{path:line}} | {{timestamp}} | {{one sentence, in order}} |
+| {{path:line, or path:line:start-end for a record that is one long line}} — {{distinctive fragment}} | {{timestamp}} | {{one sentence, in order}} |
 
 ## Findings
 
@@ -37,11 +37,11 @@ dimension to one line, and put anything you could not search under
 
 | Dimension | Searched with | Result |
 | --- | --- | --- |
-| Skills | {{the search}} | {{finding, or none found}} |
-| Gates | {{the search}} | {{finding, or none found}} |
-| Unanswered decisions | {{the search}} | {{finding, or none found}} |
-| Scope | {{the search}} | {{finding, or none found}} |
-| Ordering | {{the search}} | {{finding, or none found}} |
+| Skills | {{the search}} | {{finding, none found, or not searched: why}} |
+| Gates | {{the search}} | {{finding, none found, or not searched: why}} |
+| Unanswered decisions | {{the search}} | {{finding, none found, or not searched: why}} |
+| Scope | {{the search}} | {{finding, none found, or not searched: why}} |
+| Ordering | {{the search}} | {{finding, none found, or not searched: why}} |
 
 ## Evidence not available
 

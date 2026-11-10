@@ -22,7 +22,7 @@ This file is a filled example and failure catalogue to compare a draft against, 
 - **Evidence/uncertainty** — identity and limits, not "research says." Assumptions
   need stable IDs, evidence/state, validation, owners, expiry, and failure paths.
 - **Independent challenge** — dispatch exists only after a nonempty attempt ID.
-  Failure/deadline enters cancellation-requested until worker, descendants, and
+  Failure/deadline enters cancellation requested until worker, descendants, and
   effects are quiescent; quarantine partials. A retry is a linked successor and
   rejects predecessor late results/mutations. Missing or unresolved review blocks.
   A self-challenge never issues `clear`, so approval rests on the decision

@@ -23,10 +23,15 @@ Each of these loads `debugging`.
 ## If users are affected right now
 
 Before anything else, the agent checks whether the failure is reaching real
-users at this moment. If it is, it switches to `containing-an-incident`
-first: stop the damage with the safest available lever (a rollback, a feature
-flag, a redirect), record what was done and what impact remains, and only
-then come back to diagnosis. Say so in your request if you already know:
+users at this moment. If it is, it switches to `containing-an-incident` first:
+stop the damage with the narrowest lever that works and that it has been given
+authority for (a feature flag, a config value, a traffic redirect), and hand
+to you or the incident owner any lever it has no authority for. Having access
+is not authority: this covers every deploy, rollback, change to production
+data, and block on a customer. It then checks from the signal users are
+hitting that the impact stopped, records what was done and what is still
+broken, and only then comes back to diagnosis. Say so in your request if you
+already know:
 
 ```text
 Checkout is failing for customers right now. Contain it first.
@@ -47,8 +52,8 @@ what it tried and what would unblock it. It does not start guessing.
 
 ### It tests hypotheses instead of trying fixes
 
-With a reproduction in hand, the agent lists three to five causes the
-evidence supports and records them in a small ledger under
+With a reproduction in hand, the agent lists the causes the evidence supports,
+five at most and never padded, and records them in a small ledger under
 `.sdlc-skills/evidence/`. Each one gets a prediction and a probe. It then
 controls the suspected factor and watches for the predicted effect, and it
 checks that the competing hypotheses fail their own predictions.
@@ -58,11 +63,12 @@ accepted as a cause.
 
 ### It stops after three failed fixes
 
-The agent counts fixes it has applied to one kind of failure. After three
-that miss the mark, it stops rather than trying a fourth. It goes back to the
+The agent counts fixes it has applied to one kind of failure. After three that
+miss the mark, it stops rather than trying a fourth. It goes back to the
 reproduction, the causal model, and the assumptions, and either updates the
-model or reports to you with the ledger. This is the circuit breaker that
-stops a session from thrashing.
+model, once for that kind of failure, or reports to you with the ledger. If
+three more fixes miss on the updated model, it reports to you. This is the
+circuit breaker that stops a session from thrashing.
 
 ### It fixes the way it builds
 
@@ -71,6 +77,12 @@ the reproduction becomes the regression test, it fails before the fix and
 passes after. `yagni` keeps the fix to what the cause requires. If the fix is
 not code (a configuration, a permission, a data correction), the agent
 treats it as its own controlled action and asks for the authority it needs.
+
+The place that showed the bug is often not the only one that has it. The
+agent searches for other places with the same cause: a copy of the code, a
+sibling implementation, another caller, or another reader of a flag or
+cached value the fix changes. It fixes the ones your request covers, each
+with its own failing test, and reports the rest to you as open.
 
 Before saying "fixed", the agent reruns the reproduction against the
 original state, the fixed state, and a control, and reads the raw output
@@ -110,6 +122,7 @@ still uncertain.
 - The bug was introduced by an agent session, and you want to know how:
   [When a session goes wrong](when-a-session-goes-wrong.md).
 - The failure got past your safeguards and you want to know why:
-  ask for a post-mortem, which loads `post-mortem`.
+  ask for a post-mortem, which loads `post-mortem`. When the failure
+  reached users, the agent goes there without being asked.
 - The fix is done and you want it shipped:
   [Reviewing and shipping](reviewing-and-shipping.md).

@@ -1,13 +1,16 @@
 # Gate details
 
-Expanded checks behind the readiness gate in `../SKILL.md`. Loaded on demand — when a gate item needs a concrete check, a template, or a failure pattern to rule out.
+Expanded checks behind the readiness gate in `../SKILL.md`. Read before the expected rows are filled: every numbered row below is an expected row or an approved omission.
 
 The release-input descriptor supplies the stable expected row inventory and
 effect contract. Run controlled actions through `verification-before-completion`; its
 attempt ledger owns execution, quiescence, raw evidence, and pre/post effects.
 This reference owns which release rows must exist and how their results affect
 the promotion verdict. Never run a mutating drill against shared or production
-state without exact direct authority.
+state without exact direct authority. Pushing a version tag, merging a release
+branch, or creating a hosted release can start the project's publish workflow,
+and a version-bump commit changes the frozen source: each is the promotion or
+a new artifact set, never preparation before the decision.
 
 ## 1. Integration CI is green on the artifact's source
 

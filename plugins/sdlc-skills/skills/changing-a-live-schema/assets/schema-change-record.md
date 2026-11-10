@@ -52,7 +52,7 @@ it as missing rather than fine.
 - **Cursor:** {{where the last completed batch is recorded, so a restart resumes}}
 - **Throttle:** {{the lag or lock-wait signal it reads, and the pause rule}}
 - **Progress:** {{where remaining rows, rate, and errors are read}}
-- **Verification:** {{the count or checksum comparing old and new shape, and its result}}
+- **Verification:** {{the checksum or row-by-row comparison of old and new shape values, and its result}}
 
 ## Lock and rewrite evidence
 
@@ -82,7 +82,8 @@ Preserved behaviour, under the preserved-behaviour cycle:
 - **Phase:** contract, dropping {{old column, table, or field}}
 - **No live version reads the old shape:** {{evidence and date}}
 - **Rollback target does not read it:** {{the target version and how that was checked}}
-- **Verification re-run after old writes stopped:** {{result and date}}
+- **Verification passed on its last run before old writes stopped:** {{result and date}}
+- **No old-shape write since, and no row without the new shape:** {{evidence and date}}
 - **Retention allows:** {{the retention rule and how it is met}}
 - **Restore path:** {{the backup or snapshot and its recovery time}}
 - **Accepted:** {{the Decision ledger row identity; "no row" until accepted}}

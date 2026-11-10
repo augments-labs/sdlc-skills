@@ -34,7 +34,10 @@ Record:
 - predeclared external shard, source-change, live-state, and decommission ledgers;
 - every requirement and risk-gate ID mapped to a task or phase.
 
-Use a phase table:
+Put the phase table in the index under a `## Phases` heading (`## Shards` or
+`## Phase queues` for those): `scripts/plan-version.sh --verify` prints
+`phases_or_shards=yes` only from one of these headings, and the mode question
+and both executors read that line.
 
 | Phase | Scope/inventory | Entry gates | Exit gates | Resource/concurrency envelope | Pause/abort | Expansion authority | Recovery target |
 | --- | --- | --- | --- | --- | --- | --- | --- |

@@ -5,18 +5,17 @@ description: "Routes each task to the SDLC skills it needs before work begins. U
 
 <EXTREMELY-IMPORTANT>
 IF A SKILL MIGHT APPLY, INVOKE IT BEFORE ACTING — before any answer, question,
-or exploration. Invoking is cheap: a skill that turns out not to fit is set
-aside after reading, never before. "None fits" is decided by scanning the
-catalogue's triggers, not by confidence.
+or exploration. Set a skill aside unread only when its description's Skip
+clause names this case; otherwise read it first. "None fits" is decided by
+scanning the catalogue's triggers, not by confidence.
 </EXTREMELY-IMPORTANT>
 
 # Using SDLC skills
 
 ## Load before acting
 
-1. **Before any response or action (a question, a search, a file check, a
-   command), load every skill that might apply** through the harness's
-   skill-loading action.
+1. **Before any response or action, load every skill that might apply**
+   through the harness's skill-loading action.
 2. **Load the body, not the memory of it.** A description or an announced skill
    loads nothing; a current body already in context needs no reload. A body
    the harness re-attached after it summarized the conversation is current
@@ -24,15 +23,15 @@ catalogue's triggers, not by confidence.
    its own steps cite, ends in a truncation marker, or you cannot tell, reload
    it before acting on it.
 3. **State which skill you are using and why, then follow it.** Set one aside
-   only when its own scope or skip conditions show it does not fit. When no
-   trigger matches, proceed without a skill and invent no workflow.
+   only when its own scope or skip conditions, or rule 5, show it does not
+   fit. When no trigger matches, proceed without a skill and invent no
+   workflow.
 
 ## Routing lives in the skills
 
-Each body names its preconditions, boundaries, and handoffs. Obey them: confirm
-a named input exists before entering, move to a named owner instead of
-stretching the current skill, and invoke a named handoff through the loading
-action; naming it in prose is not invoking it.
+Obey each body's preconditions, boundaries, and handoffs: confirm a named
+input exists before entering, and move to a named owner instead of stretching
+the current skill.
 
 ## Entering the chain
 
@@ -46,8 +45,14 @@ action; naming it in prose is not invoking it.
      integrating, even as a plan's last step or under "don't ask", invoke
      `verification-before-completion`, `requesting-code-review`, then
      `finishing-a-branch`.
-5. **Scale ceremony by the loaded skill's own skip conditions,** never by your
-   estimate; ask every decision a skill puts to the user at every size.
+5. **Scale ceremony by a skill's own skip conditions,** never by your
+   estimate; ask every decision a skill puts to the user at every size. The
+   short route replaces rule 4's entries: when the request names the exact
+   edit and it changes no public interface, stored data, dependency,
+   permission, or deployment setting, edit the current checkout and invoke
+   only `test-driven-development`, if behavior changes, and
+   `verification-before-completion`. If unsure, take rule 4. Commit only when
+   asked; a push, PR, or merge takes rule 4's last entry.
 6. **After each result, take the next skill from the loaded skill's handoffs and
    the current state,** not a remembered sequence.
 
@@ -79,12 +84,10 @@ action.
 
 ## Red flags
 
-Each is a signal to invoke, not to skip:
-
 | The thought | The reality |
 | --- | --- |
 | "Too simple" | Scan anyway; simple work hides skipped discipline. |
-| "Task done — check in before the next" | An approved plan authorizes every task in it; `done` is a row added to the plan's record (the ledger), kept outside the plan and never rewritten, not a decision point. Continue until the plan ends. |
+| "Task done — check in before the next" | An approved plan authorizes every task in it; `done` is a row added to the plan's record, not a decision point. Continue until the plan ends. |
 | "Hit an issue — stop and ask" | A clear task owns its obstacles: fix and continue. Only a decision `clarifying-intent` or the loaded skill reserves for the user waits for one. |
 | "Opening the PR is one command" | The command is cheap; the decision it executes goes through a gate. `finishing-a-branch` owns it, after review. |
 | "Looks good + constraints = approval" | No accepted answer was selected; the decision is still pending. |
@@ -93,8 +96,6 @@ Catch one and stop the action, not the turn.
 
 ## Gotchas
 
-- The harness lists descriptions, not bodies: acting on a description skips its
-  body's procedure.
 - A "don't ask" directive or a non-interactive mode grants no authority to answer
   a decision a skill put to the user; answering ships a choice nobody made.
 

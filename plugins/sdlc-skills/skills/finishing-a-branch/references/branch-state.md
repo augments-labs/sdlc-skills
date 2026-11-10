@@ -6,7 +6,7 @@ review; keep-as-is, discard and PR-only close/reopen use their own identity and
 authority gates below. This is a procedure to read, not a file to copy into the
 candidate.
 
-Before asking for a mutating choice, issue an immutable transition descriptor
+Before a mutating action runs, issue an immutable transition descriptor
 with a stable transition ID; exact candidate, base, and current remote/PR state;
 one action; exact targets and payload (commit set, remote/ref, title/body, merge
 method, cleanup or discard inventory); expected pre/post effects; idempotency or
@@ -17,10 +17,18 @@ bound input change creates a successor descriptor and needs new approval. Keep
 descriptors and mutable transition records outside the candidate or return them
 directly; a repository record is a new candidate to verify and review.
 
+When the choice comes from the menu in `../SKILL.md` Step 2, issue the
+descriptor for the chosen entry after the answer, from the branch, base,
+remote, and PR that menu and Step 1 showed. The answer is the approval; ask
+for no second one. A target the user has not seen (another remote or base, a
+new branch name, a merge method) is shown and chosen before the action runs.
+A PR title and body written from the project's template and the bound ledger
+are payload, not a further choice.
+
 Give every mutation attempt a stable ID in an append-only external ledger.
 After timeout, lost response, cancellation, or another unknown outcome, do not
 retry: reconcile repository, remote, PR, workspace, worker/descendant, and effect
-state first. Remain `cancellation-requested` until quiescent; quarantine partial
+state first. Remain `cancellation requested` until quiescent; quarantine partial
 and late results. A linked retry is allowed only when the observed state proves
 it cannot duplicate or conflict with the first attempt. Otherwise preserve the
 actual state and report the ambiguous blocker.
@@ -96,8 +104,12 @@ and stop.
 6. If any gate/review blocks, keep candidate, temporary integration state,
    original workspace, and branch. Report `blocked-preserved`.
 7. Only while the base remains the recorded revision, advance it using the
-   approved project method. Verify the target now names/contains the gated
-   integrated result.
+   approved project method. When the base branch is checked out in another
+   worktree, fast-forward it from inside that worktree, and only if that
+   worktree is clean; otherwise stop and report. Never move it with
+   `git update-ref` or `git branch -f`: both leave that checkout's files and
+   index stale. Verify the target now names/contains the gated integrated
+   result.
 
 ## Commit exact candidate and keep
 
@@ -115,9 +127,13 @@ and requires its own direct choice; the commit choice grants nothing else.
 2. Check upstream/remote branch collision and contribution instructions.
 3. Push without rewriting shared history. A rejection or moved remote is new
    state to investigate, not permission to force-push.
-4. Create exactly one PR against the proven base with the description Step 1.9
-   prepared: the filled template and evidence no wider than the ledger. Report
-   its identity.
+4. Create exactly one PR against the proven base with the description
+   `../SKILL.md` Step 1.9 gives, prepared now when the choice came from the
+   menu: the filled template and evidence no wider than the ledger. Write a
+   closing keyword (`Closes #N`, `Fixes #N`) only when the user or the
+   project's contribution rules ask for one: it closes the ticket when the PR
+   merges. Otherwise reference the ticket without one. Report the PR's
+   identity.
 5. Preserve the local branch/workspace and runtime notes for review feedback.
    Cleanup waits for confirmed integration and a later valid cleanup transition.
    Record and report the retained worktree as *Report a retained worktree*
@@ -131,6 +147,20 @@ history. Verify the remote tip equals the exact pushed commit set. Do not open a
 PR, integrate, or clean resources. Report local and remote branch identities as
 `published branch`. A later source push, PR creation, or integration refreshes
 candidate/base/remote state and consumes a new exact choice.
+
+## Publish as a new branch
+
+For a detached or host-owned workspace, where the menu offers only this and
+keep-as-is.
+
+1. Take the branch name from the user or the project's convention. It must
+   not exist locally or on the remote; if it does, ask for another.
+2. Materialize the reviewed source through the procedure above.
+3. Create the branch at that commit without switching:
+   `git branch {{name}} {{revision}}`. The checkout keeps its HEAD, so a
+   host-owned workspace is left as its owner had it.
+4. Add the branch to the workspace record as task-owned, then push it as
+   *Push branch without a PR* says. Report `published branch`.
 
 ## Update an existing PR
 
@@ -207,13 +237,18 @@ branch/HEAD and workspace path.
 
 ## Owned cleanup
 
-Reconfirm integration and resource ownership. Before removing a worktree, rerun
+Reconfirm integration and resource ownership. After a squash or rebase merge
+the branch tip is not an ancestor of the base, so `git branch --merged` and
+`git branch -d` read it as unmerged: integration is confirmed only when the PR
+is merged and its head revision equals the local tip. Before removing a worktree, rerun
 `bash scripts/branch-state.sh --full` inside it. A non-zero exit, or a non-empty
 `dirty.ignored` the cleanup choice does not name, preserves the worktree; report
 it. Capture paths before changing directory; remove an owned worktree from
-outside it, then use safe branch deletion. Do not prune, force-delete, remove
-remotes, or clean adjacent workspaces unless each action and target was
-explicitly authorized.
+outside it, then delete the branch with `git branch -d`. When that refuses a
+branch whose integration was confirmed above by the merged PR's head, the
+cleanup choice covers `git branch -D` for that branch and no other. Do not
+prune, force-delete anything else, remove remotes, or clean adjacent
+workspaces unless each action and target was explicitly authorized.
 
 Detached, host-owned, shared, or ownership-uncertain workspaces are reported to
 their owner and left intact.
@@ -222,8 +257,11 @@ their owner and left intact.
 
 The confirmation token must exactly match the displayed candidate inventory.
 The inventory includes the ignored listing (`dirty.ignored`), which no recovery
-restores; a listed ignored directory is confirmed whole. A removal git refuses
-without `--force` stops the discard; report it.
+restores; a listed ignored directory is confirmed whole. The exact token
+authorizes `git worktree remove --force` and `git branch -D` for the worktree
+and the branch the inventory lists, and for nothing else: the inventory has
+already shown the uncommitted changes and unique commits git refuses over. A
+locked worktree, or any other refusal, stops the discard; report it.
 Re-resolve state immediately before deletion; any delta invalidates the token
 and requires a new inventory. Include every open/closed PR, exact head/base,
 remote ref, and whether the requested discard closes it. An unlisted, merged,

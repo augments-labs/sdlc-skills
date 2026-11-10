@@ -68,7 +68,8 @@ Repeat this block for each finding:
 
 ### {{finding title}}
 
-- Category: {{Critical: data loss/security/system break | Important: uncovered business/error behavior | Minor: edge completeness/brittleness}}
+- Severity: {{Critical: data loss/security/system break | Important: uncovered business/error behavior | Minor: edge completeness/brittleness}}
+- Disposition: {{blocking | advisory}}
 - Evidence: {{file:line and observed problem}}
 - Missing protection: {{regression that would escape; test location}}
 - Correction: {{concrete recommendation}}

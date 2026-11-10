@@ -24,9 +24,13 @@
 # diff, where a reviewer can see it.
 #
 # This is the chars/4 estimator. check-skill.sh scores bodies against the
-# house 5000-token limit using words x 1.3; compare each estimator only with
-# its own prior values. The report mode measures full SKILL.md files;
-# --chain and --table measure bodies, frontmatter excluded.
+# house 5000-token limit with its own piece-by-piece estimate; compare each
+# estimator only with its own prior values. The report mode measures full
+# SKILL.md files; --chain and --table measure bodies, frontmatter excluded.
+# --table adds the two costs a body count leaves out: the names and
+# descriptions a harness lists every session, and a ceiling with every file
+# under references/ and assets/ read. Files under scripts/ are run, not read,
+# and are not counted.
 
 set -uo pipefail
 # CHAINS_TOML is read relative to the caller, before moving to the repo root.
@@ -42,9 +46,12 @@ scripts/sh/token-budget.sh — approximate context cost of the always-loaded sur
   --chain NAME   sum the body words of chain NAME's skills from the chains file
                  (references excluded) and exit 1 over its budget_words
   --table        print the measured context cost as a markdown table: the
-                 router injection, one skill body, and every chain in the
-                 chains file (words and approx tokens); README.md carries a
-                 copy that validate-skills.sh checks against this output
+                 names and descriptions of every skill, the router injection,
+                 one skill body, and every chain in the chains file (words
+                 and approx tokens), with a last column that adds every file
+                 under references/ and assets/ as a ceiling; README.md
+                 carries a copy that validate-skills.sh checks against this
+                 output
   --help         this text
 
 Environment:
@@ -70,6 +77,22 @@ body_words() { awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next}
 # systems, and this count is gated against the README copy.
 body_tokens() { local c; c=$(awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$1" | LC_ALL=C tr -d '\200-\277' | wc -c); echo $(((c + 3) / 4)); }
 
+# Approx tokens of every file under one skill's references/ and assets/: the
+# most its support files can add, reached only if every one is read.
+support_tokens() {  # <skill dir>
+  local c=0 f
+  for f in "$1"/references/* "$1"/assets/*; do
+    [ -f "$f" ] && c=$((c + $(LC_ALL=C tr -d '\200-\277' <"$f" | wc -c)))
+  done
+  echo $(((c + 3) / 4))
+}
+# The name and description values of one SKILL.md, quotes stripped: the text a
+# harness lists for the skill before anything is loaded.
+listing_text() {  # <SKILL.md>
+  awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {exit}
+       fm && /^(name|description):/ { sub(/^[a-z]+:[[:space:]]*/, ""); sub(/^"/, ""); sub(/"[[:space:]]*$/, ""); print }' "$1"
+}
+
 # The chains file is a small TOML subset: [name] tables holding a skills array
 # (on one line or several) and the integers recorded_words and budget_words.
 # chain_parse NAME prints one "kind<TAB>value" line per skill and per integer,
@@ -91,23 +114,30 @@ if [ "${1:-}" = "--table" ]; then
   toml="${CHAINS_TOML:-scripts/sh/data/chains.toml}"
   [ -r "$toml" ] || { echo "cannot read $toml" >&2; exit 2; }
   router=skills/common/using-sdlc-skills/SKILL.md
-  mn=9999999; mx=0
+  mn=9999999; mx=0; smn=9999999; smx=0; n=0
+  listing="$(mktemp)"; trap 'rm -f "$listing"' EXIT
   for f in skills/*/*/SKILL.md; do
     t=$(body_tokens "$f"); [ "$t" -lt "$mn" ] && mn=$t; [ "$t" -gt "$mx" ] && mx=$t
+    t=$((t + $(support_tokens "$(dirname "$f")"))); [ "$t" -lt "$smn" ] && smn=$t; [ "$t" -gt "$smx" ] && smx=$t
+    listing_text "$f" >>"$listing"; n=$((n + 1))
   done
-  echo "| What loads | Words | Approx tokens |"
-  echo "| --- | --- | --- |"
-  printf '| The router, every session | %s | %s |\n' "$(body_words "$router")" "$(body_tokens "$router")"
-  printf '| One skill body, when its skill fires | | %s to %s |\n' "$mn" "$mx"
+  lc=$(LC_ALL=C tr -d '\200-\277' <"$listing" | wc -c)
+  rt=$(body_tokens "$router")
+  echo "| What loads | Words | Approx tokens | With every reference and asset |"
+  echo "| --- | --- | --- | --- |"
+  printf '| The names and descriptions of all %s skills, every session | %s | %s | |\n' "$n" "$(wc -w <"$listing" | tr -d ' ')" "$(((lc + 3) / 4))"
+  printf '| The router, every session | %s | %s | %s |\n' "$(body_words "$router")" "$rt" "$((rt + $(support_tokens "$(dirname "$router")")))"
+  printf '| One skill body, when its skill fires | | %s to %s | %s to %s |\n' "$mn" "$mx" "$smn" "$smx"
   for chain in $(sed -n 's/^[[:space:]]*\[[[:space:]]*\([a-z0-9-]*\)[[:space:]]*\][[:space:]]*$/\1/p' "$toml"); do
-    words=0; toks=0; count=0
+    words=0; toks=0; count=0; sup=0
     while IFS=$'\t' read -r kind val; do
       [ "$kind" = skill ] || continue
       f=""; for c in skills/*/"$val"/SKILL.md; do [ -f "$c" ] && f="$c"; done
       [ -n "$f" ] || { echo "[$chain] lists $val, which has no SKILL.md" >&2; exit 2; }
       words=$((words + $(body_words "$f"))); toks=$((toks + $(body_tokens "$f"))); count=$((count + 1))
+      sup=$((sup + $(support_tokens "$(dirname "$f")")))
     done < <(chain_parse "$chain" "$toml")
-    printf '| The %s chain, %s skills | %s | %s |\n' "$chain" "$count" "$words" "$toks"
+    printf '| The %s chain, %s skills | %s | %s | %s |\n' "$chain" "$count" "$words" "$toks" "$((toks + sup))"
   done
   exit 0
 fi
@@ -140,7 +170,7 @@ if [ "${1:-}" = "--chain" ]; then
     total=$((total + w))
   done
   printf '  total %d words · budget %d\n' "$total" "$budget"
-  [ "$total" -le "$budget" ] || { echo "✗ chain $chain is over budget by $((total - budget)) words"; exit 1; }
+  [ "$total" -le "$budget" ] || { echo "✗ chain $chain is over budget by $((total - budget)) words: cut that many elsewhere in the chain"; exit 1; }
   exit 0
 fi
 

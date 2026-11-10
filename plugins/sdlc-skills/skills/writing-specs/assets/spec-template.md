@@ -1,16 +1,17 @@
 # Spec template
 
-Copy this file to the spec path, replacing every `{{placeholder}}`. Delete a
-section only by saying why it is empty — an absent risks section reads as "none
-found", which is a claim.
+Copy this file to the spec path, replacing every `{{placeholder}}`. A section
+with nothing to hold keeps its heading and one line, `None: {{why}}`; never
+invent a row to fill one, and never drop a heading: an absent risks section
+reads as "none found", which is a claim.
 
 ```markdown
 # Spec: {{topic}}
 
 - **Identity:** recorded in the ledger row, never here: the first 7 characters of
   `git hash-object` over this artifact's own text as issued
-- **Predecessor:** {{prior normative identity, or none; a successor carries a
-  per-requirement added / changed / removed / preserved delta}}
+- **Predecessor:** {{prior normative identity, or none; a successor lists here
+  each requirement ID as added / changed / removed / preserved}}
 - **External decision ledger:** {{ledger path: this spec's path with .ledger.md
   for .md unless the user sets another; holds pending / changes requested /
   approved / rejected / cancelled / superseded, bound to the version above —
@@ -35,7 +36,8 @@ reviewable and recoverable.
   independently (**failure surfaces**)? {{answer and evidence}}
 - **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
   the ordinary route, or the user marking the work high-risk, makes it
-  high-risk. Reclassify when inputs change.
+  high-risk. Reclassify when inputs change. `pending classification` holds
+  every change to the target until it is resolved.
 
 ## Problem
 
@@ -48,10 +50,12 @@ are stable and never recycled by a successor.
 
 | ID | Must do | Acceptance form | Artifact today, or gate + owner |
 | --- | --- | --- | --- |
-| {{R1}} | {{observable behavior}} | {{executable gate / mockup / source-fact contract / rubric / prose}} | {{a real path that exists now, OR the intended gate and who will own it}} |
+| {{R1}} | {{observable behavior}} | {{executable gate / mockup / preservation contract / rubric / prose}} | {{a real path that exists now, OR the intended gate and who will own it}} |
 
 Never name an artifact that does not exist. `references/reference-forms.md`
-chooses the form; the cheapest honest one wins.
+chooses the form; the cheapest honest one wins. A value no source states (a
+timeout, a size limit, a status code) is an open question with an owner, never
+a plausible value in a requirement.
 
 ## Carried guardrails and obligations
 

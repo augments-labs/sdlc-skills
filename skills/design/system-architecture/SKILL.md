@@ -17,7 +17,8 @@ description: "Designs the target system for approved requirements: components, b
 
 ## Step 1: Trace and structure
 
-Open `assets/architecture-section.md` before the steps below fill it in.
+Open `assets/architecture-section.md` before starting. Fill a section only
+with what this work has; the template says what an empty one carries.
 
 1. Map every requirement, preserved obligation, and significant risk to the
    component, the interface, and the owning gate reference that cover it.
@@ -28,16 +29,15 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    approval is blocked.
 2. Name each module by what it does and by what it does not do. If removing it
    would spread its complexity across its callers, it stays. If the complexity
-   would merely move elsewhere, merge it.
-3. Follow each request, response, event, and sensitive-data path from entry to
-   effect. Mark who owns it, where it crosses an authorization boundary, and
-   where the source of truth changes hands.
-4. For each dependency and each asynchronous path, write its timeout, its
+   would merely move elsewhere, merge it. Before adding a module, search the
+   tree for one already doing that job and record the search.
+3. For each dependency and each asynchronous path, write its timeout, its
    retry and idempotency, what still works when it is degraded, how it
    recovers, and how each is exercised (the test, fault injection,
    or drill).
-5. Every sentence that states what the existing system does today (a
-   component exists, a call site handles a case, a format carries a field)
+4. Every sentence that states what the existing system does today (a
+   component exists, a call site handles a case, a format carries a field,
+   a dependency defaults to a value at its pinned version)
    names the path and symbol it was checked against at the current
    revision. Rewrite one you cannot cite to what is known, or invoke
    `clarifying-intent` for it. The plan's tasks are written against these
@@ -45,10 +45,9 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 
 ## Step 2: Operational views and seams
 
-1. Cover each view that affects correctness: deployment and runtime topology,
-   scale and resource budgets, observability, and the capabilities that make
-   rollout and compatibility possible. The transition procedure belongs to the
-   migration contract; do not restate it here.
+1. Cover each operational view the template lists that affects correctness.
+   The transition procedure belongs to the migration contract; do not restate
+   it here.
 2. If a view is left out, write a skip record with the fields the template's
    operational-views table lists. Never drop a view as "inapplicable" without
    one.
@@ -56,23 +55,28 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    change friction, or for one real volatile or external boundary with
    measured impedance, a failure policy, or test isolation. Variation that
    is only hypothetical earns none.
-4. If a choice is hard to reverse, invoke `architecture-decisions`. If a
-   choice that would change the design is unresolved, invoke
-   `clarifying-intent`.
+4. If a choice is hard to reverse, invoke `architecture-decisions`; a choice
+   it skips stays in the `Load-bearing decisions` row. If a choice that
+   would change the design is unresolved, invoke `clarifying-intent`.
 
 ## Step 3: Write, review, present
 
-1. Write the section, which is never edited once its identity is issued, to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
-   preserving the approved sections around it. Fill the header:
-   predecessor, approval rule, where its decision record lives (the ledger:
-   add to it, never rewrite it, and keep it outside the design), and the
-   stable ID delta. The identity goes in the ledger row, never the header.
-2. Fill the high-risk classification block. If any answer is off the ordinary
-   route, or the user marks the work high-risk, run
-   `assets/design-review.md` before presenting. That review is blocking. A
-   `NEEDS_CONTEXT` return keeps it pending: supply the path it names and
-   run the review again.
+1. Write the section to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`
+   or the user-set path and fill every field of the template's header and
+   its high-risk classification block; once its identity is issued, the
+   section is never edited. Record that identity
+   in its ledger (the decision record: add to it, never rewrite it, and keep
+   it outside the design).
+2. If any answer in that block is off the ordinary route, or the user marks
+   the work high-risk, fill `assets/design-review.md` before presenting and
+   dispatch it as `dispatching-parallel-agents` Step 2 says; its
+   not-dispatched question omits the self-review option. That review is
+   blocking. On `NEEDS_CONTEXT`, supply the path it names and rerun once. A
+   blocking finding takes one successor section and one re-review; report
+   what is still open to the decision owner and end the turn. The owner
+   accepts a finding only by naming it: record `accepted by {{owner}}` with
+   the finding in the ledger, and present once every open finding is
+   accepted or corrected. A reply that names none accepts none.
 3. Present:
 
    ```text
@@ -88,15 +92,16 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
-4. On option 1, if every design section the work needs is approved,
-   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+4. If option 1 is chosen and every design section the work needs is approved,
+   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version. If a
+   needed section is not approved yet, invoke its owning skill instead.
 
 ## Gotchas
 
 - A design sentence about the existing system that cites nothing is
   planned as a fact: a design that said a command launched a flow reached
   implementation before a worker found nothing launched it on the base,
-  and the plan grew a task mid-run. Step 1.5 cites the path and symbol.
+  and the plan grew a task mid-run. Step 1.4 cites the path and symbol.
 - Step 1's mapping table needs a real owning gate for every row, but this
   skill defines no assurance gates itself. A row that names a placeholder, or
   a gate its owner never defined, still reads as mapped on the page; only the

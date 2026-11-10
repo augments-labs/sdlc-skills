@@ -5,10 +5,9 @@ description: "Gets an independent review of a frozen code state before completio
 
 # Requesting Code Review
 
-Get an independent verdict on one frozen candidate, in this order: verify,
-freeze, dispatch, poll, receive. Never say a review is running, and never
-wait on one, until the dispatch action has returned a non-empty receipt (the
-tool-issued dispatch ID).
+Get an independent verdict on one frozen candidate. Never say a review is
+running, and never wait on one, until the dispatch action has returned a
+non-empty receipt (the tool-issued dispatch ID).
 
 ## When to use
 
@@ -37,9 +36,8 @@ tool-issued dispatch ID).
    evidence for this review, then resume here. Keep failures and pending
    results: they permit review, never readiness.
 4. Open `assets/review-candidate.md`, the descriptor, after the evidence is
-   bound. Fill every field: mode, identities, complete inventory, artifact
-   controls, terminal contract, continuation, review history. Keep that
-   history across successor candidates.
+   bound. Fill every field, and keep its review history across successor
+   candidates.
    Record a caller only when it has a step awaiting this verdict. A skill
    whose work ended at this handoff is not a pending return step.
 
@@ -58,16 +56,17 @@ tool-issued dispatch ID).
    - **Shallow:** a self-review. Only when the user, project policy, or the
      plan's task row assigns it in writing. Never chosen here: the size of
      the diff grants nothing.
-   - **Standard:** one independent breadth reviewer. A specialist joins only
-     when the diff matches its trigger in Step 2.3, and at most three roles
-     run at once; the rest wait for a second round.
+   - **Standard:** one independent breadth reviewer, plus the specialists
+     Step 2.3 selects; at most three roles run at once, and the rest wait
+     for a second round.
    - **Deep:** breadth, specialists, a security role filled from
-     `security-audits`' report template and checklists before Step 3.2, and an
-     independent adversarial pass.
+     `security-audits`' report template and checklists before Step 3.2, and
+     an independent adversarial pass: the breadth prompt again, with Role
+     `adversarial` and one named risk to prove.
    - **High-risk transformation:** read `references/high-risk-review.md` before
      assigning anyone.
-2. Give every role a stable ID, including each omitted role. For an omitted
-   role, record the evidence, owner, expiry, compensating check, and approver.
+2. Give every role a stable ID, including each omitted role, whose row fills
+   the descriptor's `Omission disposition`.
 3. Add a specialist role only when the diff matches its trigger below, then
    open its prompt template. If no trigger matches, the breadth reviewer runs
    alone:
@@ -90,9 +89,11 @@ tool-issued dispatch ID).
    - If a trust boundary changed, the suggested owner is `security-audits`.
      That finding blocks readiness at every depth until an independent
      `security clear` on this candidate is recorded, unless the Deep security
-     role returned it. Request that audit once, on the first round whose
-     other roles return no blocking finding; until then the finding is
-     carried forward in the review history, not audited per round.
+     role returned it. Whoever routes the finding requests that audit once,
+     on the first round whose other roles return no blocking finding; until
+     then the finding is carried forward in the review history, not audited
+     per round. Once `security clear` on this unchanged candidate is
+     recorded, apply Step 3.7 again; dispatch no new review.
    - If existing code needs an audit for accidental complexity, the suggested
      owner is `complexity-audit`.
    - If the assurance strategy is hollow or needs challenging, the suggested
@@ -122,34 +123,33 @@ tool-issued dispatch ID).
    a successor descriptor and return to Step 3.1.
 4. Success means exactly one current report for each role.
 5. Read each returned report, opening its file if only a location was
-   returned. Match Candidate, Review inputs, Role, and the role's allowed
-   Verdict to the frozen request. If a field is missing, unreadable,
-   conflicting, or mismatched, review stays pending. Check the complete
-   inventory and every human-authored change; reject unrelated traversal.
+   returned. Match Candidate, State read, Review inputs, Role, and the
+   role's allowed Verdict to the frozen request. If a field is missing,
+   unreadable, conflicting, or mismatched, review stays pending. Check the
+   complete inventory and every human-authored change; reject unrelated
+   traversal.
 6. Decide each Declined to judge entry and record it in the ledger, except
    one that turns on a product, scope, or requirement reading: that goes to
    its decision owner through `clarifying-intent`. An undecided entry keeps
    review pending.
 7. Block readiness while required current verification or role coverage is
    missing, failed, inconclusive, or conditional, or while a blocking finding
-   or an attempt's effects remain unresolved. Keep every failed attempt on
-   record; an accepted successor attempt linked to it can satisfy its current
-   role once effects are reconciled. Reconcile each advisory finding's
-   recorded decision without adding acceptance criteria.
+   or an attempt's effects remain unresolved. Reconcile each advisory
+   finding's recorded decision without adding acceptance criteria.
 8. Record each report's location, its recorded decision, and the tool-issued
    dispatch ID in the external review ledger.
 9. **REQUIRED SUB-SKILL:** invoke `receiving-code-review` with every report
    before responding to it, including a `not_ready` that asks for no edit.
 10. Before another round, apply `receiving-code-review`'s convergence check.
     If a retry is permitted and the candidate or its bound inputs changed,
-    restart at Step 1 with fresh identities and a fresh receipt. Carry prior
-    coverage and recorded decisions forward; focus the successor review on
-    fixes, affected paths, and regressions. A `security clear` recorded on an
-    earlier candidate is rebound to the successor only by the focused
-    independent re-audit of the round's edit that `security-audits` Step 3.4
-    describes, never by a new audit of the candidate. The Deep security role
-    reruns the same way.
-11. **REQUIRED — continue a `ready` verdict through the recorded owner:**
+    restart at Step 1 with fresh identities and a fresh receipt. A
+    `security clear` recorded on an earlier candidate is rebound to the
+    successor only by the focused independent re-audit of the round's edit
+    that `security-audits` Step 3.4 describes, never by a new audit of the
+    candidate. The Deep security role reruns the same way.
+11. **REQUIRED — return the verdict through the recorded owner.** One other
+    than `ready` goes back with its open findings, to the user when no owner
+    is recorded, and never reaches `finishing-a-branch`:
     - If a caller is awaiting this review, return to its pending step; never
       invoke the caller recursively.
     - If the task or plan is owned by `executing-plans` or
@@ -184,15 +184,16 @@ tool-issued dispatch ID).
 - Rerunning a caller's matching rows looks like rigor, but it verifies one
   frozen state twice, and a second run that disagrees gets argued away instead
   of diagnosed.
-- A reviewer sees only what the descriptor inventories. An untracked or
-  generated file left out of the inventory ships unreviewed.
+- A reviewer started in its own worktree or clone reads HEAD without the
+  uncommitted candidate and still echoes the descriptor's identities. `State
+  read` is what it computed itself; a copied or missing one leaves review
+  pending.
 - A trust-boundary finding without `security clear` is not advisory. Filing it
   as advice to reach `ready` ships a boundary nobody audited.
 - Each fix round restarts at Step 1 with a fresh candidate, and a fresh
   candidate reads as needing a fresh audit: one run audited every round of
-  every task, 102 audits in 193 dispatches. The audit runs once at
-  convergence; a fix round after it gets a focused re-audit of its edit, not
-  a new audit.
+  every task. The audit runs once at convergence; a fix round after it gets
+  a focused re-audit of its edit, not a new audit.
 
 ## Common mistakes
 

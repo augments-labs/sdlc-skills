@@ -2,7 +2,10 @@
 
 Copy this section into the design document, replacing every `{{placeholder}}`.
 Preserve the sections already approved around it; this one is immutable once its
-identity is issued.
+identity is issued. A section with nothing to hold keeps its heading and one
+line, `None: {{why}}`; never invent a row to fill one, and never drop a
+heading. A successor is headed `## Architecture (successor)`, the next
+`(successor 2)`.
 
 ```markdown
 ## Architecture
@@ -110,5 +113,6 @@ reviewable and recoverable.
   independently (**failure surfaces**)? {{answer and evidence}}
 - **Route:** {{ordinary | high-risk | pending classification}}. Any answer off
   the ordinary route, or the user marking the work high-risk, makes it
-  high-risk. Reclassify when inputs change.
+  high-risk. Reclassify when inputs change. `pending classification` holds
+  every change to the target until it is resolved.
 ```

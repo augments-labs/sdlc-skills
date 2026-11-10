@@ -4,6 +4,9 @@ Copy this section into the design document, replacing every `{{placeholder}}`.
 Preserve the sections already approved around it; this one is immutable once its
 identity is issued. Every flow, state, visual reference, decision, and
 acceptance check gets a stable ID, and a successor never recycles one.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
+A successor is headed `## UI/UX design (successor)`, the next `(successor 2)`.
 
 ```markdown
 ## UI/UX design
@@ -28,8 +31,9 @@ approval}}
 **Existing system evidence:** {{routes, screens, components, tokens, type,
 content patterns, preview tooling, responsive and accessibility conventions, and
 tests you actually read — with paths}}
-**Deliberate constraints vs inconsistencies:** {{which existing patterns are
-intentional and binding, and which this work may correct}}
+**Deliberate constraints, inconsistencies, and unknowns:** {{which existing
+patterns are intentional and binding, which this work may correct, and which
+nobody can show were decided}}
 
 ### Frame
 

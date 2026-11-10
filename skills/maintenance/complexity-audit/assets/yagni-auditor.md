@@ -50,6 +50,10 @@ name where it lives instead.
    and abstractions whose removal localizes rather than spreads complexity.
 3. Trace candidate callers and ownership through the supplied static, runtime,
    configured, generated, historical, external, test, and operational evidence.
+   Callers that are only the candidate's own tests are not use: treat it as
+   having no caller. Before `simplify` or `remove`, read the change that
+   introduced the candidate; a guard added after a failure gives its reason
+   there, not in the code.
 4. Bind retained complexity to current behavior, preservation, compatibility,
    safety, accessibility, operations, rollback, or assurance. A real owner means
    `keep`; changing that owner is `decision` for its accountable authority.

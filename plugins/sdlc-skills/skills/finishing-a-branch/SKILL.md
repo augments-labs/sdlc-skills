@@ -23,8 +23,8 @@ authorize no change to history or to a remote, and no discard or cleanup.
 
 ## Step 1: Read the state
 
-1. Run the script and keep its output. Use its numbers verbatim later; never
-   hand-count commits.
+1. Run the script and keep its output; if it exits non-zero, stop and report.
+   Use its numbers verbatim later; never hand-count commits.
 
    ```bash
    bash scripts/branch-state.sh
@@ -66,8 +66,7 @@ authorize no change to history or to a remote, and no discard or cleanup.
    none, open `assets/pr-description.md` before writing it. Fill the evidence
    fields only from the bound ledger and verdict; add whichever of the check
    results, the review verdict, and what was not verified the project's
-   template has no place for. For other actions, prepare the fields that apply
-   without inventing a PR.
+   template has no place for.
 
 ## Step 2: Present the choices
 
@@ -93,13 +92,13 @@ authorize no change to history or to a remote, and no discard or cleanup.
 2. If the workspace is detached or host-owned, offer only *publish as a new
    branch* and *keep as-is*.
 3. If a PR already exists, offer only the transitions its state and its
-   policy permit. Never conflate, retarget, rewrite, delete, or duplicate a
-   PR.
+   policy permit: for a merged PR, *clean up owned resources* or *keep
+   as-is*. Never conflate, retarget, rewrite, delete, or duplicate a PR.
 4. Never put discard on this menu.
 5. Wait for one listed entry. If the reply is praise, a constraint, a partial
    answer, silence, "looks good", or a decision about something adjacent,
    present the menu again unchanged.
-6. Bind the answer to the prepared descriptor. If the target or payload
+6. Bind the answer to a descriptor prepared for that entry. If the target or payload
    changes materially, show the changed choice; do not reuse the approval
    given for the old one.
 
@@ -120,7 +119,7 @@ authorize no change to history or to a remote, and no discard or cleanup.
 Enter only on a direct request. Never offer discard because work looks
 unwanted.
 
-1. Rerun `bash scripts/branch-state.sh` before filling the block. If
+1. Rerun `bash scripts/branch-state.sh --full` before filling the block. If
    `base.resolved` is false, take the base the `using-git-worktrees`
    workspace record holds, or get it from the user or the project, rerun
    with `--base`, and fill nothing until it resolves. Then fill the block
@@ -131,7 +130,7 @@ unwanted.
    - Branch {{name}} ({{n}} unique commits: {{list}})
    - Staged {{n}}, unstaged {{n}}, untracked {{n}} changes
    - Ignored {{n}}: {{list}} (lost only with a removed worktree; never recoverable)
-   - Worktree {{path}}; remote {{state}}; PR {{state}}
+   - Worktree {{path}}; remote {{live state}}; PR {{live state}}
    Recovery: {{possible | not possible}}
 
    Recommendation: {{preserve unless current authority clearly calls for deletion}}.
@@ -140,7 +139,7 @@ unwanted.
 
 2. Stop. If the reply is "yes", "go ahead", "get rid of it", or a numbered or
    clicked choice, touch nothing.
-3. Only after that exact token, rerun with the same `--base`. A changed
+3. Only after that exact token, rerun the same command. A changed
    `candidate.id`, a non-zero exit, or no `candidate.id` voids the token.
    Otherwise close or delete the listed task-owned resources, and nothing else.
 

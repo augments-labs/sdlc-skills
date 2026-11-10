@@ -1,10 +1,11 @@
 # Deprecation record template
 
-`deprecating-an-api` opens this in its first step, fills Interface and Use
-before the replacement ships, Signal when the deprecation change ships, and
-Removal when the owner decides; `release-readiness` receives it with the
-removal change, and `yagni` and `refactor-architecture` read its Status and
-the owner's removal row to tell a completed deprecation from one in progress.
+`deprecating-an-api` opens this in its first step and fills the header,
+Callers, and Use there, Interface when the replacement ships, Signal when the
+deprecation change ships, and Removal when the owner decides;
+`release-readiness` receives it with the removal change, and `yagni` and
+`refactor-architecture` read its Status and the owner's removal row to tell
+an approved removal and a completed deprecation from one in progress.
 Write it to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-deprecation.md`
 unless the user names another place; the owner's removal decision is a row in
 the ledger beside it, and nowhere else. No secret, credential, or personal data

@@ -26,10 +26,12 @@ Can we release this build?
 
 Before any review, `verification-before-completion` makes sure the claim
 "it works" has something behind it. The agent lists everything the request
-asked for and marks each item delivered, pending, blocked, or declined. It
-runs the checks your project requires, reads their raw output, and records
-which version of the code they ran against. If the code changed after a
-check ran, the check does not count.
+asked for and marks each item delivered, pending, blocked, or declined. An
+item with several variants, such as a sync and an async path or two
+platforms, gets a line for each, so one finished variant cannot stand for
+the others. It runs the checks your project requires, reads their raw
+output, and records which version of the code they ran against. If the code
+changed after a check ran, the check does not count.
 
 The result is a short ledger: what passed, on what state, and what is still
 open. A required check that did not run turns the whole result red, however
@@ -61,7 +63,8 @@ How deep the review goes:
 On agents with a subagent tool, the reviewer is a fresh agent that returns a
 written report. Where there is no such tool, the agent asks you once whether
 to self-review (labelled as such), to hand the change to someone you name,
-or to leave the work pending.
+or to leave the work pending. The self-review choice is not offered when the
+review has to be independent, such as a security review.
 
 The agent reads each report through `receiving-code-review`. It does not
 apply feedback blindly: each point is checked against the code, accepted or
@@ -74,6 +77,59 @@ To review a pull request someone else opened, ask for it by number
 independent review on it without executing its code, writes the findings for
 the author, and posts nothing (no approval, no request for changes, no
 comment) until you choose what to post.
+
+## A security audit
+
+When a change touches a trust boundary (login, tokens, permissions, uploads,
+secrets, a dependency, user input that reaches a query or a shell),
+`security-audits` traces what an attacker could make that exact version do,
+from each input they control to the effect it reaches. The size of the diff
+does not set the scope: old code the change newly exposes is part of it.
+
+The verdict comes from an independent auditor, never from the agent that
+wrote the change, and it is one of three: `security clear`,
+`security blocked`, or `inconclusive`. A scanner summary or an earlier
+finding does not stand in for a traced path. Any edit after the verdict
+voids it until that edit is audited.
+
+If a category cannot be checked (no check exists, or the probe would need
+shared or production state), the agent does not waive it. It asks you to
+authorize the exact probe, to accept the omission with an owner, an expiry,
+and a compensating measure, or to keep the change blocked. With no answer,
+the verdict stays `inconclusive`.
+
+Ask for one directly:
+
+```text
+Audit the upload endpoint change for security before we merge.
+```
+
+## Checking a running interface
+
+For a change you can see, in a graphical or a terminal interface,
+`visual-ui-verification` starts the interface itself from the version under
+check and captures it: the journeys and states that matter (empty, loading,
+error, overflow, no permission) across the screen sizes, themes, and input
+methods the change affects. It keeps every frame. Before it trusts its own
+inspection, it captures one deliberately broken frame and confirms that the
+inspection marks it red.
+
+The result is a verdict row by row, never "looks good": pass, fail when a
+blocking defect is open, or pending. What to expect:
+
+- Reading the source or the markup does not count as seeing the screen.
+  Where the agent has no capture tool, or its tool cannot reach a row, that
+  row is pending, and it asks you to provide the tool or to look at those
+  rows yourself.
+- It compares against the approved design when there is one, and otherwise
+  against the acceptance criteria or a capture of the interface from before
+  the change.
+- It fixes nothing itself. Each fix goes back through a failing test, and
+  the affected rows are captured again.
+
+```text
+Check the settings screen on mobile and in dark mode before we call it done.
+```
 
 ## What to do with the branch
 
@@ -94,30 +150,36 @@ Recommendation: ...
 
 Things to know about this menu:
 
-- The agent waits for one of the listed entries. Praise, a question, or a
-  partial answer gets the menu again.
+- The agent waits for one of the listed entries. Praise, "looks good", a
+  new constraint, a partial answer, or a decision about something else gets
+  the menu again.
 - Green checks and a ready review do not authorize anything by themselves.
   The push, the PR, or the merge happens because you chose it.
 - If the branch has already been pushed, rewriting its history (squash,
   rebase, amend) needs your direct permission for each. The agent never
   force-pushes as a repair.
 - If a pull request already exists, only the transitions that PR's state
-  permits are offered.
+  and your project's policy permit are offered. For a merged PR that means
+  cleaning up what the task owns, or keeping things as they are.
 - When opening a PR, the agent prepares the description from your project's
-  contribution rules and PR template, with the verification evidence. A
-  project with no template gets the skill's own: what changes and why, the
-  checks run on that exact candidate, the review verdict, risk and rollback,
-  and what is left for the reviewer to decide.
+  contribution rules and PR template, and adds the check results, the review
+  verdict, and what was not verified wherever the template has no place for
+  them. A project with no template gets the skill's own: why, what changes,
+  the checks run on that exact candidate, the review verdict, risk and
+  rollback, what was not verified, and what is left for the reviewer to
+  decide.
 
 ## Discarding work
 
 Discard is never on the menu. If you want to throw the branch away, ask for
-it by name. The agent then shows exactly what would be deleted (the branch
-and its unique commits, uncommitted changes, the worktree, any remote branch
-or PR) and whether any of it is recoverable, and it asks you to type a
+it by name. The agent then shows exactly what would be deleted: the branch
+and its unique commits; staged, unstaged, and untracked changes; ignored
+files, which nothing brings back; the worktree; and any remote branch or PR.
+It says whether the rest is recoverable, and it asks you to type a
 confirmation that names the candidate, using the candidate ID the agent
-shows, such as `discard 9c41e07a2b5d18f3`. "Yes" or "go ahead" does not
-count.
+shows, such as `discard 9c41e07a2b5d18f3`. "Yes", "go ahead", or picking a
+numbered option does not count, and if anything changes before the deletion
+the agent shows a new list and asks again.
 
 ## Releasing
 

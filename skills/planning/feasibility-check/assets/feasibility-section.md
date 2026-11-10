@@ -3,6 +3,10 @@
 Copy this section into the brief, replacing every `{{placeholder}}`. It is one
 `##` section of a shared brief — leave the other approved sections untouched.
 Drop a dimension row only by writing why it does not apply, never by silence.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
+A successor section is headed `## Feasibility (successor)`, the next
+`## Feasibility (successor 2)`, and so on, so no two share a heading.
 
 ```markdown
 ## Feasibility
@@ -13,7 +17,7 @@ Drop a dimension row only by writing why it does not apply, never by silence.
 - **External condition and decision ledger:** {{ledger path: the brief's path
   with .ledger.md for .md, rows naming this section, unless the user sets
   another; holds each condition's pending / satisfied / failed state and the go /
-  go-if / no-go / cancel outcome, bound to the version above — lifecycle never
+  go-if / no-go / changes requested / cancel outcome, bound to the version above — lifecycle never
   mutates this section}}
 - **Accountable decision owner:** {{who commits the project}}
 

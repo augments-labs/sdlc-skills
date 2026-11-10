@@ -29,17 +29,26 @@ section:
 
 - `define-goals` pins down what the project is for: the objective, who it
   is for, how success will be measured, and the guardrails. It pushes back
-  on a list of features presented as goals and on a target with no baseline.
+  on a list of features presented as goals and on an outcome with no source
+  or date. A baseline nobody has measured is written as unmeasured, with who
+  takes the first reading and by when.
 - `scoping` draws the boundary: what is in, what is out, and what is enough
   for the goal. Expect it to ask about the things teams cut to shrink a
   first release, such as compatibility, security, and rollback.
 - `feasibility-check` asks whether the thing can be delivered at all, across
-  technical, delivery, budget, operational, security, and dependency risk.
+  technical, delivery, budget, operational, security, data, and dependency
+  risk.
   It also asks the question nobody likes: does an existing tool, a
   configuration change, or not building at all do the job?
 
 Each section is a decision you approve. The agent skips `feasibility-check`
-when the path is well trodden and the risk is plainly low.
+only when the brief already has a feasibility section that fills every risk
+row from evidence and leaves no project-stopping risk unrated. A risk nobody can
+rate yet becomes a condition on a go-if, and when you choose that option the
+agent settles it with a `prototyping` spike. A change to an approved scope is
+written as a new section beside the old one for you to approve; once you do,
+work under the specs and plans bound to the old scope stops until their
+owners check them again.
 
 When the goal is settled but more than one way to reach it is plausible,
 `brainstorming` writes its own section: several approaches, each produced
@@ -75,7 +84,33 @@ you approve:
   tests cannot show that behavior survived. It sets the conditions that must
   hold before the transformation starts.
 - `coding-standards` for a project's naming, patterns, and vocabulary, once
-  per project.
+  per project or again when the conventions have drifted.
+
+## The project's checks
+
+Before high-risk work, or when the tests you have do not catch real defects,
+`verification-strategy` designs the project's battery of checks: which risk
+each check covers, when it runs, and what it blocks. Ask "how should we test
+this project?" or "what should CI run?". It writes an assurance matrix under
+`.sdlc-skills/verification/`.
+
+A check counts as executable only after the agent has watched it fail: green,
+red on a defect introduced on purpose, green again once the defect is
+removed. Anything else is recorded as planned or blocked. An independent
+reviewer challenges the matrix first. If the challenge cannot be brought to
+a clear verdict, the agent returns the open blockers and offers nothing to
+approve. Once it is clear, you choose:
+
+```text
+1. Approve the battery
+2. Request changes
+3. Reject the strategy
+4. Cancel
+```
+
+The agent approves nothing here itself: thresholds, omissions, and
+exceptions are yours to accept. A single feature does not need this; its
+plan and its tests carry the proof.
 
 ## A plan
 
@@ -99,12 +134,16 @@ approval and how the plan runs:
 7. Cancel
 ```
 
-Options 2 and 3 appear only when your agent has a subagent tool and the plan
-has no phases or shards.
+Options 2 and 3 appear only when your agent has a subagent tool, the plan
+has no phases or shards, and the work is in a git project. A delegated run
+needs local commits, so the agent asks for permission to commit if it does
+not have it, and on a no it hands the choice of mode back to you.
 
 For a high-risk plan, `reviewing-plans` sends the plan to an independent
-reviewer before you see this block, and every blocker it returns is
-resolved first. For other plans, the agent offers the review and you decide.
+reviewer before you see this block, and every blocker it returns gets a
+recorded decision first: corrected in a new version of the plan, refuted with
+evidence, or put to you with the plan. For other plans, the agent offers the
+review and you decide.
 
 ## Executing a plan
 
@@ -117,11 +156,11 @@ The option you approve with sets how the plan runs:
   planning conversation left behind. The agent recommends this for a large
   plan or when this session has already been summarized.
 - **Delegated**, one task at a time or in waves, runs it through
-  `subagent-driven-development`: a fresh
-  subagent implements each task, a reviewer checks its diff, and a bounded
-  fix loop handles what the reviewer finds. The agent in your session keeps
-  every decision. This needs an agent with a subagent tool; see
-  [Supported agents](../reference/agents.md).
+  `subagent-driven-development`: a fresh subagent implements each task, a
+  reviewer checks its diff, and a bounded fix loop handles what the reviewer
+  finds. The agent in your session keeps every decision. This needs an agent
+  with a subagent tool and a git project; see [Supported
+  agents](../reference/agents.md).
 
 An approved plan authorizes every task in it, so the agent does not stop to
 check in after each one. When the code differs from what the plan
@@ -134,7 +173,13 @@ to the plan's goal, a requirement, its acceptance check, its constraints, or
 an approved migration or assurance contract, or, on a high-risk plan, any
 change its migration rules treat as normative, such as an interface or
 ownership change; when no task can move forward;
-or when a high-risk entry gate has not passed. A defect it finds outside
+or when a high-risk entry gate has not passed. In a delegated run it also
+stops before an act that cannot be undone, one that touches secrets,
+permissions, or a trust boundary, one that takes effect outside the
+worktree, and a requirement that reads two ways or a product or architecture
+choice the approved documents do not settle. When a task's fix loop uses up
+its rounds without converging, it hands you that task as blocked, with what
+each round changed. A defect it finds outside
 a task is logged and listed when the plan finishes, not fixed on the spot,
 unless the plan says otherwise.
 

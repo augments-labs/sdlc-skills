@@ -40,10 +40,10 @@ what happens to the branch.
 
 ## Step 2: Set up the workspace
 
-If every task's `Files` lies outside any git-tracked project, or the index says
-the deliverable is not a repository change, record `workspace: not applicable`
-in the ledger, with `plan` in `Section`, and skip 2.2. If even one task is
-inside a repository, Step 2.2 and Step 5.3 apply to the whole plan.
+If every task's `Files` lies outside any git-tracked project, record
+`workspace: not applicable` in the ledger, with `plan` in `Section`, and skip
+2.2. If even one task is inside a repository, Step 2.2 and Step 5.3 apply to
+the whole plan.
 
 1. Record the approved plan directory by absolute path; read and mirror the
    plan only there.
@@ -80,21 +80,20 @@ edit. If any check fails, report the field and the task; do not start it.
 Take the next task whose `Depends on` tasks are all `done`. Keep the approved
 mode; switching needs the `Approval rule` owner's direct answer.
 
-1. Read the task file, its `Context` paths, its evaluator, the ledger's
-   learnings, and the rulings that touch this task. Never work from memory
-   of the plan.
-2. Write the attempt row before any edit: task ID, attempt ID, current
-   revision, evaluator identity, expected observable.
+1. Read the task file, its `Context` paths, its evaluator, and the ledger's
+   rulings, findings, and failed attempts that touch this task. Never work
+   from memory of the plan.
+2. Write the attempt row, `State` `in progress`, before any edit: task ID,
+   attempt ID, current revision, evaluator identity, expected observable.
 3. **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`
    before the first edit or project command. The plan naming them is not
-   invocation; the loading action must appear in this session.
+   invocation; the loading action must appear in this session. A carve-out
+   in the task's `Implementation disciplines` stands only where the loaded
+   skill's own Skip covers the task; otherwise the skill applies.
 4. Inspect the result yourself: diff against the attempt's starting revision;
    compare with `Files`, `Exclusive ownership/effects`, and this task's
-   rulings. For a dispatched
-   task, read
-   its raw diff, result revision, and evaluator output, never its summary. A
-   defect or gap outside the task's contract goes to *Findings outside the
-   task*; never fix it inside this task.
+   rulings. A defect or gap outside the task's contract goes to *Findings
+   outside the task*; never fix it inside this task.
 5. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on that
    exact state: the `Evaluator`, every `VCONF` row, and
    `visual-ui-verification` for a change visible in a running GUI or TUI.
@@ -106,12 +105,10 @@ mode; switching needs the `Approval rule` owner's direct answer.
      check
    Mirror only the task row's checkbox and adjacent label. **Do not change the
    index's `Status` header or normalize it out of the plan's identity.**
-7. After parallel work, rerun the combined check on the merged state before any
-   of its tasks is `done`.
-8. Under `per task` cadence only, **REQUIRED SUB-SKILLS:** invoke
+7. Under `per task` cadence only, **REQUIRED SUB-SKILLS:** invoke
    `requesting-code-review` on this task's revision, then
    `finishing-a-branch`. Return after it records its decision.
-9. Go to step 1 with the next ready task. Do not report, ask, or pause at
+8. Go to step 1 with the next ready task. Do not report, ask, or pause at
    `done`. Later `todo` tasks are expected. A blocked task does not block
    independent ready work; retain its blocker and skip it until its entry
    condition changes. Leave the loop only in these cases:
@@ -193,10 +190,6 @@ In the task workspace recorded in Step 2, in order:
 
 - A gap written as a successor halts the run for reapproval: one run wrote
   fifteen this way.
-- An instruction to fix whatever turns up reads as licence to queue every
-  advisory as a task, and each fix's review then raises more — reproduced
-  by a plan run that carried that instruction with no budget: its 14-row
-  list grew to 91. Admit by observed failure, inside the budget.
 - A task file edited after approval leaves the index unchanged; only the
   printed version moves.
 - A workspace created from HEAD lacks an uncommitted plan, or holds an older,
@@ -204,14 +197,11 @@ In the task workspace recorded in Step 2, in order:
 
 ## Failures and the circuit breaker
 
-- If an attempt fails, append it with its raw evidence and a stable
-  failure-class ID, and start a new attempt that links to it.
-- If a worker is past its deadline, write `cancellation requested`, wait
-  until it and everything it started have stopped, set its output aside
-  unused, and reject its late results.
+- If an attempt fails, append it, still `in progress`, with its raw evidence
+  and a stable failure-class ID, and start a new attempt that links to it.
 - After three attempts in one class without convergence, write `blocked`
-  with the class and the attempts, and skip the task under Step 4.9; the
-  turn ends only through Step 4.9's exits. Never patch shard failures one
+  with the class and the attempts, and skip the task under Step 4.8; the
+  turn ends only through Step 4.8's exits. Never patch shard failures one
   at a time.
 
 ## Findings outside the task
@@ -234,4 +224,6 @@ what, the evidence. It is never a task because someone wrote it down.
   trusting: the latest decision row (empty `Section`) for the printed
   version, the workspace's base, HEAD, and dirty state through
   `using-git-worktrees`, the execution ledger, and whether each `done` row
-  still matches the current revision.
+  still matches the current revision. A task left `in progress` was
+  interrupted: keep its uncommitted edits only where a recorded RED covers
+  them, set the rest aside, and start a new attempt that links to it.

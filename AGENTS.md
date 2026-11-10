@@ -111,8 +111,9 @@ Edit skills under `skills/`, then run
 
 Behavior evals live in
 [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals):
-`bin/triggering` scores whether a description triggers, and `bin/behavior`
-runs a scenario against a live agent CLI and judges what it built. A behavior
+`bin/triggering` scores whether a description triggers, and `bin/evaluate`
+runs a skill's cases on a live agent CLI, with the skill and without it or
+against an older plugin tree, and grades what each run built. A behavior
 claim backed by an eval record (its `results/` path and pinned plugin commit)
 is evidence; one argued from the skill text is not.
 
@@ -121,9 +122,11 @@ is evidence; one argued from the skill text is not.
 - **New skill:** name the failure it answers and say whether it is an observed
   session, a contract gap, or an unmeasured candidate. Pick the phase folder
   from `docs/reference/skills.md`, or `common/`.
-- **Focus:** write what the agent wouldn't know without the skill:
-  project-specific conventions, domain-specific procedures, non-obvious edge
-  cases, and the particular tools or APIs to use.
+- **Focus:** write what a capable agent gets wrong without the skill: the
+  rule it would not choose on its own, the non-obvious edge case, who owns a
+  decision, and this library's own scripts and records. Leave out what it
+  already does unprompted. A project's conventions, domain procedures, and
+  tools come from that project's own instructions, not from a skill here.
 - **Cutting:** ask of each section "would the agent get this wrong without
   this?" When unsure, keep it and say so in the PR. Hard stops and
   destructive-action guards are never cut.
@@ -131,10 +134,13 @@ is evidence; one argued from the skill text is not.
   or hard stop without saying in the PR why the new wording holds the same line.
 - **Support files only:** for a change under `references/` or `assets/` alone,
   say the body is unchanged.
-- **Chain budgets:** when a body edit pushes a chain over its `budget_words`
-  in `scripts/sh/data/chains.toml`, cut the body first. Raise the budget only
-  with a line in the PR naming the words added to the budget and what they
-  buy, so the budget moves by decision, never by habit.
+- **Chain budgets:** each chain's `budget_words` in
+  `scripts/sh/data/chains.toml` is a fixed ceiling. A body edit that takes a
+  chain over it cuts as many words elsewhere in that chain, in the same
+  change. Raise a ceiling only with an eval record (see *Evals*) showing the
+  added words change what an agent does; a line in the PR arguing for them
+  does not raise it. A chain that gains or loses a skill moves its ceiling by
+  that body's words and no more.
 
 ## What belongs here
 

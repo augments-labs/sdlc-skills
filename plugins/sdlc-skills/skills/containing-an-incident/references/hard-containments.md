@@ -43,7 +43,7 @@ A restart clears the memory state, a rollback replaces the running code, a
 truncation drops the poison message. Resolve it in this order:
 
 1. Contain anyway if the capture would take more than seconds.
-2. Capture what is cheap first, under Step 3.3's authority, redaction, and
+2. Capture what is cheap first, under Step 2.5's authority, redaction, and
    location — a copy of the failing input, the current config, a snapshot of
    the queue head, the last N log lines.
 3. Say plainly in the record what was lost, so the investigation does not
@@ -62,6 +62,17 @@ Blocking the tenant that triggers the bug takes that tenant offline entirely.
 - When the harms are genuinely comparable, this is not your call alone. It is an
   authority question: escalate with both sides
   stated, and keep looking for a narrower lever while you wait.
+
+## The rollback meets data the old release cannot read
+
+The release migrated a schema or wrote records in a new shape. Rolling the
+code back leaves that data in place, and the old code fails on it.
+
+- Check the release for a migration or a new record format before asking for
+  the rollback.
+- If there is one, prefer a lever that keeps the new code running: the flag,
+  a config value, shedding the failing path.
+- If rollback is the only lever, escalate with the data it cannot read named.
 
 ## You cannot tell whether it is contained
 

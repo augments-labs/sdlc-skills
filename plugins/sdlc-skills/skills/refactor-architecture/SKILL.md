@@ -15,17 +15,19 @@ interface, depth, seam, adapter, leverage, and the deletion test.
 
 - An existing codebase has friction: a change bounces you across many files,
   modules are thin wrappers, tests couple to internals, seams leak.
-- **Skip** for greenfield design (`system-architecture`) or a one-off local
-  fix.
+- **Skip** for greenfield design (`system-architecture`), a one-off local
+  fix, or a read-only audit: `complexity-audit` owns that and hands an
+  accepted structural finding here.
 
 ## Step 1: Classify and measure
 
-1. Fill the classification block (the structural proposal's **High-risk
-   classification** section). If all four answers are on the ordinary route,
-   stay here. If any answer is not, wait for an approved, current migration
-   and assurance contract and for the entry gates to pass. Work authorized as a
-   prerequisite takes in only its exact proposed contract; it cannot edit
-   the target, approve the contract, or satisfy entry.
+1. Open `assets/structural-proposal.md` before classifying, and fill its
+   **High-risk classification** section. If all four answers are on the
+   ordinary route, stay here. If any answer is not, invoke
+   `migration-strategy` and `verification-strategy`, then wait for their
+   approved, current contracts and for the entry gates to pass. Work
+   authorized as a prerequisite takes in only its exact proposed contract;
+   it cannot edit the target, approve the contract, or satisfy entry.
 2. Pin down the exact source revision, the contracts it must honour, and the
    external inputs it consumes.
 3. Inventory the surface and the friction, giving each item a stable ID.
@@ -47,10 +49,8 @@ interface, depth, seam, adapter, leverage, and the deletion test.
    change friction, or for one real volatile or external boundary with
    measured impedance, failure policy, or test isolation. Never add one for
    implementation count or for hypothetical variation.
-3. Fill `assets/structural-proposal.md` before presenting it: the distinct
-   structures compared, the removals and where their invariants now live,
-   the slice table, and the approver rule. The decision outcome and the
-   slice progress stay outside it.
+3. Fill the rest of the proposal before presenting it. The decision outcome
+   and the slice progress go in the ledger beside it, never in it.
 4. If a choice is hard to reverse, invoke `architecture-decisions`.
 5. Present the proposal. Never pick the structure yourself:
 
@@ -68,6 +68,9 @@ interface, depth, seam, adapter, leverage, and the deletion test.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
+   Option 2 issues a successor proposal and asks again; 3 and 4 end here,
+   recorded in the ledger, and the Step 1.4 worktree and tests stay until
+   the user settles them through `finishing-a-branch`.
 6. If the inputs drift, or what was approved changes, that needs an approved
    successor, and the slices it affects are invalid.
 
@@ -76,27 +79,29 @@ interface, depth, seam, adapter, leverage, and the deletion test.
 1. Only after the exact scope and the decision authority are in place,
    **REQUIRED SUB-SKILLS:** invoke `test-driven-development` and `yagni`. If
    the slices take more than one step, invoke `writing-plans`; its mode
-   answer names the executor.
-2. For each slice: migrate its callers, run the bound gate and the project
-   gate (the checks its row of the slice table names), compare against the
-   accepted floors, and retain the known-green state. Checkpoint under
-   `using-git-worktrees`.
+   answer names the executor. A slice that is one mechanical change across
+   many files goes to `large-scale-changes`.
+2. For each slice: migrate its callers, run the checks its row of the slice
+   table names (Step 1.4's preservation tests and the project's own),
+   compare against the measurements in the proposal's **Now** section, and
+   retain the known-green state. Checkpoint under `using-git-worktrees`.
+   Rewrite a test that reaches into internals against the interface in an
+   earlier slice of its own, never in the slice that moves its target.
 3. If a behavior delta appears, stop. Return to its requirement or to a
    new-behavior cycle.
-4. Before removing a surface, inventory every path that could still reach
-   it: static calls, dynamic registration, reflection, configuration,
-   generated inputs, tests, and external consumers. If unsure, it stays, or
-   waits for a completed deprecation and migration.
+4. Before removing, moving, or renaming a surface, inventory every path
+   that could still reach it: static calls, dynamic registration,
+   reflection, configuration, generated inputs, tests, and external
+   consumers, plus its name as a string (dynamic imports, entry-point
+   declarations, CI path filters, ownership globs, patch targets in tests).
+   If unsure, it stays, or waits for `deprecating-an-api`'s *removal
+   approved* and the migration.
 5. Map every invariant the surface carried to the coverage that survives.
    Falsify that surviving gate. Keep the rollback recoverable until
    integration.
 
 ## Gotchas
 
-- A surface with zero static callers can still be reached through dynamic
-  registration, reflection, or a generated config — a plain call-site search
-  finds none of those and reads as proof the surface is dead when it is only
-  unproven.
 - The deletion test's "removal spreads complexity to callers" branch is only
   as good as the caller trace behind it: run it against a guessed caller set
   and a genuinely load-bearing module reads as a thin wrapper worth

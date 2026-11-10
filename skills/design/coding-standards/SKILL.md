@@ -12,7 +12,7 @@ description: "Settles the conventions agents and humans both follow in a project
 
 ## Step 1: Settle the vocabulary and the patterns
 
-Open `assets/standards-template.md` before starting; each step fills its section. Read `references/standards-example.md` when the first draft is written and needs comparing against a filled example.
+Open `assets/standards-template.md` before starting. Fill a section only with what this project has; the template says what an empty one carries. Read `references/standards-example.md` when the first draft is written and needs comparing against a filled example.
 
 1. If an approved `data-model` or domain contract exists, take its concepts
    and terms. Decide only their representation (how each term appears in
@@ -23,27 +23,29 @@ Open `assets/standards-template.md` before starting; each step fills its section
    can see.
 3. Ban a generic label wherever a domain term exists. Keep the glossary
    current.
-4. Name the one way this project does each of these: error handling,
-   validation, async, dependency injection, and testing seams. Give one
-   short example of each.
-5. Write the hard nevers, the things never to do in this project.
+4. Give the one short pattern example the template asks for.
+5. Where one thing is done several ways, count each form across the whole
+   tree by search, not from sampled files, and record the counts with the
+   form chosen.
 
 ## Step 2: Assign enforcement
 
-1. Assign enforcement to each rule. If the rule can be detected statically,
+1. Read the project's formatter, linter, and type-check configuration
+   first: a rule that disagrees with it changes that configuration in this
+   proposal or is dropped. Assign enforcement to each rule. If the rule can
+   be detected statically,
    assign a formatter, linter, type or static check, or repository check
    that fails. If the rule is about vocabulary, architecture, or judgement,
    assign a named review rubric and a named owner.
-2. The warning budget is zero. Never leave a permissive default.
+2. The warning budget is zero. Never leave a permissive default. Where
+   warnings already exist, record each rule's count today as a Step 2.4
+   exception; a change may lower it, never raise it.
 3. Point to the exemplar (the file that does all of the above right). Run
    its checks and rubric now. If the project is greenfield and has no
    exemplar, name the first artifact and its owner; adoption stays pending.
    Never fabricate a path.
-4. Name which project instruction wins when instructions conflict, and who
-   approves an exception. Each exception needs a scope, a reason, an expiry,
-   and a compensating check.
-5. Name how often, or on what trigger, the standard is reviewed for drift,
-   and who updates it.
+4. Each exception needs an approver, a scope, a reason, an expiry, and a
+   compensating check.
 
 ## Step 3: Write and present
 
@@ -71,7 +73,9 @@ Open `assets/standards-template.md` before starting; each step fills its section
    exemplar gate (the exemplar's checks and rubric from Step 2.3) have run.
    Record `in force / suspended / superseded` outside the section, in the
    external adoption ledger the template names (its record of adoption),
-   with fresh evidence.
+   with fresh evidence. Then print the one line that points the project's
+   agent instruction file at this path, for the user to add; never edit
+   that file.
 
 ## Gotchas
 

@@ -1,6 +1,6 @@
 # Dispatch briefs in depth
 
-Worked examples behind `../SKILL.md` — loaded on demand. Each pair shows a weak brief and the strong one for the same task, filled from `../assets/dispatch-packet.md`. The examples show the slim packet; a high-risk run or a phase queue fills `../assets/dispatch-packet-controlled.md` as well.
+Worked examples behind `../SKILL.md` — loaded on demand. Each pair shows a weak brief and the strong one for the same task, filled from `../assets/dispatch-packet.md`. The examples show the slim packet; a high-risk run or a phase queue fills `../assets/dispatch-packet-controlled.md` as well. Each strong brief is an excerpt holding the fields its pair is about: a real packet fills every field of the asset.
 
 ## Pair 1 — separate failing tests
 
@@ -90,7 +90,7 @@ Why it fails: session history is not context — it carries your dead ends and m
   cases; scope exceptions.
 ```
 
-The typo gets its own brief at the small tier. The worker still observes the
+The typo gets its own brief at the medium tier. The worker still observes the
 named RED under TDD; it need not run a broad suite merely to discover which
 failure owns the task.
 
@@ -112,7 +112,7 @@ Why it fails: "best" undefined — each agent optimises a different axis; no cri
 ## Task
 
 - **Task:** Evaluate {{approach}} as the cache for the product-list endpoint.
-- **Tier:** small
+- **Tier:** medium
 - **Base:** {{immutable repository revision}}
 
 ## Boundary
@@ -125,12 +125,11 @@ Why it fails: "best" undefined — each agent optimises a different axis; no cri
 
 ## Done when
 
-- **Judge against, in order:** 1) correctness under concurrent writes, 2) p95
-  read latency at the load in README, 3) operational cost (new infra? new
-  failure modes?), 4) lines-of-code cost to adopt.
-- **Done when:** you can answer all four criteria from evidence you actually
-  read — a file, a measurement, or the approach's documented semantics. No
-  "it should be fine."
+- **Done when:** you can answer all four criteria, in this order, from
+  evidence you actually read — a file, a measurement, or the approach's
+  documented semantics. No "it should be fine." 1) correctness under
+  concurrent writes, 2) p95 read latency at the load in README, 3) operational
+  cost (new infra? new failure modes?), 4) lines-of-code cost to adopt.
 
 ## Output
 

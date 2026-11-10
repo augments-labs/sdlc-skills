@@ -64,18 +64,19 @@ open, leave that to it.
 
 ## Step 3: Write the brief and present it
 
-1. Fill `assets/brief-template.md` after Step 2.4's stop condition holds:
-   goal, decisions with their reasons, non-goals, open risks, the brief's
-   identity (a hash of its own text; the template says how), and the fields
-   that name its decision record (the ledger: add to it, never rewrite it,
-   and keep it outside the brief). A brief, not a spec.
+1. Fill `assets/brief-template.md` after Step 2.4's stop condition holds. Its
+   decision record (the ledger) stays outside the brief: add to it, never
+   rewrite it. A brief, not a spec.
 2. Write it to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the
-   user-set path, preserving approved sections around it. If the brief is
-   tiny, write it inline beside its decision record instead.
+   user-set path, preserving approved sections around it. Compute its
+   identity with `using-sdlc-skills`' `artifact-layout.sh --hash FILE --brief`
+   and record it in the ledger row. A tiny brief (a goal and one decision)
+   goes in the reply beside its decision record: path `this reply`, version
+   `none`.
 3. Present and end the turn:
 
    ```text
-   Brief {{path}} — version {{identity (per template)}}
+   Brief {{path}} — version {{identity}}
    Goal: {{one line}}  Decisions: {{n}}  Non-goals: {{n}}  Open risks: {{n}}
 
    1. Approve
@@ -120,8 +121,9 @@ authority you hold now covers changing it. While its identity is not yet
 issued, update the draft. Never edit an artifact once its identity is issued,
 whether its decision is pending or closed: every change to what downstream
 work relies on from it creates a new proposed successor that names its
-predecessor, with a per-ID list of what was `added / changed / removed /
-preserved`, and removing an ID needs its owner's approval.
+predecessor, with a list per decision, non-goal, or stable ID of what was
+`added / changed / removed / preserved`, and removing one needs its owner's
+approval.
 
 When a successor is approved, list everything bound to its predecessor and
 mark each binding invalid until its owner validates it again. Record its

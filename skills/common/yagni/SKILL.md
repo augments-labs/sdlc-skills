@@ -53,21 +53,22 @@ them.
    dispatch nothing. For any other lasting surface, or when a strict challenge
    was requested, fill the challenger prompt,
    `assets/yagni-challenger.md` with `assets/challenge-report.md` before
-   dispatching it read-only as `dispatching-parallel-agents` Step 2 says, and
-   wait. Record the dispatch ID it returns next to the report.
+   dispatching it read-only as `dispatching-parallel-agents` Steps 1.4 and 2
+   say, and wait. Record the dispatch ID it returns next to the report.
 
    Read the report; match its Proposal and Challenge inputs to the request. A
    verdict that is missing, mismatched, conflicting, or invalid counts as
-   `inconclusive`. `revise` means the proposal is blocked as written.
+   `inconclusive`. `lean` clears the surface as proposed.
+   `revise` means the proposal is blocked as written.
    `decision` means its accountable owner decides (the user, unless a plan
    names another); wait for that. `inconclusive` is not clearance.
 
    The task says "add a retry to the upload call". The draft also adds a
    `maxRetries` setting and a hook for a custom backoff. Neither the task nor
-   any commitment it inherits needs either, so each is a speculative knob or
-   extension point: rung 1, skip it and say so. Had the user asked to "make the
-   retry count configurable", that one setting would be requested surface with
-   the request as its owner, and the backoff hook would still be speculative.
+   any inherited commitment needs either, so each is speculative: rung 1, skip
+   it and say so. Had the user asked to "make the retry count configurable",
+   that one setting would be requested surface, owned by the request, and the
+   backoff hook would still be speculative.
 
 ## Step 2: Before calling it ready
 

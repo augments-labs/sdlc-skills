@@ -20,17 +20,16 @@ the *how* (architecture, schemas, code) to design.
   `clarifying-intent`; this skill cannot turn that reply into approved
   requirements.
 
-## Step 1: Gather and state
+## Step 1: Gather
 
 1. Pull the goal or brief, and read the relevant existing code. If a genuine
    gap is left, invoke `clarifying-intent`. Invent nothing you could have
    found.
-2. State the problem in a line or two, and link the goal it serves.
 
 ## Step 2: Write the requirements
 
-Open `assets/spec-template.md` before you start; each step below fills one of
-its sections.
+Open `assets/spec-template.md` before you start. Fill a section only with
+what this work has; the template says what an empty one carries.
 
 1. Write each functional requirement as an observable behavior with a stable
    ID that no successor spec ever gives to a different requirement:
@@ -40,14 +39,11 @@ its sections.
    Wrong: R-07 good auth
    ```
 
-2. Carry every guardrail and obligation that applies: trust and data,
-   security, accessibility, compatibility, operational and recovery,
-   performance and resource, supported platforms and modes. Do not add a
-   generic list of non-functional requirements.
+2. Carry each guardrail and obligation the template names, when it applies.
+   Do not add a generic list of non-functional requirements.
 3. Read `references/reference-forms.md` before choosing the first acceptance
    form. For each requirement, choose the cheapest form that can honestly
-   judge it: an executable gate, a disposable mockup, a source-fact
-   contract, a rubric, or prose.
+   judge it.
 4. If the form is an executable gate, write it as a proposed file beside the
    spec, never into the project; the implementer lands and runs it inside
    the task workspace as its `test-driven-development` check. If the interface, or the authority to change
@@ -61,22 +57,21 @@ its sections.
    rows that showed it, with its result and never the rows; cite no schema
    for it, since a schema says only what rows may hold. Rewrite one you
    cannot cite to what is known, or move it to open questions.
-6. Fill every column of the template's assumptions-and-dependencies table,
-   one row per assumption or dependency.
-7. List the open questions, the requirement-level risks, and what is out of
-   scope this round.
 
 ## Step 3: Write and present
 
-1. Write the spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md` or the
-   user-set path. The spec is immutable: a change to it is a new spec that
-   names this one as its predecessor, never an edit.
-2. Fill the template's high-risk classification section. If any answer there
-   is off the ordinary route, or the user marks the work high-risk, run the
-   review in `assets/spec-review.md` before presenting, with a reviewer who is
-   not the spec's sole author. That review blocks presenting the spec
-   (Step 3.3). A `NEEDS_CONTEXT` return keeps it pending: supply the path
-   it names and run the review again.
+1. Fill the template's high-risk classification section, then write the
+   spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set
+   path. The spec is immutable: a change to it is a new spec in its own
+   file (`-{{n}}` before `.md`) that names this one as its predecessor,
+   never an edit.
+2. If any classification answer is off the ordinary route, or the user marks
+   the work high-risk, dispatch the review in `assets/spec-review.md` before
+   presenting, as `dispatching-parallel-agents` Step 2 says, to a reviewer
+   who is not the spec's sole author. That review blocks presenting the
+   spec (Step 3.3). Record each finding's disposition, as the asset says.
+   On `NEEDS_CONTEXT`, supply the path it names and rerun once; a second is
+   an open question for the decision owner.
 3. Present:
 
    ```text

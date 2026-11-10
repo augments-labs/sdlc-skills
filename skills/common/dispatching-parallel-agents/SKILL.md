@@ -15,7 +15,8 @@ reconcile every diff yourself before anything integrates.
   no task needing another's output. Overlapping reads of frozen inputs are safe.
 - **Skip** overlapping writes, shared mutable state, dependent outputs, and
   work that is quicker done inline. Sequence it in the current task or plan;
-  the plan executors are for an approved plan only.
+  `executing-plans` and `subagent-driven-development` take an approved plan
+  only.
 
 ## Step 1: Before fan-out
 
@@ -36,15 +37,15 @@ reconcile every diff yourself before anything integrates.
    Then cap the wave at what the machine can run at once. For a heavy build,
    measure one run's memory and cores, dispatch what fits, and sequence the
    rest.
-2. Pick each agent's tier from the Model selection table below and write it
+2. Pick each agent's tier from the Model selection table and write it
    in the packet's `Tier` field: the lowest tier sufficient for the decisions
    that remain and the cost of an error. Supply missing context before moving
    up a tier.
-3. Fill one `assets/dispatch-packet.md` per agent, every field, before its
+3. Fill one `assets/dispatch-packet.md` per agent, every field, before
    dispatch. Read `references/brief-examples.md` before writing the first one.
    Never paste session history.
    - Read `assets/dispatch-packet-controlled.md` when the plan is high-risk or
-     uses phase queues; it adds the ten controlled fields.
+     uses phase queues; it adds ten controlled fields.
    - Until those fields say otherwise, a worker may not dispatch anyone, and
      the data it may reach stays bounded.
 4. Before the first dispatch, freeze the expected packet IDs and their count,
@@ -87,13 +88,14 @@ user's main-session model and any model reserved for orchestration untouched.
    tool-issued ID, write `not dispatched`, and name the action tried and what would make it
    callable. Never describe a fan-out that has no tool-issued IDs behind it,
    and never quietly do the work yourself instead.
-   Ask the user once per work item; the answer covers only that work:
+   Ask once for every work item the same cause stopped, naming each; the
+   answer covers only those items:
 
    ```text
-   {{work}} needs an independent agent, and {{action}} is not callable here.
+   {{work items}} need an independent agent, and {{action}} is not callable here.
 
-   1. I do it myself, labelled as a self-review, not an independent one
-   2. Name the reviewer or agent who will do it
+   1. I do it in this session, labelled not independent (for a review: a self-review)
+   2. Name the person or agent who will do it
    3. Keep it pending
 
    Recommendation: {{option}} — {{one sentence}}.
@@ -104,7 +106,8 @@ user's main-session model and any model reserved for orchestration untouched.
    be independent), omit option 1 and say why.
    Ask this and end the turn; `clarifying-intent` owns what closes it.
    Record the answer as the written assignment and continue under it. A named
-   reviewer's report counts only when it arrives from outside this session,
+   person's or agent's result counts only when it arrives from outside this
+   session,
    bound to the exact identities; the recorded answer stands in for the
    tool-issued ID. With no answer, the work stays pending.
 3. Poll exactly those IDs until the frozen deadline. Never poll a target that
@@ -115,9 +118,9 @@ user's main-session model and any model reserved for orchestration untouched.
    all stopped (quiescent). Set partial output aside, unused (quarantine).
    Only then write failed, timed out, or cancelled.
 5. Reassign the work as a new attempt linked to the one it replaces only
-   with a changed intervention and inside the caller's bound; otherwise
-   return the item to the caller as failed or blocked. Reject every late
-   result or change that arrives from the replaced attempt.
+   with a changed intervention and inside the caller's bound (once per item
+   when none is set); otherwise return the item as failed or blocked. Reject
+   every late result or change that arrives from the replaced attempt.
 6. If a writer reports a shared generator, file, state, dependency, or scope
    outside its packet, pause the affected work, preserve the diffs,
    reclassify the pieces, assign one owner or a sequence, and issue revised

@@ -3,6 +3,8 @@
 Fill this in as the audit runs, and write the completed file to
 `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`. The coordinator alone writes
 it; dispatched auditors return partition reports that get reconciled into it.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
 # Complexity audit: {{topic}}
@@ -17,6 +19,9 @@ it; dispatched auditors return partition reports that get reconciled into it.
   these are not candidates for removal}}
 - **Evidence allowed:** {{what counts here: static reads, existing test output,
   dependency metadata — and what does not}}
+- **Audit-input identity:** {{the first 7 characters of `git hash-object` over
+  this report as it stands once the partitions are written and before any
+  dispatch; every auditor prompt and partition report carries it}}
 
 This report is owned by the coordinator and lives outside the audited target's
 identity. If the target drifts from the frozen identity, stop or restart; do not

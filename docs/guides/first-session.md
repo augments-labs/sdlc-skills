@@ -62,6 +62,16 @@ Use sdlc-skills:mapping-the-codebase on the payments module before we change it.
 
 The [skill catalogue](../reference/skills.md) lists every name.
 
+## Changing a skill
+
+The skills are plain files. To change one or add one, work in a checkout of
+the library and ask the agent; `writing-skills` loads. It holds the format
+(the frontmatter, the size limits, where templates, references, and scripts
+go) and a checker, `check-skill.sh`, that the agent runs before it calls the
+skill done. It also asks for proof that the skill changes what an agent
+does: an agent that can explain a rule has not shown that it follows it.
+[CONTRIBUTING.md](../../CONTRIBUTING.md) covers sending the change back.
+
 ## The questions the agent asks
 
 Several skills stop and ask you something before they go on: which branch to
@@ -76,11 +86,28 @@ Two things follow from that:
 - Telling the agent "don't ask me questions" does not let it answer those
   questions for you. It still stops at a decision that is yours.
 
+## Asking how the code behaves
+
+When you ask what a function returns, whether a case is handled, or why an
+output appears, `runtime-evidence` has the agent run the code and answer
+with what it saw. Each claim in the answer is labelled:
+
+- `observed` comes with the command, the revision, and the line it printed.
+- `read` means the agent could not run it, with the reason and the run that
+  would settle it.
+
+The same skill applies before the agent tells you code is faster, lighter,
+or smaller: it measures the old and the new version in one session and
+reports the median and the range of each, or says the difference is too
+small to measure.
+
 ## The folder the agent creates
 
 The first time a skill needs to write a brief, a plan, or a record of a
 check, the agent creates a `.sdlc-skills/` folder at the root of your
-project. Briefs, specs, designs, plans, and post-mortems go there, and so do
+project. When the agent works in a separate worktree, the folder still sits
+in your main checkout, so one task leaves one trail. Briefs, specs, designs,
+plans, and post-mortems go there, and so do
 the records of what was run and what was decided.
 
 The folder is laid out so that you can commit the useful parts and ignore the

@@ -164,8 +164,8 @@ done
 #   (validate-skill-graph.sh --targets), so the two gates agree on what one is.
 echo "• backticked skill names and handoff targets resolve to skills on disk"
 skill_names="$(find skills -mindepth 3 -maxdepth 3 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
-name_allowlist='common-dir git-dir integrated-regression description-yaml reference-depth reference-load-condition
-  blocked-preserved cancellation-requested closed-preserved discard-pending materialized-kept outcome-unknown
+name_allowlist='integrated-regression description-yaml reference-depth reference-load-condition
+  blocked-preserved closed-preserved discard-pending materialized-kept outcome-unknown
   comment-accuracy silent-failures test-coverage type-design'
 handoff_allowlist='inconclusive satisfied'
 while IFS=: read -r file token; do
@@ -523,13 +523,14 @@ done < <(grep -roE --include='*.md' --include='*.sh' \
 # numbers is worse than one with none, because it reads as checked.
 #
 # This compares measurements, not limits. The ceilings themselves (1024, 500,
-# 5000) live in check-skill.sh alone and are deliberately not restated here.
+# 5000, 19000) live in check-skill.sh alone and are deliberately not restated
+# here.
 echo "• conformance record matches the tree"
 CONF_DOC=docs/reference/agent-skills-conformance.md
 if [ ! -f "$CONF_DOC" ]; then
   err "$CONF_DOC is missing — the conformance record is part of the gate"
 else
-  max_desc=0; max_lines=0; max_tokens=0
+  max_desc=0; max_lines=0; max_tokens=0; max_bytes=0
   for skill in skills/*/*/SKILL.md; do
     fm_end=$(awk 'NR>1 && /^---[[:space:]]*$/{print NR; exit}' "$skill")
     d=$(awk -v e="${fm_end:-0}" '
@@ -542,6 +543,8 @@ else
     [ "$l" -gt "$max_lines" ] && max_lines=$l
     t=$(bash "$CONFORMANCE" --tokens "$skill")
     [ "$t" -gt "$max_tokens" ] && max_tokens=$t
+    b=$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -c | tr -d ' ')
+    [ "$b" -gt "$max_bytes" ] && max_bytes=$b
   done
   n_refs=$(ls -d skills/*/*/references 2>/dev/null | wc -l | tr -d ' ')
   n_assets=$(ls -d skills/*/*/assets 2>/dev/null | wc -l | tr -d ' ')
@@ -560,6 +563,7 @@ else
   conf_claim "longest description"  "$max_desc"   'longest is [0-9]+ \|'
   conf_claim "longest body"         "$max_lines"  'longest is [0-9]+ \([0-9]+% of ceiling\)'
   conf_claim "largest body tokens"  "$max_tokens" 'largest is ~[0-9]+'
+  conf_claim "largest body bytes"   "$max_bytes"  'largest is [0-9]+ bytes'
   conf_claim "references/ count"    "$n_refs"     '\| [0-9]+ skills; rubrics'
   conf_claim "assets/ count"        "$n_assets"   '\| [0-9]+ skills; every fill-in template'
   conf_claim "scripts/ count"       "$n_scripts"  '\| [0-9]+ skills \(see below\)'

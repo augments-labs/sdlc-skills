@@ -11,19 +11,19 @@ different kind of evidence; it is never permission to guess and patch.
 
 Before the first step, check whether the failure is reaching real users right
 now. If it is, invoke `containing-an-incident` first. Return after containment,
-or with its recorded fallback: exhausted safe levers, residual impact, and
-incident/escalation owner. Continue diagnosis under that recorded decision; do
-not go back to containment for residual impact that has not changed. New or
-worsened impact or a newly available lever reopens containment.
+or with its recorded hard-containment fallback. Continue diagnosis under that
+recorded decision; do not go back to containment for residual impact that has
+not changed. New or worsened impact or a newly available lever reopens
+containment.
 
 ## Step 1: Frame the investigation
 
 1. If the failure is deterministic and you can already reproduce it, write
-   three lines: symptom, reproduction command, expected versus observed. If it
-   is intermittent, in production, or not yet reproducible, write the
-   investigation descriptor, every field, from
-   `references/feedback-loop-options.md` before the first probe, keeping what
-   you observed and what someone reported in separate fields.
+   three lines: symptom, reproduction command, expected versus observed. On
+   this route those lines are the descriptor and the command is its judge;
+   they grant no new access. If it is intermittent, in production, or not
+   yet reproducible, write the investigation descriptor, every field, from
+   `references/feedback-loop-options.md` before the first probe.
 
    A test failed once in CI and passed the three times you ran it locally.
    Those three green runs do not make the failure deterministic, and they do
@@ -48,7 +48,7 @@ worsened impact or a newly available lever reopens containment.
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/hypotheses.md`. Search the
    exact error text first.
 2. List only causes the evidence supports and that a probe could prove wrong.
-   Three to five. Do not pad.
+   At most five. Do not pad.
 3. Give the failure class, each hypothesis, each intervention, and each
    attempt a stable ID. Record the prediction, the probe, the result, and
    your confidence. Leave the descriptor unedited.
@@ -70,7 +70,7 @@ worsened impact or a newly available lever reopens containment.
 ## Step 3: Fix and close
 
 1. If the request was for a diagnosis only, report the cause and the
-   evidence. Leave the correction pending. Stop.
+   evidence. Leave the correction pending; skip to Step 3.9.
 2. Check configuration, environment, dependency, data, and feature state
    before touching code.
 3. Turn the reproduction into the regression check. If probabilistic, record
@@ -79,14 +79,21 @@ worsened impact or a newly available lever reopens containment.
    `test-driven-development` and `yagni`. A data, permission, infrastructure,
    or operational correction is its own controlled action under its own
    authority. Never write code to stand in for one of those.
-5. Rerun the same loop against the before state, the control, and the fixed
-   state. Run the project checks the change requires.
-6. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` and read the raw
+5. Search for every other site with the same cause: a copy of the code, a
+   sibling implementation, another caller; and every other reader of a flag,
+   cached value, or shared field the fix changes. Check each one. Fix those
+   the request covers, each with its own failing check; report the rest as
+   pending.
+6. Rerun the same loop against the before state, the control, and the fixed
+   state. Run the project checks the change requires. Revert a fix that
+   misses before trying another.
+7. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` and read the raw
    output through it before saying fixed. Report what the evidence shows and
    what it leaves uncertain.
-7. Clean up only the exact targets your authority covers. If instrumentation
+8. Clean up only the exact targets your authority covers. If instrumentation
    or artifacts are left behind, report them as pending. Never remove
    quietly.
+9. If the failure reached users, invoke `post-mortem`.
 
 ## Circuit breaker
 
@@ -105,9 +112,6 @@ the ledger.
 
 ## Gotchas
 
-- A wrong-reason RED that bounces back from `test-driven-development` applies
-  no fix: restarting the count, or counting only applied fixes, means the
-  breaker never trips.
 - A test double that lacks something the real dependency does can be the
   cause. Check when the double is created, called, and torn down relative to
   the code under test before hunting a defect in that code; skipping this
@@ -116,10 +120,6 @@ the ledger.
   (the runner, a hook, or teardown failed), not a test failure. Calling it
   flaky or green leaves the real failure undiagnosed; diagnose what exited
   nonzero before reading any test result.
-- A flag, cached value, or shared field has more readers than the one that
-  showed the bug. Before you flip it, or call a stale-state fix done, search
-  for every reader and check each one; fixing only the reader you saw leaves
-  the others stale or newly broken.
 
 ## Hard stops
 

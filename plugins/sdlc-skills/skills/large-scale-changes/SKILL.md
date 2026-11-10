@@ -6,9 +6,7 @@ description: "Applies a mechanical change across many files, packages, or owners
 # Large-Scale Changes
 
 The script is the change; its output is evidence. Review the script and a
-sample, regenerate instead of merging, and ship one shard per owner. This
-skill never decides how many PRs to open or whom to ping, never deprecates
-an interface other teams call, and never redesigns structure.
+sample, regenerate instead of merging, and ship one shard per owner.
 
 ## When to use
 
@@ -33,9 +31,13 @@ an interface other teams call, and never redesigns structure.
    between the current one and the target, not only the target's, and list
    each breaking change as part of the transformation. Keep one target
    version per package-manager workspace unless the user says otherwise.
+   Read `references/package-manager-bumps.md` before a bump under npm,
+   pnpm, yarn, Go modules, or pip with hashes.
 4. **REQUIRED SUB-SKILL:** invoke `using-git-worktrees` for one workspace
-   on the base the shards will target. The script lives there, in the
-   repository, under the project's scripts path.
+   on the base the shards will target. Commit the script and its fixtures
+   there, under the project's scripts path; every shard runs it from this
+   workspace at the revision the manifest records. That branch is the
+   manifest's evidence and merges only when the user asks for it.
 
 ## Step 2: Write the script, then prove it on a sample
 
@@ -70,7 +72,8 @@ an interface other teams call, and never redesigns structure.
 
 1. Split by the project's ownership file, or by package when there is none.
    Open `assets/shard-manifest.md` before the first shard branch is cut,
-   and fill one row per shard.
+   and fill one row per shard. If the ownership file is a `CODEOWNERS` file,
+   read `references/ownership-files.md` before splitting by it.
 2. Each shard must build and pass its tests alone, against the current base,
    in any merge order. If a shard needs another shard's change, that shared
    part is not a shard: ship it first as its own change and build the
@@ -101,21 +104,31 @@ an interface other teams call, and never redesigns structure.
    `finishing-a-branch` with that answer as the direct instruction for its
    push-and-PR transition; do not ask again per shard while the shard's
    revision, remote/ref, and PR title/body match what the manifest recorded
-   before the question was asked. Write the link and the state in the
-   manifest. A shard whose revision or payload changes afterwards (Step 5)
-   is asked again by `finishing-a-branch`.
+   before the question was asked. Record the answer as a row in the ledger
+   beside the manifest, name the row in its Decision ledger field, and write
+   each link and state in the manifest. A shard whose revision or payload
+   changes afterwards (Step 5) is asked again by `finishing-a-branch`.
 
 ## Step 5: Keep shards current until the last one merges
 
 1. If the base moves under an open shard, merge the new base into the shard
    (a conflict in a file the script rewrites takes the base's whole file),
    rerun the script on the result for that shard's paths, and commit the new
-   output on top. Never rebase or merge generated hunks by hand.
-2. If a review changes the transformation, change the script, rerun it on
-   every open shard, and record the script's new revision in the manifest.
-3. Report the manifest with every shard's state. The change is done when
-   every shard and the switch-on, if any, have merged; report anything else
-   as in progress.
+   output on top; then redo, in its own commit, any hand edit that file
+   lost. Never rebase or merge generated hunks by hand.
+2. If a review changes the transformation, change the script and record its
+   new revision in the manifest. Recut each open shard from the base and
+   rerun the script there, then redo the shard's hand edits: on the old
+   output the script finds nothing left to match. For a shard already
+   merged, write the difference between the old output and the new as its
+   own transformation and ship it as a new shard.
+3. After the last shard merges, rerun the script over the whole scope on
+   the merged base, before any switch-on. A diff that is not empty is call
+   sites added meanwhile: ship it as one more shard, once; if the rerun
+   after that is not empty either, report what keeps adding them instead of
+   a third pass. Report the manifest with every shard's state. The change
+   is done when every shard and the switch-on, if any, have merged; report
+   anything else as in progress.
 
 ## Hard stops
 
@@ -128,35 +141,11 @@ an interface other teams call, and never redesigns structure.
 
 ## Gotchas
 
-- In a GitHub `CODEOWNERS` file the last matching pattern wins, a `!`
-  negation or a `[ ]` range is invalid and that line is skipped without an
-  error, and a path no pattern matches has no owner at all; the file read is
-  the one on the PR's base branch. A shard split by the first match, or by
-  a file on the task branch, names the wrong reviewer — shows when a shard
-  for one team gets a review request from another, or from nobody.
-- GitLab `CODEOWNERS` sections are enforced separately: the last matching
-  entry in each section applies, so one path can need an approval from
-  every section that matches it, and a `^[Section]` is optional on merge
-  requests only. One shard per path owner undercounts the approvals a shard
-  needs — shows when a merged-looking shard waits on a second section.
-- npm `overrides`, pnpm `overrides`, and yarn `resolutions` are read only
-  from the workspace root manifest; one written in a package's own
-  manifest is ignored or warned on, and npm refuses an override of a direct
-  dependency whose spec differs from the dependency's (use `$name` to point
-  at it). A per-package override "bump" changes nothing — shows when the
-  lockfile diff after the bump is empty.
-- Go versions in `go.mod` are minimums under minimal version selection:
-  `go get m@v` holds only until something requires a higher `m`, and a
-  downgrade also downgrades every module that requires the removed
-  versions. In a `go.work` workspace `go get` edits one main module at a
-  time, so a bump across the workspace is one run per module — shows when
-  a "bumped" module still builds against the old version.
-- With pip, a `--hash` on any requirement turns hash-checking on for all of
-  them, including every transitive dependency, and one entry without a hash
-  fails the install; a package with wheels per platform needs a hash per
-  wheel. A bump that rewrites one line of a hashed requirements file breaks
-  installs on the other platforms — shows when CI on one platform passes
-  and another fails on the same commit.
+- A script that finds its files by walking directories also rewrites
+  ignored build output, installed dependencies, and worktrees under the
+  repository, and no diff lists those edits. Take the file list from the
+  version-control index — shows when a build breaks on a file the diff
+  never showed.
 
 ## Common mistakes
 

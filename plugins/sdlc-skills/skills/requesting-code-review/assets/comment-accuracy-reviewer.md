@@ -53,6 +53,7 @@ Repeat this block for each finding:
 ### {{finding title}}
 
 - Category: {{Critical: false/misleading, correct or delete | Improve: missing why/context, suggest addition | Remove: restates code}}
+- Disposition: {{blocking | advisory}}
 - Evidence: {{file:line and observed problem}}
 - Comment claim: {{quote and code or contract it describes}}
 - Correction: {{concrete recommendation}}

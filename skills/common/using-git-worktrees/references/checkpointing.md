@@ -1,6 +1,6 @@
 # Checkpointing a task branch
 
-Read this when the task will make more than one commit.
+Read this before the task's first commit.
 
 ## The unit
 
@@ -19,10 +19,16 @@ whole file, including the earlier edits. A path-limited commit leaves anything
 else in the index staged and uncommitted:
 
 ```bash
+git rev-parse --show-toplevel    # expect: the workspace path, never the shared checkout
 git add -- {{task-changed-paths}}
 git commit -m "{{message}}" -- {{task-changed-paths}}
 git show --stat --format= HEAD   # expect: only {{task-changed-paths}}
 ```
+
+A closing keyword in the message (`Closes #N`, `Fixes #N`) closes the ticket
+when the commit reaches the default branch. Write one only when the user or
+the project's contribution rules ask for it; otherwise reference the ticket
+without one.
 
 ## The authority is recorded once per task
 

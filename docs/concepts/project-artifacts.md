@@ -1,8 +1,11 @@
 # The `.sdlc-skills/` folder
 
 The first time a skill writes a brief, a plan, or a record of a check, the
-agent creates `.sdlc-skills/` at the root of your project. This page says
-what goes in it and what to commit.
+agent creates `.sdlc-skills/` at the root of your project. When the agent
+works in a linked git worktree, that root is still the main checkout, so a
+task keeps one trail whichever worktree wrote to it. (With a bare
+repository, it is the top of the checkout in use.) This page says what goes
+in it and what to commit.
 
 ## What goes where
 
@@ -10,7 +13,7 @@ what goes in it and what to commit.
 | --- | --- | --- |
 | `briefs/` | Goals, scope, feasibility, and interview briefs; captured tickets | Yes |
 | `specs/` | Specifications | Yes |
-| `designs/` | Architecture, data models, UI designs, coding standards, decision records, migration contracts, rollout records, schema change records, deprecation records, shard manifests | Yes |
+| `designs/` | Architecture, data models, UI designs, coding standards, decision records, migration contracts, rollout records, schema change records, deprecation records, shard manifests, structural proposals | Yes |
 | `plans/` | Plan directories: an index and one file per task | Yes |
 | `audits/` | Complexity audit reports | Yes |
 | `post-mortems/` | Post-mortems | Yes |
@@ -25,6 +28,14 @@ Artifacts are named `<date>-<topic>.md`, for example
 The "commit it" column describes a project that keeps its delivery trail in
 the repository. If your project keeps planning out of the repository, ignore
 `.sdlc-skills/` as a whole; the layout inside does not change.
+
+## Sections with nothing to hold
+
+A brief, a spec, a design section, or an audit report keeps every heading
+of its template. When a heading has nothing to say for your work, the agent
+writes one line under it, `None:` and the reason, and does not invent a row
+to fill the table. Read that reason when you review: it is a claim that
+nothing applies, and you can send it back.
 
 ## Ledgers
 

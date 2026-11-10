@@ -4,6 +4,8 @@
 section it names. Use this template for
 `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}-migration.md`, replacing every
 placeholder; remove an inapplicable row only with a recorded rationale.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
 ## Normative control
@@ -29,7 +31,7 @@ placeholder; remove an inapplicable row only with a recorded rationale.
   challenger prompt and its clear, revise, or inconclusive verdict; actual
   attempt receipts belong in the External challenge ledger}}`
 - **External challenge ledger:** `{{reviewer-owned location; dispatch IDs,
-  predecessor/successor lineage, cancellation-requested/quiescent state,
+  predecessor/successor lineage, cancellation requested/quiescent state,
   quarantined partials, succeeded/failed/timed-out/cancelled outcomes, reports,
   findings, and dispositions bind this identity}}`
 - **Challenge artifact controls:** `{{data class, allowed access, current

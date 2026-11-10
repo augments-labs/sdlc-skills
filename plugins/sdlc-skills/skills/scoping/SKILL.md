@@ -19,23 +19,18 @@ Name the boundary before anyone starts building.
 
 ## Step 1: Cut the scope
 
-Open `assets/scope-section.md` before starting; each step fills its section.
+Open `assets/scope-section.md` before starting. Fill a section only with
+what this work has; the template says what an empty one carries.
 
 1. Carry the non-negotiables forward first: goal guardrails, existing
    contracts, preserved behavior and data, security, accessibility,
    compatibility, operability, recovery.
-2. Put in scope the smallest set of capabilities that reaches the approved
-   outcome under those constraints.
-3. Put out of scope each deferred capability, with a stable ID, the
-   rationale, its impact on the goal, an owner, and the trigger for
-   revisiting it. Never list a preserved invariant or an existing commitment
-   there.
-4. Write the MVP as the thinnest version that meets the goal and every
-   non-negotiable.
-5. For each assumption and each dependency, record its validation action,
+2. Never list a preserved invariant or an existing commitment as out of
+   scope.
+3. For each assumption and each dependency, record its validation action,
    its owner, and its expiry or decision point. A hidden project inside
    "assumes X" is scope, not an assumption.
-6. Write the change rules: the observations that abort this cut, the changes
+4. Write the change rules: the observations that abort this cut, the changes
    that reopen approval, and who decides. If the user is the only
    stakeholder (a solo owner), they decide, and no approver matrix is
    recorded.
@@ -45,7 +40,11 @@ Open `assets/scope-section.md` before starting; each step fills its section.
 1. Write the `## Scope` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    keeping the approved sections around it as they are. Once its identity is
-   issued, the section is never edited.
+   issued, the section is never edited. To revise, write a successor
+   section, headed as the template says, that names its predecessor and
+   marks each capability and exclusion
+   `added / changed / removed / preserved`; add the predecessor's
+   `superseded` row only on the successor's approval.
 2. Present:
 
    ```text
@@ -63,7 +62,9 @@ Open `assets/scope-section.md` before starting; each step fills its section.
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. **REQUIRED SUB-SKILL:** on option 1, invoke `writing-specs` when detailed
    requirements are the next missing input. Never impose a phase that is
-   already complete.
+   already complete. When a successor is approved, list every spec and plan
+   bound to its predecessor; work under each stops until its owner
+   validates it again.
 
 ## Gotchas
 

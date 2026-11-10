@@ -11,7 +11,7 @@ required observation using stable `{{double-curly}}` values.
 - **Run ID / time:** `{{stable attempt identity and UTC interval}}`
 - **Candidate:** `{{immutable source/artifact identity, or working-tree digest of staged, unstaged, and untracked non-ignored paths}}`
 - **Ignored inputs:** `{{path and SHA-256 of each ignored input the launch path reads (build output, generated assets, local configuration), recomputed before the verdict; or none}}`
-- **Launch path:** `{{command or controlled action}}`
+- **Launch path:** `{{command or controlled action, the process it started, and the port or window captured from}}`
 - **Acceptance source:** `{{approved full design path/version, requirements and
   rubric identity; include flows, states, conditions and decisions outside any
   preview; or, with no approved design, the design locations checked and the

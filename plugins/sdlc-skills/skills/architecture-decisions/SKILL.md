@@ -13,28 +13,23 @@ description: "Records a significant, hard-to-reverse technical decision and the 
   boundary, a framework, a public contract, or a security model is such a
   decision.
 - **Skip** when any of the three is missing. A reversible, obvious, or
-  inevitable choice is noise as an ADR.
+  inevitable choice is noise as an ADR; return the skip to the invoking
+  skill.
 
 ## Step 1: Draft the ADR
 
-Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
-Read `references/adr-example.md` when the first draft is written and needs
-comparing against a filled example.
+Open `assets/adr-template.md` before Step 1's actions; it owns the fields,
+so fill every one. Read `references/adr-example.md` when the first draft is
+written and needs comparing against a filled example.
 
-1. State the question, the artifact or system the decision covers, the forces
-   bearing on it, and who decides: one accountable decision owner, or the
-   approvers with a rule for settling a conflict.
+1. State the question and the artifact or system the decision covers.
 2. Weigh at least two real options. For each, record what it assumes, where
    it breaks, what would rule it out, what reversing it would cost, and the
    evidence. Wherever keeping things as they are, or deferring the decision,
    is viable, weigh that too; where it is not, record the evidence that says
    so.
 3. Give every assumption a stable ID and a way to be proved wrong.
-4. Record the proposed choice and each rejected alternative. Keep the
-   rejections; never edit them away.
-5. Record the consequences and the reversal path: what the choice commits you
-   to, what it means for data and migrations, how to undo it, and what it
-   closes off.
+4. Keep every rejected alternative; never edit one away.
 
 ## Step 2: Persist, then challenge
 
@@ -45,8 +40,8 @@ comparing against a filled example.
    artifact layout's section rule in `using-sdlc-skills`: the first 7
    characters of `git hash-object` over the ADR's own section); the challenge
    binds to this path and this identity.
-2. If the choice is irreversible (Step 1.5's reversal row says undo is
-   impossible or unaffordable, not merely costly) and a dispatch action
+2. If the choice is irreversible (its `Consequences and reversal` field says
+   undo is impossible or unaffordable, not merely costly) and a dispatch action
    exists, fill `assets/adr-challenger.md` with that path and identity before
    dispatching it. Dispatch it as `dispatching-parallel-agents` Step 2 says,
    to a reviewer other than the sole author. That reviewer challenges the
@@ -61,9 +56,15 @@ comparing against a filled example.
    owner in Step 3.
 
    Approval waits for `clear` on this ADR identity, or for the decision
-   owner accepting a labelled self-challenge. Skip both the dispatched
-   challenge and the self-challenge only when a current independent design
-   review covers this exact ADR identity.
+   owner accepting a labelled self-challenge. `revise` takes one successor
+   ADR and one re-challenge; `inconclusive`, the missing input and one
+   rerun. If still not `clear`, report the open findings to the decision
+   owner and end the turn. The owner accepts a finding only by naming it:
+   record `accepted by {{owner}}` with the finding in the ledger, and
+   present Step 3 once every open finding is accepted or corrected. A reply
+   that names none accepts none. Skip both the dispatched challenge and the
+   self-challenge only when a current independent design review covers this
+   exact ADR identity.
 
 ## Step 3: Present and track
 
@@ -73,6 +74,7 @@ comparing against a filled example.
    ADR {{identity (per template)}}: {{question}}
    Proposed: {{choice}} — {{rationale, one line}}
    Rejected: {{alternatives}}  Reversal cost: {{one line}}
+   Challenge: {{clear | self-challenge | design review}} — {{open risk, or none}}
 
    1. Accept
    2. Reject in favor of {{other option}}
@@ -87,7 +89,9 @@ comparing against a filled example.
    is implemented, as the ADR's conformance contract requires) as two separate
    things. Acceptance puts nothing `in force`; conformance does. Retirement
    needs an action by the owner and the absence of the surface the ADR
-   governs. If there is a contradiction, reopen every affected owner.
+   governs. If code or a later decision contradicts an accepted ADR, add a
+   row to its lifecycle ledger and tell the owners its `Downstream impact`
+   names.
 3. Return the recorded outcome to the skill that invoked this one.
 
 ## Gotchas

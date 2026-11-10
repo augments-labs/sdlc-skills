@@ -6,14 +6,16 @@ the ADR's sole author.
 Before dispatch, bind the exact ADR identity, the role ID, allowed artifact
 access, current authority for its worker/provider/storage/egress, and the report
 location. No receipt, no challenger: an unavailable, refused, or empty dispatch
-leaves the challenge pending. Without a dispatch, the SKILL's labelled
-self-challenge applies, and it never yields `clear`. Set a terminal deadline and
-a timeout/cancel owner before dispatching, then poll only that attempt ID.
-Quarantine output from any run that did not reach quiescence, and reject a late
-result from a reassigned predecessor.
+leaves the challenge pending. Without a callable dispatch, the SKILL's labelled
+self-challenge applies only when the user chooses it at the
+`dispatching-parallel-agents` Step 2 question, and it never yields `clear`.
+Set a terminal deadline and a timeout/cancel owner before dispatching, then
+poll only that attempt ID. Quarantine output from any run that did not reach
+quiescence, and reject a late result from a reassigned predecessor.
 
 The ADR owner resolves every finding. A `revise` verdict needs a successor ADR,
-which the same role challenges again. Approval waits for `clear` on the exact
+which the same role challenges again, once; a result still not `clear` goes to
+the decision owner as open findings. Approval waits for `clear` on the exact
 ADR identity, or for the decision owner accepting a labelled self-challenge.
 
 ````markdown

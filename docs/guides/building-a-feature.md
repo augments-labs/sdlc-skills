@@ -21,7 +21,8 @@ If the work is already written up as a ticket, hand the agent the ticket:
 paste it, or give the link or identifier if the agent has a tool to read it.
 `working-from-a-ticket` records the ticket and its acceptance criteria as
 written, so the plan and the tests bind to that record rather than to a
-summary, and the agent re-reads the ticket before it calls the work done.
+summary, and the agent re-reads the ticket before it calls the work done. If
+you pasted the ticket, it asks you whether the ticket has changed since.
 
 ## 1. It settles what you mean, if anything is open
 
@@ -57,11 +58,18 @@ shows the line.
 
 ## 3. It writes a failing test first
 
-`test-driven-development` writes one test for the behavior, runs it with
+`test-driven-development` first lists the cases the behavior covers: the
+ordinary one, the boundaries of each input, and each failure the interface
+promises. It takes one case at a time. It writes one test, runs it with
 your project's real test command, and reads the failure. It checks that the
 test failed for the right reason, at the assertion it was meant to hit, and
 not because of an import error or a skipped test. Then it writes the code
 that makes the test pass, runs the whole suite, and refactors under green.
+A case it leaves untested is reported to you as deferred.
+
+A new test that passes the first time it runs proves nothing yet. The agent
+finds out why before it goes on: the behavior was already there, the test
+cannot fail, or code was written ahead of the test.
 
 You will see the failing run and the passing run in the transcript. The
 agent keeps those outputs as evidence.
@@ -93,7 +101,9 @@ failure.
 
 On agents without a subagent tool, the agent tells you it cannot dispatch a
 review and asks you once whether to do a self-review (labelled as one), to
-hand the change to a reviewer you name, or to leave the work pending.
+hand the change to a reviewer you name, or to leave the work pending. The
+self-review choice is not offered when the review has to be independent,
+such as a security review.
 
 The agent then reads the review through `receiving-code-review`, which
 checks each piece of feedback on its merits before acting on it.
@@ -129,9 +139,11 @@ step in more detail.
 - **A quick experiment.** Ask for a prototype and `prototyping` builds a
   throwaway to answer the question, outside the test discipline. Behavior
   you keep is rebuilt under a test afterwards.
-- **No test framework.** The agent still looks for the smallest executable
-  check that can fail. If none is possible, it says so instead of claiming
-  the change is tested.
+- **No test framework.** The agent moves the rules into units it can test
+  and test-drives those. For the wiring it could not test, it tells you how
+  it checked it and asks whether to add a test harness, naming what that
+  costs in dependencies and configuration, or to accept that wiring as an
+  unverified exception.
 - **A staged rollout.** If your release policy, the plan, or you ask for a
   feature flag, kill switch, canary, or staged rollout, `rollout-controls`
   builds the switch (off by default, in front of every path the change adds)
@@ -141,6 +153,24 @@ step in more detail.
   anything. This is not the flag `yagni` stops:
   someone asked for it. `release-readiness` later binds those terms instead
   of inventing them.
+- **Signals for operators.** Ask for logs, metrics, traces, or an alert and
+  `adding-observability` starts from the two questions an operator asks: is
+  it working for users, and if not, why? It emits through the logging and
+  metrics facility your project already has, under your naming, and asks
+  before it adds a library or a vendor. A signal counts only once it has
+  been seen, by a test or in a real environment. Each alert is on a symptom
+  users feel, has an owner and a first action, and is fired once on purpose.
+  Where firing it would reach a person or a shared environment, the agent
+  gets the owner's go-ahead first or fires it through a route that pages no
+  one; whether the alert pages anyone at all is the owner's decision. No
+  secret or personal data goes into a label or a log field.
+- **A change you can see.** For a screen or a terminal interface,
+  `visual-ui-verification` checks the running interface before the work is
+  called done. See
+  [Reviewing and shipping](reviewing-and-shipping.md#checking-a-running-interface).
+- **A change near a trust boundary.** Login, permissions, uploads, secrets,
+  or user input that reaches a query or a shell bring in `security-audits`.
+  See [Reviewing and shipping](reviewing-and-shipping.md#a-security-audit).
 - **A change to stored data.** If the feature adds, renames, or drops a
   column or field, adds an index or constraint, or backfills data on a store
   your running system reads, `changing-a-live-schema` builds it in phases:

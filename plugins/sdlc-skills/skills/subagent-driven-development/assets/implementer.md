@@ -41,7 +41,9 @@ tag, release, or dispatch another agent.
 1. Invoke `test-driven-development` and `yagni` through this harness's
    skill-loading action. If the harness exposes no such action, stop and
    return `NEEDS_CONTEXT: skill loading unavailable`; never approximate
-   either one from memory.
+   either one from memory. A carve-out in the task's `Implementation
+   disciplines` stands only where the loaded skill's own Skip covers the
+   task; otherwise the skill applies.
 2. Open every path above and every file the contract names. Those are paths,
    not summaries, and nobody has read them for you.
 3. A clause you can read two ways is not yours to settle. Stop, return

@@ -21,22 +21,19 @@ it.
 
 ## Step 1: Find the objective
 
-Open `assets/goals-section.md` before starting; each step fills its section.
+Open `assets/goals-section.md` before starting. Fill a section only with
+what this work has; the template says what an empty one carries.
 
 1. Ask "why this, why now?" until the answer is what the world does
    differently afterward, not code that exists.
-2. Name who benefits, who operates or bears risk, what changes for each, and
-   who owns the outcome. If goals compete, give each its own metric, never
-   one averaged metric.
+2. If goals compete, give each its own metric, never one averaged metric.
 3. Record one accountable decision owner, or else the approvers, the conflict
    resolver, and the decision rule. If the user is the only stakeholder (a
    solo owner), write the user as the decision owner in `Decision rule:` and
    name no approvers or conflict resolver.
-4. For each outcome, record its current baseline, target, time horizon,
-   measurement source, and accountable owner. If an outcome has no source or
-   date, it cannot be checked, so it is not a goal.
-5. Write the guardrails and the failure criterion.
-6. Write the value in one sentence.
+4. If an outcome has no source or date, it cannot be checked, so it is not a
+   goal. Write a baseline never measured as `unmeasured`, with who takes the
+   first reading and by when; never a recalled number.
 
 ## Step 2: Write and present
 
@@ -58,14 +55,15 @@ Open `assets/goals-section.md` before starting; each step fills its section.
    3. Reject the objective
    4. Cancel
 
-   Recommendation: {{option the open assumptions support}} — {{one sentence}}.
+   Recommendation: {{option the measure and guardrails support}} — {{one sentence}}.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` unless an
    existing feasibility section already fills every dimension row from
-   evidence and no row is unknown; then, if the boundary is next, invoke
-   `scoping`. Never impose a phase that is already complete.
+   evidence and no killer risk's confidence is unknown; then, if the
+   boundary is next, invoke `scoping`. Never impose a phase that is already
+   complete.
 
 ## Gotchas
 

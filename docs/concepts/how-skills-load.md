@@ -11,6 +11,11 @@ description says when the skill applies and where it stops, so the agent can
 tell it apart from its neighbours. The body of a skill, with the procedure
 and the questions it asks you, is loaded only when the skill is used.
 
+Most descriptions end with a sentence that starts with "Skip". When that
+sentence names your case, the agent sets the skill aside without loading its
+body. When the case is not named there, the agent loads the body before it
+decides the skill does not fit.
+
 A skill gets loaded in one of three ways:
 
 - Its description matches what you asked for.
@@ -34,11 +39,14 @@ ends, a decision comes back, feedback arrives.
 
 The routing skill gives starting points, not a fixed sequence. Once a skill
 is loaded, that skill decides what happens next, and the agent sets a skill
-aside only when the skill's own scope or skip conditions say it does not
-fit. The agent is not meant to decide "this task is too simple for process"
-on its own; each skill says how small it scales.
+aside only when the skill's own scope or skip conditions, in its description
+or its body, say it does not fit. The agent is not meant to decide "this task is too simple for process"
+on its own; each skill says how small it scales. The one route the routing
+skill shortens itself is a small edit you name exactly:
+[Scale to the work](skills-and-gates.md#scale-to-the-work) says what
+qualifies.
 
-The routing body is kept to about 700 words, because every session loads all
+The routing body is kept under 900 words, because every session loads all
 of it.
 
 ## Long sessions and compaction
