@@ -19,7 +19,8 @@ description: "Plans how a rewrite or migration preserves behavior through cutove
   (**failure surfaces**)? If the ordinary route cannot make those surfaces
   reviewable and recoverable, hold work on the target until this contract
   is approved and `verification-strategy`'s entry gates have passed. If the
-  answers are uncertain, record the change as pending classification.
+  answers are uncertain, record `pending classification` in the `Route`
+  field of the spec, design section, or plan index that carries the change.
   Classify it again whenever the inputs change.
 - **Skip** a bounded change whose behavior and diff can still be reviewed
   directly; such work stays on its ordinary route.
@@ -35,10 +36,9 @@ the section of it that the step names.
 1. Fill `Normative control`: the source and target revisions, the scope, and
    one accountable owner or an approval rule. If the target is not settled,
    go back to `system-architecture` first.
-2. Fill `Source-fact inventory` from observable behavior and contracts, not
-   from how the source is built: behavior, contracts, durable data,
-   consumers, platforms and build modes, operational obligations, known
-   deviations.
+2. Fill `Source-fact inventory` as the template lists. Name each place
+   searched for consumers; each one not searched (direct database readers,
+   scheduled jobs, exports, other repositories) is an `Unknown contract` row.
 3. Classify every fact, in `Preservation and deviation contract` or in
    `Unknown contract`, as one of: a preserved invariant, an intentional
    deviation, or an unknown.
@@ -50,15 +50,8 @@ the section of it that the step names.
 
 ## Step 2: Design the transition
 
-1. Fill `Transition and translation`: the approach (incremental, cutover, or
-   hybrid); the translation rules; which intermediate and mixed-version
-   states are allowed; the compatibility direction; and what happens to
-   unmapped or invalid input.
-2. Fill `Representative trial slice`: the riskiest paths at a useful scale,
-   drawn from a stable coverage inventory; a recorded decision for every cell
-   left out (the template's `Uncovered cells`); the outcome, the expansion
-   decision, and the failure response. Commands and thresholds belong to the
-   assurance matrix.
+1. Fill `Transition and translation` as the template lists.
+2. Fill `Representative trial slice` as the template lists.
 3. Fill `Partitions and ownership`: a stable inventory of shards and the
    rules for who owns each. Attempts, owners, heartbeats, transfers, and
    results go into a ledger (a record kept outside the contract: add to it,
@@ -80,10 +73,9 @@ the section of it that the step names.
    repeats, pause the affected work, fix the shared rule, and re-audit every
    impacted shard.
 4. Fill `Pause, abort, cutover, and rollback`, `Retained artifacts`, and
-   `Decommission and retained-source retirement` before anyone needs them:
-   when to pause and when to abort, who holds authority for cutover, the
-   rollback target, the point of no return, the recovery time, and what
-   becomes of the retained source.
+   `Decommission and retained-source retirement` before anyone needs them.
+   In the rollback rule, say what happens to each write the target accepted after
+   cutover: replayed to the source, or a loss its owner approved.
 5. Enter decommission only when the retention period has elapsed, live use is
    provably zero, its gate has passed, and its targets, authority, and
    recovery are written down. A decommission action that is partial, failed,
@@ -100,14 +92,15 @@ the section of it that the step names.
    approval, then dispatch two read-only challengers as
    `dispatching-parallel-agents` Step 2 says, bound to the contract's
    `Independent challenge contract`: one who knows the source and its domain,
-   and one who owns operations and data. They challenge whether the facts are
-   complete, the mappings and mixed states, the intake path and the
-   partitions, and the trial slice and the recovery plan.
+   and one who owns operations and data.
 3. For any role left out, record an accountable skip; the template's
    `Independent challenge coverage` field says what one carries. Bind each
    challenge to one exact attempt with a deadline. A required role blocks
    approval until its current report on this contract identity reads
-   `clear`.
+   `clear`. `revise` takes one successor contract and one re-challenge by
+   that role; `inconclusive`, the missing input and one rerun. If a role is
+   still not `clear`, report its open findings to the `Approval rule` owner
+   and end the turn.
 4. Present the contract:
 
    ```text
@@ -124,7 +117,9 @@ the section of it that the step names.
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 5. Only an approved exact version, with the consumers bound to its
-   predecessor reconciled, proceeds to `writing-plans`.
+   predecessor reconciled, proceeds. **REQUIRED SUB-SKILL:** invoke
+   `verification-strategy` when this version's entry gates are missing;
+   otherwise invoke `writing-plans`.
 
 ## Gotchas
 

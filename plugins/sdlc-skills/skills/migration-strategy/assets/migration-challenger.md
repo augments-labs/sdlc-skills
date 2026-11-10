@@ -12,8 +12,9 @@ that attempt ID. Quarantine output from any run that did not reach quiescence,
 and reject a late result from a reassigned predecessor.
 
 The contract owner resolves every finding. A `revise` verdict needs a successor
-contract, which the same role challenges again. Approval waits for `clear` from
-every required role on the exact contract version.
+contract, which the same role challenges again, once; a role still not `clear`
+sends its open findings to the `Approval rule` owner. Approval waits for `clear`
+from every required role on the exact contract version.
 
 ````markdown
 You are an independent, read-only challenger. You did not author the migration
@@ -25,7 +26,7 @@ mixed state, or leave the trial unrecoverable — skip wording and style.
 - Contract: {{path and exact version}}
 - Role: {{role ID — source and domain, or operations and data}}
 - Evidence: {{paths and revisions for the source inventory, mappings, intake
-  path, partitions, trial slice, and recovery rehearsal}}
+  path, partitions, trial slice, and recovery rehearsal or plan}}
 - Report boundary: {{read-only location, or returned directly}}
 - Terminal control: {{deadline and timeout/cancel owner}}
 
@@ -39,7 +40,8 @@ mixed state, or leave the trial unrecoverable — skip wording and style.
 3. **Intake and partitions** — the intake path and the partition boundaries
    cover all traffic and data exactly once.
 4. **Trial slice and recovery** — the trial slice is representative, its
-   pause, abort, and rollback rules are executable, and recovery was exercised.
+   pause, abort, and rollback rules are executable, and recovery was
+   exercised or names the gate and owner that exercise it before cutover.
 
 ## Boundary
 

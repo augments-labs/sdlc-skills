@@ -13,7 +13,8 @@ description: "Records a significant, hard-to-reverse technical decision and the 
   boundary, a framework, a public contract, or a security model is such a
   decision.
 - **Skip** when any of the three is missing. A reversible, obvious, or
-  inevitable choice is noise as an ADR.
+  inevitable choice is noise as an ADR; return the skip to the invoking
+  skill.
 
 ## Step 1: Draft the ADR
 
@@ -55,9 +56,12 @@ written and needs comparing against a filled example.
    owner in Step 3.
 
    Approval waits for `clear` on this ADR identity, or for the decision
-   owner accepting a labelled self-challenge. Skip both the dispatched
-   challenge and the self-challenge only when a current independent design
-   review covers this exact ADR identity.
+   owner accepting a labelled self-challenge. `revise` takes one successor
+   ADR and one re-challenge; `inconclusive`, the missing input and one
+   rerun. If still not `clear`, report the open findings to the decision
+   owner and end the turn. Skip both the dispatched challenge and the
+   self-challenge only when a current independent design review covers this
+   exact ADR identity.
 
 ## Step 3: Present and track
 
@@ -67,6 +71,7 @@ written and needs comparing against a filled example.
    ADR {{identity (per template)}}: {{question}}
    Proposed: {{choice}} — {{rationale, one line}}
    Rejected: {{alternatives}}  Reversal cost: {{one line}}
+   Challenge: {{clear | self-challenge | design review}} — {{open risk, or none}}
 
    1. Accept
    2. Reject in favor of {{other option}}
@@ -81,7 +86,9 @@ written and needs comparing against a filled example.
    is implemented, as the ADR's conformance contract requires) as two separate
    things. Acceptance puts nothing `in force`; conformance does. Retirement
    needs an action by the owner and the absence of the surface the ADR
-   governs. If there is a contradiction, reopen every affected owner.
+   governs. If code or a later decision contradicts an accepted ADR, add a
+   row to its lifecycle ledger and tell the owners its `Downstream impact`
+   names.
 3. Return the recorded outcome to the skill that invoked this one.
 
 ## Gotchas

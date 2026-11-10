@@ -34,23 +34,17 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 2. In an existing project, find its routes, screens, components, tokens, type
    and content patterns, preview tooling, responsive and accessibility
    conventions, and tests.
-3. Sort what you found into two buckets: deliberate constraints that bind this
-   work, and inconsistencies this work may correct.
+3. Sort what you found into three buckets: deliberate constraints that bind
+   this work, inconsistencies this work may correct, and `unknown`, a
+   pattern nobody can show was decided; ask before binding or correcting it.
 4. In an existing product with no evidence reachable, stop. Ask for the
    repository, a preview, screenshots, or the system documentation. Never put
    a generic system in its place.
 
 ## Step 2: Frame, flow, hierarchy
 
-1. Name the user's situation, the interface's single primary job, its primary
-   affordance, and what success and failure each look like.
-2. Write each key journey as *given / when / then*, with its entry,
-   completion, escape, and recovery.
-3. Cover the hidden states wherever they can occur: empty, loading, partial,
-   validation, error, offline, no-permission.
-4. For each screen, mark what is primary, secondary, contextual, and deferred.
-5. Use realistic content in the user's vocabulary. Keep an action's name
-   identical across its control, its confirmation, and its errors.
+1. Fill the template's Frame, Flows, State matrix, and Hierarchy and content
+   sections, following the note on each.
 
 ## Step 3: Decide the direction by seeing it
 
@@ -62,18 +56,21 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
    `references/visual-decisions.md` before building the comparison surface,
    then build it on the first medium in the reference's order that fits. A self-contained local page starts from
    `assets/comparison-template.html` before its first variant is written.
-   Write 2–4 controlled, meaningfully different variants (requirements,
-   content, data, device, and baseline accessibility held the same). Give
-   every version block and every variant a stable ID.
-3. Deliver the file path and offer to serve the surface. Start the preview
-   only after the user accepts, then present its URL:
+   Give every version block and every variant a stable ID.
+3. Say where the surface is, by its medium: a project preview by the route
+   or command the project already has, a private page by its location,
+   screenshots or wireframes by their paths, and a local page by its file
+   path with an offer to serve it. Render a local page and check it at 360px
+   first; with no way to render it, say so. Start the preview only after the
+   user accepts, then present its URL:
 
    ```bash
    bash scripts/start-server.sh --root .sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}/visuals --entry {{decision-slug}}.html
    ```
 
    If serving fails or is declined, the file path stands as what was
-   delivered.
+   delivered. Then ask which variant and why, and end the turn; never choose
+   it yourself.
 4. Skip the surface only with a recorded reason, which must be one of these:
    every open question is conceptual (its answer does not depend on seeing
    anything); the scale-down clause under *When to use* applies; or the
@@ -113,7 +110,8 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
 5. If a successor section replaces this one, its delta (the template's
    *Stable ID delta*) includes the selected visual references.
 6. If option 1 is chosen and every design section the work needs is approved,
-   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
+   **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version. If a
+   needed section is not approved yet, invoke its owning skill instead.
 
 ## Gotchas
 
@@ -122,11 +120,9 @@ Open `assets/ui-ux-section.md` before the steps below fill it in.
   look alarming or subtle. The skip test in Step 3.4 asks whether every open
   question is conceptual, so settling the conceptual half in prose does not
   release the visual half from being rendered and compared.
-- Step 1.3 sorts into two buckets, a deliberate constraint or an
-  inconsistency this work may correct, and has none for a pattern that is
-  neither: an undocumented accident nobody decided. Filing an unrecognized
-  pattern as deliberate by default treats an accident as a constraint instead
-  of flagging it as unknown.
+- A pattern that is neither a deliberate constraint nor an inconsistency is
+  an undocumented accident nobody decided. Filing it as deliberate by default
+  treats an accident as a constraint; Step 1.3's `unknown` bucket holds it.
 - Run without `--root`, `bash scripts/start-server.sh` exits 1, and the
   file-path fallback in Step 3.3 then hides that no surface was served.
 - Run without `--entry`, the printed URL opens the visuals directory; that
