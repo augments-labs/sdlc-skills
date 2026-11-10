@@ -17,25 +17,24 @@ to the user. This skill never deploys or publishes.
 ## Step 1: Pin down what is being released
 
 Open `assets/release-candidate.md` before this step's first action; each step
-fills its sections. Read `references/gate-details.md` when a step below cites
-a row number and you need that row's concrete check.
+fills its sections. Read `references/gate-details.md` before filling the
+expected rows: each of its numbered rows is an expected row or an approved
+omission.
 
-1. Fill the `Immutable release-input descriptor`: the promotion, the source,
-   the contracts, the expected artifacts and check cells, and who may
-   approve. Write no secret values.
+1. Fill the `Immutable release-input descriptor`. Write no secret values.
 2. Write every attempt and its evidence in the `External attempt and evidence
    ledger` (the ledger: add to it, never rewrite it), never in the descriptor.
 3. Freeze the artifact set: one finished, successful build per required
    member, from the recorded source. Record the set's identity (row 10).
-4. Test and promote *that* set. A later rebuild is a different set, however
-   equivalent it looks; reject it.
+4. Only *that* set is tested and promoted. A later rebuild is a different
+   set, however equivalent it looks; reject it.
 
 ## Step 2: Judge it
 
 Work every `Readiness rows` entry until it is **evidenced**, **not applicable
 with an approved disposition** (the row's owner accepts the reason it does not
 apply, and that acceptance is recorded under the descriptor's approver rule),
-or **blocking**. In the descriptor's `Status` column, `pass` is evidenced,
+or **blocking**. In that table's `Status` column, `pass` is evidenced,
 `fail` is blocking, and a `pending` or `inconclusive` row is neither and
 holds the verdict at `inconclusive` until it resolves, unless a `fail` row
 already makes it `not ready`.
@@ -48,8 +47,9 @@ already makes it `not ready`.
    compare that inventory with what actually ran and account for every
    difference (row 11).
 3. Exercise the cutover and the recovery, including the claimed RPO and RTO,
-   and observe what happens; do not infer it (rows 3, 13). Fill `Rollout and
-   recovery`.
+   and observe what happens; do not infer it (rows 3, 13). Drill on an
+   isolated representative copy; shared or production state needs exact
+   direct authority, else block. Fill `Rollout and recovery`.
 4. Check the target: configuration, secrets, capacity, dependencies, and the
    order of the steps (row 6). Verify that each is present and has the
    expected shape; never print a value.
@@ -59,18 +59,16 @@ already makes it `not ready`.
    accept. Never invent a policy or lower one.
 6. If the promotion is an expansion or a full release, attach the evidence
    observed in the prior stage.
-7. Account for the consumers (rows 7, 8, 15: release notes, breaking changes,
-   and package obligations). If the release is a package, install the packed
-   artifact into a clean, representative consumer before publishing anything.
+7. Account for the consumers (rows 7, 8, 15). If the release is a package,
+   install the packed artifact into a clean, representative consumer before
+   publishing anything.
 
 ## Step 3: Decide
 
 1. Record a decision (its disposition) for every deviation in `Deviations`
    (row 14). Lowering a check so the frozen set passes is a new assurance
    decision, not a release fix.
-2. Write the `Verdict`, naming the identities it is bound to: release input,
-   artifact set, terminal evidence (the complete ledger), approval, and
-   evidence freshness.
+2. Write the `Verdict` with every identity it is bound to.
 3. Recompute every identity immediately before any decision. If any has
    changed, reopen the decision.
 4. Present the verdict and the choice, then end the turn:
@@ -86,8 +84,9 @@ already makes it `not ready`.
    Recommendation: {{1 only when ready or ready with accepted deviations, otherwise 2}} — {{one sentence}}.
    ```
 
-5. Promote nothing until the user names one of the three. The promotion then
-   runs as its own authorized action, never on the strength of the verdict.
+5. Promote nothing until the user names one of the three; record the answer
+   in `Decision`. On 1, the promotion runs as its own authorized action,
+   outside this skill, never on the strength of the verdict. On 2 or 3, stop.
 
 ## Gotchas
 

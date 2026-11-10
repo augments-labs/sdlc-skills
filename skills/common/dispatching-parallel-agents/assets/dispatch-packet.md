@@ -7,14 +7,17 @@ when it is genuinely empty for this task, and say so. The filled fence, with
 `## Dispatch record` left blank, becomes that agent's entire prompt, sent
 through the dispatch action; nothing outside it reaches the agent. The
 coordinator fills `## Dispatch record` afterward, only in its own kept copy,
-never in what was sent. A high-risk run or one using phase queues also fills
-the controlled variant of this template, whose ten fields extend the matching
-section below with a stricter rule.
+never in what was sent. `Packet` and `Deadline` hold what the coordinator
+freezes before the first dispatch. A high-risk run or one using phase queues
+also fills the controlled variant of this template, whose ten fields extend
+the matching section below with a stricter rule.
 
 ```markdown
 ## Task
 
 - **Task:** {{one sentence — the exact problem this agent owns}}
+- **Packet:** {{ID unique in this run and its place in the frozen count, such as P2 of 3}}
+- **Deadline:** {{frozen final deadline; the timeout and cancel action, and who runs it}}
 - **Tier:** {{small | medium | large}}
 - **Base:** {{immutable revision this work starts from}}
 
@@ -35,9 +38,14 @@ section below with a stricter rule.
 ## Done when
 
 - **Done when:** {{the observable condition — a named test passes, a specific output exists}}
+- **Route:** the `Workspace` above is this task's isolation, so create no
+  other; at done when, return the report. `requesting-code-review`,
+  `finishing-a-branch`, and any push, PR, or merge belong to the coordinator.
 
 ## Output
 
+- When blocked, or when this packet is ambiguous, return `NEEDS_CONTEXT` with
+  the exact question; never guess. Never copy a secret into the report.
 - **Report:** {{base/result revisions, diff range, files changed, command and raw verdict, authorized checkpoint commits or none, scope exceptions}}
 - **Item lines:** {{none, when the scope is not a list | the list of items this agent owns}} — when the scope is a list, the report gives one line per item, done or skipped with its reason; a report missing a line is rejected.
 - **Report path:** {{the one file the agent writes its report to; it writes no other report anywhere}}

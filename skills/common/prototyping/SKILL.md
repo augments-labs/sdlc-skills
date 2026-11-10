@@ -11,7 +11,6 @@ A prototype answers one question and dies: the code is disposable; the
 ## When to use
 
 - A specific question is uncertain and faster to *build* than to argue: does this algorithm work, can this UI be built, render, or perform as designed, does this library do what its docs claim.
-- Reached from `feasibility-check` (a killer risk) or `ui-ux-design` (a feasibility question).
 - **Skip** when you already know the answer, or the question is vague.
 - **Skip** a layout or variant choice: `ui-ux-design` owns it.
 
@@ -34,6 +33,8 @@ A prototype answers one question and dies: the code is disposable; the
 
 1. Build the smallest disposable probe: driver, fixtures, instrumentation
    only. No reusable abstraction, production integration, or generality.
+   Install dependencies in the probe's workspace at the project's locked
+   versions, never into its manifest, lockfile, or installed packages.
 2. For a logic question, build a tiny driver or an executable assertion on
    the uncertain behavior. For a UI feasibility question, build only the
    smallest populated surface the registered question needs.
@@ -51,11 +52,11 @@ A prototype answers one question and dies: the code is disposable; the
    user names another path. If the result settles a load-bearing choice and
    no caller is waiting, **REQUIRED SUB-SKILL:** invoke
    `architecture-decisions` and apply its entry conditions.
-2. Return observations to the caller's pending decision. A UI experiment informs
-   `ui-ux-design`; it does not select the product direction or authorize its
-   implementation. Before scratch cleanup, retain any frame or artifact the
-   approved design binds as immutable evidence. Product implementation, when
-   authorized, rebuilds behavior under its normal gates; never lift prototype code.
+2. A UI experiment informs `ui-ux-design`; it does not select the product
+   direction or authorize its implementation. Before scratch cleanup, retain
+   any frame or artifact the approved design binds as immutable evidence.
+   Product implementation, when authorized, rebuilds behavior under its normal
+   gates; never lift prototype code.
 3. Remove only the scratch artifacts registered in Step 1 inside the
    disposable boundary, and only under current authority for those exact
    targets. To dispose of a repository branch, worktree, ref, or workspace,

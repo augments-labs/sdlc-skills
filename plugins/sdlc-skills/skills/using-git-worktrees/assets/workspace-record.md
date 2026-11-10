@@ -1,8 +1,10 @@
 # Workspace record template
 
-`using-git-worktrees` opens this before the first command and fills each
-section as its step runs, then hands it to whatever finishes the branch. Every
-field below is something a later step needs and cannot re-derive.
+`using-git-worktrees` copies this to
+`.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/workspace-record.md` before the
+first command and fills each section as its step runs, then hands it to
+whatever finishes the branch. Every field below is something a later step
+needs and cannot re-derive.
 
 ```markdown
 # Workspace record — {{task-name}}

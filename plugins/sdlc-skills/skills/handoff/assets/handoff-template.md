@@ -28,6 +28,8 @@ recoverability, cleanup owner, cleanup authority, and pending/completed state}}
 - Branch / commit / workspace: {{exact identity}}
 - Workspace inputs: {{staged/unstaged/untracked/relevant ignored/generated paths
   plus controlled external gate-input identities, or "none"}}
+- Outside this tree: {{stashes, unpushed commits on other branches or
+  worktrees, running processes, claimed ports, or "none"}}
 - Done: {{what is complete and verified — cite the check that proved it}}
 - In flight: {{what is half-done, exactly where it stopped}}
 

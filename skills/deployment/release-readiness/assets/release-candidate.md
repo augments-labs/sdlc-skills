@@ -30,7 +30,8 @@ network, mutation, or publication access.
   required state or proposed omission}}`
 - **Requirements/migration/assurance versions:** `{{identities}}`
 - **Migration source/live state:** `{{source revision and queue digest/count/lag;
-  snapshot/high-water identity, applied ranges, reconciliation and threshold}}`
+  snapshot/high-water identity, applied ranges, reconciliation and threshold;
+  the migration contract's decommission ledger location and its latest state}}`
 - **Review/security inputs:** `{{candidate-bound identities}}`
 - **Prior-stage/deviation inputs:** `{{identities and required dispositions}}`
 - **Action contracts:** `{{environment or authorized copy, data boundary,
@@ -55,7 +56,7 @@ pre/post effects. Shared or production mutation needs exact direct authority;
 otherwise use an isolated representative copy or block.
 
 A failure, deadline, cancellation, or lost response remains
-`cancellation-requested` until worker, descendants, and effects are quiescent.
+`cancellation requested` until worker, descendants, and effects are quiescent.
 Quarantine partial/late outputs and link any retry; never retry an unknown
 non-idempotent outcome before reconciling actual state. Only terminal successful
 build attempts enter the frozen artifact set. A later rebuild creates a new

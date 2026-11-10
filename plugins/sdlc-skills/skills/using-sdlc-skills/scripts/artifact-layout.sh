@@ -73,7 +73,8 @@ if [ -n "$hash_file" ]; then
   [ -f "$hash_file" ] || { echo "Error: \"$hash_file\" is not a readable file." >&2; exit 2; }
   command -v git >/dev/null 2>&1 || { echo "Error: git is not on PATH." >&2; exit 3; }
   if [ -n "$section" ]; then
-    extracted="$(awk -v h="$section" '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ \t]*$/) z = 0} !z && $0 == h {n++; f = 1; s = s $0 "\n"; next} f && !z && /^##? / {f = 0} f {b = b $0 "\n"; if (NF) {s = s b; b = ""}} END {if (n != 1) {printf "%d headings match\n", n > "/dev/stderr"; exit 2} printf "%s", s}' "$hash_file")" || exit 2
+    # lv is HEADING's level; a HEADING with no leading #s ends as a ## one does.
+    extracted="$(awk -v h="$section" 'BEGIN {lv = match(h, /^#+ /) ? RLENGTH - 1 : 2} {t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ \t]*$/) z = 0} !z && $0 == h {n++; f = 1; s = s $0 "\n"; next} f && !z && match($0, /^#+ /) && RLENGTH - 1 <= lv {f = 0} f {b = b $0 "\n"; if (NF) {s = s b; b = ""}} END {if (n != 1) {printf "%d headings match\n", n > "/dev/stderr"; exit 2} printf "%s", s}' "$hash_file")" || exit 2
     printf '%s\n' "$extracted" | git hash-object --stdin | cut -c1-7
   elif [ "$brief" -eq 1 ]; then
     awk '{t = $0; sub(/^ */, "", t); if (!z && t ~ /^([`][`][`]|~~~)/) {z = 1; match(t, /^([`]+|~+)/); o = substr(t, 1, RLENGTH)} else if (z && index(t, o) == 1 && t ~ /^([`]+|~+)[ \t]*$/) z = 0} !z && /^## / {exit} {b = b $0 "\n"; if (NF) {printf "%s", b; b = ""}}' "$hash_file" | git hash-object --stdin | cut -c1-7

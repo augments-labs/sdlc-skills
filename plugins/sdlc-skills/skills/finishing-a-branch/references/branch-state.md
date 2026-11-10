@@ -20,7 +20,7 @@ directly; a repository record is a new candidate to verify and review.
 Give every mutation attempt a stable ID in an append-only external ledger.
 After timeout, lost response, cancellation, or another unknown outcome, do not
 retry: reconcile repository, remote, PR, workspace, worker/descendant, and effect
-state first. Remain `cancellation-requested` until quiescent; quarantine partial
+state first. Remain `cancellation requested` until quiescent; quarantine partial
 and late results. A linked retry is allowed only when the observed state proves
 it cannot duplicate or conflict with the first attempt. Otherwise preserve the
 actual state and report the ambiguous blocker.
@@ -96,8 +96,12 @@ and stop.
 6. If any gate/review blocks, keep candidate, temporary integration state,
    original workspace, and branch. Report `blocked-preserved`.
 7. Only while the base remains the recorded revision, advance it using the
-   approved project method. Verify the target now names/contains the gated
-   integrated result.
+   approved project method. When the base branch is checked out in another
+   worktree, fast-forward it from inside that worktree, and only if that
+   worktree is clean; otherwise stop and report. Never move it with
+   `git update-ref` or `git branch -f`: both leave that checkout's files and
+   index stale. Verify the target now names/contains the gated integrated
+   result.
 
 ## Commit exact candidate and keep
 
@@ -207,7 +211,10 @@ branch/HEAD and workspace path.
 
 ## Owned cleanup
 
-Reconfirm integration and resource ownership. Before removing a worktree, rerun
+Reconfirm integration and resource ownership. After a squash or rebase merge
+the branch tip is not an ancestor of the base, so `git branch --merged` and
+`git branch -d` read it as unmerged: integration is confirmed only when the PR
+is merged and its head revision equals the local tip. Before removing a worktree, rerun
 `bash scripts/branch-state.sh --full` inside it. A non-zero exit, or a non-empty
 `dirty.ignored` the cleanup choice does not name, preserves the worktree; report
 it. Capture paths before changing directory; remove an owned worktree from

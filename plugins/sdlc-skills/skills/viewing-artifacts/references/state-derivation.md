@@ -10,8 +10,9 @@ produce a value.
 directories whose names match that shape are threaded; anything else is ignored, except an artifact at a user-set path that a trail record names — a pointer field, a ledger row's `Location`, or a plan's bound inputs: it threads to the topic of the artifact holding that record. The same slug across folders is one topic — `designs/<slug>.md`, its
 `<slug>-migration.md` sibling, and its `<slug>/visuals/` directory all belong
 to it. Plans are directories (`plans/<slug>/00-index.md`). Audits and
-post-mortems thread to their topic by the same slug but render in the sidebar
-and meta only; they never get a spine node or a tier-2 block.
+post-mortems thread to their topic by the same slug. The template has no
+region for them: they show only as that topic's sidebar entry and never get a
+spine node or a tier-2 block.
 
 ## Phase status
 
@@ -22,6 +23,10 @@ The spine is brief, spec, design, plan, execute. For each phase of each topic:
 - **Presence** → the artifact exists, even without a `**Status:**` field.
   Decision state is external; its identity, per its template's `**Identity:**`
   line, is what approval binds to. A draft or proposed label is never approval.
+  Recompute an identity; never read it off a label. `using-sdlc-skills`'
+  `artifact-layout.sh --hash FILE` prints a file's, with `--section HEADING`
+  or `--brief` for part of one, and the `plan-version.sh` script that
+  `writing-plans` carries prints a plan's.
 - **Derive state and dependencies per section.** Shared files can hold goals,
   scope, feasibility, or ADRs with separate identities and ledger rows. A
   change in one section does not invalidate an unrelated section's approval.
