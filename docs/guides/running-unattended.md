@@ -36,7 +36,7 @@ run, so:
   open a pull request against `dev`. Otherwise keep the branch as it is.
 ```
 
-Each line covers only the decision it names. These are the ones a single
+Each line covers only the decision it names. Among the decisions a single
 change can meet:
 
 | Decision | Which skill asks | What to say beforehand |
@@ -47,9 +47,15 @@ change can meet:
 | What happens to the branch | `finishing-a-branch` | The action, the branch, the remote, and the base it goes to |
 | Where a handoff note goes, when the work will not fit one session | `handoff` | `.sdlc-skills/handoffs/` in the project, a path you name, or the reply only |
 
+Other stops depend on what the run finds: a valid review finding that
+contradicts an approved document, or a file the task changed that already
+had uncommitted edits before it began.
+
 Where the agent works and which branch it starts from have defaults: a new
 worktree, cut from the branch the task began on. Lines in your instructions
-file change them.
+file change them. A checkout on a detached HEAD has no such branch: with no
+base named in your prompt or your instructions file, the agent asks for it
+and stops.
 
 The branch line has to describe what is sent and where. If what is about to
 be sent, or where it goes, is not what your line describes (another remote
@@ -89,21 +95,24 @@ comes up when the plan ends, or after each task where the plan integrates
 per task. The run stops before the plan ends when:
 
 - A task needs a change to the plan's goal, a requirement, its acceptance
-  check, its constraints, or an approved migration or assurance contract.
-  It writes the proposed new version and asks you to approve it.
+  check, its constraints, or an approved migration or assurance contract,
+  or, on a high-risk plan, any change its migration rules treat as
+  normative. It writes the proposed new version and asks you to approve it.
 - No remaining task can move forward. It reports what blocks each one.
 - A high-risk task's entry check has not passed and nothing else can
   proceed without it.
 - The remaining work will not fit the session. It writes a handoff for the
   next session to resume from.
 
-A delegated run, one subagent per task, has two more stops. It needs
+A delegated run, one subagent per task, stops in more cases. It needs
 commits, so unless permission to commit locally is on record it asks before
-the first task and, on a no, does not run. It also stops before an act that
-cannot be undone, one that touches secrets, permissions, or a trust
-boundary, one that takes effect outside the worktree, and a requirement
-that reads two ways or a product or architecture choice the approved
-documents do not settle.
+the first task and, on a no, does not run. It never builds a task in the
+session itself: when a subagent cannot be dispatched for a task, doing the
+work in this session is not among the choices. It also stops before an act
+that cannot be undone, one that touches secrets, permissions, or a trust
+boundary, one that takes effect outside the worktree, a requirement that
+reads two ways or a product or architecture choice the approved documents
+do not settle, and when the plan is broken on every path it can see.
 
 ## What a line given beforehand does not cover
 
@@ -131,9 +140,9 @@ documents do not settle.
 
 ## When the run stops anyway
 
-The last message is the question the skill put, with its choices, or a
-report of what blocks the work. No decision was made for you, and the work
-it controls is still pending.
+The last message is the question the skill put, with its choices, a report
+of what blocks the work, or a handoff for the next session. No decision was
+made for you, and the work it controls is still pending.
 
 To continue, start a session and give the answer there. A line inside a
 document saying it is approved does not count in a new session: the agent
