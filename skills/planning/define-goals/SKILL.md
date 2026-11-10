@@ -21,22 +21,17 @@ it.
 
 ## Step 1: Find the objective
 
-Open `assets/goals-section.md` before starting; each step fills its section.
+Open `assets/goals-section.md` before starting and fill every section of it.
 
 1. Ask "why this, why now?" until the answer is what the world does
    differently afterward, not code that exists.
-2. Name who benefits, who operates or bears risk, what changes for each, and
-   who owns the outcome. If goals compete, give each its own metric, never
-   one averaged metric.
+2. If goals compete, give each its own metric, never one averaged metric.
 3. Record one accountable decision owner, or else the approvers, the conflict
    resolver, and the decision rule. If the user is the only stakeholder (a
    solo owner), write the user as the decision owner in `Decision rule:` and
    name no approvers or conflict resolver.
-4. For each outcome, record its current baseline, target, time horizon,
-   measurement source, and accountable owner. If an outcome has no source or
-   date, it cannot be checked, so it is not a goal.
-5. Write the guardrails and the failure criterion.
-6. Write the value in one sentence.
+4. If an outcome has no source or date, it cannot be checked, so it is not a
+   goal.
 
 ## Step 2: Write and present
 

@@ -19,23 +19,17 @@ Name the boundary before anyone starts building.
 
 ## Step 1: Cut the scope
 
-Open `assets/scope-section.md` before starting; each step fills its section.
+Open `assets/scope-section.md` before starting and fill every section of it.
 
 1. Carry the non-negotiables forward first: goal guardrails, existing
    contracts, preserved behavior and data, security, accessibility,
    compatibility, operability, recovery.
-2. Put in scope the smallest set of capabilities that reaches the approved
-   outcome under those constraints.
-3. Put out of scope each deferred capability, with a stable ID, the
-   rationale, its impact on the goal, an owner, and the trigger for
-   revisiting it. Never list a preserved invariant or an existing commitment
-   there.
-4. Write the MVP as the thinnest version that meets the goal and every
-   non-negotiable.
-5. For each assumption and each dependency, record its validation action,
+2. Never list a preserved invariant or an existing commitment as out of
+   scope.
+3. For each assumption and each dependency, record its validation action,
    its owner, and its expiry or decision point. A hidden project inside
    "assumes X" is scope, not an assumption.
-6. Write the change rules: the observations that abort this cut, the changes
+4. Write the change rules: the observations that abort this cut, the changes
    that reopen approval, and who decides. If the user is the only
    stakeholder (a solo owner), they decide, and no approver matrix is
    recorded.

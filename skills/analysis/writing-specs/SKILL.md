@@ -20,17 +20,15 @@ the *how* (architecture, schemas, code) to design.
   `clarifying-intent`; this skill cannot turn that reply into approved
   requirements.
 
-## Step 1: Gather and state
+## Step 1: Gather
 
 1. Pull the goal or brief, and read the relevant existing code. If a genuine
    gap is left, invoke `clarifying-intent`. Invent nothing you could have
    found.
-2. State the problem in a line or two, and link the goal it serves.
 
 ## Step 2: Write the requirements
 
-Open `assets/spec-template.md` before you start; each step below fills one of
-its sections.
+Open `assets/spec-template.md` before you start and fill every section of it.
 
 1. Write each functional requirement as an observable behavior with a stable
    ID that no successor spec ever gives to a different requirement:
@@ -61,10 +59,6 @@ its sections.
    rows that showed it, with its result and never the rows; cite no schema
    for it, since a schema says only what rows may hold. Rewrite one you
    cannot cite to what is known, or move it to open questions.
-6. Fill every column of the template's assumptions-and-dependencies table,
-   one row per assumption or dependency.
-7. List the open questions, the requirement-level risks, and what is out of
-   scope this round.
 
 ## Step 3: Write and present
 

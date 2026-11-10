@@ -17,14 +17,9 @@ description: "Defines domain concepts, relationships, state transitions, and inv
 
 Open `assets/data-model-section.md` before the steps below fill it in.
 
-1. Name one concept per entity in the domain's language: what it represents,
-   and the words experts use for it. This vocabulary is a deliverable: it is
-   used downstream without being redefined.
-2. List each entity's attributes with their type and meaning. Write what null
-   means and which enumeration values are allowed, not just the column.
-3. Map the relationships: cardinality, ownership, and what cascades on delete.
-4. Draw the state transitions of each concept that has a lifecycle.
-5. For each invariant that must never break, name what enforces it (a
+1. Fill the Concepts, Attributes, Relationships, and State transitions
+   tables, following the template's note on each.
+2. For each invariant that must never break, name what enforces it (a
    constraint, a transaction boundary, a test, or a reconciliation) and who
    owns failures.
 
@@ -79,7 +74,7 @@ Open `assets/data-model-section.md` before the steps below fill it in.
   which eighth lens you forgot.
 - Cardinality has a steady-state value and a momentary one: during creation,
   before a required relationship holds, and during deletion, when a cascade
-  fires into one. Step 1's cardinality mapping does not separate the two, so
+  fires into one. One recorded cardinality does not separate the two, so
   documenting only the steady state leaves the code free to do anything at
   those edges without that being a documented deviation.
 

@@ -12,7 +12,7 @@ description: "Settles the conventions agents and humans both follow in a project
 
 ## Step 1: Settle the vocabulary and the patterns
 
-Open `assets/standards-template.md` before starting; each step fills its section. Read `references/standards-example.md` when the first draft is written and needs comparing against a filled example.
+Open `assets/standards-template.md` before starting and fill every section of it. Read `references/standards-example.md` when the first draft is written and needs comparing against a filled example.
 
 1. If an approved `data-model` or domain contract exists, take its concepts
    and terms. Decide only their representation (how each term appears in
@@ -23,10 +23,7 @@ Open `assets/standards-template.md` before starting; each step fills its section
    can see.
 3. Ban a generic label wherever a domain term exists. Keep the glossary
    current.
-4. Name the one way this project does each of these: error handling,
-   validation, async, dependency injection, and testing seams. Give one
-   short example of each.
-5. Write the hard nevers, the things never to do in this project.
+4. Give one short example of each pattern the template names.
 
 ## Step 2: Assign enforcement
 
@@ -39,11 +36,8 @@ Open `assets/standards-template.md` before starting; each step fills its section
    its checks and rubric now. If the project is greenfield and has no
    exemplar, name the first artifact and its owner; adoption stays pending.
    Never fabricate a path.
-4. Name which project instruction wins when instructions conflict, and who
-   approves an exception. Each exception needs a scope, a reason, an expiry,
-   and a compensating check.
-5. Name how often, or on what trigger, the standard is reviewed for drift,
-   and who updates it.
+4. Each exception needs an approver, a scope, a reason, an expiry, and a
+   compensating check.
 
 ## Step 3: Write and present
 

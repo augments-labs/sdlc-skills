@@ -17,7 +17,8 @@ description: "Designs the target system for approved requirements: components, b
 
 ## Step 1: Trace and structure
 
-Open `assets/architecture-section.md` before the steps below fill it in.
+Open `assets/architecture-section.md` before starting and fill every section
+of it.
 
 1. Map every requirement, preserved obligation, and significant risk to the
    component, the interface, and the owning gate reference that cover it.
@@ -29,14 +30,11 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 2. Name each module by what it does and by what it does not do. If removing it
    would spread its complexity across its callers, it stays. If the complexity
    would merely move elsewhere, merge it.
-3. Follow each request, response, event, and sensitive-data path from entry to
-   effect. Mark who owns it, where it crosses an authorization boundary, and
-   where the source of truth changes hands.
-4. For each dependency and each asynchronous path, write its timeout, its
+3. For each dependency and each asynchronous path, write its timeout, its
    retry and idempotency, what still works when it is degraded, how it
    recovers, and how each is exercised (the test, fault injection,
    or drill).
-5. Every sentence that states what the existing system does today (a
+4. Every sentence that states what the existing system does today (a
    component exists, a call site handles a case, a format carries a field)
    names the path and symbol it was checked against at the current
    revision. Rewrite one you cannot cite to what is known, or invoke
@@ -45,10 +43,9 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 
 ## Step 2: Operational views and seams
 
-1. Cover each view that affects correctness: deployment and runtime topology,
-   scale and resource budgets, observability, and the capabilities that make
-   rollout and compatibility possible. The transition procedure belongs to the
-   migration contract; do not restate it here.
+1. Cover each operational view the template lists that affects correctness.
+   The transition procedure belongs to the migration contract; do not restate
+   it here.
 2. If a view is left out, write a skip record with the fields the template's
    operational-views table lists. Never drop a view as "inapplicable" without
    one.
@@ -95,7 +92,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 - A design sentence about the existing system that cites nothing is
   planned as a fact: a design that said a command launched a flow reached
   implementation before a worker found nothing launched it on the base,
-  and the plan grew a task mid-run. Step 1.5 cites the path and symbol.
+  and the plan grew a task mid-run. Step 1.4 cites the path and symbol.
 - Step 1's mapping table needs a real owning gate for every row, but this
   skill defines no assurance gates itself. A row that names a placeholder, or
   a gate its owner never defined, still reads as mapped on the page; only the

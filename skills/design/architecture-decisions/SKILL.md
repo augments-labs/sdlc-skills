@@ -17,24 +17,18 @@ description: "Records a significant, hard-to-reverse technical decision and the 
 
 ## Step 1: Draft the ADR
 
-Open `assets/adr-template.md` before Step 1's actions; it owns the fields.
-Read `references/adr-example.md` when the first draft is written and needs
-comparing against a filled example.
+Open `assets/adr-template.md` before Step 1's actions; it owns the fields,
+so fill every one. Read `references/adr-example.md` when the first draft is
+written and needs comparing against a filled example.
 
-1. State the question, the artifact or system the decision covers, the forces
-   bearing on it, and who decides: one accountable decision owner, or the
-   approvers with a rule for settling a conflict.
+1. State the question and the artifact or system the decision covers.
 2. Weigh at least two real options. For each, record what it assumes, where
    it breaks, what would rule it out, what reversing it would cost, and the
    evidence. Wherever keeping things as they are, or deferring the decision,
    is viable, weigh that too; where it is not, record the evidence that says
    so.
 3. Give every assumption a stable ID and a way to be proved wrong.
-4. Record the proposed choice and each rejected alternative. Keep the
-   rejections; never edit them away.
-5. Record the consequences and the reversal path: what the choice commits you
-   to, what it means for data and migrations, how to undo it, and what it
-   closes off.
+4. Keep every rejected alternative; never edit one away.
 
 ## Step 2: Persist, then challenge
 
@@ -45,8 +39,8 @@ comparing against a filled example.
    artifact layout's section rule in `using-sdlc-skills`: the first 7
    characters of `git hash-object` over the ADR's own section); the challenge
    binds to this path and this identity.
-2. If the choice is irreversible (Step 1.5's reversal row says undo is
-   impossible or unaffordable, not merely costly) and a dispatch action
+2. If the choice is irreversible (its `Consequences and reversal` field says
+   undo is impossible or unaffordable, not merely costly) and a dispatch action
    exists, fill `assets/adr-challenger.md` with that path and identity before
    dispatching it. Dispatch it as `dispatching-parallel-agents` Step 2 says,
    to a reviewer other than the sole author. That reviewer challenges the
