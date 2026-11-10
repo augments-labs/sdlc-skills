@@ -145,9 +145,9 @@ numbers cannot drift from the tree.
 | The names and descriptions of all 48 skills, every session | 3201 | 5037 | |
 | The router, every session | 843 | 1333 | 4568 |
 | One skill body, when its skill fires | | 638 to 4745 | 638 to 21916 |
-| The bug-fix chain, 9 skills | 10290 | 16493 | 46499 |
-| The new-feature chain, 13 skills | 16088 | 25609 | 66730 |
-| The plan-execution chain, 8 skills | 10745 | 17159 | 48059 |
+| The bug-fix chain, 9 skills | 10293 | 16494 | 46500 |
+| The new-feature chain, 13 skills | 16091 | 25610 | 66731 |
+| The plan-execution chain, 8 skills | 10748 | 17160 | 48060 |
 | The delegated-execution chain, 7 skills | 10287 | 16548 | 50717 |
 | The incident chain, 5 skills | 5170 | 8127 | 20047 |
 | The release chain, 5 skills | 5619 | 9123 | 36054 |
