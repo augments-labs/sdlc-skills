@@ -10,8 +10,8 @@ reads as "none found", which is a claim.
 
 - **Identity:** recorded in the ledger row, never here: the first 7 characters of
   `git hash-object` over this artifact's own text as issued
-- **Predecessor:** {{prior normative identity, or none; a successor carries a
-  per-requirement added / changed / removed / preserved delta}}
+- **Predecessor:** {{prior normative identity, or none; a successor lists here
+  each requirement ID as added / changed / removed / preserved}}
 - **External decision ledger:** {{ledger path: this spec's path with .ledger.md
   for .md unless the user sets another; holds pending / changes requested /
   approved / rejected / cancelled / superseded, bound to the version above —
@@ -49,10 +49,12 @@ are stable and never recycled by a successor.
 
 | ID | Must do | Acceptance form | Artifact today, or gate + owner |
 | --- | --- | --- | --- |
-| {{R1}} | {{observable behavior}} | {{executable gate / mockup / source-fact contract / rubric / prose}} | {{a real path that exists now, OR the intended gate and who will own it}} |
+| {{R1}} | {{observable behavior}} | {{executable gate / mockup / preservation contract / rubric / prose}} | {{a real path that exists now, OR the intended gate and who will own it}} |
 
 Never name an artifact that does not exist. `references/reference-forms.md`
-chooses the form; the cheapest honest one wins.
+chooses the form; the cheapest honest one wins. A value no source states (a
+timeout, a size limit, a status code) is an open question with an owner, never
+a plausible value in a requirement.
 
 ## Carried guardrails and obligations
 

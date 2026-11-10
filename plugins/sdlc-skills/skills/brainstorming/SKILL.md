@@ -54,7 +54,8 @@ of it.
 5. Record the base revision the facts were checked against, then write the
    question, facts, criteria, and base revision to
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/approach-inputs.md`. The
-   writers read that file, never this conversation.
+   writers read that file, never this conversation. Read a path with
+   uncommitted changes as committed (`git show {{revision}}:{{path}}`).
 
 ## Step 2: Produce the approaches
 
@@ -72,10 +73,9 @@ of it.
    Default to the first three. Add a row only when a criterion names its
    concern, and stop at five: each approach is one `large`-tier run.
 2. Fill `assets/approach-prompt.md` once per perspective before any
-   approach is written. Every fill names the same inputs file, brief, base
-   revision, and report directory; only the perspective line differs. The
-   workspace is the project root at the base revision, read-only. The
-   report path is `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/approach-{{perspective}}.md`,
+   approach is written. The workspace is the project root at the base
+   revision, read-only. The report path is
+   `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/approach-{{perspective}}.md`,
    the one write a fill allows.
 3. If a dispatch action is callable, freeze the packet count, the deadline,
    and the cancel owner as `dispatching-parallel-agents` Step 1.4 says, then
@@ -99,7 +99,9 @@ of it.
 6. A `NEEDS_CONTEXT` return is not a failure and uses no retry: the inputs
    are ambiguous for every writer. Answer its question, asking the user
    once when the inputs file cannot settle it, write a successor inputs
-   file, and dispatch the whole wave again from Step 2.2.
+   file, `approach-inputs-2.md`, with report paths ending `-2.md`, and
+   dispatch the whole wave once more from Step 2.2. On a second
+   `NEEDS_CONTEXT`, ask the user its question and end the turn.
 
 ## Step 3: Check facts, then compare
 
@@ -155,23 +157,27 @@ of it.
    the chosen approach by the name after the colon in its heading; the
    rejected ones stay in the section as the record of what was not chosen.
    Naming a rejected approach is a change: treat it as option 3.
+
    **REQUIRED SUB-SKILL:** when the choice is hard to reverse, invoke
    `architecture-decisions` with the chosen approach and every other one,
    rejected included, as its options. If the record it returns rejects the
    choice in favor of another approach, add a superseding `approved` row
-   naming that approach and the record's identity. On any outcome other
-   than accepted or rejected in favor of another approach, the choice is
-   not settled: add a `changes requested` or `cancelled` row naming the
-   record's identity and end the turn.
+   naming that approach and the record's identity. If that skill's Skip
+   applies, the choice stands. On any other outcome than accepted or
+   rejected in favor of another approach, the choice is not settled: add a
+   `changes requested` or `cancelled` row naming the record's identity and
+   end the turn.
 4. Once the choice is settled, invoke the next missing precondition:
    `feasibility-check` for an initiative, unless an existing Feasibility
-   section fills every dimension row from evidence and no row is unknown;
+   section assesses the chosen approach and fills every dimension row from
+   evidence, and no killer risk's confidence is unknown;
    `scoping` for an initiative whose boundary is not yet approved; else
    `writing-specs`.
-5. On option 3, write a successor section from Step 1 with the change named,
-   add a `superseded` row to the predecessor naming the successor, and
-   present it again. Each round ends the turn; the user decides when the
-   question is settled.
+5. On option 3, add a `changes requested` row, write a successor section
+   from Step 1 with the change named, and present it again; the
+   predecessor's `superseded` row, naming the successor, waits until the
+   successor is approved. Each round ends the turn; the user decides when
+   the question is settled.
 
 ## Gotchas
 
@@ -194,9 +200,5 @@ of it.
 
 ## Common mistakes
 
-- Instead of scoring approaches with numbers, write what each one does
-  against each criterion; a number hides the observation the user needs.
 - Instead of carrying a rejected approach into the spec as a later phase,
   leave it under Rejected with its reason; a later initiative can cite it.
-- Instead of brainstorming the goal, settle it first; approaches to an
-  unsettled objective compare nothing.

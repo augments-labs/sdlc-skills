@@ -1,6 +1,6 @@
 ---
 name: feasibility-check
-description: "Checks whether an initiative can be delivered before committing to it: technical, delivery, budget, operational, security, data, and dependency risk. Use when an initiative's feasibility is uncertain, including proven technology under uncertain delivery constraints. Skip only when an existing feasibility section already fills every dimension row from evidence and no row is unknown."
+description: "Checks whether an initiative can be delivered before committing to it: technical, delivery, budget, operational, security, data, and dependency risk. Use when an initiative's feasibility is uncertain, including proven technology under uncertain delivery constraints. Skip only when an existing feasibility section already fills every dimension row from evidence and no killer risk's confidence is unknown."
 ---
 
 # Feasibility Check
@@ -14,7 +14,7 @@ bound to its evidence to the accountable owner.
 - When feasibility is genuinely uncertain: new technology, hard constraints,
   unknown data.
 - **Skip** only when an existing feasibility section already fills every
-  dimension row from evidence and no row is `unknown`.
+  dimension row from evidence and no killer risk's confidence is `unknown`.
 - **Solo owner**: when the user is the only stakeholder, they own every
   dimension row and every go-if condition, so Step 1.1's owner lookup is
   skipped.
@@ -30,9 +30,11 @@ section.
    rule and stakeholder roles. If no owner is named there, ask the user who
    owns it; never invent one.
 2. For each killer risk, record the evidence source, its freshness, and the
-   confidence. `unknown` is a valid confidence.
-3. Turn the top unknown into a bounded question for `prototyping`. One
-   spike answers one dimension.
+   confidence. Evidence recalled, not read or run in this session, has
+   confidence `unknown`.
+3. Turn the top unknown into a bounded question and record it as a go-if
+   condition whose evidence is a `prototyping` spike. One spike answers one
+   dimension.
 4. Fill Option Zero with evidence for whether not building, an existing
    tool, configuration, or process, or a smaller initiative meets the goal
    and guardrails.
@@ -63,11 +65,12 @@ section.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
-4. On a go-if, only the named evidence and owner move a condition's external
-   state (its state in the ledger the template names: add to it, never
-   rewrite it). On expiry, or on any change to a bound input, gate,
-   evidence, owner, or freshness, the condition is invalid and the decision
-   is reopened.
+4. On a go-if, **REQUIRED SUB-SKILL:** invoke `prototyping` for a condition
+   whose evidence is a spike. Only the named evidence and owner move a
+   condition's external state (its state in the ledger the template names:
+   add to it, never rewrite it). On expiry, or on any change to a bound
+   input, gate, evidence, owner, or freshness, the condition is invalid and
+   the decision is reopened.
 5. **REQUIRED SUB-SKILL:** on a direct go, or a go-if with every condition
    `satisfied`, invoke `scoping` when the boundary is next. Never impose a
    phase already complete.

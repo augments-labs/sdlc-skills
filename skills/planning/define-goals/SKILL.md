@@ -32,7 +32,8 @@ what this work has; the template says what an empty one carries.
    solo owner), write the user as the decision owner in `Decision rule:` and
    name no approvers or conflict resolver.
 4. If an outcome has no source or date, it cannot be checked, so it is not a
-   goal.
+   goal. Write a baseline never measured as `unmeasured`, with who takes the
+   first reading and by when; never a recalled number.
 
 ## Step 2: Write and present
 
@@ -54,14 +55,15 @@ what this work has; the template says what an empty one carries.
    3. Reject the objective
    4. Cancel
 
-   Recommendation: {{option the open assumptions support}} — {{one sentence}}.
+   Recommendation: {{option the measure and guardrails support}} — {{one sentence}}.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. **REQUIRED SUB-SKILL:** on option 1, invoke `feasibility-check` unless an
    existing feasibility section already fills every dimension row from
-   evidence and no row is unknown; then, if the boundary is next, invoke
-   `scoping`. Never impose a phase that is already complete.
+   evidence and no killer risk's confidence is unknown; then, if the
+   boundary is next, invoke `scoping`. Never impose a phase that is already
+   complete.
 
 ## Gotchas
 

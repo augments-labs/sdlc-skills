@@ -40,7 +40,11 @@ what this work has; the template says what an empty one carries.
 1. Write the `## Scope` section to
    `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
    keeping the approved sections around it as they are. Once its identity is
-   issued, the section is never edited.
+   issued, the section is never edited. To revise, write a successor
+   section, headed as the template says, that names its predecessor and
+   marks each capability and exclusion
+   `added / changed / removed / preserved`; add the predecessor's
+   `superseded` row only on the successor's approval.
 2. Present:
 
    ```text
@@ -58,7 +62,9 @@ what this work has; the template says what an empty one carries.
    Ask this and end the turn; `clarifying-intent` owns what closes it.
 3. **REQUIRED SUB-SKILL:** on option 1, invoke `writing-specs` when detailed
    requirements are the next missing input. Never impose a phase that is
-   already complete.
+   already complete. When a successor is approved, list every spec and plan
+   bound to its predecessor; work under each stops until its owner
+   validates it again.
 
 ## Gotchas
 
