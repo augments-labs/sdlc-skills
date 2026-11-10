@@ -47,9 +47,9 @@ change can meet:
 | What happens to the branch | `finishing-a-branch` | The action, the branch, the remote, and the base it goes to |
 | Where a handoff note goes, when the work will not fit one session | `handoff` | `.sdlc-skills/handoffs/` in the project, a path you name, or the reply only |
 
-Other stops depend on what the run finds: a valid review finding that
-contradicts an approved document, or a file the task changed that already
-had uncommitted edits before it began.
+Other stops depend on what the run finds, such as a valid review finding
+that contradicts an approved document, or a file the task changed that
+already had uncommitted edits before it began.
 
 Where the agent works and which branch it starts from have defaults: a new
 worktree, cut from the branch the task began on. Lines in your instructions
