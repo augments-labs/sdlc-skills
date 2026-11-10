@@ -4,6 +4,8 @@ Copy this section into the design document, replacing every `{{placeholder}}`.
 Preserve the sections already approved around it; this one is immutable once its
 identity is issued. Every concept, relationship, transition, invariant, and
 mapping gets a stable ID, and a successor never recycles one.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
 ## Data model

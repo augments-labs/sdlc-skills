@@ -1,8 +1,9 @@
 # Spec template
 
-Copy this file to the spec path, replacing every `{{placeholder}}`. Delete a
-section only by saying why it is empty — an absent risks section reads as "none
-found", which is a claim.
+Copy this file to the spec path, replacing every `{{placeholder}}`. A section
+with nothing to hold keeps its heading and one line, `None: {{why}}`; never
+invent a row to fill one, and never drop a heading: an absent risks section
+reads as "none found", which is a claim.
 
 ```markdown
 # Spec: {{topic}}

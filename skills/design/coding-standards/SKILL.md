@@ -12,7 +12,7 @@ description: "Settles the conventions agents and humans both follow in a project
 
 ## Step 1: Settle the vocabulary and the patterns
 
-Open `assets/standards-template.md` before starting and fill every section of it. Read `references/standards-example.md` when the first draft is written and needs comparing against a filled example.
+Open `assets/standards-template.md` before starting. Fill a section only with what this project has; the template says what an empty one carries. Read `references/standards-example.md` when the first draft is written and needs comparing against a filled example.
 
 1. If an approved `data-model` or domain contract exists, take its concepts
    and terms. Decide only their representation (how each term appears in

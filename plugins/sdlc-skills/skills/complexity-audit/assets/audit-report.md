@@ -3,6 +3,8 @@
 Fill this in as the audit runs, and write the completed file to
 `.sdlc-skills/audits/{{YYYY-MM-DD}}-{{topic}}.md`. The coordinator alone writes
 it; dispatched auditors return partition reports that get reconciled into it.
+A section with nothing to hold keeps its heading and one line,
+`None: {{why}}`; never invent a row to fill one, and never drop a heading.
 
 ```markdown
 # Complexity audit: {{topic}}

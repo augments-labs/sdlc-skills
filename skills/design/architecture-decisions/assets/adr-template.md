@@ -3,8 +3,9 @@
 `architecture-decisions` opens this before Step 1's actions; it owns the
 fields the steps below fill. Append the drafted, `proposed` ADR to
 `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
-preserving what is already there. Fill every section; never omit a decision
-input, risk, authority, or recovery fact to hit a size target.
+preserving what is already there. Fill every field; one with nothing to hold
+says `none` and why. Never invent content to fill one, and never omit a
+decision input, risk, authority, or recovery fact to hit a size target.
 
 ```markdown
 ## ADR: {{decision-title}}
