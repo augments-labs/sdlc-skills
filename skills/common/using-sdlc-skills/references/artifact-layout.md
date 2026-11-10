@@ -14,12 +14,12 @@ nothing.
 | --- | --- | --- |
 | `briefs/` | goals, scope, feasibility, and interview briefs; captured tickets | yes |
 | `specs/` | specifications | yes |
-| `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts, rollout records, schema change records, deprecation records, shard manifests | yes |
+| `designs/` | architecture, data models, UI, coding standards, ADRs, migration contracts, rollout records, schema change records, deprecation records, shard manifests, structural proposals | yes |
 | `plans/` | plan directories: an index and its task files | yes |
 | `audits/` | complexity audit reports, outside the candidate workspace | yes |
 | `post-mortems/` | post-mortems | yes |
 | `verification/` | assurance matrices | yes |
-| `evidence/` | run records bound to one state, prototype results and boundary records included | only its `.gitignore` |
+| `evidence/` | run records bound to one state; prototype results, boundary records, and workspace records included | only its `.gitignore` |
 | `handoffs/` | handoff notes and containment records | only when safe to share |
 | `views/` | the generated project view | the project's choice |
 
@@ -87,7 +87,10 @@ over the exact text the artifact owns:
 - **A captured ticket** (a file whose H1 begins `# Ticket:`): the whole
   file; nothing else is written into it.
 - **A plan:** its index, with every task checkbox and state label normalized to
-  `[ ]` and `todo`, followed by every task file in index order.
+  `[ ]` and `todo`, followed by every task file in index order. The
+  `plan-version.sh` script that `writing-plans`, `executing-plans`, and
+  `subagent-driven-development` each carry prints it; the commands below do
+  not.
 
 ```bash
 bash scripts/artifact-layout.sh --hash .sdlc-skills/specs/2026-01-15-login.md
@@ -116,8 +119,8 @@ update does not make the row stale.
 `evidence/` holds records that bind to one state and go stale with it:
 verification ledgers, TDD RED records, debugging hypothesis and attempt
 ledgers, review descriptors, dispatch receipts and reports, plan review
-reports, security reports, gate-state records, boundary records, and prototype
-results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
+reports, security reports, gate-state records, boundary records, workspace
+records, and prototype results. Group them by task: `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/`.
 A plan's run records use its directory name: the SDD run ledger lives at
 `.sdlc-skills/evidence/{{plan directory name}}/sdd-ledger.md` and keeps its
 own header (`When | Kind | Task | Detail`), being a run record, not a decision

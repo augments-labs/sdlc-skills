@@ -371,6 +371,15 @@ EOF
 got_brief="$(bash "$AL" --hash "$hash_doc" --brief 2>/dev/null)"
 check "artifact-layout.sh --hash FILE --brief matches literal brief preamble hash (ignoring backtick and tilde fences)" "$got_brief" "$want_brief"
 
+level_doc="$tmp/levels.md"
+printf '# Design\n\nIntro.\n\n## Parts\n\n### First\n\nFirst body.\n\n### Second\n\nSecond body.\n\n# Appendix\n\nTail.\n' > "$level_doc"
+want_first="$(printf '### First\n\nFirst body.\n' | git hash-object --stdin | cut -c1-7)"
+got_first="$(bash "$AL" --hash "$level_doc" --section '### First' 2>/dev/null)"
+check "artifact-layout.sh --section ends a ### section at its next ### sibling" "$got_first" "$want_first"
+want_design="$(printf '# Design\n\nIntro.\n\n## Parts\n\n### First\n\nFirst body.\n\n### Second\n\nSecond body.\n' | git hash-object --stdin | cut -c1-7)"
+got_design="$(bash "$AL" --hash "$level_doc" --section '# Design' 2>/dev/null)"
+check "artifact-layout.sh --section runs a # section through its lower headings to the next #" "$got_design" "$want_design"
+
 missing_err="$(bash "$AL" --hash "$hash_doc" --section '## Missing' 2>&1 >/dev/null)"
 rc=$?
 check "artifact-layout.sh --hash fails with exit 2 when section heading is absent" "$rc:$missing_err" "2:0 headings match"

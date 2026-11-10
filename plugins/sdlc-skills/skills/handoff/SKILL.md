@@ -45,14 +45,13 @@ says it may go.
 
 Read `references/handoff-example.md` when the first draft is written and needs comparing against a filled example.
 
-1. Fill every section: identity, goal, state identity, decisions and
-   authority, evidence, gotchas and permissions, resume first action,
-   suggested skills, references.
-2. In `Handoff identity`, name the predecessor record and add this note after
-   it as its successor. If more than one successor already ends the
-   predecessor's lineage, or the predecessor file's ledger holds
-   no hash for it, or one the file no longer matches, stop and resolve the
-   lineage.
+1. Fill every section; `Storage controls` records every destination.
+2. In `Handoff identity`, name the predecessor record; this note's
+   `Predecessor` line and ledger row make it the successor. If more than one
+   successor already ends the predecessor's lineage, or the predecessor
+   file's ledger holds no hash for it, or one the file no longer matches,
+   stop, say which, and ask. Name a reply-only predecessor by ID with
+   `no hash`.
 3. In `Decisions and authority`, give for each decision the direct answer or
    the standing default that authorized it. List every open decision as open.
    Never write an assumption as approval.

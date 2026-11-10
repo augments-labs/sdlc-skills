@@ -35,6 +35,7 @@ Entries in the session store expire on idle timeout, not just on absolute TTL.
 - Plan/artifact: .sdlc-skills/plans/2026-07-28-session-expiry/ at version 9f8e7d6
 - Branch / commit / workspace: fix/session-idle-expiry / a1b2c3d / primary checkout
 - Workspace inputs: unstaged src/store/memory.js — half-done sweep pass, not yet wired in
+- Outside this tree: none
 - Done: TTL-based expiry (commit a1b2c3d), covered by store-expiry test
 - In flight: idle-expiry sweep — the sweep function exists but is never scheduled
 

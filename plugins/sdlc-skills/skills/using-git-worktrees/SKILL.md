@@ -5,11 +5,12 @@ description: "Creates an isolated git worktree for a task and checkpoints work t
 
 <EXTREMELY-IMPORTANT>
 NEVER START REPO EDITS IN A SHARED CHECKOUT, WHATEVER BRANCH IT IS ON. A shared
-checkout is one where Step 1 reports `git-dir` equal to `common-dir`. Create or
+checkout is one where Step 1 reports `git_dir` equal to `common_dir`. Create or
 enter a dedicated workspace *before* the first edit: a git worktree, unless the
-user or project says otherwise. The only exceptions are the user explicitly
-okaying the current checkout, or the project's written policy okaying it (Step
-1.6): a line you can quote, never your reading of the checkout.
+user or project says otherwise. The only exceptions are an edit on
+`using-sdlc-skills`' short route, the user explicitly okaying the current
+checkout, or the project's written policy okaying it (Step 1.6): a line you
+can quote, never your reading of the checkout.
 Writing anything under `.sdlc-skills/` is not a repo edit here; product code,
 tests, and the project's own checks are.
 </EXTREMELY-IMPORTANT>
@@ -26,14 +27,13 @@ tests, and the project's own checks are.
 
 ## Available scripts
 
-- **`scripts/worktree-state.sh`** — reports checkout isolation, submodule
-  status, dirty state, base resolution, branch collisions, and `.worktrees/`
-  ignore status as JSON.
+- **`scripts/worktree-state.sh`** — reports the checkout's state as JSON.
 
 ## Step 1: Detect what you are in
 
-Open `assets/workspace-record.md` before the first command. Fill each section
-as its step runs.
+Copy `assets/workspace-record.md` before the first command, to
+`.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/workspace-record.md`. Fill each
+section as its step runs.
 
 1. Run `bash scripts/worktree-state.sh` to inspect `toplevel`, `git_dir`,
    `common_dir`, `linked_worktree`, `submodule_superproject`, `detached`,
@@ -62,7 +62,8 @@ as its step runs.
    guidance conflicts, ask and stop. With network authority, run
    `git fetch origin "$BASE"` (otherwise record "not fetched"), then run
    `bash scripts/worktree-state.sh --base "$BASE"` and record `base.local_sha`
-   and `base.remote_sha`.
+   and `base.remote_sha`. If `remote_sha` is set and differs, use
+   `origin/$BASE` as `BASE`; ask first when local is ahead.
 2. Read `references/baseline-contract.md` before any install or baseline
    command.
 
@@ -71,17 +72,17 @@ as its step runs.
 1. Name it by project convention, or `feature/{{short-task}}`,
    `fix/{{short-task}}`, `docs/{{short-task}}`. Run
    `bash scripts/worktree-state.sh --check-branch "$BRANCH"`; if it exits `1`
-   (`valid_format` is `false` or a local or remote branch exists), pick
-   another name. Never overwrite or reuse an existing branch.
+   (`valid_format` is `false` or a local or fetched remote branch exists),
+   pick another name. Never overwrite or reuse an existing branch.
 2. Pick the mechanism, taking the first that applies: a user instruction; then
    project guidance; then a harness-native worktree command, run with the name
    above and HEAD at the proven base, after which skip to Step 4; then the
    steps below. A harness-native command acts on the session's own
    repository: if the work is in another repository, skip it, run the steps
    below from that repository, and say why the native command was not used.
-3. Inside a submodule (`submodule_superproject` non-empty), stop here: create
-   an owned branch in the submodule and write an explicit plan for the parent
-   gitlink, and never run the rest of Step 3 from the superproject's paths.
+3. Inside a submodule (`submodule_superproject` non-empty), create an owned
+   branch in the submodule, write an explicit plan for the parent gitlink, and
+   go to Step 4; never run the rest of Step 3 from the superproject's paths.
    Otherwise set `root` to `main_checkout_root` and `common_dir` to Step 1's
    `common_dir`, and choose the directory (`dir=".worktrees"` unless the user
    gave a path) under `root`. If `main_checkout_root` is `null` (a bare
@@ -89,10 +90,9 @@ as its step runs.
    stop.
 4. If `worktrees_dir_ignored` is `false` (or `git -C "$root" check-ignore -q "$dir/"`
    fails for a custom `dir`), exclude the directory locally with
-   `printf '%s/\n' "$dir" >> "$common_dir/info/exclude"`; that is the whole
-   change. Never add `{{dir}}/` to `.gitignore` in any checkout: authority to
-   commit locally covers task checkpoints, not a project change nobody
-   requested.
+   `printf '%s/\n' "$dir" >> "$common_dir/info/exclude"`. Never add
+   `{{dir}}/` to `.gitignore` in any checkout: authority to commit locally
+   covers task checkpoints, not a project change nobody requested.
 5. Create from the proven base and enter:
 
    ```bash
@@ -108,7 +108,8 @@ as its step runs.
 ## Step 4: Baseline it
 
 1. Claim distinct runtime identities (ports, databases, fixtures).
-2. Run project setup inside the worktree by the project's own instructions.
+2. Confirm `git rev-parse --show-toplevel` prints the workspace path, then run
+   project setup there by the project's own instructions.
 3. Run the real baseline under `references/baseline-contract.md` after setup.
    If the baseline has a failing check (a red cell) you cannot attribute, or
    left an effect you did not contain, stop work.
@@ -119,10 +120,10 @@ as its step runs.
 | The thought | The reality |
 | --- | --- |
 | "I'll just inspect first" | For an edit request, checking the branch and status is the first inspection. |
-| "It's only a small change" | Small changes still land on the wrong branch. Create the branch first. |
+| "It's only a small change" | Small changes still land on the wrong branch. Outside the exceptions above, create the branch first. |
 | "The harness made a detached checkout, so I'll add my own worktree" | First determine whether the host already owns isolation and cleanup. |
 | "I'll make the branch after the first edit" | After the edit, you may already have mixed unrelated state. |
-| "It looks like a plain checkout" | Looking is not detecting. Comparing `git-dir` with `common-dir`, plus the superproject check, is the inspection. |
+| "It looks like a plain checkout" | Looking is not detecting. Comparing `git_dir` with `common_dir`, plus the superproject check, is the inspection. |
 
 ## Step 5: Checkpoint while you work
 
@@ -137,7 +138,8 @@ authority to push, publish, or integrate.
 1. After each coherent piece a reviewer could accept or reject separately:
    **REQUIRED SUB-SKILL:** invoke `verification-before-completion`, run its
    smallest real check, and commit locally under the recorded authority,
-   staging only the paths this task changed.
+   staging only the paths this task changed. Read
+   `references/checkpointing.md` before the first commit.
 2. When the work on the branch is ready for integration: **REQUIRED
    SUB-SKILL:** invoke `finishing-a-branch` with the recorded workspace, base,
    and ownership. Run no push, publish, integrate, discard, delete, history
@@ -154,9 +156,6 @@ authority to push, publish, or integrate.
 
 ## Gotchas
 
-- Read `references/checkpointing.md` before the first commit: it defines the
-  unit of a checkpoint, how to stage one by path, and what `git commit` does
-  not grant.
 - A check written during planning lands on whatever branch the shared
   checkout is on.
 - A policy line that okays the current checkout grants only that; local

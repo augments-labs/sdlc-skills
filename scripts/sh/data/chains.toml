@@ -15,7 +15,7 @@ budget_words = 10300
 
 [new-feature]
 skills = ["using-sdlc-skills", "working-from-a-ticket", "clarifying-intent", "writing-specs", "mapping-the-codebase", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 16013
+recorded_words = 16011
 budget_words = 16187
 
 [plan-execution]
@@ -35,5 +35,5 @@ budget_words = 5204
 
 [release]
 skills = ["using-sdlc-skills", "verification-before-completion", "requesting-code-review", "release-readiness", "finishing-a-branch"]
-recorded_words = 5618
+recorded_words = 5617
 budget_words = 5659

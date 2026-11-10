@@ -56,8 +56,7 @@ description: "{{What the skill does}}. Use when {{situations in the user's words
 
 ## Gotchas
 
-- {{a fact the agent gets wrong when untold}} — prevents {{the failure}};
-  reproduced by {{the probe or scenario}}.
+- {{a fact the agent gets wrong when untold}} — prevents {{the failure}}.
 
 ## Common mistakes
 

@@ -28,8 +28,9 @@ Read `references/reference.md` when unsure how much detail a form needs:
    The [Agent Skills specification](https://agentskills.io/specification) lists
    every field. The description says what the skill does and when to use it, in
    the user's words, with the keywords an agent matches a task on — 1 to 1,024
-   characters, no word cap, no `Fires on` list, no summary of the steps. Quote
-   it. A description that still carries a `Fires on` list predates this rule;
+   characters, no word cap, no `Fires on` list, no summary of the steps, and
+   none of the internal terms `check-skill.sh` rejects there: exact candidate,
+   material intent, owning phase skill, normative. Quote it. A description that still carries a `Fires on` list predates this rule;
    rewrite it to this shape when you edit that skill.
 2. **House limits: at most 500 body lines, under 5000 estimated tokens, and
    under 19,000 bytes.** A harness may cut a body it re-attaches after it
@@ -90,8 +91,9 @@ Read `references/reference.md` when unsure how much detail a form needs:
    not applying it. Preserve history across revisions and return to a pending
    caller instead of invoking it recursively.
 7. **Cut by judgement, not word caps.** Ask of every section:
-   "would the agent get this wrong without this?" If no, cut it. If unsure, run
-   a throwaway probe; read `references/testing.md` before writing it up. Never
+   "would the agent get this wrong without this?" If no, cut it. If unsure,
+   keep it and say so; cut it only on a throwaway probe's evidence, and read
+   `references/testing.md` before writing that probe up. Never
    cut a hard stop or a destructive-action guard. Reword a hard stop, a guard,
    or a rationalization or red-flag row only so that the new words cover
    everything the old ones did, and nothing more.
@@ -100,8 +102,8 @@ Read `references/reference.md` when unsure how much detail a form needs:
    state the goal and its reason in one sentence. Give one default and one
    escape hatch; keep a menu only for a decision that belongs to the user.
 9. **Gotchas over rules.** Every body carries `## Gotchas`: facts the agent gets
-   wrong when untold, each naming the failure it prevents and citing only the
-   probe or scenario that reproduces it. Name every support file with its load
+   wrong when untold, each naming the failure it prevents. Name every support
+   file with its load
    condition, as in `Read references/{{file}} when {{condition}}`, and keep the
    body understandable without it.
 
@@ -151,12 +153,8 @@ debugging, and receiving review. For these only:
 ## Available scripts
 
 - **`scripts/check-skill.sh`** — checks a skill directory with the library's
-  format and policy profile: required fields, names, sizes, selected paths,
-  presentation, bundled script help, and the policy checks (`## Gotchas`, load
-  conditions, description YAML, frontmatter fields, compatibility length,
-  arrows in prose) —
-  warnings by default,
-  failures with `--strict`. Its field extraction is not a complete
+  format and policy profile; `--help` lists every check. Policy findings are
+  warnings by default, failures with `--strict`. Its field extraction is not a complete
   YAML parser and does not validate all optional metadata. It executes the
   checked skill's scripts with `--help`; inspect untrusted scripts or isolate
   them first.

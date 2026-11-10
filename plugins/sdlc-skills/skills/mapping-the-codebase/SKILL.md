@@ -21,7 +21,7 @@ its boundaries are.
    reach, and why the boundary you picked holds that reach. For a
    compatibility-sensitive change, never stop at direct callers.
 2. Pin the repository or working state and the identity of every external
-   input the reading depends on. Write what makes the reading stale.
+   input the reading depends on.
 
 ## Step 2: Map
 
@@ -43,9 +43,10 @@ its boundaries are.
 1. Write the boundary record to
    `.sdlc-skills/evidence/{{YYYY-MM-DD}}-{{topic}}/boundary-record.md` unless
    the user names another path: what the region owns, what it delegates,
-   where its seams are, which downstream obligations a change must preserve.
-2. Set a freshness limit. Once it has passed, or a pinned input has changed,
-   revalidate the affected claims before relying on them.
+   where its seams are, which downstream obligations a change must preserve,
+   what Step 1.2 pinned, and a freshness limit (a revision or date).
+2. Past the limit, or once a pinned input has changed, revalidate the
+   affected claims before relying on them.
 3. If implementation finds a caller or surface the map never covered, stop
    editing and return to Step 1 with it: recheck that the boundary holds the
    change's reach, map the surface from the code, and update the record
@@ -56,5 +57,5 @@ its boundaries are.
 - A caller reached through configuration, reflection, a generated route, or a
   scheduler never appears in an import search, so a map built from imports
   draws a boundary that a runtime caller crosses.
-- A boundary record carries no signal of its own staleness; past its freshness
-  limit it reads exactly like a current one.
+- A capped search result, or one that skipped ignored, generated, or vendored
+  paths, is not the full caller set.

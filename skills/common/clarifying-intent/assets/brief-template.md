@@ -2,7 +2,8 @@
 
 `clarifying-intent` fills this once Step 2.4's stop condition holds. Write it
 to `.sdlc-skills/briefs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path, or
-inline beside its decision record when the brief is tiny. Lifecycle state —
+put it in the reply with its decision record when the brief is tiny (a goal
+and one decision). Lifecycle state —
 approval, changes requested, supersession — never mutates this file; it lives
 in the external ledger the fields below name.
 

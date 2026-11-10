@@ -1,7 +1,7 @@
 # YAGNI challenger prompt template
 
-Fill Inputs and Report template from `assets/challenge-report.md`; send the
-fenced prompt. The challenger fills the report.
+Fill Inputs, and paste the report template the skill names into Report
+template; send the fenced prompt. The challenger fills the report.
 
 A prompt or assigned name is not dispatch. Freeze terminal control, then require
 a nonempty receipt from the callable action and poll that exact attempt. At its

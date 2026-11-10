@@ -50,16 +50,8 @@ The page carries state, not documents.
    of a row in a ledger, or a plan's bound inputs. If a recorded path cannot
    be read, that artifact's values are unknown, and Step 3.3 names the cause
    class. Never search the filesystem for look-alikes.
-3. Read `references/state-derivation.md` before deriving a value. Derive
-   every value by its rules: slug allowlist, phase artifacts, approval
-   sources, drift, attention grouping.
-4. Match each section's approved version and location to its decision
-   ledger, keeping the ledger's own decision vocabulary. Take task progress
-   from the plan's ledger rows, never from the index checkboxes; only the
-   state `done` counts as complete. Find drift by comparing the input
-   identity a downstream artifact recorded with that input as it is now;
-   timestamps alone can indicate possible staleness, never prove freshness.
-   Where no value can be derived, say unknown.
+3. Read `references/state-derivation.md` before deriving a value, and derive
+   every value by its rules. Where no value can be derived, say unknown.
 
 ## Step 2: Render
 
@@ -78,7 +70,8 @@ The page carries state, not documents.
    write is content, and it changes the hash of that state. A status question
    is not consent to that.
 4. Write exactly one file: `$root/.sdlc-skills/views/index.html`, never one
-   inside a linked task worktree. Create `views/` if missing. No external
+   inside a linked task worktree unless Step 1.1 resolved the root there.
+   Create `views/` if missing. No external
    URLs, no JavaScript, no scratch or backup files. Regeneration recomputes
    from the trail and rewrites in place; never merge a previous render.
 
