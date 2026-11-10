@@ -142,7 +142,7 @@ numbers cannot drift from the tree.
 <!-- token-budget-table:start -->
 | What loads | Words | Approx tokens | With every reference and asset |
 | --- | --- | --- | --- |
-| The names and descriptions of all 48 skills, every session | 3203 | 5042 | |
+| The names and descriptions of all 49 skills, every session | 3299 | 5183 | |
 | The router, every session | 843 | 1333 | 4623 |
 | One skill body, when its skill fires | | 638 to 4736 | 638 to 21889 |
 | The bug-fix chain, 9 skills | 10287 | 16477 | 47050 |
