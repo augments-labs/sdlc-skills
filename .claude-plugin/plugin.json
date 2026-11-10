@@ -31,6 +31,7 @@
     "./skills/common/writing-skills",
     "./skills/common/yagni",
     "./skills/common/mapping-the-codebase",
+    "./skills/common/runtime-evidence",
     "./skills/deployment/finishing-a-branch",
     "./skills/deployment/release-readiness",
     "./skills/design/architecture-decisions",

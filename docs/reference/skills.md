@@ -92,6 +92,7 @@ These skills are not tied to a phase. They live in `skills/common/`.
 | `clarifying-intent` | Asks the questions that settle what you want before work is built on a guess |
 | `prototyping` | Answers an uncertain question with a throwaway prototype |
 | `mapping-the-codebase` | Maps how a region of code fits together before it is changed |
+| `runtime-evidence` | Answers a question about how code behaves by running it, and backs a claim about speed, memory, or size with a controlled measurement |
 | `using-git-worktrees` | Creates an isolated worktree for a task and checkpoints work there |
 | `dispatching-parallel-agents` | Splits independent work across parallel agents |
 | `yagni` | Keeps a change to what the task needs, and makes sure that part is complete |

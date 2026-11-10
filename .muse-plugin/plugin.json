@@ -59,6 +59,10 @@
         "path": "skills/common/mapping-the-codebase/SKILL.md"
       },
       {
+        "id": "runtime-evidence",
+        "path": "skills/common/runtime-evidence/SKILL.md"
+      },
+      {
         "id": "finishing-a-branch",
         "path": "skills/deployment/finishing-a-branch/SKILL.md"
       },

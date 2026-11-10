@@ -68,7 +68,7 @@ written, not about what your agent needs to support.
 
 | Directory | House use |
 | --- | --- |
-| `references/` | 28 skills; rubrics, checklists, worked examples, and lookup guidance |
+| `references/` | 29 skills; rubrics, checklists, worked examples, and lookup guidance |
 | `assets/` | 40 skills; every fill-in template and other static resources |
 | `scripts/` | 11 skills (see below) |
 

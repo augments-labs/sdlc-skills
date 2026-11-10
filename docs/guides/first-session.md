@@ -76,6 +76,21 @@ Two things follow from that:
 - Telling the agent "don't ask me questions" does not let it answer those
   questions for you. It still stops at a decision that is yours.
 
+## Asking how the code behaves
+
+When you ask what a function returns, whether a case is handled, or why an
+output appears, `runtime-evidence` has the agent run the code and answer
+with what it saw. Each claim in the answer is labelled:
+
+- `observed` comes with the command, the revision, and the line it printed.
+- `read` means the agent could not run it, with the reason and the run that
+  would settle it.
+
+The same skill applies before the agent tells you code is faster, lighter,
+or smaller: it measures the old and the new version in one session and
+reports the median and the range of each, or says the difference is too
+small to measure.
+
 ## The folder the agent creates
 
 The first time a skill needs to write a brief, a plan, or a record of a
