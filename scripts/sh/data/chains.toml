@@ -15,7 +15,7 @@ budget_words = 10300
 
 [new-feature]
 skills = ["using-sdlc-skills", "working-from-a-ticket", "clarifying-intent", "writing-specs", "mapping-the-codebase", "writing-plans", "executing-plans", "using-git-worktrees", "test-driven-development", "yagni", "verification-before-completion", "requesting-code-review", "finishing-a-branch"]
-recorded_words = 16101
+recorded_words = 16091
 budget_words = 16187
 
 [plan-execution]

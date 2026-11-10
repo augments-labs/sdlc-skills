@@ -39,7 +39,12 @@ section:
   configuration change, or not building at all do the job?
 
 Each section is a decision you approve. The agent skips `feasibility-check`
-when the path is well trodden and the risk is plainly low.
+when the path is well trodden and the risk is plainly low. A risk nobody can
+rate yet becomes a condition on a go-if, and when you choose that option the
+agent settles it with a `prototyping` spike. A change to an approved scope is
+written as a new section beside the old one for you to approve; once you do,
+work under the specs and plans bound to the old scope stops until their
+owners check them again.
 
 When the goal is settled but more than one way to reach it is plausible,
 `brainstorming` writes its own section: several approaches, each produced

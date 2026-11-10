@@ -39,14 +39,11 @@ what this work has; the template says what an empty one carries.
    Wrong: R-07 good auth
    ```
 
-2. Carry every guardrail and obligation that applies: trust and data,
-   security, accessibility, compatibility, operational and recovery,
-   performance and resource, supported platforms and modes. Do not add a
-   generic list of non-functional requirements.
+2. Carry each guardrail and obligation the template names, when it applies.
+   Do not add a generic list of non-functional requirements.
 3. Read `references/reference-forms.md` before choosing the first acceptance
    form. For each requirement, choose the cheapest form that can honestly
-   judge it: an executable gate, a disposable mockup, a source-fact
-   contract, a rubric, or prose.
+   judge it.
 4. If the form is an executable gate, write it as a proposed file beside the
    spec, never into the project; the implementer lands and runs it inside
    the task workspace as its `test-driven-development` check. If the interface, or the authority to change
@@ -63,15 +60,18 @@ what this work has; the template says what an empty one carries.
 
 ## Step 3: Write and present
 
-1. Write the spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md` or the
-   user-set path. The spec is immutable: a change to it is a new spec that
-   names this one as its predecessor, never an edit.
-2. Fill the template's high-risk classification section. If any answer there
-   is off the ordinary route, or the user marks the work high-risk, run the
-   review in `assets/spec-review.md` before presenting, with a reviewer who is
-   not the spec's sole author. That review blocks presenting the spec
-   (Step 3.3). A `NEEDS_CONTEXT` return keeps it pending: supply the path
-   it names and run the review again.
+1. Fill the template's high-risk classification section, then write the
+   spec to `.sdlc-skills/specs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set
+   path. The spec is immutable: a change to it is a new spec in its own
+   file (`-{{n}}` before `.md`) that names this one as its predecessor,
+   never an edit.
+2. If any classification answer is off the ordinary route, or the user marks
+   the work high-risk, dispatch the review in `assets/spec-review.md` before
+   presenting, as `dispatching-parallel-agents` Step 2 says, to a reviewer
+   who is not the spec's sole author. That review blocks presenting the
+   spec (Step 3.3). Record each finding's disposition, as the asset says.
+   On `NEEDS_CONTEXT`, supply the path it names and rerun once; a second is
+   an open question for the decision owner.
 3. Present:
 
    ```text

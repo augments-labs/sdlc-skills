@@ -14,8 +14,9 @@ nonempty report bound to that spec version; failed, timed out, and cancelled all
 stay pending.
 
 The spec owner resolves every finding and records its disposition. Every
-normative correction creates a proposed successor and requires focused re-review
-of affected and dependent requirements. Direct approval applies only to the
+normative correction creates a proposed successor and requires one focused
+re-review of affected and dependent requirements; a finding still open after it
+goes to the decision owner with the spec. Direct approval applies only to the
 reviewed version.
 
 ````markdown
@@ -39,7 +40,7 @@ Review the requirements spec in Inputs. Flag **only** issues that would lead to 
 4. **Complete vs the goal** — every part of the stated goal has a requirement, and every requirement traces back to the goal (no gaps, no orphans).
 5. **No contradictions** — no two requirements, or a requirement and its criterion, that can't both hold.
 6. **The form is honest and it exists** — every referenced test, mockup,
-   source-fact contract, or rubric resolves to a real artifact. For approved
+   preservation contract, or rubric resolves to a real artifact. For approved
    new behavior, an authorized executable criterion can be observed failing
    for the missing behavior. Preserved behavior instead starts green and is
    deliberately falsified through the TDD preservation cycle. Flag fabricated

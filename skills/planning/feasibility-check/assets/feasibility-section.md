@@ -5,6 +5,8 @@ Copy this section into the brief, replacing every `{{placeholder}}`. It is one
 Drop a dimension row only by writing why it does not apply, never by silence.
 A section with nothing to hold keeps its heading and one line,
 `None: {{why}}`; never invent a row to fill one, and never drop a heading.
+A successor section is headed `## Feasibility (successor)`, the next
+`## Feasibility (successor 2)`, and so on, so no two share a heading.
 
 ```markdown
 ## Feasibility

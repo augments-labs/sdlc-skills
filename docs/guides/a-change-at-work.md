@@ -24,7 +24,9 @@ Pick up ORD-412 from the tracker.
 already has, or asks you to paste it. It records the ticket and its
 acceptance criteria as written under `.sdlc-skills/briefs/`, hands what the
 ticket leaves open to `clarifying-intent`, which asks you one point at a
-time, and re-reads the ticket before the work is called done.
+time, and re-reads the ticket before the work is called done. It writes
+nothing to the tracker, and a secret or a customer's personal data in the
+ticket goes into the record as a `[redacted]` marker.
 [Building a feature](building-a-feature.md) covers handing the agent a
 ticket.
 
