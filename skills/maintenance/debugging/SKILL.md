@@ -79,12 +79,17 @@ worsened impact or a newly available lever reopens containment.
    `test-driven-development` and `yagni`. A data, permission, infrastructure,
    or operational correction is its own controlled action under its own
    authority. Never write code to stand in for one of those.
-5. Rerun the same loop against the before state, the control, and the fixed
+5. Search for every other site with the same cause: a copy of the code, a
+   sibling implementation, another caller; and every other reader of a flag,
+   cached value, or shared field the fix changes. Check each one. Fix those
+   the request covers, each with its own failing check; report the rest as
+   pending.
+6. Rerun the same loop against the before state, the control, and the fixed
    state. Run the project checks the change requires.
-6. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` and read the raw
+7. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` and read the raw
    output through it before saying fixed. Report what the evidence shows and
    what it leaves uncertain.
-7. Clean up only the exact targets your authority covers. If instrumentation
+8. Clean up only the exact targets your authority covers. If instrumentation
    or artifacts are left behind, report them as pending. Never remove
    quietly.
 
@@ -116,10 +121,6 @@ the ledger.
   (the runner, a hook, or teardown failed), not a test failure. Calling it
   flaky or green leaves the real failure undiagnosed; diagnose what exited
   nonzero before reading any test result.
-- A flag, cached value, or shared field has more readers than the one that
-  showed the bug. Before you flip it, or call a stale-state fix done, search
-  for every reader and check each one; fixing only the reader you saw leaves
-  the others stale or newly broken.
 
 ## Hard stops
 

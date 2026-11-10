@@ -26,10 +26,12 @@ Can we release this build?
 
 Before any review, `verification-before-completion` makes sure the claim
 "it works" has something behind it. The agent lists everything the request
-asked for and marks each item delivered, pending, blocked, or declined. It
-runs the checks your project requires, reads their raw output, and records
-which version of the code they ran against. If the code changed after a
-check ran, the check does not count.
+asked for and marks each item delivered, pending, blocked, or declined. An
+item with several variants, such as a sync and an async path or two
+platforms, gets a line for each, so one finished variant cannot stand for
+the others. It runs the checks your project requires, reads their raw
+output, and records which version of the code they ran against. If the code
+changed after a check ran, the check does not count.
 
 The result is a short ledger: what passed, on what state, and what is still
 open. A required check that did not run turns the whole result red, however

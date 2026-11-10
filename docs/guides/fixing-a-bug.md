@@ -72,6 +72,12 @@ passes after. `yagni` keeps the fix to what the cause requires. If the fix is
 not code (a configuration, a permission, a data correction), the agent
 treats it as its own controlled action and asks for the authority it needs.
 
+The place that showed the bug is often not the only one that has it. The
+agent searches for other places with the same cause: a copy of the code, a
+sibling implementation, another caller, or another reader of a flag or
+cached value the fix changes. It fixes the ones your request covers, each
+with its own failing test, and reports the rest to you as open.
+
 Before saying "fixed", the agent reruns the reproduction against the
 original state, the fixed state, and a control, and reads the raw output
 through `verification-before-completion`.

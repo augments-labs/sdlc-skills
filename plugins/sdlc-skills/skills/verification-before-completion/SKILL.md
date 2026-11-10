@@ -22,8 +22,9 @@ description: "Runs the checks and reads their output before any claim that work 
 ## Step 1: Pin down the claim
 
 1. List every item the request asked for, including anything added later,
-   and record a decision for each: delivered, pending, blocked, or declined
-   with a reason.
+   with one row for each variant an item names or the code keeps in parallel
+   (sync and async, each platform, each caller). Record a decision for each
+   row: delivered, pending, blocked, or declined with a reason.
 2. Keep an evidence record (the ledger): add to it, never rewrite it, and
    keep it outside the state under check. One task with one required check:
    one row in your reply holds
@@ -61,9 +62,8 @@ description: "Runs the checks and reads their output before any claim that work 
    allows it here, and record why. Run the rest fresh.
 2. If a check times out, fails partway, runs in the background, or changes
    something it should not, read `references/unsettled-runs.md` before
-   recording its row. Never count late output, or a log from before this
-   attempt or another run. If it fails again with nothing changed, diagnose
-   or return pending; never rerun until one passes.
+   recording its row. If it fails again with nothing changed, diagnose or
+   return pending; never rerun until one passes.
 3. Read the raw output, not the exit code, and record the run in its row;
    redact only the copy you show your human partner. If an assertion could
    not have failed for this code, say so and do not count its green;

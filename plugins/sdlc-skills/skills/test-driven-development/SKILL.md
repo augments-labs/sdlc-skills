@@ -118,8 +118,7 @@ change. Watch it happen; keep the output.
    inherited, shared, or user state to manufacture a cycle.
 3. **REQUIRED SUB-SKILL:** invoke `verification-before-completion` on the exact state
    you are about to call done. This cycle's check is one row of that skill's
-   evidence record (the ledger: add to it, never rewrite it, and keep it
-   outside the state under check), not the whole record.
+   evidence record, not the whole record.
 4. Return to whatever invoked this skill: a plan task, a worktree checkpoint,
    or a fix under `debugging`. In that report, list each piece of work you
    deferred during the cycle with the condition that closes it. Run no
