@@ -5,9 +5,9 @@ description: "Routes each task to the SDLC skills it needs before work begins. U
 
 <EXTREMELY-IMPORTANT>
 IF A SKILL MIGHT APPLY, INVOKE IT BEFORE ACTING — before any answer, question,
-or exploration. Invoking is cheap: a skill that turns out not to fit is set
-aside after reading, never before. "None fits" is decided by scanning the
-catalogue's triggers, not by confidence.
+or exploration. Set a skill aside unread only when its description's Skip
+clause names this case; otherwise read it first. "None fits" is decided by
+scanning the catalogue's triggers, not by confidence.
 </EXTREMELY-IMPORTANT>
 
 # Using SDLC skills
@@ -45,7 +45,7 @@ the current skill.
      integrating, even as a plan's last step or under "don't ask", invoke
      `verification-before-completion`, `requesting-code-review`, then
      `finishing-a-branch`.
-5. **Scale ceremony by the loaded skill's own skip conditions,** never by your
+5. **Scale ceremony by a skill's own skip conditions,** never by your
    estimate; ask every decision a skill puts to the user at every size. The
    short route replaces rule 4's entries: when the request names the exact
    edit and it changes no public interface, stored data, dependency,
