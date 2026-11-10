@@ -110,8 +110,8 @@ People call this context rot. Tackling it takes work in three places:
    when a skill applies. Move templates and detailed reference material into
    separate files (`assets/`, `references/`) that the agent reads only when a
    step needs them. Replace long prose checks with small scripts (`scripts/`),
-   keep state on disk (`.sdlc-skills/`), and cap the word count of every skill
-   and workflow chain.
+   keep state on disk (`.sdlc-skills/`), and cap the size of every skill body
+   and the word count of every workflow chain.
 2. **In the agent harness.** Unload a planning skill once its phase is done,
    leave a short record on disk, and run implementation tasks in fresh
    subagents so planning history does not sit in the coding window.
@@ -121,8 +121,9 @@ People call this context rot. Tackling it takes work in three places:
 
 `sdlc-skills` applies the library-level fixes directly, and uses subagents
 where your harness supports them (`subagent-driven-development`). Every skill
-and workflow chain is checked against a word budget
-(`scripts/sh/token-budget.sh`), and state lives on disk under `.sdlc-skills/`.
+body is checked against a size limit and every workflow chain against a word
+budget (`scripts/sh/token-budget.sh`), and state lives on disk under
+`.sdlc-skills/`.
 An approved plan and its approval record are files, so execution does not have
 to happen in the window that planned it: delegated mode runs each task in a
 subagent, and you can start the executor from the plan path in a new session.
@@ -399,9 +400,11 @@ A large project may touch every phase. Most tasks use a few skills.
    claim that work is done. `requesting-code-review` and
    `receiving-code-review` handle the review. `reviewing-a-pr` reviews a
    pull request someone else opened.
-6. **Deployment.** `finishing-a-branch` asks what to do with the branch: push,
-   open a PR, merge, keep, or discard. `release-readiness` decides whether a
-   build is safe to ship.
+6. **Deployment.** `finishing-a-branch` asks what to do with the branch:
+   commit and keep it, push it, open a PR, integrate it locally, or leave it
+   as it is. It deletes a branch only when you ask for that directly and
+   confirm by typing the token it shows. `release-readiness` decides whether
+   a build is safe to ship.
 7. **Maintenance.** `debugging` finds the cause of a bug before any fix.
    `containing-an-incident` and `post-mortem` handle failures that reach users.
    `deprecating-an-api` retires an interface others call: the replacement

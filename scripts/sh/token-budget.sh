@@ -24,7 +24,7 @@
 # diff, where a reviewer can see it.
 #
 # This is the chars/4 estimator. check-skill.sh scores bodies against the
-# house 5000-token limit using words x 1.3; compare each estimator only with
+# house 5000-token limit with its own piece-by-piece estimate; compare each estimator only with
 # its own prior values. The report mode measures full SKILL.md files;
 # --chain and --table measure bodies, frontmatter excluded. --table adds the
 # two costs a body count leaves out: the names and descriptions a harness

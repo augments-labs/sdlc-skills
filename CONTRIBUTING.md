@@ -116,7 +116,7 @@ does with a skill.
 | Where | What a result proves | Commands |
 | --- | --- | --- |
 | `scripts/sh/`, all run in CI | The structure and policy rules each check covers | `validate-skills.sh`, `validate-skill-graph.sh`, `validate-trigger-collisions.sh`, `token-budget.sh` |
-| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, and `run-state-identity.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
+| `tests/`, offline. CI runs `run-session-start.sh`, `run-serve-preview.sh`, `run-trace-viewer.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, and, on Linux, macOS, and Windows, `run-check-skill.sh` | One packaging or script behavior each | `run-session-start.sh`, `run-plugin-smoke.sh`, `run-sdd-scripts.sh`, `run-opencode-plugin.sh`, `run-pi-extension.sh`, `run-hermes-plugin.sh`, `run-serve-preview.sh`, `run-validate-skills.sh`, `run-check-skill.sh`, `run-git-hooks.sh`, `run-state-identity.sh`, `run-trace-viewer.sh` |
 | `tests/harnesses/` | Nothing on its own. These files hold how each CLI installs the plugin, and the smoke test drives them | One file per supported CLI |
 
 ### The four gates
@@ -165,7 +165,7 @@ where the CLI can list them.
 
 A chain is the ordered set of skills the router loads for one kind of task,
 such as a bug fix or a new feature. `scripts/sh/data/chains.toml` lists the
-skills in each chain, the recorded word count of each body, and the chain's
+skills in each chain, the chain's recorded word total, and the chain's
 budget. `token-budget.sh --chain NAME` adds up the bodies in the chain,
 leaving out their reference files, and fails when the total is over budget.
 CI runs it for every chain.
@@ -221,7 +221,7 @@ A few things the gate enforces:
   `plan-files.sh`, and `assets/mode-question.md` in `writing-plans`, `executing-plans`, and
   `subagent-driven-development`, and the preview scripts (`serve.py` and its
   wrappers) in `viewing-artifacts`, `ui-ux-design`, and `diagnosing-a-session`. Edit the
-  `writing-plans` copy (for the first two) or the `viewing-artifacts` copy
+  `writing-plans` copy (for the first three) or the `viewing-artifacts` copy
   (for the preview), then copy it to the others; the gate compares against
   those.
 - No shipped skill may reference a `docs/` path, because `docs/` does not
@@ -444,8 +444,11 @@ check a cell with the CLI before you rely on it.
 
 When the action is not available, the skills require the agent to treat the
 work as not dispatched, name the action it attempted and what the
-environment would need, and ask the user once, offering a self-review
-labelled as one, a named reviewer or agent, or keeping the work pending.
+environment would need, and ask the user once for every work item the same
+cause stopped. The choices are doing it in the session, labelled not
+independent (for a review, a self-review), a named person or agent, or
+keeping the work pending; the first is left out where independence is
+required.
 
 `subagent-driven-development` adds a role binding. Its three role briefs
 (`assets/implementer.md`, `assets/task-reviewer.md`, `assets/re-reviewer.md`)
@@ -580,7 +583,9 @@ content checklist are judged by a person.
 
 ### Two token estimates
 
-`check-skill.sh` estimates tokens as words × 1.3. `scripts/sh/token-budget.sh`
+`check-skill.sh` estimates tokens piece by piece: it splits a body into
+words, numbers, symbols, and line breaks and charges each at a fixed rate.
+`scripts/sh/token-budget.sh`
 uses characters ÷ 4 over full `SKILL.md` files and its own configured
 maximum; its `--chain` and `--table` modes count bodies without frontmatter.
 Both are rough text budgets. They are not interchangeable, and neither is a
@@ -623,7 +628,8 @@ is intentional and labelled as one.
 
 `validate-skills.sh` re-measures the numbers in the record against the tree
 on every run: the longest description, the longest body and its share of the
-ceiling, the largest estimated body, and how many skills have `references/`,
+ceiling, the largest estimated body, the largest body in bytes, and how many
+skills have `references/`,
 `assets/`, and `scripts/` directories. It finds each number by matching a
 phrase unique to its row, so a stale number fails the gate, and so does a
 rewording that breaks the match. When a skill change moves one of those
@@ -631,7 +637,7 @@ numbers, update the record in the same pull request. When you reword the
 record, keep the matched phrases intact; the regexes are in the
 "conformance record matches the tree" block of `scripts/sh/validate-skills.sh`.
 
-The ceilings themselves (1024, 500, 5000) live in `check-skill.sh` alone and
+The ceilings themselves (1024, 500, 5000, 19000) live in `check-skill.sh` alone and
 are deliberately not restated in the gate.
 
 ## Releases

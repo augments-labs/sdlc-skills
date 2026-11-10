@@ -21,14 +21,13 @@ Pick up ORD-412 from the tracker.
 ```
 
 `working-from-a-ticket` reads the ticket through a tracker tool your agent
-already has, or asks you to paste it. It records the ticket and its
-acceptance criteria as written under `.sdlc-skills/briefs/`, hands what the
-ticket leaves open to `clarifying-intent`, which asks you one point at a
-time, and re-reads the ticket before the work is called done. It writes
-nothing to the tracker, and a secret or a customer's personal data in the
-ticket goes into the record as a `[redacted]` marker.
-[Building a feature](building-a-feature.md) covers handing the agent a
-ticket.
+already has, or asks you to paste it. It records the ticket and its acceptance
+criteria as written under `.sdlc-skills/briefs/`, hands what the ticket leaves
+open to `clarifying-intent`, which asks you one point at a time, and re-reads
+the ticket before the work is called done. It writes nothing to the tracker,
+and a secret, a credential, or a customer's personal data in the ticket goes
+into the record as a `[redacted: kind]` marker that names what was removed.
+[Building a feature](building-a-feature.md) covers handing the agent a ticket.
 
 What depends on you: the answers to the open points.
 
@@ -50,8 +49,8 @@ and says how the tracker gets connected.
 
 This change spans several steps and files, so `working-from-a-ticket` hands
 it to `writing-plans`, which traces each acceptance criterion to a task's
-check and shows you the plan's index and version to approve, change,
-reject, or cancel.
+check and shows you the plan's index and version with one choice: approve
+it and pick how it runs, request changes, reject, or cancel.
 
 Each piece of behavior then begins with `test-driven-development`: a test
 that fails for the right reason, then the code that makes it pass. `yagni`
@@ -59,7 +58,8 @@ keeps the change to what the ticket asks for.
 [Building a feature](building-a-feature.md) shows one cycle;
 [Planning larger work](planning-larger-work.md) covers plans.
 
-What depends on you: approving one exact version of the plan.
+What depends on you: approving one exact version of the plan and choosing
+how it runs.
 
 ## 4. The live table
 

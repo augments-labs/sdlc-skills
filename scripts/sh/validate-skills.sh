@@ -529,7 +529,7 @@ CONF_DOC=docs/reference/agent-skills-conformance.md
 if [ ! -f "$CONF_DOC" ]; then
   err "$CONF_DOC is missing — the conformance record is part of the gate"
 else
-  max_desc=0; max_lines=0; max_tokens=0
+  max_desc=0; max_lines=0; max_tokens=0; max_bytes=0
   for skill in skills/*/*/SKILL.md; do
     fm_end=$(awk 'NR>1 && /^---[[:space:]]*$/{print NR; exit}' "$skill")
     d=$(awk -v e="${fm_end:-0}" '
@@ -542,6 +542,8 @@ else
     [ "$l" -gt "$max_lines" ] && max_lines=$l
     t=$(bash "$CONFORMANCE" --tokens "$skill")
     [ "$t" -gt "$max_tokens" ] && max_tokens=$t
+    b=$(awk -v e="${fm_end:-0}" 'NR>e' "$skill" | wc -c | tr -d ' ')
+    [ "$b" -gt "$max_bytes" ] && max_bytes=$b
   done
   n_refs=$(ls -d skills/*/*/references 2>/dev/null | wc -l | tr -d ' ')
   n_assets=$(ls -d skills/*/*/assets 2>/dev/null | wc -l | tr -d ' ')
@@ -560,6 +562,7 @@ else
   conf_claim "longest description"  "$max_desc"   'longest is [0-9]+ \|'
   conf_claim "longest body"         "$max_lines"  'longest is [0-9]+ \([0-9]+% of ceiling\)'
   conf_claim "largest body tokens"  "$max_tokens" 'largest is ~[0-9]+'
+  conf_claim "largest body bytes"   "$max_bytes"  'largest is [0-9]+ bytes'
   conf_claim "references/ count"    "$n_refs"     '\| [0-9]+ skills; rubrics'
   conf_claim "assets/ count"        "$n_assets"   '\| [0-9]+ skills; every fill-in template'
   conf_claim "scripts/ count"       "$n_scripts"  '\| [0-9]+ skills \(see below\)'

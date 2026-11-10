@@ -95,7 +95,9 @@ small to measure.
 
 The first time a skill needs to write a brief, a plan, or a record of a
 check, the agent creates a `.sdlc-skills/` folder at the root of your
-project. Briefs, specs, designs, plans, and post-mortems go there, and so do
+project. When the agent works in a separate worktree, the folder still sits
+in your main checkout, so one task leaves one trail. Briefs, specs, designs,
+plans, and post-mortems go there, and so do
 the records of what was run and what was decided.
 
 The folder is laid out so that you can commit the useful parts and ignore the
