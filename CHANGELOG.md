@@ -2,6 +2,32 @@
 
 Notable changes to SDLC skills, newest first. Versions follow semantic versioning; the narrative for each release lives on its release page — this file is the terse, cumulative record.
 
+## [12.0.0] — 2026-11-10
+
+`runtime-evidence` is a new skill: it answers a question about how existing
+code behaves by running it, and labels each claim `observed` or `read`. A
+named small edit takes a short route that loads at most two skills, and a
+skill whose Skip clause names the case is set aside unread. Completion is
+checked once per variant a request names, a fix is followed by a search for
+every other site with the same cause, and an audit of every phase cut text
+that restated a template or a rule already stated. No skill is renamed or
+removed.
+
+Breaking: some artifacts written by 11.x move or change, so carry work in
+progress across before resuming it.
+
+- The review report and the security report carry a required `State read`
+  field, and a report without it does not count. Dispatch again, from a
+  fresh descriptor, any review or audit that has no recorded verdict; a
+  recorded verdict stands.
+- `.sdlc-skills/` sits in the main checkout, also when the agent works in a
+  linked worktree. Move a folder an earlier version created inside a
+  worktree to the main checkout; if it held more than `evidence/`, rerun
+  that worktree's verification and review.
+- Each identity in a release-input descriptor now has one stated
+  computation. Reissue the descriptor of a release assessment in progress
+  and rerun its gates.
+
 ## [11.2.0] — 2026-11-07
 
 `eliminating-corrections` is a new maintenance skill: when a human corrects
