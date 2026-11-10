@@ -111,8 +111,9 @@ Edit skills under `skills/`, then run
 
 Behavior evals live in
 [sdlc-skills-evals](https://github.com/augments-labs/sdlc-skills-evals):
-`bin/triggering` scores whether a description triggers, and `bin/behavior`
-runs a scenario against a live agent CLI and judges what it built. A behavior
+`bin/triggering` scores whether a description triggers, and `bin/evaluate`
+runs a skill's cases on a live agent CLI, with the skill and without it or
+against an older plugin tree, and grades what each run built. A behavior
 claim backed by an eval record (its `results/` path and pinned plugin commit)
 is evidence; one argued from the skill text is not.
 

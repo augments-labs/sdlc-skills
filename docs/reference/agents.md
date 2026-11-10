@@ -15,7 +15,8 @@ Three things differ between agents:
    adapter supply it again; some do not.
 3. **Whether the skills can dispatch subagents.** Reviews and delegated plan
    execution hand work to a fresh agent through a tool the adapter names.
-   Where no tool is bound, the agent asks you what to do instead.
+   Where no tool is bound, the agent asks you what to do instead, and the
+   delegated ways of running a plan are not offered.
 
 The version named for each agent is the one the support was checked on.
 Later versions may differ.
@@ -39,8 +40,11 @@ Later versions may differ.
 
 "No binding" means the skills have no name for that agent's subagent tool.
 When a skill needs to dispatch a reviewer or a worker, the agent tells you
-it cannot and asks once whether to do a self-review (labelled as one), hand
-the work to someone you name, or leave it pending.
+it cannot and asks once, for every piece of work the same cause stopped,
+whether to do it in the same session (labelled not independent; for a
+review, a self-review), hand it to a person or agent you name, or leave it
+pending. Where the work has to be independent, such as a security review,
+the first choice is not offered.
 
 ## Claude Code
 

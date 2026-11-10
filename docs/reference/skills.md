@@ -65,7 +65,7 @@ a few skills.
 
 | Skill | What it does |
 | --- | --- |
-| `finishing-a-branch` | Takes a finished branch through the choice you make: push, PR, merge, keep, or discard |
+| `finishing-a-branch` | Takes a finished branch through the choice you make: commit and keep, push, open a PR, integrate locally, or keep as-is. Discards unmerged work only on a direct request you confirm by typing a token; removes a merged branch only when you choose the cleanup |
 | `release-readiness` | Decides whether a build is safe to release, deploy, or publish |
 
 ## Maintenance
@@ -97,7 +97,7 @@ These skills are not tied to a phase. They live in `skills/common/`.
 | `dispatching-parallel-agents` | Splits independent work across parallel agents |
 | `yagni` | Keeps a change to what the task needs, and makes sure that part is complete |
 | `handoff` | Writes a handoff so another session or agent can continue unfinished work |
-| `viewing-artifacts` | Shows the state of briefs, specs, designs, plans, and execution in a local viewer |
+| `viewing-artifacts` | Builds one page showing the state of briefs, specs, designs, plans, and execution, and offers a local preview of it |
 | `writing-skills` | Guides writing and editing the skills in this library |
 
 ## Which skills load together

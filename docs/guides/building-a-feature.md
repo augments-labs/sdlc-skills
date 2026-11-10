@@ -101,7 +101,9 @@ failure.
 
 On agents without a subagent tool, the agent tells you it cannot dispatch a
 review and asks you once whether to do a self-review (labelled as one), to
-hand the change to a reviewer you name, or to leave the work pending.
+hand the change to a reviewer you name, or to leave the work pending. The
+self-review choice is not offered when the review has to be independent,
+such as a security review.
 
 The agent then reads the review through `receiving-code-review`, which
 checks each piece of feedback on its merits before acting on it.
@@ -137,9 +139,11 @@ step in more detail.
 - **A quick experiment.** Ask for a prototype and `prototyping` builds a
   throwaway to answer the question, outside the test discipline. Behavior
   you keep is rebuilt under a test afterwards.
-- **No test framework.** The agent still looks for the smallest executable
-  check that can fail. If none is possible, it says so instead of claiming
-  the change is tested.
+- **No test framework.** The agent moves the rules into units it can test
+  and test-drives those. For the wiring it could not test, it tells you how
+  it checked it and asks whether to add a test harness, naming what that
+  costs in dependencies and configuration, or to accept that wiring as an
+  unverified exception.
 - **A staged rollout.** If your release policy, the plan, or you ask for a
   feature flag, kill switch, canary, or staged rollout, `rollout-controls`
   builds the switch (off by default, in front of every path the change adds)

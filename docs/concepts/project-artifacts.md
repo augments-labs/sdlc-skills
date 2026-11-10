@@ -1,8 +1,11 @@
 # The `.sdlc-skills/` folder
 
 The first time a skill writes a brief, a plan, or a record of a check, the
-agent creates `.sdlc-skills/` at the root of your project. This page says
-what goes in it and what to commit.
+agent creates `.sdlc-skills/` at the root of your project. When the agent
+works in a linked git worktree, that root is still the main checkout, so a
+task keeps one trail whichever worktree wrote to it. (With a bare
+repository, it is the top of the checkout in use.) This page says what goes
+in it and what to commit.
 
 ## What goes where
 

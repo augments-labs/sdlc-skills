@@ -67,12 +67,16 @@ session.
   `dispatching-parallel-agents`, and `subagent-driven-development` hand
   work to a fresh agent through a tool the adapter names. Without a
   binding, the skills treat the action as unavailable: the agent tells you
-  what it tried to do and asks you once whether to self-review (labelled as
-  one), hand the work to someone you name, or leave it pending. It does not
-  do the work itself in silence.
+  what it could not hand off and asks you once whether it should do the work
+  in this session, labelled as not independent (for a review, a
+  self-review), whether you will name a person or agent to do it, or whether
+  to leave it pending. The first choice is not offered where the work has to
+  be independent, such as a security review, or for building a plan task in
+  a delegated run. It does not do the work itself in silence.
 - **Model tiers.** A skill that asks for a small, medium, or large model for
-  a reviewer has nothing to bind that to. The agent states the tier in the
-  prompt and your agent uses whatever it uses.
+  a reviewer has nothing to bind that to. The agent tells you it could not
+  select a model, uses only a fallback your preferences allow, and never
+  reports the tier it chose as the one that ran.
 - **Re-injection after compaction**, as above.
 
 Everything else works: the skills are plain instructions, and the checks

@@ -63,7 +63,8 @@ How deep the review goes:
 On agents with a subagent tool, the reviewer is a fresh agent that returns a
 written report. Where there is no such tool, the agent asks you once whether
 to self-review (labelled as such), to hand the change to someone you name,
-or to leave the work pending.
+or to leave the work pending. The self-review choice is not offered when the
+review has to be independent, such as a security review.
 
 The agent reads each report through `receiving-code-review`. It does not
 apply feedback blindly: each point is checked against the code, accepted or
@@ -96,30 +97,36 @@ Recommendation: ...
 
 Things to know about this menu:
 
-- The agent waits for one of the listed entries. Praise, a question, or a
-  partial answer gets the menu again.
+- The agent waits for one of the listed entries. Praise, "looks good", a
+  new constraint, a partial answer, or a decision about something else gets
+  the menu again.
 - Green checks and a ready review do not authorize anything by themselves.
   The push, the PR, or the merge happens because you chose it.
 - If the branch has already been pushed, rewriting its history (squash,
   rebase, amend) needs your direct permission for each. The agent never
   force-pushes as a repair.
 - If a pull request already exists, only the transitions that PR's state
-  permits are offered.
+  and your project's policy permit are offered. For a merged PR that means
+  cleaning up what the task owns, or keeping things as they are.
 - When opening a PR, the agent prepares the description from your project's
-  contribution rules and PR template, with the verification evidence. A
-  project with no template gets the skill's own: what changes and why, the
-  checks run on that exact candidate, the review verdict, risk and rollback,
-  and what is left for the reviewer to decide.
+  contribution rules and PR template, and adds the check results, the review
+  verdict, and what was not verified wherever the template has no place for
+  them. A project with no template gets the skill's own: why, what changes,
+  the checks run on that exact candidate, the review verdict, risk and
+  rollback, what was not verified, and what is left for the reviewer to
+  decide.
 
 ## Discarding work
 
 Discard is never on the menu. If you want to throw the branch away, ask for
-it by name. The agent then shows exactly what would be deleted (the branch
-and its unique commits, uncommitted changes, the worktree, any remote branch
-or PR) and whether any of it is recoverable, and it asks you to type a
+it by name. The agent then shows exactly what would be deleted: the branch
+and its unique commits; staged, unstaged, and untracked changes; ignored
+files, which nothing brings back; the worktree; and any remote branch or PR.
+It says whether the rest is recoverable, and it asks you to type a
 confirmation that names the candidate, using the candidate ID the agent
-shows, such as `discard 9c41e07a2b5d18f3`. "Yes" or "go ahead" does not
-count.
+shows, such as `discard 9c41e07a2b5d18f3`. "Yes", "go ahead", or picking a
+numbered option does not count, and if anything changes before the deletion
+the agent shows a new list and asks again.
 
 ## Releasing
 
