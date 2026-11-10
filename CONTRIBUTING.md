@@ -444,11 +444,11 @@ check a cell with the CLI before you rely on it.
 
 When the action is not available, the skills require the agent to treat the
 work as not dispatched, name the action it attempted and what the
-environment would need, and ask the user once for every work item the same
-cause stopped. The choices are doing it in the session, labelled not
-independent (for a review, a self-review), a named person or agent, or
-keeping the work pending; the first is left out where independence is
-required.
+environment would need, and ask the user one question that covers every
+work item the same cause stopped. The choices are doing it in the session,
+labelled not independent (for a review, a self-review), a named person or
+agent, or keeping the work pending; the first is left out where independence
+is required.
 
 `subagent-driven-development` adds a role binding. Its three role briefs
 (`assets/implementer.md`, `assets/task-reviewer.md`, `assets/re-reviewer.md`)
@@ -637,8 +637,8 @@ numbers, update the record in the same pull request. When you reword the
 record, keep the matched phrases intact; the regexes are in the
 "conformance record matches the tree" block of `scripts/sh/validate-skills.sh`.
 
-The ceilings themselves (1024, 500, 5000, 19000) live in `check-skill.sh` alone and
-are deliberately not restated in the gate.
+The ceilings themselves (1024, 500, 5000, 19000) live in `check-skill.sh`
+alone and are deliberately not restated in the gate.
 
 ## Releases
 

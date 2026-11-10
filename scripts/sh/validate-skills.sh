@@ -523,7 +523,8 @@ done < <(grep -roE --include='*.md' --include='*.sh' \
 # numbers is worse than one with none, because it reads as checked.
 #
 # This compares measurements, not limits. The ceilings themselves (1024, 500,
-# 5000) live in check-skill.sh alone and are deliberately not restated here.
+# 5000, 19000) live in check-skill.sh alone and are deliberately not restated
+# here.
 echo "• conformance record matches the tree"
 CONF_DOC=docs/reference/agent-skills-conformance.md
 if [ ! -f "$CONF_DOC" ]; then

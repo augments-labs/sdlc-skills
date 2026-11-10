@@ -402,9 +402,10 @@ A large project may touch every phase. Most tasks use a few skills.
    pull request someone else opened.
 6. **Deployment.** `finishing-a-branch` asks what to do with the branch:
    commit and keep it, push it, open a PR, integrate it locally, or leave it
-   as it is. It deletes a branch only when you ask for that directly and
-   confirm by typing the token it shows. `release-readiness` decides whether
-   a build is safe to ship.
+   as it is. It throws away unmerged work only when you ask for that
+   directly and confirm by typing the token it shows, and it removes a merged
+   branch only when you choose the cleanup. `release-readiness` decides
+   whether a build is safe to ship.
 7. **Maintenance.** `debugging` finds the cause of a bug before any fix.
    `containing-an-incident` and `post-mortem` handle failures that reach users.
    `deprecating-an-api` retires an interface others call: the replacement

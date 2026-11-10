@@ -25,11 +25,13 @@ Each of these loads `debugging`.
 Before anything else, the agent checks whether the failure is reaching real
 users at this moment. If it is, it switches to `containing-an-incident` first:
 stop the damage with the narrowest lever that works and that it has been given
-authority for (a feature flag, a config value, a traffic redirect), hand to
-you or the incident owner any lever it does not hold, which includes every
-deploy and rollback, check from the signal users are hitting that the impact
-stopped, record what was done and what is still broken, and only then come
-back to diagnosis. Say so in your request if you already know:
+authority for (a feature flag, a config value, a traffic redirect), and hand
+to you or the incident owner any lever it has no authority for. Having access
+is not authority: this covers every deploy, rollback, change to production
+data, and block on a customer. It then checks from the signal users are
+hitting that the impact stopped, records what was done and what is still
+broken, and only then comes back to diagnosis. Say so in your request if you
+already know:
 
 ```text
 Checkout is failing for customers right now. Contain it first.

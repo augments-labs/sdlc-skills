@@ -65,7 +65,7 @@ a few skills.
 
 | Skill | What it does |
 | --- | --- |
-| `finishing-a-branch` | Takes a finished branch through the choice you make: commit and keep, push, open a PR, integrate locally, or keep as-is. Deletes a branch only on a direct request you confirm by typing a token |
+| `finishing-a-branch` | Takes a finished branch through the choice you make: commit and keep, push, open a PR, integrate locally, or keep as-is. Discards unmerged work only on a direct request you confirm by typing a token; removes a merged branch only when you choose the cleanup |
 | `release-readiness` | Decides whether a build is safe to release, deploy, or publish |
 
 ## Maintenance

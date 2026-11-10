@@ -24,12 +24,13 @@
 # diff, where a reviewer can see it.
 #
 # This is the chars/4 estimator. check-skill.sh scores bodies against the
-# house 5000-token limit with its own piece-by-piece estimate; compare each estimator only with
-# its own prior values. The report mode measures full SKILL.md files;
-# --chain and --table measure bodies, frontmatter excluded. --table adds the
-# two costs a body count leaves out: the names and descriptions a harness
-# lists every session, and a ceiling with every file under references/ and
-# assets/ read. Files under scripts/ are run, not read, and are not counted.
+# house 5000-token limit with its own piece-by-piece estimate; compare each
+# estimator only with its own prior values. The report mode measures full
+# SKILL.md files; --chain and --table measure bodies, frontmatter excluded.
+# --table adds the two costs a body count leaves out: the names and
+# descriptions a harness lists every session, and a ceiling with every file
+# under references/ and assets/ read. Files under scripts/ are run, not read,
+# and are not counted.
 
 set -uo pipefail
 # CHAINS_TOML is read relative to the caller, before moving to the repo root.

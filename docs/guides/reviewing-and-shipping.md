@@ -119,10 +119,10 @@ Things to know about this menu:
 ## Discarding work
 
 Discard is never on the menu. If you want to throw the branch away, ask for
-it by name. The agent then shows exactly what would be deleted (the branch
-and its unique commits, staged, unstaged, and untracked changes, ignored
-files, which nothing brings back, the worktree, any remote branch or PR) and
-whether the rest is recoverable, and it asks you to type a
+it by name. The agent then shows exactly what would be deleted: the branch
+and its unique commits; staged, unstaged, and untracked changes; ignored
+files, which nothing brings back; the worktree; and any remote branch or PR.
+It says whether the rest is recoverable, and it asks you to type a
 confirmation that names the candidate, using the candidate ID the agent
 shows, such as `discard 9c41e07a2b5d18f3`. "Yes", "go ahead", or picking a
 numbered option does not count, and if anything changes before the deletion
