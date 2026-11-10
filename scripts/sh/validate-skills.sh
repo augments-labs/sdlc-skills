@@ -164,8 +164,8 @@ done
 #   (validate-skill-graph.sh --targets), so the two gates agree on what one is.
 echo "• backticked skill names and handoff targets resolve to skills on disk"
 skill_names="$(find skills -mindepth 3 -maxdepth 3 -name SKILL.md -exec dirname {} \; | xargs -n1 basename | sort -u)"
-name_allowlist='common-dir git-dir integrated-regression description-yaml reference-depth reference-load-condition
-  blocked-preserved cancellation-requested closed-preserved discard-pending materialized-kept outcome-unknown
+name_allowlist='integrated-regression description-yaml reference-depth reference-load-condition
+  blocked-preserved closed-preserved discard-pending materialized-kept outcome-unknown
   comment-accuracy silent-failures test-coverage type-design'
 handoff_allowlist='inconclusive satisfied'
 while IFS=: read -r file token; do
