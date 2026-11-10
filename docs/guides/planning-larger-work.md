@@ -86,6 +86,30 @@ you approve:
 - `coding-standards` for a project's naming, patterns, and vocabulary, once
   per project or again when the conventions have drifted.
 
+## The project's checks
+
+Before high-risk work, or when the tests you have do not catch real defects,
+`verification-strategy` designs the project's battery of checks: which risk
+each check covers, when it runs, and what it blocks. Ask "how should we test
+this project?" or "what should CI run?". It writes an assurance matrix under
+`.sdlc-skills/verification/`.
+
+A check counts as executable only after the agent has watched it fail: green,
+red on a defect introduced on purpose, green again once the defect is
+removed. Anything else is recorded as planned or blocked. An independent
+reviewer challenges the matrix before you see it, and then you choose:
+
+```text
+1. Approve the battery
+2. Request changes
+3. Reject the strategy
+4. Cancel
+```
+
+The agent approves nothing here itself: thresholds, omissions, and
+exceptions are yours to accept. A single feature does not need this; its
+plan and its tests carry the proof.
+
 ## A plan
 
 `writing-plans` breaks approved work into ordered tasks, each with its

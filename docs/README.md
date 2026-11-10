@@ -30,8 +30,9 @@ does along the way, with example prompts.
 | [A change at work, from ticket to post-mortem](guides/a-change-at-work.md) | One change through a company's whole lifecycle: ticket, team rules, live data, a flag, review, release, incident, post-mortem, and what stays with you at each stage |
 | [Building a feature](guides/building-a-feature.md) | From the request to a reviewed branch: worktree, failing test first, checks, review |
 | [Fixing a bug](guides/fixing-a-bug.md) | How the agent finds the cause before it proposes a fix, and what it asks you for |
-| [Reviewing and shipping](guides/reviewing-and-shipping.md) | Verification, independent review, and the choice of what happens to the branch |
-| [Planning larger work](guides/planning-larger-work.md) | Briefs, specs, designs, and plans for work that is bigger than one change |
+| [Reviewing and shipping](guides/reviewing-and-shipping.md) | Verification, independent review, the security and interface checks, and the choice of what happens to the branch |
+| [Planning larger work](guides/planning-larger-work.md) | Briefs, specs, designs, the project's checks, and plans for work that is bigger than one change |
+| [Reworking existing code](guides/reworking-existing-code.md) | Auditing for complexity nothing needs, restructuring, retiring an interface others call, and one mechanical change across many files |
 | [When a session goes wrong](guides/when-a-session-goes-wrong.md) | Getting a cited account of what a session did, as a report and a trace page |
 | [Setting up for a team](guides/setting-up-for-a-team.md) | What a team writes once in its agent instructions file: checkout, base branch, branch names, local commits, review depth, PR rules |
 | [Using the skills on another agent](guides/other-agents.md) | What to do when your agent is not in the supported list |

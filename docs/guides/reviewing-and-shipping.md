@@ -78,6 +78,59 @@ independent review on it without executing its code, writes the findings for
 the author, and posts nothing (no approval, no request for changes, no
 comment) until you choose what to post.
 
+## A security audit
+
+When a change touches a trust boundary (login, tokens, permissions, uploads,
+secrets, a dependency, user input that reaches a query or a shell),
+`security-audits` traces what an attacker could make that exact version do,
+from each input they control to the effect it reaches. The size of the diff
+does not set the scope: old code the change newly exposes is part of it.
+
+The verdict comes from an independent auditor, never from the agent that
+wrote the change, and it is one of three: `security clear`,
+`security blocked`, or `inconclusive`. A scanner summary or an earlier
+finding does not stand in for a traced path. Any edit after the verdict
+voids it until that edit is audited.
+
+If a category cannot be checked (no check exists, or the probe would need
+shared or production state), the agent does not waive it. It asks you to
+authorize the exact probe, to accept the omission with an owner, an expiry,
+and a compensating measure, or to keep the change blocked. With no answer,
+the verdict stays `inconclusive`.
+
+Ask for one directly:
+
+```text
+Audit the upload endpoint change for security before we merge.
+```
+
+## Checking a running interface
+
+For a change you can see, in a graphical or a terminal interface,
+`visual-ui-verification` starts the interface itself from the version under
+check and captures it: the journeys and states that matter (empty, loading,
+error, overflow, no permission) across the screen sizes, themes, and input
+methods the change affects. It keeps every frame. Before it trusts its own
+inspection, it captures one deliberately broken frame and confirms that the
+inspection marks it red.
+
+The result is a verdict row by row, never "looks good": pass, fail when a
+blocking defect is open, or pending. What to expect:
+
+- Reading the source or the markup does not count as seeing the screen.
+  Where the agent has no capture tool, or its tool cannot reach a row, that
+  row is pending, and it asks you to provide the tool or to look at those
+  rows yourself.
+- It compares against the approved design when there is one, and otherwise
+  against the acceptance criteria or a capture of the interface from before
+  the change.
+- It fixes nothing itself. Each fix goes back through a failing test, and
+  the affected rows are captured again.
+
+```text
+Check the settings screen on mobile and in dark mode before we call it done.
+```
+
 ## What to do with the branch
 
 With verification and review done, `finishing-a-branch` reads the state of

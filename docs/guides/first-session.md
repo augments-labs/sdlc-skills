@@ -62,6 +62,16 @@ Use sdlc-skills:mapping-the-codebase on the payments module before we change it.
 
 The [skill catalogue](../reference/skills.md) lists every name.
 
+## Changing a skill
+
+The skills are plain files. To change one or add one, work in a checkout of
+the library and ask the agent; `writing-skills` loads. It holds the format
+(the frontmatter, the size limits, where templates, references, and scripts
+go) and a checker, `check-skill.sh`, that the agent runs before it calls the
+skill done. It also asks for proof that the skill changes what an agent
+does: an agent that can explain a rule has not shown that it follows it.
+[CONTRIBUTING.md](../../CONTRIBUTING.md) covers sending the change back.
+
 ## The questions the agent asks
 
 Several skills stop and ask you something before they go on: which branch to
