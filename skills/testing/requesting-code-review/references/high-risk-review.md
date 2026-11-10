@@ -10,7 +10,8 @@ failure surfaces defeat ordinary line-by-line review.
 - **Equivalence specialist:** uses `../assets/equivalence-reviewer.md` to compare source,
   target, and migration contract independently of implementation claims.
 - **Adversarial reviewers (at least two):** independently try to refute
-  readiness. Give them distinct risk hypotheses or partitions, then require an
+  readiness, each from `../assets/code-reviewer.md` with Role `adversarial`.
+  Give them distinct risk hypotheses or partitions, then require an
   integrated-result pass over cross-partition behavior.
 - **Security auditor:** required when trust boundaries changed; follows
   `security-audits`.

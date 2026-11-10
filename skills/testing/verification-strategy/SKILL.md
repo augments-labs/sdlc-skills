@@ -35,8 +35,7 @@ reading the code, a coverage number, or the builder's opinion.
 
 ## Step 2: Make each gate real
 
-1. Fill `Cadence and promotion map`: cheap gates block every change;
-   expensive ones protect a phase, trial, cutover, or release.
+1. Fill `Cadence and promotion map`.
 2. A "manual" gate gets a procedure, evidence, an owner, and a promotion it
    blocks.
 3. Calibrate each gate in isolation you are authorized to use: pin down what
@@ -44,8 +43,9 @@ reading the code, a coverage number, or the builder's opinion.
 4. Watch the whole cycle: green, then red on an introduced divergence, then
    full restoration, then green. Keep raw results outside the state under
    check.
-5. If calibrating for real is unsafe, use a known-bad fixture, or mark the
-   gate `uncalibrated` and say so.
+5. If calibrating for real is unsafe, use a known-bad fixture. With neither,
+   the gate is uncalibrated: record it `planned` or `blocked`, with the
+   reason under `Known gaps and deviations`.
 6. Record each gate as `executable`, `planned`, or `blocked`. Only
    `executable` satisfies an entry condition.
 7. To implement one bounded gate, invoke `test-driven-development`. For gate
@@ -68,12 +68,14 @@ reading the code, a coverage number, or the builder's opinion.
    Read the returned assurance section. If its Matrix version is missing or
    mismatched, or its verdict is anything other than `clear`, approval is
    blocked.
-2. On a blocker, correct a successor, reverify, and rechallenge until clear
-   or concretely blocked.
+2. On a blocker, correct a successor, reverify, and rechallenge, inside
+   `receiving-code-review`'s repair budget. When the budget is spent, or no
+   supported correction remains, the loop ends `unconverged`: return the
+   open blockers to the user and present nothing for approval.
 3. Present the matrix:
 
    ```text
-   Assurance matrix {{path}} — {{n}} executable, {{n}} planned, {{n}} absent
+   Assurance matrix {{path}} — {{n}} executable, {{n}} planned, {{n}} blocked
    Thresholds: {{list}}. Omissions: {{list}}. Blocking cadence: {{summary}}.
 
    1. Approve the battery

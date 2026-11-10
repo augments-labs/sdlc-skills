@@ -27,8 +27,8 @@ description: "Runs the checks and reads their output before any claim that work 
    row: delivered, pending, blocked, or declined with a reason.
 2. Keep an evidence record (the ledger): add to it, never rewrite it, and
    keep it outside the state under check. One task with one required check:
-   one row in your reply holds
-   the claim, the check, the state identity, and the raw result. An
+   one row in your reply holds the claim, the check, the state identity, and
+   the raw result; ignore steps that name a full-record field. An
    integration, a release, or more than one check: open the full record,
    `assets/evidence-ledger.md`, before the first check runs and fill every
    field.
@@ -47,11 +47,11 @@ description: "Runs the checks and reads their output before any claim that work 
    that matches an approved pre-existing exclusion in the workspace record
    stays listed and limits the claim to "no new errors"; one with no
    exclusion is an unexplained red: list it and keep the claim pending.
-4. Capture the state the checks will run on; add `--committed` when that
-   state is a commit:
+4. Capture and record the state the checks will run on; add `--committed`
+   when it is a commit:
 
    ```bash
-   before=$(bash scripts/state-identity.sh --quiet)
+   bash scripts/state-identity.sh --quiet
    ```
 
 5. Fill `State` with what the script cannot see.
@@ -66,7 +66,8 @@ description: "Runs the checks and reads their output before any claim that work 
    return pending; never rerun until one passes.
 3. Read the raw output, not the exit code, and record the run in its row;
    redact only the copy you show your human partner. If an assertion could
-   not have failed for this code, say so and do not count its green;
+   not have failed for this code, or the runner replayed a cached result or
+   skipped the test, say so and do not count its green;
    repairing the task's own test belongs to `test-driven-development`, and
    repairing a project or battery gate to `verification-strategy`.
 
@@ -79,7 +80,7 @@ description: "Runs the checks and reads their output before any claim that work 
 4. Re-check the state with the flags used at capture:
 
    ```bash
-   bash scripts/state-identity.sh --compare "$before"
+   bash scripts/state-identity.sh --compare {{recorded value}}
    ```
 
    Any nonzero exit leaves the claim pending; follow
@@ -90,27 +91,25 @@ description: "Runs the checks and reads their output before any claim that work 
 ## Step 3: Claim and return
 
 1. A required check that failed, did not run, or ran on another state makes
-   the result red: not complete. With the full record, fill
-   `Inventory reconciliation`.
-2. Return the record without touching the state under check, with its
-   failed and inconclusive rows intact.
-3. Write the claim the rows support and nothing wider: what passed, on which
+   the result red: not complete. Fill `Inventory reconciliation`.
+2. Write the claim the rows support and nothing wider: what passed, on which
    state identity, what is pending.
 
    An off-by-one fix to `due_date`: `pytest tests/test_due.py::test_last_day`
-   on commit `4f2a9c1`, captured with `--committed`, prints `1 passed`. That
-   supports "the test passes on `4f2a9c1`", not "fixed": nothing shows that
-   test failing before the fix, and the rest of the suite has not run.
+   on commit `4f2a9c1` prints `1 passed`. That supports "the test passes on
+   `4f2a9c1`", not "fixed": nothing shows that test failing before the fix,
+   and the rest of the suite has not run.
 
-4. A checkpoint commit reuses rows whose check reads only file content, and
-   only when `--compare "$before" --committed` exits 0; once it does, record
-   each reused row again under the committed revision. Commit, CI, and
-   review checks bind to their own revision.
-5. **REQUIRED — return the record; this skill routes nowhere.** Every unmet
-   check goes back with it to the pending step of whatever asked; never
-   invoke that caller from here. `using-sdlc-skills` routes what follows;
-   only `release-readiness` decides release.
-6. Run no commit, push, PR, or merge from this skill.
+3. A checkpoint commit reuses rows whose check reads only file content, and
+   only when `--compare {{recorded value}} --committed` exits 0; once it
+   does, record each reused row again under the committed revision. Commit,
+   CI, and review checks bind to their own revision.
+4. **REQUIRED — return the record; this skill routes nowhere.** Every unmet
+   check goes back with it, failed and inconclusive rows intact, to the
+   pending step of whatever asked; never invoke that caller.
+   `using-sdlc-skills` routes what follows; only `release-readiness` decides
+   release.
+5. Run no commit, push, PR, or merge from this skill.
 
 ## Gotchas
 
