@@ -27,23 +27,14 @@ process and authority.
 
 ## Step 1: Bind the inputs
 
-Open `assets/schema-change-record.md` before the actions below: they fill
-its Inputs section and the data-model identity in its header. A missing
-input is a question for its owner, never a value to assume.
-
-1. The settled `data-model` section and the storage-mapping rows this change
-   touches. Record its identity and the route its classification block
-   records, or "new model" when there is no existing one. If the semantics
-   are unchanged, as for an index or a backfill, record "no data-model
-   section" with the reason.
-2. The project's migration tool and conventions: where migrations live, how
-   they are versioned, and at which deploy step they run.
-3. The deploy model: how many code versions run against the store at once
-   during a roll, and the exact rollback target, the version that will run
-   against the changed store if this deploy is reverted.
-4. The store engine and its version.
-5. The size of the affected data: rows or volume, write rate, and whether
-   replicas follow the store.
+1. Open `assets/schema-change-record.md` before sequencing, and fill every
+   row of its Inputs table from the project, each with its source. A missing
+   input is a question for its owner, never a value to assume.
+2. In its header, record the settled `data-model` section and the
+   storage-mapping rows this change touches: its identity and the route its
+   classification block records, or "new model" when there is no existing
+   one. If the semantics are unchanged, as for an index or a backfill,
+   record "no data-model section" with the reason.
 
 ## Step 2: Sequence as expand, migrate, contract
 
@@ -60,15 +51,21 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
    before the code. Rollback: revert the code; the expansion stays and is
    harmless.
 2. **Dual-write and tolerant reads.** The new code writes both shapes and
-   reads either, treating a row not yet backfilled as old-shape. Rollback:
-   the previous version, which still reads and writes the old shape alone.
-3. **Backfill.** Batch it over a key the store indexes. Make it idempotent;
+   reads either, treating a row not yet backfilled as old-shape. The old
+   shape is the source of truth until Switch reads: where a row holds both,
+   read the old one. Rollback: the previous version, which still reads and
+   writes the old shape alone.
+3. **Backfill.** Start it once no version that writes only the old shape is
+   live. Batch it over a key the store indexes. Make it idempotent;
    resumable from a recorded cursor; throttled against replication lag and
-   lock wait; and observable
-   through remaining rows, rate, and errors. Verification compares the two
-   shapes by count or checksum and goes in the record. Gate to advance:
-   remaining rows zero and verification passed. Never one transaction over
-   the table.
+   lock wait; and observable through remaining rows, rate, and errors. It
+   rewrites every row whose two shapes differ, not only rows that lack the
+   new one. Write each batch as one conditional statement, or guard each
+   row by its version, so it never overwrites a row a live write changed
+   after the batch read it. Verification compares the two shapes' values, by
+   checksum or row by row, never by count alone, and goes in the record.
+   Gate to advance: remaining rows zero and verification passed. Never one
+   transaction over the table.
 4. **Switch reads.** Rollback: the previous change, which reads either
    shape.
 5. **Stop old writes.** Rollback: the previous change, which still writes
@@ -76,13 +73,15 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
 6. **Contract.** Drop the old column, table, or field. Code stops using it
    in one deploy; the drop ships in a later one, and only when no live
    version reads the old shape, the rollback target does not read it
-   either, verification has been re-run after old writes stopped and
-   passed, and retention allows. This is the point of no return: its
-   rollback is a restore from the retained backup or snapshot, never an
-   application rollback. Name it in the record and put it to the data owner:
+   either, verification passed on its last run before old writes stopped,
+   no old-shape write has been observed since, no row lacks the new shape,
+   and retention allows. This is the point of no return: its rollback is a
+   restore from the retained backup or snapshot, never an application
+   rollback. Name it in the record. In the pass whose phase is contract,
+   after Stop old writes has shipped, put it to the data owner:
 
    ```text
-   Contract for {{change}}: drops {{old column, table, or field}}; no live version or rollback target reads it as of {{evidence}}; verification re-run {{date, result}}; retention {{satisfied how}}.
+   Contract for {{change}}: drops {{old column, table, or field}}; no live version or rollback target reads it as of {{evidence}}; verification last passed {{date}}, before old writes stopped; no old-shape write since and no row without the new shape as of {{evidence}}; retention {{satisfied how}}.
    After this ships, rolling the application back to {{rollback target}} is no longer possible; recovery is {{restore path and its recovery time}}.
 
    1. Accept: ship the contract
@@ -98,7 +97,10 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
    place.
 8. Add a new constraint in the form the engine offers that does not validate
    existing rows under a lock, then validate it as a separate step. If the
-   engine offers no such form, the lock is measured in Step 3.
+   engine offers no such form, the lock is measured in Step 3. Relax the
+   old column's NOT NULL, or give it a default, in a migration before Stop
+   old writes; add the new column's NOT NULL or foreign key only once no
+   live version or rollback target writes rows without it.
 
 ## Step 3: Build each phase under test
 
@@ -124,9 +126,14 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
    none, record the operation as **unverified**, in its evidence row and in
    the record's Not verified section, which goes to `release-readiness` as
    it stands. Never leave it blank.
-3. Write the deploy-versus-migration order for this phase where the deploy
+3. Give every schema statement that takes an exclusive lock, however brief,
+   a lock-wait limit and a retry: queued behind one long transaction, it
+   stalls every query behind it. Run an online or concurrent index build
+   outside the migration tool's transaction, and drop the invalid index a
+   failed build leaves before the retry.
+4. Write the deploy-versus-migration order for this phase where the deploy
    process reads it, matching Step 2.
-4. A migration already applied anywhere, including a shared test store, is
+5. A migration already applied anywhere, including a shared test store, is
    never edited. Fix forward with a new one.
 
 ## Step 4: Record and hand off
@@ -153,9 +160,9 @@ Phases row, its own section, and its rows in Tests; never leave one empty.
    listed there as unverified.
 4. Each later phase, contract above all, is its own change through the same
    chain, from Step 1, with the record's predecessor line filled.
-5. If a feature flag or staged rollout is also requested, that is a separate
-   concern under the project's release policy. It does not replace the
-   phasing here, and the phasing does not supply it.
+5. If a feature flag or staged rollout is also requested, `rollout-controls`
+   owns it. It does not replace the phasing here, and the phasing does not
+   supply it.
 
 ## Hard stops
 
