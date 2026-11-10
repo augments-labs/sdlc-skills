@@ -62,12 +62,11 @@ Open `assets/architecture-section.md` before the steps below fill it in.
 
 ## Step 3: Write, review, present
 
-1. Write the section, which is never edited once its identity is issued, to
-   `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md` or the user-set path,
-   preserving the approved sections around it. Fill the header:
-   predecessor, approval rule, where its decision record lives (the ledger:
-   add to it, never rewrite it, and keep it outside the design), and the
-   stable ID delta. The identity goes in the ledger row, never the header.
+1. Write the section to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`
+   or the user-set path and fill every field of the template's header; once
+   its identity is issued, the section is never edited. Record that identity
+   in its ledger (the decision record: add to it, never rewrite it, and keep
+   it outside the design).
 2. Fill the high-risk classification block. If any answer is off the ordinary
    route, or the user marks the work high-risk, run
    `assets/design-review.md` before presenting. That review is blocking. A
@@ -88,7 +87,7 @@ Open `assets/architecture-section.md` before the steps below fill it in.
    ```
 
    Ask this and end the turn; `clarifying-intent` owns what closes it.
-4. On option 1, if every design section the work needs is approved,
+4. If option 1 is chosen and every design section the work needs is approved,
    **REQUIRED SUB-SKILL:** invoke `writing-plans` against this version.
 
 ## Gotchas

@@ -48,11 +48,10 @@ Open `assets/data-model-section.md` before the steps below fill it in.
 ## Step 3: Write and present
 
 1. Write the section to `.sdlc-skills/designs/{{YYYY-MM-DD}}-{{topic}}.md`
-   or the user-set path, preserving the approved sections around it; once its
-   identity is issued, the section is never edited. Fill the header:
-   predecessor, approval rule, the location of its ledger (the decision
-   record: add to it, never rewrite it, and keep it outside the design), and
-   the stable ID delta. The identity goes in the ledger row, never the header.
+   or the user-set path and fill every field of the template's header; once
+   its identity is issued, the section is never edited. Record that identity
+   in its ledger (the decision record: add to it, never rewrite it, and keep
+   it outside the design).
 2. Present:
 
    ```text
