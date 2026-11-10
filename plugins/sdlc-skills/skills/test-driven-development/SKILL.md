@@ -5,14 +5,8 @@ description: "Drives behavior changes through a failing test before implementati
 
 # Test-Driven Development
 
-Make an executable check fail for the right reason before the code exists, or
-make an existing check fail on purpose before you preserve behavior through a
-change. Watch it happen; keep the output.
-
 ## When to use
 
-- Any feature, fix, refactor, migration, generator, or config that changes
-  behavior.
 - **Skip** disposable spikes and non-behavioral content or config. Behavior
   from a spike that is then accepted gets rebuilt under a check.
 - High-risk target code waits for its approved migration and assurance
@@ -42,17 +36,18 @@ change. Watch it happen; keep the output.
 
    Never invent a failure for behavior that already works.
 
-   A task: move `parse_price` into the `money` module, keeping its old import
-   working, and make it reject a negative amount, which it accepts today.
-   That is two cycles. The move is behavior that must survive unchanged:
-   Step 3, with the existing green tests as the check once they are accepted
-   as Step 3.1 requires. The rejection is new behavior: Step 2, with its own
-   RED first. One test that fails because the import path moved proves
+   A task that moves `parse_price` into the `money` module and also makes it
+   reject a negative amount is two cycles: Step 3 for the move, Step 2 for
+   the rejection. One test that fails because the import path moved proves
    neither.
 
 ## Step 2: New behavior, RED then GREEN
 
-1. Write one test for the next approved behavior.
+1. List the cases the approved behavior covers before the first test: the
+   ordinary one, each input's boundaries (empty, zero, the limit, one past
+   it), each failure the interface promises. Write one test for the next
+   case, one cycle each; a case left untested is deferred work for Step 4.4.
+   Nearby behavior that must stay unchanged takes Step 3.
 
    If the behavior is a detector (a lint rule, validator, or scanner), pin,
    in the same test, an input it must flag and a near-miss it must pass; a
@@ -73,9 +68,13 @@ change. Watch it happen; keep the output.
    ```
 
    If the wrong reason is a missing symbol, add the smallest stub that cannot
-   pass (it raises or returns a wrong value) and rerun, so the failure is at
-   the intended assertion. If a stub cannot be added, confirm the runner
+   pass (it returns a wrong value) and rerun, so the failure is at the
+   intended assertion. If a stub cannot be added, confirm the runner
    collected exactly the tests you wrote before reading the failure.
+
+   If it passes first run, find which holds: the behavior already exists
+   (Step 1.3's last route), the assertion cannot fail for this code (fix the
+   test), or code ran ahead of the test (remove it and rerun).
 
    On a wrong reason whose cause is not directly visible, or an unexplained
    result, invoke `debugging` before any product code, passing back the

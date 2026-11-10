@@ -57,11 +57,18 @@ shows the line.
 
 ## 3. It writes a failing test first
 
-`test-driven-development` writes one test for the behavior, runs it with
+`test-driven-development` first lists the cases the behavior covers: the
+ordinary one, the boundaries of each input, and each failure the interface
+promises. It takes one case at a time. It writes one test, runs it with
 your project's real test command, and reads the failure. It checks that the
 test failed for the right reason, at the assertion it was meant to hit, and
 not because of an import error or a skipped test. Then it writes the code
 that makes the test pass, runs the whole suite, and refactors under green.
+A case it leaves untested is reported to you as deferred.
+
+A new test that passes the first time it runs proves nothing yet. The agent
+finds out why before it goes on: the behavior was already there, the test
+cannot fail, or code was written ahead of the test.
 
 You will see the failing run and the passing run in the transcript. The
 agent keeps those outputs as evidence.
