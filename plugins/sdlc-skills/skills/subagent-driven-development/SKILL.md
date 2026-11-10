@@ -25,12 +25,11 @@ they may not take. This skill never decides what happens to the branch.
 - **`scripts/plan-version.sh`** — prints the plan's version, or with `--check-contract` and `--verify` checks task-contract invariants and the decision ledger.
 - **`scripts/plan-files.sh`** — checks each task's `Files` paths against a base revision. Read-only.
 - **`scripts/sdd-workspace.sh`** — opens the plan-scoped ledger and re-checks
-  that it still binds to the plan. Run it before the first dispatch, and again
-  after every compaction.
+  that it still binds to the plan.
 - **`scripts/task-brief.sh`** — renders a role brief from a task file, and
-  refuses one with a script slot left unfilled. Run it for every dispatch.
+  refuses one with a script slot left unfilled.
 - **`scripts/review-package.sh`** — assembles one task's diff and file list for
-  a reviewer. Run it when an implementer reports.
+  a reviewer.
 
 ## Step 1: Verify approval and mode
 
@@ -75,7 +74,8 @@ they may not take. This skill never decides what happens to the branch.
    `.sdlc-skills/evidence/{{plan directory name}}/sdd-ledger.md` and holds
    this run's dispatches, rulings, and findings. Task states go to the
    index's `External execution ledger`, one row per state as
-   `artifact-layout.md` maps an execution row; the decision ledger stays where the index points.
+   `using-sdlc-skills`' `artifact-layout.md` maps an execution row; the
+   decision ledger stays where the index points.
 4. Confirm the plan contract before the first dispatch from Step 1's
    `--verify` output (`Consumes`, `Depends on`, `Implementation disciplines`,
    and `overlap=` lines): write every `overlap=` pair claiming the same file
@@ -150,8 +150,8 @@ nothing from here.
    exist; and a file, written beside the report, of the ledger rulings that
    touch this task. Paths the worker opens for itself;
    never pasted history.
-4. Set the tier explicitly, from the Model selection table in
-   `dispatching-parallel-agents`.
+4. Set the tier explicitly, from the task's `Suggested tier` checked against
+   the Model selection table in `dispatching-parallel-agents`.
 5. Bind the role to a runtime: where the harness exposes a named agent whose
    contract covers the role, dispatch that agent with the role brief; otherwise
    dispatch a general subagent with the role prompt. Name mappings belong in
@@ -173,7 +173,11 @@ nothing from here.
    apply `dispatching-parallel-agents` Step 2.4. Before packaging, confirm
    the implementer and everything it started have stopped and `git status`
    shows nothing changed after the reported revision; otherwise stop the
-   stragglers and rebuild the range. Build the package with
+   stragglers and rebuild the range. Run `git status` as well in every other
+   checkout the brief named a path in: a change there that is neither yours
+   nor the report is a `blocking` finding the package cannot show.
+
+   Build the package with
    `bash scripts/review-package.sh`, then fill `assets/task-reviewer.md` when
    the implementer reports, rendering it with `bash scripts/task-brief.sh`,
    which inserts `assets/task-reviewer-report.md` before dispatch, and pass
@@ -205,8 +209,9 @@ nothing from here.
    five unless the user or the plan sets another number, and the `per task`
    review rounds of 5.6 count against the same budget. All but the last two
    rounds go back to the same implementer, which still holds the task. The
-   last two go to a fresh implementer one tier up, briefed from the findings
-   file; it has read nothing. Every round gets its findings by file path,
+   last two go to a fresh implementer one tier up, or at `large` when it is
+   already there, briefed from the findings file; it has read nothing.
+   Every round gets its findings by file path,
    never pasted; when the harness reports the same implementer's context near
    its limit, a fresh one at its tier takes the round from that file. A round
    may answer a finding with no change and evidence that the claim is false:
@@ -228,9 +233,12 @@ nothing from here.
    For a wave: once every unblocked wave diff has passed 5.1 to 5.4, merge
    those branches into the plan worktree (a blocked task's branch stays out)
    and run this check on the merged HEAD before any wave task is `done`. If
-   it is red, open a fix round in the plan worktree on the task it names,
-   counted against that task's repair budget and ending in 5.4's
-   adjudication, then merge and check again. The wave
+   a merge conflicts, abort it and open a fix round for the task whose
+   branch was being merged: its implementer rebuilds that branch on the plan
+   worktree's HEAD. If the check is red, open a fix round in the plan
+   worktree on the task it names, or on the task merged last when it names
+   none. Each round counts against that task's repair budget and ends in
+   5.4's adjudication; then merge and check again. The wave
    worktrees and branches are task-owned resources in the workspace record
    for `finishing-a-branch`.
 
@@ -257,8 +265,9 @@ In the worktree from Step 2, in order:
    are claims; this is the evidence.
 2. **REQUIRED SUB-SKILL:** invoke `requesting-code-review` on the whole branch.
    Its fix rounds run under `receiving-code-review`'s convergence check and
-   plan-end budget. You run only the triage and the budget: each fix set and
-   every round goes to a fresh implementer through the Step 4 brief and the
+   plan-end budget. You run only the triage and the budget: write each fix
+   set to a file beside the review report and pass it as `--task`; it and
+   every round go to a fresh implementer through the Step 4 brief and the
    Step 5 review loop, counted against the plan-end budget, not a task's.
    When that budget is spent, write the adjudication in the ledger and hand
    the user that row; no task is recorded `blocked`.
@@ -292,18 +301,11 @@ the evidence. It is never a task because someone wrote it down.
 ## Gotchas
 
 - A gap found mid-task, written as a successor, stops the run for
-  reapproval: one run wrote fifteen this way. A gap every traced
-  requirement survives is a ruling, and the second one walks the rest of
-  the plan once.
-- An instruction to fix whatever turns up reads as licence to queue every
-  advisory as a task, and each fix's review then raises more — reproduced
-  by a plan run that carried that instruction with no budget: its 14-row
-  list grew to 91. Admit by observed failure, inside the budget.
+  reapproval: one run wrote fifteen this way. Write a ruling wherever
+  Step 3 allows one.
 - A worker's status is not a verdict on the task — reproduced whenever a `DONE`
   arrives with a diff that edits a file the brief never named. Read the diff
   yourself (Step 5.5).
-- A fresh implementer in a late round has read nothing. "Fix the findings"
-  names a file it does not have; give it the findings path and the task path.
 - Every brief here prohibits subdispatch; keep it. A worker's own workers
   return a diff nobody reconciled and receipts you never held.
 - The controller never edits, so `test-driven-development` and `yagni` load in

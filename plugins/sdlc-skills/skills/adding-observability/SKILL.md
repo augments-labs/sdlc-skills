@@ -57,7 +57,9 @@ renames a signal something already reads, and never decides who gets paged.
    set that can occur, at startup.
 3. Record latency as a histogram whose buckets include every threshold
    someone will alert on. Never an average, and never a summary when
-   instances are aggregated.
+   instances are aggregated. Record the outcome and the duration on every
+   way out of the operation: a raised error, a timeout, and a cancellation
+   as well as a return.
 4. Carry the trace or request id on every log line the request writes. Where
    the request crosses a queue, a thread pool, a scheduled job, or another
    process, inject the trace context into the message or carry it by hand.
@@ -68,6 +70,9 @@ renames a signal something already reads, and never decides who gets paged.
    that will succeed) below error level.
 7. No secret, credential, token, request body, header, query string, or
    personal data in a signal's value, label, or log field.
+8. In a process that exits before the facility collects (a batch job, a
+   command-line run, a scheduled task), flush or push the signals before it
+   exits.
 
 ## Step 3: Prove each signal is emitted
 
@@ -86,6 +91,9 @@ renames a signal something already reads, and never decides who gets paged.
    assume.
 2. Fire each alert once on purpose (a test environment, a synthetic failure,
    or a lowered threshold restored afterwards) and record that it fired.
+   Where the alert reaches a person or its rule lives in a shared
+   environment, get the owner's go-ahead first or fire it through a route
+   that pages no one.
 3. If an existing metric name, label, or log field must change, every
    dashboard and alert that reads it is a caller. **REQUIRED SUB-SKILL:**
    invoke `deprecating-an-api` for the rename; never rename in place.
@@ -96,9 +104,6 @@ renames a signal something already reads, and never decides who gets paged.
    Signals: {{n}} through {{facility}}, each seen in {{test | environment}}; unverified: {{list | none}}
    Alerts: {{n}}, each with owner and first action; fired on purpose: {{yes | which ones not, and who will}}
    ```
-
-5. Continue the ordinary chain to verification, review, and the branch
-   decision unchanged.
 
 ## Hard stops
 
@@ -123,20 +128,6 @@ renames a signal something already reads, and never decides who gets paged.
   the layout later breaks every query over the old series — shows when a
   300 ms alert on buckets of 250 ms and 500 ms fires on an estimate and
   nobody can say whether 300 ms was crossed.
-- A label on a value nobody enumerated (raw path, user id, message text)
-  makes one series per value; the store slows or drops the metric, and a
-  caller can mint values on purpose. A route must be the template with
-  placeholders, never the path — shows when the metric vanishes from the
-  dashboard after a crawler visits every id.
-- Head sampling decides at the start of the trace, before the error or the
-  slow span exists, so it cannot keep every error trace; only a decision
-  taken after the trace ends can — shows when the one failing request of the
-  day has no trace.
-- Trace context travels only where something injects it into a carrier
-  (headers, message metadata) and something extracts it on the other side; a
-  queue, a thread pool, or a scheduled job starts a new trace unless the
-  producer attaches the context to the message and the consumer reads it —
-  shows when every consumer trace is a root with no parent.
 - Unit conventions differ by facility and both are strict: one wants base
   units in a plural suffix (`_seconds`, `_bytes`, `_total` after the unit);
   another wants the unit in the metric's metadata (`s`, `By`) and not in the

@@ -10,8 +10,11 @@ Read this when the plan index's `Out-of-task findings` field says `fix when admi
 2. The approved field authorizes an added task inside its budget, and nothing
    else. Its `Evaluator` reproduces the observed failure and is red before the
    fix; its `Depends on` names every listed task that owns a file it edits; it
-   passes the plan-contract check (Step 3). A finding whose fix would change a
-   listed task's contract or `Evaluator` is not admitted: it waits for Step 5.4.
+   passes the plan-contract check (Step 3), with its `Consumes`, `Depends on`, and
+   `Implementation disciplines` read from the added file itself: `--verify`
+   reads only the tasks the index lists. A finding whose fix would change a
+   listed task's contract or `Evaluator` is not admitted: it waits for
+   Step 5.4.
 3. Run an added task through Step 4 before Step 5. It has no index row to
    mirror: its state lives in the execution ledger only, and Step 5.1 runs its
    evaluator with the listed tasks'.
