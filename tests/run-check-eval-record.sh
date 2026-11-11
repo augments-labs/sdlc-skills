@@ -535,39 +535,58 @@ git -C "$repo" checkout -q -f base
 # The command CONTRIBUTING gives for running dev's copy must fail when it
 # cannot get that copy, not run an empty script and exit 0, and must leave
 # nothing behind in the caller's temp directory. It runs on a pull request's
-# checkout, so it must read the body from outside that checkout (a committed
-# pr-body.md can be a link into .git/) and must run dev's copy even when the
-# pull request brings a branch or tag named origin/dev.
+# checkout, whose files and ref names the pull request decides: it must read
+# the body from outside that checkout (a committed pr-body.md can be a link
+# into .git/), and must take dev from this repository by commit, so that no
+# branch or tag the pull request brings, under any name, changes which
+# script runs or which base it checks against. The test serves dev from a
+# local copy in place of the URL.
+url=https://github.com/augments-labs/sdlc-skills.git
 cmd="$(awk '/run `dev`.s copy/ { f = 1 } f && /^```bash$/ { b = 1; next } b && /^```$/ { exit } b { print }' "$ROOT/CONTRIBUTING.md")"
-if [ -z "$cmd" ]; then bad "CONTRIBUTING has a command for running dev's copy"; else
+if [ -z "$cmd" ]; then bad "CONTRIBUTING has a command for running dev's copy"
+elif [ "${cmd#*"$url"}" = "$cmd" ]; then bad "the dev's-copy command fetches dev from $url (got: $cmd)"; else
+  up="$tmp/upstream.git"; git init -q --bare "$up"
+  cmd="${cmd//"$url"/"$up"}"
   ln -s "$evals" "$tmp/sdlc-skills-evals"
   git -C "$repo" checkout -q -B devcopy base; mkdir -p "$repo/scripts/sh"; cp "$S" "$repo/scripts/sh/"; commit devcopy
-  git -C "$repo" checkout -q -B case-devcopy devcopy; printf 'more\n' >> "$repo/notes/a.md"; commit case-devcopy
+  git -C "$repo" push -q "$up" devcopy:refs/heads/dev
   : > "$tmp/pr-body.md"
   dct="$tmp/devcopy-tmp"; mkdir -p "$dct"
-  git -C "$repo" update-ref refs/remotes/origin/dev devcopy
+  git -C "$repo" checkout -q -B case-devcopy devcopy; printf 'more\n' >> "$repo/notes/a.md"; commit case-devcopy
   out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
   if [ "$code" = 0 ] && printf '%s' "$out" | grep -q '^eval-record:'; then ok "the dev's-copy command runs dev's copy"
   else bad "the dev's-copy command runs dev's copy (got $code: $out)"; fi
-  git -C "$repo" checkout -q -B hostile devcopy
-  printf 'echo hostile; exit 0\n' > "$repo/scripts/sh/check-eval-record.sh"; commit hostile
-  git -C "$repo" checkout -q case-devcopy
-  for kind in heads tags; do
-    git -C "$repo" update-ref "refs/$kind/origin/dev" hostile
+  # A pull request that changes a skill with no record and carries its own
+  # script that passes everything. Each ref below points at its head: dev's
+  # copy, checking against dev, fails it; the pull request's script, or a
+  # base that resolves to the head itself, would pass it.
+  git -C "$repo" checkout -q -B case-hostile devcopy
+  printf 'echo hostile; exit 0\n' > "$repo/scripts/sh/check-eval-record.sh"
+  printf 'more\n' >> "$repo/$skill/SKILL.md"; commit case-hostile
+  d="$(git -C "$repo" rev-parse devcopy)"
+  for ref in refs/heads/origin/dev refs/tags/origin/dev refs/remotes/origin/dev \
+             refs/heads/refs/remotes/origin/dev refs/tags/refs/remotes/origin/dev \
+             refs/heads/FETCH_HEAD refs/tags/FETCH_HEAD "refs/heads/$d" "refs/tags/$d"; do
+    git -C "$repo" update-ref "$ref" case-hostile
     out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
-    if [ "$code" = 0 ] && printf '%s' "$out" | grep -q '^eval-record:' && ! printf '%s' "$out" | grep -q hostile
-    then ok "the dev's-copy command runs dev's copy past refs/$kind/origin/dev"
-    else bad "the dev's-copy command runs dev's copy past refs/$kind/origin/dev (got $code: $out)"; fi
-    git -C "$repo" update-ref -d "refs/$kind/origin/dev"
+    if [ "$code" = 1 ] && printf '%s' "$out" | grep -q '^MISSING  foo (skills/common/foo) needs an evaluation record' \
+       && ! printf '%s' "$out" | grep -q hostile
+    then ok "the dev's-copy command runs dev's copy against dev past $ref"
+    else bad "the dev's-copy command runs dev's copy against dev past $ref (got $code: $out)"; fi
+    git -C "$repo" update-ref -d "$ref"
   done
-  git -C "$repo" update-ref refs/remotes/origin/dev base
+  git -C "$repo" checkout -q case-devcopy
+  git -C "$repo" push -q -f "$up" base:refs/heads/dev
   out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
   if [ "$code" != 0 ]; then ok "the dev's-copy command fails when dev has no copy"
   else bad "the dev's-copy command fails when dev has no copy (got 0: $out)"; fi
+  out="$(cd "$repo" && TMPDIR="$dct" bash -c "${cmd//"$up"/"$tmp/no-such-repo.git"}" 2>&1)"; code=$?
+  if [ "$code" != 0 ] && ! printf '%s' "$out" | grep -q '^eval-record:'; then ok "the dev's-copy command fails when dev cannot be fetched"
+  else bad "the dev's-copy command fails when dev cannot be fetched (got $code: $out)"; fi
   left="$(ls -A "$dct")"
   if [ -z "$left" ]; then ok "the dev's-copy command leaves no temp file"
   else bad "the dev's-copy command leaves no temp file (left: $left)"; fi
-  git -C "$repo" update-ref -d refs/remotes/origin/dev; rm -f "$tmp/pr-body.md" "$tmp/sdlc-skills-evals"
+  rm -rf "$up"; rm -f "$tmp/pr-body.md" "$tmp/sdlc-skills-evals"
 fi
 
 # Each temp file is removed even when a later one cannot be made.
@@ -617,9 +636,9 @@ if [ "$code" = 0 ]; then ok "--help exits 0"; else bad "--help exits 0 (got $cod
 # flag with no value), an unknown revision, no merge base, a diff or tree
 # listing that fails, a temp file it cannot make, a missing input (no
 # results/, no body), no jq.
-# Only the exit-code paragraph counts: the flag descriptions above it use
-# some of the same words.
-codes="$(printf '%s\n' "$out" | sed -n '/^Exit codes:/,$p' | tr '\n' ' ' | tr -s ' ')"
+# Only the exit-code paragraph counts, up to its blank line: the flag
+# descriptions above it use some of the same words.
+codes="$(printf '%s\n' "$out" | sed -n '/^Exit codes:/,/^$/p' | tr '\n' ' ' | tr -s ' ')"
 for phrase in 'a usage error' 'an unknown revision' 'no merge base' 'a diff that fails' 'a tree it cannot list' 'a temp file it cannot make' 'a missing input' 'jq is missing'; do
   if printf '%s' "$codes" | grep -qF "$phrase"; then ok "--help names '$phrase' among the causes of exit 2"
   else bad "--help names '$phrase' among the causes of exit 2"; fi

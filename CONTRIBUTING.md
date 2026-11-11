@@ -249,15 +249,18 @@ the script, so a pull request that changes either one attests its own
 check. Before merging one that also changes a skill, split it in two, or
 run `dev`'s copy of the script on its head, with the pull request body
 saved beside this checkout as `../pr-body.md` and the evals repository
-cloned beside it too. Both stay outside the checkout, and `dev` is named by
-its full ref: the pull request's files decide what is inside the checkout,
-including a `pr-body.md` that links into `.git/`, and it can bring a branch
-or tag that is also named `origin/dev`.
+cloned beside it too. The command fetches `dev` from this repository and
+runs the script at that commit, against that commit. The pull request
+decides what is inside the checkout, including a `pr-body.md` that links
+into `.git/` and any branch or tag, under any name, so neither the body nor
+`dev` is taken from there.
 
 ```bash
-s="$(git show refs/remotes/origin/dev:scripts/sh/check-eval-record.sh)" \
-  && bash -c "$s" check-eval-record.sh --base refs/remotes/origin/dev \
-  --head HEAD --evals ../sdlc-skills-evals --body ../pr-body.md
+git fetch https://github.com/augments-labs/sdlc-skills.git refs/heads/dev \
+  && d="$(git rev-parse --verify 'FETCH_HEAD^{commit}')" \
+  && s="$(git show "$d:scripts/sh/check-eval-record.sh")" \
+  && bash -c "$s" check-eval-record.sh --base "$d" --head HEAD \
+  --evals ../sdlc-skills-evals --body ../pr-body.md
 ```
 
 The records are matched by content, not by commit. `skill_tree` is
