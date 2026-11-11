@@ -217,8 +217,9 @@ Eval record: results/2026-11-12-handoff-claude-code
 
 A record line starts at the beginning of its line and is case-sensitive; an
 indented example is not read. When a skill changed, a line that starts
-`Eval record:` but names no readable record fails the check, even beside a
-record that matches. `none: <reason>` is for the human reader; the check
+`Eval record:` but does not name a `results/<dir>` holding a
+`benchmark.json` or `triggering.json` fails the check, even beside a record
+that matches. `none: <reason>` is for the human reader; the check
 ignores it.
 
 The `eval-record` workflow runs `scripts/sh/check-eval-record.sh` against a
@@ -237,7 +238,10 @@ trees which records the change needs:
 The check measures from the merge base, the commit the branch left `dev`
 at. If `dev` has changed the skill since, the merge would hold text no
 record measured, so the check fails until the branch is rebased and the
-rebased text is measured.
+rebased text is measured. The check does not re-run when another pull
+request merges into `dev`, so a green result can go stale: before merging a
+pull request that changes a skill, bring its branch up to date with `dev`
+if `dev` has moved since the check last ran.
 
 The records are matched by content, not by commit. `skill_tree` is
 `git rev-parse <commit>:skills/<phase>/<name>`, which a squash merge leaves

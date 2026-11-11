@@ -164,6 +164,12 @@ run 1 "a file moved from one skill to another needs records for both"
 has "the skill the file left is named" "foo (skills/common/foo)"
 has "the skill the file joined is named" "gone (skills/common/gone)"
 
+start twofiles; printf 'x\n' >> "$repo/$skill/assets/t.md"; printf 'y\n' > "$repo/$skill/assets/u.md"; commit twofiles
+: > "$body"
+run 1 "two changed files in one skill fail"
+n="$(printf '%s\n' "$last_out" | grep -c 'foo (skills/common/foo) needs an evaluation record')"
+if [ "$n" = 1 ]; then ok "the skill is named once"; else bad "the skill is named once (named $n times)"; fi
+
 start rename-scripts; git -C "$repo" mv "$skill/assets/t.md" "$skill/scripts/t.md"; commit rename-scripts
 run 1 "a file moved from assets/ to scripts/ still changes what the agent reads"
 
@@ -187,6 +193,11 @@ run 0 "a record line with a CRLF ending is read"
 
 printf 'Eval record: results/body-ok/\n' > "$body"
 run 0 "a record line with a trailing slash is read"
+printf 'Eval record: results/body-ok \t\n' > "$body"
+run 0 "trailing whitespace on a record line is ignored"
+printf 'Eval record: x/results/body-ok\n' > "$body"
+run 1 "a record path not under results/ is a bad line"
+has "the bad line is named as such" "names no results/<dir>"
 
 bench body-stale foo "$B" old_skill "$B"
 printf 'Eval record: results/body-stale\n' > "$body"
@@ -261,6 +272,22 @@ spoil body-ok short-eval benchmark.json 'del(.runs[0])'
 printf 'Eval record: results/short-eval\n' > "$body"
 run 1 "an eval with two runs in one arm fails, whatever runs_per_eval says"
 
+spoil body-ok short-old benchmark.json 'del(.runs[] | select(.configuration == "old_skill" and .run_number == 1))'
+printf 'Eval record: results/short-old\n' > "$body"
+run 1 "an eval with two runs in the old_skill arm fails"
+
+spoil body-ok second-eval benchmark.json '.metadata.eval_ids += ["e2"]'
+printf 'Eval record: results/second-eval\n' > "$body"
+run 1 "a listed eval with no runs fails"
+
+spoil body-ok no-eval-ids benchmark.json '.metadata.eval_ids = []'
+printf 'Eval record: results/no-eval-ids\n' > "$body"
+run 1 "a record that lists no eval fails"
+
+spoil body-ok split-evals benchmark.json '.metadata.eval_ids += ["e2"] | (.runs[] | select(.run_number == 1)).eval_id = "e2"'
+printf 'Eval record: results/split-evals\n' > "$body"
+run 1 "three runs per arm split across two evals, short in each, fail"
+
 spoil body-ok no-skill benchmark.json '.metadata.skill = null'
 printf 'Eval record: results/no-skill\n' > "$body"
 run 1 "a record that names no skill fails"
@@ -323,6 +350,9 @@ spoil desc-ok desc-inc-train triggering.json '.splits.train.inconclusive = 1'
 printf 'Eval record: results/desc-inc-train\n' > "$body"
 run 1 "a triggering record with an inconclusive train query fails"
 has "it says a query is inconclusive" "inconclusive"
+spoil desc-ok desc-inc-missing triggering.json 'del(.splits.validation.inconclusive)'
+printf 'Eval record: results/desc-inc-missing\n' > "$body"
+run 1 "a split that does not say how many queries were inconclusive fails"
 spoil desc-ok desc-inc-val triggering.json '.splits.validation.inconclusive = 2'
 printf 'Eval record: results/desc-inc-val\n' > "$body"
 run 1 "a triggering record with an inconclusive validation query fails"
@@ -371,7 +401,6 @@ run 1 "a removed skill fails without the exemption"
 has "the failure names the removed skill" "gone"
 run 0 "a removed skill passes with --exempt" --exempt
 
-echo "--- usage"
 echo "--- the records measure the text the merge will hold"
 git -C "$repo" checkout -q -B dev-moved base
 write_skill "$skill" "$desc_line" "Step one, as dev has it now."; commit dev-moved
@@ -386,6 +415,15 @@ BASE=dev-moved run 1 "a base that changed this skill since the branch point fail
 has "it asks for a rebase" "rebase"
 has "the moved skill is named" "foo (skills/common/foo)"
 BASE=dev-moved run 0 "--exempt passes a moved base" --exempt
+
+# A closer that is not exactly `---` leaves the description unhashable; the
+# change must still need a record, not pass as "the base's".
+git -C "$repo" checkout -q -B dev-fence base
+printf -- '---\nname: foo\n%s\n--- \n\n# Foo\n\nStep one.\n' "$desc_line" > "$repo/$skill/SKILL.md"; commit dev-fence
+git -C "$repo" checkout -q -B case-fence dev-fence
+printf -- '---\nname: foo\n%s\n--- \n\n# Foo\n\nStep one.\n' 'description: "Does foo, changed."' > "$repo/$skill/SKILL.md"; commit case-fence
+: > "$body"
+BASE=dev-fence run 1 "a description change under a closer with a trailing space still needs a record"
 
 git -C "$repo" checkout -q --orphan unrelated; git -C "$repo" rm -rqf . >/dev/null
 printf 'x\n' > "$repo/x.md"; commit unrelated

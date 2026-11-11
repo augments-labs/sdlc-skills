@@ -48,6 +48,9 @@ all of these hold on the PR's current head commit, whoever merges:
    GitHub review. Every finding is fixed or refuted with evidence; one left
    open needs a maintainer's answer, recorded in the PR.
 3. Anyone who asked to see the diff before merge has approved it.
+4. For a PR that changes a skill, the `eval-record` check ran on the current
+   `dev`: if `dev` has moved since, bring the branch up to date so the check
+   runs again (see *Evals*).
 
 A review covers only the commit it names: after a push, review the new diff
 and update the section before merging. Merge into `main` only as

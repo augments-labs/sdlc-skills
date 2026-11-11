@@ -45,8 +45,8 @@ exactly the skill text it changes.
 Run from the root of this repository's checkout, with both commits present.
 
 Exit codes: 0 every changed skill has its records, or --exempt · 1 a record
-is missing or does not match · 2 a usage error, an unknown revision, a
-missing input, or jq is missing
+is missing or does not match · 2 a usage error, an unknown revision, no
+merge base, a diff that fails, a missing input, or jq is missing
 EOF
 }
 
@@ -87,14 +87,14 @@ desc_line() {  # <rev> <skill dir>
     $0 == "---" { printf "%s", d; exit }
     d == "" && /^description:/ { d = $0 }'
 }
-# The rest of what the agent reads as text: SKILL.md without that line, and
-# the assets/ and references/ trees. scripts/ is left out: a script's own
-# offline test covers it.
+# The rest of what the agent reads as text: SKILL.md without exactly the line
+# desc_line found (all of it when desc_line found none, so an unhashable
+# description still counts as a change), and the assets/ and references/
+# trees. scripts/ is left out: a script's own offline test covers it.
 rest_of() {  # <rev> <skill dir>
-  git show "$1:$2/SKILL.md" 2>/dev/null | LC_ALL=C awk '
-    NR == 1 { fm = ($0 == "---"); print; next }
-    fm && $0 == "---" { fm = 0 }
-    fm && !seen && /^description:/ { seen = 1; next }
+  local d; d="$(desc_line "$1" "$2")"
+  git show "$1:$2/SKILL.md" 2>/dev/null | D="$d" LC_ALL=C awk '
+    !seen && ENVIRON["D"] != "" && $0 == ENVIRON["D"] { seen = 1; next }
     { print }'
   echo "assets $(git rev-parse -q --verify "$1:$2/assets" 2>/dev/null)"
   echo "references $(git rev-parse -q --verify "$1:$2/references" 2>/dev/null)"
@@ -183,8 +183,8 @@ trig_why() {  # <file> <skill> <description sha256>
       "its description_sha256 is not the SHA-256 of \($skill)'"'"'s description line at the head (\($sha))"
     elif ((.metadata.runs | numbers) // 0) < 3 then "runs is \(.metadata.runs); a record uses 3 or more"
     elif (.splits.validation | type) != "object" then "it has no validation split"
-    elif any(.splits[]; (.inconclusive | numbers) != 0) then
-      "\([.splits[] | .inconclusive // 0] | add) quer(ies) are inconclusive"
+    elif any(.splits[]; .inconclusive != 0) then
+      "a split has inconclusive queries, or does not say how many (inconclusive: \([.splits[] | .inconclusive] | map(tostring) | join(", ")))"
     elif .splits.validation.pass_rate == null then "its validation split scored no query"
     else "ok" end' --arg skill "$2" --arg sha "$3"
 }

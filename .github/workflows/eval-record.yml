@@ -2,9 +2,10 @@ name: eval-record
 
 # A pull request into dev that changes a skill's SKILL.md, assets/ or
 # references/ must name the eval records of exactly that skill text: a new
-# skill needs both a triggering and an evaluation record (AGENTS.md, "Evals"). The rules live in scripts/sh/check-eval-record.sh. This job runs
-# no agent and holds no secret: it reads the public evals repository's
-# committed records. It re-runs when the body or the labels change, so a
+# skill needs both a triggering and an evaluation record (AGENTS.md, "Evals").
+# The rules live in scripts/sh/check-eval-record.sh. This job runs no agent
+# and holds no secret: it reads the public evals repository's committed
+# records. It re-runs when the body or the labels change, so a
 # record added after the push, or the maintainer's no-eval label, takes
 # effect without a new commit.
 
