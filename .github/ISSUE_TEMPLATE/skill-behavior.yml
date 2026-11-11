@@ -76,7 +76,7 @@ body:
       description: Pick the strongest you have. A report argued only from the skill text is still welcome; it is read as a contract gap, not as an observed failure.
       options:
         - A transcript or a diagnosing-a-session report, with line citations
-        - An eval record from sdlc-skills-evals (results path and pinned plugin commit)
+        - An eval record from sdlc-skills-evals (its results path)
         - Observed in a session, but no transcript kept
         - Reasoned from the skill text, no session
     validations:
@@ -85,7 +85,7 @@ body:
     id: evidence
     attributes:
       label: Evidence
-      description: Attach or paste the transcript excerpt, the Findings and Timeline sections of the diagnosis report, or the eval results path with the pinned plugin commit. Redact sensitive values by kind and line.
+      description: Attach or paste the transcript excerpt, the Findings and Timeline sections of the diagnosis report, or the eval record's results path. Redact sensitive values by kind and line.
   - type: textarea
     id: without-plugin
     attributes:

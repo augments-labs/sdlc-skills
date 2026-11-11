@@ -1,0 +1,51 @@
+name: eval-record
+
+# A pull request into dev that changes a skill's SKILL.md, assets/ or
+# references/ must name the eval records of exactly that skill text: a new
+# skill needs both a triggering and an evaluation record (AGENTS.md, "Evals").
+# The rules live in scripts/sh/check-eval-record.sh. This job runs no agent
+# and holds no secret: it reads the public evals repository's committed
+# records. It re-runs when the body or the labels change, so a
+# record added after the push, or the maintainer's no-eval label, takes
+# effect without a new commit.
+
+on:
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  eval-record:
+    runs-on: ubuntu-latest
+    # The body is untrusted and the work grows with it; a normal run takes seconds.
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read the evals repository's committed records
+        run: git clone --quiet --depth 1 https://github.com/augments-labs/sdlc-skills-evals.git "$RUNNER_TEMP/evals"
+      - name: Every changed skill names its records
+        shell: bash
+        env:
+          # Untrusted text: it reaches the script as a file, never as code.
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EXEMPT: ${{ contains(github.event.pull_request.labels.*.name, 'no-eval') }}
+        run: |
+          set -o pipefail
+          printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/body.txt"
+          args=()
+          [ "$EXEMPT" = true ] && args+=(--exempt)
+          # Record and body text reach the log; the runner must not read it as workflow commands.
+          token=$(cat /proc/sys/kernel/random/uuid)
+          echo "::stop-commands::$token"
+          trap 'echo "::$token::"' EXIT
+          bash scripts/sh/check-eval-record.sh --base "$BASE_SHA" --head "$HEAD_SHA" \
+            --evals "$RUNNER_TEMP/evals" --body "$RUNNER_TEMP/body.txt" "${args[@]}" \
+            | tee -a "$GITHUB_STEP_SUMMARY"

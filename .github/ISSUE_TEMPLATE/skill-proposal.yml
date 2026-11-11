@@ -44,7 +44,7 @@ body:
     id: evidence-kind
     attributes:
       label: What is this answering?
-      description: The same three kinds the maintainers use when they add a skill. An unmeasured candidate is welcome; it is read as such.
+      description: An unmeasured candidate is welcome as an issue; it is read as such. The pull request that adds the skill needs an observed session or a contract gap, and an eval record.
       options:
         - An observed session (a transcript or diagnosis report shows the failure)
         - A contract gap (the skill text permits the failure; no session yet)

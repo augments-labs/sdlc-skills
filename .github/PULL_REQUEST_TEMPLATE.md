@@ -91,29 +91,43 @@ attempt should land where that one did not. -->
     bash scripts/sh/validate-skills.sh
     bash skills/common/writing-skills/scripts/check-skill.sh --strict path/to/each/skill/touched
 
-For a skill change, name the failure or contract gap it answers. This
-repository runs no live agent, so behaviour is argued from the text unless
-"Environments tested" below records a run. -->
+For a skill change, name the failure or contract gap it answers. Its
+evidence is the eval records under "Evaluation"; an argument from the skill
+text is not evidence. -->
 
 ## Evaluation
 
 - What opening prompt started the session that led to this change?
 
+<!-- A change to a skill's SKILL.md, assets/, or references/ names each eval
+record that measured it, one line each, starting at the beginning of the
+line, after the record is on the evals repository's main:
+
+    Eval record: results/<date>-<skill>-<harness>
+    Eval record: results/<date>-<skill>-<harness>-triggering
+
+A description change needs a triggering record; any other change needs an
+evaluation record against the skill text the branch started from. A new
+skill needs both, the evaluation record against no skill. The eval-record
+check fails the pull request until every changed skill has its records
+(CONTRIBUTING.md, "Eval records"). A change to a skill's scripts/ directory,
+or to files outside skills/, needs none; otherwise write `none: <reason>`
+and expect the check to stay red unless a maintainer applies the no-eval
+label. -->
+
 ## Environments tested
 
 <!-- One row per environment in which you ran the changed skill, script, or
 hook after the change. The table above says who made the change and where;
-this says where it was exercised. Behaviour is argued from the text until a
-row shows it running. A skill change with no row is accepted as a text-only
-claim and is held to that bar; say `not run` in the first row, with `n/a`
-in its other cells, rather than leaving the table blank or filling it from
-memory.
+this says where it was exercised. A row adds to a skill change's eval
+records under "Evaluation"; it never replaces them. With no row, say `not
+run` in the first row, with `n/a` in its other cells, rather than leaving
+the table blank or filling it from memory.
 
 For each row, "What ran" is the exact opening prompt or the scenario, and
 "Observed" is what the agent did, in one line, with a link to the transcript,
-diagnosis report, or eval record (its `results/` path and pinned plugin
-commit) when you have one. A row without an observation is an installation,
-not a test. -->
+diagnosis report, or eval record (its `results/` path) when you have one. A
+row without an observation is an installation, not a test. -->
 
 | Harness | Harness version | Model | Model version/ID | Plugins loaded | What ran | Observed |
 | --- | --- | --- | --- | --- | --- | --- |

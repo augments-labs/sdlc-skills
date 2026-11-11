@@ -48,6 +48,11 @@ all of these hold on the PR's current head commit, whoever merges:
    GitHub review. Every finding is fixed or refuted with evidence; one left
    open needs a maintainer's answer, recorded in the PR.
 3. Anyone who asked to see the diff before merge has approved it.
+4. For a PR that changes a skill, the `eval-record` check ran on the current
+   `dev`: if `dev` has moved since, bring the branch up to date so the check
+   runs again (see *Evals*). If the PR also changes
+   `.github/workflows/eval-record.yml` or `scripts/sh/check-eval-record.sh`,
+   its own check is not evidence: run `dev`'s copy of the script on it.
 
 A review covers only the commit it names: after a push, review the new diff
 and update the section before merging. Merge into `main` only as
@@ -114,14 +119,39 @@ Behavior evals live in
 `bin/triggering` scores whether a description triggers, and `bin/evaluate`
 runs a skill's cases on a live agent CLI, with the skill and without it or
 against an older plugin tree, and grades what each run built. A behavior
-claim backed by an eval record (its `results/` path and pinned plugin commit)
-is evidence; one argued from the skill text is not.
+claim backed by an eval record (its `results/` path; the record names the
+plugin commit and skill text it measured) is evidence; one argued from the
+skill text is not.
+
+A PR that changes a skill's `SKILL.md`, `assets/`, or `references/` MUST
+name, in its body, one `Eval record: results/<dir>` line per record, each
+already on the evals repository's `main`. The `eval-record` CI job reads
+them and fails the PR unless:
+
+- **a changed description line:** a triggering record's
+  `description_sha256` is that line at the PR head, with 3 or more runs, a
+  validation split, and no inconclusive query in any split;
+- **any other change to those files:** an evaluation record's
+  `plugin.skill_tree` is the skill's tree at the head, measured against its
+  tree where the branch left the base (`old_skill`), with 3 or more runs of
+  every eval in each arm and every run scored: none indeterminate, no null
+  pass rate, no assertion awaiting review;
+- **a new skill:** both records, the evaluation one against no skill
+  (`without_skill`).
+
+If the base changed the skill after the branch left it, rebase and measure
+the rebased text. A typo fix or a removed skill needs the `no-eval` label,
+and only a maintainer applies it (repository permissions enforce that).
+Moving a skill to another phase folder changes no text and needs the label
+too. Never argue a behavior change from the skill text in place of a record.
+A change to a skill's `scripts/` directory, or to files outside `skills/`,
+needs no record; its offline test is the proof.
 
 ## Adding or editing a skill
 
 - **New skill:** name the failure it answers and say whether it is an observed
-  session, a contract gap, or an unmeasured candidate. Pick the phase folder
-  from `docs/reference/skills.md`, or `common/`.
+  session or a contract gap, and name its eval records (see *Evals*). Pick
+  the phase folder from `docs/reference/skills.md`, or `common/`.
 - **Focus:** write what a capable agent gets wrong without the skill: the
   rule it would not choose on its own, the non-obvious edge case, who owns a
   decision, and this library's own scripts and records. Leave out what it

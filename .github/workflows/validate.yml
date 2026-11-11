@@ -31,6 +31,8 @@ jobs:
         run: bash tests/run-git-hooks.sh
       - name: State identity (in-repository and non-repository modes)
         run: bash tests/run-state-identity.sh
+      - name: Eval-record checker (scripts/sh/check-eval-record.sh)
+        run: bash tests/run-check-eval-record.sh
       - name: Token budget (always-loaded surface)
         run: bash scripts/sh/token-budget.sh --max 5000
       - name: Handoff cycles
