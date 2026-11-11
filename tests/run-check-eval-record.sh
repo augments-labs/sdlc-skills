@@ -580,9 +580,14 @@ elif [ "${cmd#*"$url"}" = "$cmd" ]; then bad "the dev's-copy command fetches dev
   out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
   if [ "$code" != 0 ]; then ok "the dev's-copy command fails when dev has no copy"
   else bad "the dev's-copy command fails when dev has no copy (got 0: $out)"; fi
+  # A failed fetch leaves FETCH_HEAD empty, and git then reads a tag named
+  # FETCH_HEAD: the command must stop at the fetch, not go on to resolve one.
+  git -C "$repo" update-ref refs/tags/FETCH_HEAD case-hostile
   out="$(cd "$repo" && TMPDIR="$dct" bash -c "${cmd//"$up"/"$tmp/no-such-repo.git"}" 2>&1)"; code=$?
-  if [ "$code" != 0 ] && ! printf '%s' "$out" | grep -q '^eval-record:'; then ok "the dev's-copy command fails when dev cannot be fetched"
+  if [ "$code" != 0 ] && ! printf '%s' "$out" | grep -q '^eval-record:' && ! printf '%s' "$out" | grep -q hostile
+  then ok "the dev's-copy command fails when dev cannot be fetched"
   else bad "the dev's-copy command fails when dev cannot be fetched (got $code: $out)"; fi
+  git -C "$repo" update-ref -d refs/tags/FETCH_HEAD
   left="$(ls -A "$dct")"
   if [ -z "$left" ]; then ok "the dev's-copy command leaves no temp file"
   else bad "the dev's-copy command leaves no temp file (left: $left)"; fi
