@@ -248,12 +248,16 @@ The workflow runs the pull request's own copy of `eval-record.yml` and of
 the script, so a pull request that changes either one attests its own
 check. Before merging one that also changes a skill, split it in two, or
 run `dev`'s copy of the script on its head, with the pull request body
-saved as `pr-body.md` and the evals repository cloned beside this one:
+saved beside this checkout as `../pr-body.md` and the evals repository
+cloned beside it too. Both stay outside the checkout, and `dev` is named by
+its full ref: the pull request's files decide what is inside the checkout,
+including a `pr-body.md` that links into `.git/`, and it can bring a branch
+or tag that is also named `origin/dev`.
 
 ```bash
-s="$(git show origin/dev:scripts/sh/check-eval-record.sh)" \
-  && bash -c "$s" check-eval-record.sh --base origin/dev --head HEAD \
-  --evals ../sdlc-skills-evals --body pr-body.md
+s="$(git show refs/remotes/origin/dev:scripts/sh/check-eval-record.sh)" \
+  && bash -c "$s" check-eval-record.sh --base refs/remotes/origin/dev \
+  --head HEAD --evals ../sdlc-skills-evals --body ../pr-body.md
 ```
 
 The records are matched by content, not by commit. `skill_tree` is
@@ -270,11 +274,11 @@ the label, needs no new commit. Only a maintainer applies `no-eval`, which
 repository permissions enforce, for a typo fix, a removed skill, or a move
 between phase folders, and says why in the pull request. To check a branch
 before pushing, clone the evals repository, save the pull request body you
-will submit as `pr-body.md`, and run:
+will submit beside this checkout as `../pr-body.md`, and run:
 
 ```bash
 bash scripts/sh/check-eval-record.sh --base origin/dev --head HEAD \
-  --evals ../sdlc-skills-evals --body pr-body.md
+  --evals ../sdlc-skills-evals --body ../pr-body.md
 ```
 
 ## Writing documentation

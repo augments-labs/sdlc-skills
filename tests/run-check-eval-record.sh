@@ -534,18 +534,32 @@ git -C "$repo" checkout -q -f base
 
 # The command CONTRIBUTING gives for running dev's copy must fail when it
 # cannot get that copy, not run an empty script and exit 0, and must leave
-# nothing behind in the caller's temp directory.
+# nothing behind in the caller's temp directory. It runs on a pull request's
+# checkout, so it must read the body from outside that checkout (a committed
+# pr-body.md can be a link into .git/) and must run dev's copy even when the
+# pull request brings a branch or tag named origin/dev.
 cmd="$(awk '/run `dev`.s copy/ { f = 1 } f && /^```bash$/ { b = 1; next } b && /^```$/ { exit } b { print }' "$ROOT/CONTRIBUTING.md")"
 if [ -z "$cmd" ]; then bad "CONTRIBUTING has a command for running dev's copy"; else
   ln -s "$evals" "$tmp/sdlc-skills-evals"
   git -C "$repo" checkout -q -B devcopy base; mkdir -p "$repo/scripts/sh"; cp "$S" "$repo/scripts/sh/"; commit devcopy
   git -C "$repo" checkout -q -B case-devcopy devcopy; printf 'more\n' >> "$repo/notes/a.md"; commit case-devcopy
-  : > "$repo/pr-body.md"
+  : > "$tmp/pr-body.md"
   dct="$tmp/devcopy-tmp"; mkdir -p "$dct"
   git -C "$repo" update-ref refs/remotes/origin/dev devcopy
   out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
   if [ "$code" = 0 ] && printf '%s' "$out" | grep -q '^eval-record:'; then ok "the dev's-copy command runs dev's copy"
   else bad "the dev's-copy command runs dev's copy (got $code: $out)"; fi
+  git -C "$repo" checkout -q -B hostile devcopy
+  printf 'echo hostile; exit 0\n' > "$repo/scripts/sh/check-eval-record.sh"; commit hostile
+  git -C "$repo" checkout -q case-devcopy
+  for kind in heads tags; do
+    git -C "$repo" update-ref "refs/$kind/origin/dev" hostile
+    out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
+    if [ "$code" = 0 ] && printf '%s' "$out" | grep -q '^eval-record:' && ! printf '%s' "$out" | grep -q hostile
+    then ok "the dev's-copy command runs dev's copy past refs/$kind/origin/dev"
+    else bad "the dev's-copy command runs dev's copy past refs/$kind/origin/dev (got $code: $out)"; fi
+    git -C "$repo" update-ref -d "refs/$kind/origin/dev"
+  done
   git -C "$repo" update-ref refs/remotes/origin/dev base
   out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
   if [ "$code" != 0 ]; then ok "the dev's-copy command fails when dev has no copy"
@@ -553,7 +567,7 @@ if [ -z "$cmd" ]; then bad "CONTRIBUTING has a command for running dev's copy"; 
   left="$(ls -A "$dct")"
   if [ -z "$left" ]; then ok "the dev's-copy command leaves no temp file"
   else bad "the dev's-copy command leaves no temp file (left: $left)"; fi
-  git -C "$repo" update-ref -d refs/remotes/origin/dev; rm -f "$repo/pr-body.md" "$tmp/sdlc-skills-evals"
+  git -C "$repo" update-ref -d refs/remotes/origin/dev; rm -f "$tmp/pr-body.md" "$tmp/sdlc-skills-evals"
 fi
 
 # Each temp file is removed even when a later one cannot be made.
@@ -603,8 +617,11 @@ if [ "$code" = 0 ]; then ok "--help exits 0"; else bad "--help exits 0 (got $cod
 # flag with no value), an unknown revision, no merge base, a diff or tree
 # listing that fails, a temp file it cannot make, a missing input (no
 # results/, no body), no jq.
-for phrase in 'usage error' 'unknown revision' 'merge base' 'diff that fails' 'cannot list' 'temp file' 'missing input' 'jq'; do
-  if printf '%s' "$out" | grep -q "$phrase"; then ok "--help names '$phrase' among the causes of exit 2"
+# Only the exit-code paragraph counts: the flag descriptions above it use
+# some of the same words.
+codes="$(printf '%s\n' "$out" | sed -n '/^Exit codes:/,$p' | tr '\n' ' ' | tr -s ' ')"
+for phrase in 'a usage error' 'an unknown revision' 'no merge base' 'a diff that fails' 'a tree it cannot list' 'a temp file it cannot make' 'a missing input' 'jq is missing'; do
+  if printf '%s' "$codes" | grep -qF "$phrase"; then ok "--help names '$phrase' among the causes of exit 2"
   else bad "--help names '$phrase' among the causes of exit 2"; fi
 done
 
