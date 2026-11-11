@@ -533,21 +533,26 @@ run 0 "a submodule inside a skill's scripts/ passes"
 git -C "$repo" checkout -q -f base
 
 # The command CONTRIBUTING gives for running dev's copy must fail when it
-# cannot get that copy, not run an empty script and exit 0.
+# cannot get that copy, not run an empty script and exit 0, and must leave
+# nothing behind in the caller's temp directory.
 cmd="$(awk '/run `dev`.s copy/ { f = 1 } f && /^```bash$/ { b = 1; next } b && /^```$/ { exit } b { print }' "$ROOT/CONTRIBUTING.md")"
 if [ -z "$cmd" ]; then bad "CONTRIBUTING has a command for running dev's copy"; else
   ln -s "$evals" "$tmp/sdlc-skills-evals"
   git -C "$repo" checkout -q -B devcopy base; mkdir -p "$repo/scripts/sh"; cp "$S" "$repo/scripts/sh/"; commit devcopy
   git -C "$repo" checkout -q -B case-devcopy devcopy; printf 'more\n' >> "$repo/notes/a.md"; commit case-devcopy
   : > "$repo/pr-body.md"
+  dct="$tmp/devcopy-tmp"; mkdir -p "$dct"
   git -C "$repo" update-ref refs/remotes/origin/dev devcopy
-  out="$(cd "$repo" && bash -c "$cmd" 2>&1)"; code=$?
+  out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
   if [ "$code" = 0 ] && printf '%s' "$out" | grep -q '^eval-record:'; then ok "the dev's-copy command runs dev's copy"
   else bad "the dev's-copy command runs dev's copy (got $code: $out)"; fi
   git -C "$repo" update-ref refs/remotes/origin/dev base
-  out="$(cd "$repo" && bash -c "$cmd" 2>&1)"; code=$?
+  out="$(cd "$repo" && TMPDIR="$dct" bash -c "$cmd" 2>&1)"; code=$?
   if [ "$code" != 0 ]; then ok "the dev's-copy command fails when dev has no copy"
   else bad "the dev's-copy command fails when dev has no copy (got 0: $out)"; fi
+  left="$(ls -A "$dct")"
+  if [ -z "$left" ]; then ok "the dev's-copy command leaves no temp file"
+  else bad "the dev's-copy command leaves no temp file (left: $left)"; fi
   git -C "$repo" update-ref -d refs/remotes/origin/dev; rm -f "$repo/pr-body.md" "$tmp/sdlc-skills-evals"
 fi
 
@@ -563,6 +568,8 @@ out="$(cd "$repo" && env PATH="$mt/bin:$PATH" TMPDIR="$mt/tmp" bash "$S" --base 
 left="$(ls -A "$mt/tmp")"
 if [ "$code" = 2 ] && [ -z "$left" ]; then ok "a failed second mktemp exits 2 and leaves no temp file"
 else bad "a failed second mktemp exits 2 and leaves no temp file (got $code, left: $left)"; fi
+if printf '%s' "$out" | grep -q 'cannot make a temp file'; then ok "a failed mktemp says so"
+else bad "a failed mktemp says so (got: $out)"; fi
 
 git -C "$repo" checkout -q --orphan unrelated; git -C "$repo" rm -rqf . >/dev/null
 printf 'x\n' > "$repo/x.md"; commit unrelated
@@ -592,7 +599,14 @@ if [ "$code" = 2 ] && printf '%s' "$out" | grep -q 'jq is required'; then ok "a 
 else bad "a machine without jq exits 2 and says so (got $code: $out)"; fi
 out="$(bash "$S" --help 2>&1)"; code=$?
 if [ "$code" = 0 ]; then ok "--help exits 0"; else bad "--help exits 0 (got $code)"; fi
-if printf '%s' "$out" | grep -q 'cannot list'; then ok "--help lists every cause of exit 2"; else bad "--help lists every cause of exit 2 (no 'cannot list')"; fi
+# One phrase per `exit 2` in the script: a usage error (an unknown argument, a
+# flag with no value), an unknown revision, no merge base, a diff or tree
+# listing that fails, a temp file it cannot make, a missing input (no
+# results/, no body), no jq.
+for phrase in 'usage error' 'unknown revision' 'merge base' 'diff that fails' 'cannot list' 'temp file' 'missing input' 'jq'; do
+  if printf '%s' "$out" | grep -q "$phrase"; then ok "--help names '$phrase' among the causes of exit 2"
+  else bad "--help names '$phrase' among the causes of exit 2"; fi
+done
 
 echo
 if [ "$fails" = 0 ]; then echo "all check-eval-record checks passed"; else echo "check-eval-record checks FAILED"; fi

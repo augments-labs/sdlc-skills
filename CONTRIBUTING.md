@@ -251,9 +251,9 @@ run `dev`'s copy of the script on its head, with the pull request body
 saved as `pr-body.md` and the evals repository cloned beside this one:
 
 ```bash
-f="$(mktemp)" && git show origin/dev:scripts/sh/check-eval-record.sh > "$f" \
-  && bash "$f" --base origin/dev --head HEAD --evals ../sdlc-skills-evals \
-  --body pr-body.md
+s="$(git show origin/dev:scripts/sh/check-eval-record.sh)" \
+  && bash -c "$s" check-eval-record.sh --base origin/dev --head HEAD \
+  --evals ../sdlc-skills-evals --body pr-body.md
 ```
 
 The records are matched by content, not by commit. `skill_tree` is

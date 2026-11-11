@@ -23,11 +23,11 @@
 #   - a skill the base changed after the merge base: the merge would hold
 #     text no record measured, so the branch is rebased and measured again;
 #   - a symbolic link or a submodule anywhere under skills/ at the head but
-#     inside a skill's scripts/ (a link file, or a link that is itself
-#     assets/, references/, a skill, or a phase), a SKILL.md added or changed under
-#     skills/ anywhere but skills/<phase>/<name>/, or a changed path whose
-#     name has a newline: text no record can name, so it passes only with
-#     --exempt.
+#     inside a skill's scripts/ (a link file, or a link or submodule that is
+#     itself assets/, references/, a skill, or a phase), a SKILL.md added or
+#     changed under skills/ anywhere but skills/<phase>/<name>/, or a
+#     changed path whose name has a newline: text no record can name, so it
+#     passes only with --exempt.
 #
 # It checks that a record declares exactly that text and was fully scored,
 # not that the numbers are good: it prints them for a reviewer. No model
@@ -55,8 +55,8 @@ Run from the root of this repository's checkout, with both commits present.
 
 Exit codes: 0 every changed skill has its records, or --exempt · 1 a record
 is missing or does not match · 2 a usage error, an unknown revision, no
-merge base, a diff that fails, a tree it cannot list, a missing input, or
-jq is missing
+merge base, a diff that fails, a tree it cannot list, a temp file it
+cannot make, a missing input, or jq is missing
 EOF
 }
 
@@ -116,7 +116,8 @@ has_skill() { git cat-file -e "$1:$2/SKILL.md" 2>/dev/null; }
 # in a name would otherwise split it into lines no pattern matches.
 list="" tree=""
 trap 'rm -f ${list:+"$list"} ${tree:+"$tree"}' EXIT
-list="$(mktemp)" && tree="$(mktemp)" || exit 2
+list="$(mktemp)" && tree="$(mktemp)" \
+  || { echo "cannot make a temp file" >&2; exit 2; }
 git -c core.quotePath=false diff --no-renames --name-only -z "$mb" "$head" -- skills/ > "$list" \
   || { echo "cannot diff $mb $head" >&2; exit 2; }
 changed=() unmet=()
