@@ -21,7 +21,11 @@
 #   - a removed skill: no record can measure it, so it passes only with
 #     --exempt;
 #   - a skill the base changed after the merge base: the merge would hold
-#     text no record measured, so the branch is rebased and measured again.
+#     text no record measured, so the branch is rebased and measured again;
+#   - a symbolic link in a skill's SKILL.md, assets/ or references/ at the
+#     head, a changed SKILL.md anywhere but skills/<phase>/<name>/, or a
+#     changed path whose name has a newline: text no record can name, so it
+#     passes only with --exempt.
 #
 # It checks that a record declares exactly that text and was fully scored,
 # not that the numbers are good: it prints them for a reviewer. No model
@@ -102,20 +106,45 @@ rest_of() {  # <rev> <skill dir>
 has_skill() { git cat-file -e "$1:$2/SKILL.md" 2>/dev/null; }
 
 # --no-renames lists both ends of a move; quotePath=false keeps a non-ASCII
-# path matchable instead of quoted.
-changed="$(git -c core.quotePath=false diff --no-renames --name-only -z "$mb" "$head" -- skills/ \
-  | tr '\0' '\n')" || { echo "cannot diff $mb $head" >&2; exit 2; }
-skills="$(printf '%s\n' "$changed" \
+# path matchable instead of quoted. The list is read NUL-separated: a newline
+# in a name would otherwise split it into lines no pattern matches.
+list="$(mktemp)" || exit 2
+trap 'rm -f "$list"' EXIT
+git -c core.quotePath=false diff --no-renames --name-only -z "$mb" "$head" -- skills/ > "$list" \
+  || { echo "cannot diff $mb $head" >&2; exit 2; }
+changed=() unmet=()
+while IFS= read -r -d '' f; do
+  case "$f" in *$'\n'*)
+    unmet+=("a changed path under skills/ has a newline in its name: ${f//$'\n'/\\n}"); continue;;
+  esac
+  # A SKILL.md anywhere else is text an agent may read that no record names.
+  if [[ "$f" =~ (^|/)SKILL\.md$ ]] && ! [[ "$f" =~ ^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/|scripts/) ]]; then
+    unmet+=("$f is not at skills/<phase>/<name>/SKILL.md: move it there, or a maintainer applies no-eval")
+  fi
+  changed+=("$f")
+done < "$list"
+skills="$(printf '%s\n' "${changed[@]+"${changed[@]}"}" \
   | LC_ALL=C grep -E '^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/)' \
   | cut -d/ -f1-3 | LC_ALL=C sort -u)"
+# A symbolic link lets text outside the skill change under it unseen, so any
+# link in a skill's SKILL.md, assets/ or references/ fails, changed or not.
+while IFS= read -r -d '' e; do
+  [ "${e%% *}" = 120000 ] || continue
+  p="${e#*$'\t'}"
+  [[ "$p" =~ ^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/) ]] \
+    && unmet+=("${p//$'\n'/\\n} is a symbolic link: a record measures a skill's own files, so replace it with the file it points to")
+done < <(git ls-tree -r -z "$head" -- skills/)
 
 # The records the body names. A malformed line is reported, never guessed at.
-records=() problems=()
+records=() problems=() seen=" "
 while IFS= read -r line || [ -n "$line" ]; do
   line="${line%$'\r'}"
   case "$line" in "Eval record:"*) ;; *) continue;; esac
   path="${line#Eval record:}"
   path="$(printf '%s' "$path" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s#/$##')"
+  # A line named twice is read once: the body is untrusted and its size is the cost.
+  case "$seen" in *" $path "*) continue;; esac
+  seen="$seen$path "
   if ! printf '%s' "$path" | LC_ALL=C grep -Eq '^results/[A-Za-z0-9][A-Za-z0-9._-]*$' \
      || [ "${path#*..}" != "$path" ]; then
     problems+=("a record line names no results/<dir>: $(printf '%s' "$path" | LC_ALL=C tr -cd 'A-Za-z0-9._/ -' | cut -c1-80)")
@@ -128,7 +157,7 @@ while IFS= read -r line || [ -n "$line" ]; do
   fi
 done < "$body"
 
-if [ -z "$skills" ]; then
+if [ -z "$skills" ] && [ ${#unmet[@]} -eq 0 ]; then
   echo "eval-record: this pull request changes no skill's SKILL.md, assets/ or references/; no record is needed."
   [ ${#problems[@]} -eq 0 ] || printf 'note: %s\n' "${problems[@]}"
   exit 0
@@ -192,7 +221,6 @@ trig_numbers() {  # <file>
   jq -r '[.splits | to_entries[] | "\(.key) \(.value.pass_rate) (\(.value.passed)/\(.value.queries))"] | join(", ")' "$1"
 }
 
-unmet=()
 need() {  # <kind> <skill dir> <skill> <head tree> <arm> <base tree> <description sha>
   local kind="$1" dir="$2" name="$3" why found="" reasons=() rec file
   for rec in "${records[@]+"${records[@]}"}"; do

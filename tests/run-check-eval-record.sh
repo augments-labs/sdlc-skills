@@ -425,6 +425,41 @@ printf -- '---\nname: foo\n%s\n--- \n\n# Foo\n\nStep one.\n' 'description: "Does
 : > "$body"
 BASE=dev-fence run 1 "a description change under a closer with a trailing space still needs a record"
 
+echo "--- a skill's text cannot hide from the checker"
+start newline; write_skill "skills/common/ev"$'\n'"il" 'description: "Evil."' "Body."; commit newline
+: > "$body"
+run 1 "a changed path under skills/ with a newline in its name fails"
+has "it says why" "has a newline in its name"
+start spaced; write_skill "skills/common/sp aced" 'description: "Spaced."' "Body."; commit spaced
+run 1 "a skill whose name has a space is checked like any other"
+has "it names that skill" "sp aced (skills/common/sp aced) needs an evaluation record"
+
+git -C "$repo" checkout -q -B link-base base
+mkdir -p "$repo/outside" "$repo/$skill/references"; printf 'shared\n' > "$repo/outside/shared.md"
+ln -s ../../../../outside/shared.md "$repo/$skill/references/link.md"; commit link-base
+git -C "$repo" checkout -q -B case-link link-base
+printf 'changed\n' >> "$repo/outside/shared.md"; commit case-link
+BASE=link-base run 1 "a symbolic link in a skill's references/ fails even when only its target changed"
+has "it names the link" "skills/common/foo/references/link.md is a symbolic link"
+BASE=link-base run 0 "--exempt passes a symbolic link" --exempt
+
+start flat; mkdir -p "$repo/skills/flat"; printf -- '---\nname: flat\ndescription: "Flat."\n---\n' > "$repo/skills/flat/SKILL.md"; commit flat
+run 1 "a SKILL.md outside skills/<phase>/<name>/ fails"
+has "it names the stray file" "skills/flat/SKILL.md is not at skills/<phase>/<name>/SKILL.md"
+start nested; mkdir -p "$repo/$skill/references/example"; printf 'x\n' > "$repo/$skill/references/example/SKILL.md"; commit nested
+run 1 "a SKILL.md inside a skill's references/ is that skill's change"
+has "it needs the skill's record" "foo (skills/common/foo) needs an evaluation record"
+if printf '%s\n' "$last_out" | grep -qF "is not at skills/<phase>/<name>/SKILL.md"; then
+  bad "a SKILL.md inside references/ is not called stray"; else ok "a SKILL.md inside references/ is not called stray"; fi
+
+start dup; printf 'x\n' >> "$repo/$skill/assets/t.md"; commit dup
+bench dup-bad foo "$(tree_at base "$skill")" old_skill "$(tree_at base "$skill")"
+printf 'Eval record: results/dup-bad\nEval record: results/dup-bad\n' > "$body"
+run 1 "a record named twice still fails when it does not match"
+n="$(printf '%s\n' "$last_out" | grep -cF 'not results/dup-bad:')"
+if [ "$n" = 1 ]; then ok "a record named twice is checked once"; else bad "a record named twice is checked once (reported $n times)"; fi
+: > "$body"
+
 git -C "$repo" checkout -q --orphan unrelated; git -C "$repo" rm -rqf . >/dev/null
 printf 'x\n' > "$repo/x.md"; commit unrelated
 run 2 "a head with no merge base with the base exits 2"

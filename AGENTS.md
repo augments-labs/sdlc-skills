@@ -50,7 +50,9 @@ all of these hold on the PR's current head commit, whoever merges:
 3. Anyone who asked to see the diff before merge has approved it.
 4. For a PR that changes a skill, the `eval-record` check ran on the current
    `dev`: if `dev` has moved since, bring the branch up to date so the check
-   runs again (see *Evals*).
+   runs again (see *Evals*). If the PR also changes
+   `.github/workflows/eval-record.yml` or `scripts/sh/check-eval-record.sh`,
+   its own check is not evidence: run `dev`'s copy of the script on it.
 
 A review covers only the commit it names: after a push, review the new diff
 and update the section before merging. Merge into `main` only as

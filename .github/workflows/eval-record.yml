@@ -20,6 +20,8 @@ permissions:
 jobs:
   eval-record:
     runs-on: ubuntu-latest
+    # The body is untrusted and the work grows with it; a normal run takes seconds.
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
