@@ -92,7 +92,8 @@ proves and which test to run for which change.
    answers.
 3. If the change alters what a skill makes an agent do, name the failure or
    the gap it answers, and name the eval records that measured the new text.
-   A pull request that argues from the skill text alone fails CI. See
+   A pull request that names no record fails the `eval-record` check; an
+   argument from the skill text does not replace one. See
    [Eval records](#eval-records).
 4. Say who orchestrated the change (a human, an agent, or both), every model
    that wrote any of it and the part it wrote, and the harness and its
@@ -183,8 +184,9 @@ asset that moves a number is followed by pasting the table again.
 A budget is a fixed ceiling. When an edit takes a chain over it, cut as many
 words elsewhere in that chain in the same change, so the chain's total does
 not grow. `budget_words` rises only with an eval record, named by its
-`results/` path, showing that the added words change what an agent does. A line in the pull request arguing for the words is not enough, since
-one can be written for any addition. The one other move is a change of
+`results/` path, showing that the added words change what an agent does. A
+line in the pull request arguing for the words is not enough, since one can
+be written for any addition. The one other move is a change of
 membership: a chain that gains or loses a skill moves its ceiling by that
 body's words and no more.
 
@@ -213,6 +215,12 @@ A pull request into `dev` that changes a skill's `SKILL.md`, `assets/`, or
 Eval record: results/2026-11-12-handoff-claude-code
 ```
 
+A record line starts at the beginning of its line and is case-sensitive; an
+indented example is not read. When a skill changed, a line that starts
+`Eval record:` but names no readable record fails the check, even beside a
+record that matches. `none: <reason>` is for the human reader; the check
+ignores it.
+
 The `eval-record` workflow runs `scripts/sh/check-eval-record.sh` against a
 fresh clone of the public evals repository, so each record must be merged
 there first. For each changed skill, the script works out from the git
@@ -220,11 +228,16 @@ trees which records the change needs:
 
 | The pull request changes | It needs |
 | --- | --- |
-| The skill's `description:` line | A triggering record (`triggering.json`) whose `description_sha256` is the SHA-256 of that line at the head, with 3 or more runs and a scored validation split |
-| Anything else in `SKILL.md`, `assets/`, or `references/` | An evaluation record (`benchmark.json`) whose `plugin.skill_tree` is the skill's tree at the head, and whose second arm is `old_skill` with `baseline.skill_tree` the skill's tree at the base. Every run is scored: 3 or more per eval, no null pass rate, no indeterminate run, no assertion awaiting review |
-| A new skill | Both, with `without_skill` as the second arm |
-| A removed skill | The `no-eval` label: no record can measure a skill that is gone |
-| `scripts/` only | Nothing; the script's offline test is the proof |
+| The skill's `description:` line | A triggering record (`triggering.json`) whose `description_sha256` is the SHA-256 of that line at the head, with 3 or more runs, a validation split with a pass rate, and no inconclusive query in any split |
+| Anything else in `SKILL.md`, `assets/`, or `references/` | An evaluation record (`benchmark.json`) whose `plugin.skill_tree` is the skill's tree at the head, and whose second arm is `old_skill` with `baseline.skill_tree` the skill's tree at the merge base. 3 or more runs of every eval in each arm, each scored: a numeric pass rate, not indeterminate, no assertion awaiting review |
+| A new skill | Both records, the evaluation one with `without_skill` as the second arm |
+| A removed skill, or one moved to another phase folder | The `no-eval` label: no record can measure a skill that is gone, and a move changes no text |
+| A skill's `scripts/` directory, or files outside `skills/` | Nothing; the script's offline test is the proof |
+
+The check measures from the merge base, the commit the branch left `dev`
+at. If `dev` has changed the skill since, the merge would hold text no
+record measured, so the check fails until the branch is rebased and the
+rebased text is measured.
 
 The records are matched by content, not by commit. `skill_tree` is
 `git rev-parse <commit>:skills/<phase>/<name>`, which a squash merge leaves
@@ -232,13 +245,15 @@ unchanged, so a record made from the task branch still matches on `dev`. An
 edit to the skill after the eval changes the tree and turns the check red.
 
 The job prints each record's pass rates for the reviewer and stops there: it
-proves a scored run exists on exactly this text, not that the numbers are
-good. Reading the delta is review's job.
+checks that a record declares exactly this text and was fully scored, not
+that the numbers are good. Reading the delta is review's job.
 
 It re-runs when the body or the labels change, so adding a record line, or
-the label, needs no new commit. Only a maintainer applies `no-eval`, for a
-typo fix or a removed skill, and says why in the pull request. To check a
-branch before pushing, clone the evals repository and run:
+the label, needs no new commit. Only a maintainer applies `no-eval`, which
+repository permissions enforce, for a typo fix, a removed skill, or a move
+between phase folders, and says why in the pull request. To check a branch
+before pushing, clone the evals repository, save the pull request body you
+will submit as `pr-body.md`, and run:
 
 ```bash
 bash scripts/sh/check-eval-record.sh --base origin/dev --head HEAD \

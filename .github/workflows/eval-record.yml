@@ -1,8 +1,8 @@
 name: eval-record
 
 # A pull request into dev that changes a skill's SKILL.md, assets/ or
-# references/ must name an eval record of exactly that skill text (AGENTS.md,
-# "Evals"). The rules live in scripts/sh/check-eval-record.sh. This job runs
+# references/ must name the eval records of exactly that skill text: a new
+# skill needs both a triggering and an evaluation record (AGENTS.md, "Evals"). The rules live in scripts/sh/check-eval-record.sh. This job runs
 # no agent and holds no secret: it reads the public evals repository's
 # committed records. It re-runs when the body or the labels change, so a
 # record added after the push, or the maintainer's no-eval label, takes
@@ -39,6 +39,7 @@ jobs:
           printf '%s\n' "$PR_BODY" > "$RUNNER_TEMP/body.txt"
           args=()
           [ "$EXEMPT" = true ] && args+=(--exempt)
+          # Record and body text reach the log; the runner must not read it as workflow commands.
           token=$(cat /proc/sys/kernel/random/uuid)
           echo "::stop-commands::$token"
           trap 'echo "::$token::"' EXIT

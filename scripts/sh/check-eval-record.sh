@@ -3,25 +3,29 @@
 # the skill text it changes?
 #
 # For each skill whose SKILL.md, assets/ or references/ the pull request
-# changes, it works out which records the change needs from the git trees
-# alone, then reads the records the pull request body names, one
-# `Eval record: results/<dir>` line each, from a checkout of the evals
-# repository:
+# changes since its merge base, it works out which records the change needs
+# from the git trees alone, then reads the records the pull request body
+# names, one `Eval record: results/<dir>` line each, from a checkout of the
+# evals repository:
 #
 #   - a description line that changed, or a new skill: a triggering record
 #     (triggering.json) whose description_sha256 is the SHA-256 of the head's
-#     description line, with 3 or more runs and a scored validation split;
-#   - any other change to those files: an evaluation record (benchmark.json)
-#     whose plugin.skill_tree is the skill's tree at the head, measured
-#     against the base's tree (old_skill) or, for a new skill, against no
-#     skill (without_skill), with 3 or more runs per eval and every run
-#     scored: no null pass rate, no indeterminate run, no assertion awaiting
-#     review;
+#     description line, with 3 or more runs, a validation split, and no
+#     inconclusive query in any split;
+#   - any other change to those files, or a new skill: an evaluation record
+#     (benchmark.json) whose plugin.skill_tree is the skill's whole directory
+#     tree at the head, measured against the merge base's tree (old_skill)
+#     or, for a new skill, against no skill (without_skill), with 3 or more
+#     runs of every eval in each arm, each run scored: a numeric pass rate,
+#     not indeterminate, no assertion awaiting review;
 #   - a removed skill: no record can measure it, so it passes only with
-#     --exempt.
+#     --exempt;
+#   - a skill the base changed after the merge base: the merge would hold
+#     text no record measured, so the branch is rebased and measured again.
 #
-# It proves a scored run exists on that exact text, not that the numbers are
-# good: it prints them for a reviewer. No model runs and no network is read.
+# It checks that a record declares exactly that text and was fully scored,
+# not that the numbers are good: it prints them for a reviewer. No model
+# runs and no network is read.
 set -uo pipefail
 
 usage() {
@@ -29,7 +33,8 @@ usage() {
 check-eval-record.sh — check that a pull request names an eval record of
 exactly the skill text it changes.
 
-  --base REV    the commit the pull request merges into
+  --base REV    the commit the pull request merges into; records are measured
+                against its merge base with --head
   --head REV    the pull request's head commit
   --evals DIR   a checkout of the evals repository (reads DIR/results/)
   --body FILE   the pull request body, read for `Eval record: results/<dir>`
@@ -66,19 +71,25 @@ for rev in "$base" "$head"; do
 done
 [ -d "$evals/results" ] || { echo "no results/ under $evals" >&2; exit 2; }
 [ -f "$body" ] || { echo "no pull request body at $body" >&2; exit 2; }
+# Records are measured against the text the branch started from.
+mb="$(git merge-base "$base" "$head" 2>/dev/null)" \
+  || { echo "no merge base between $base and $head" >&2; exit 2; }
 
 sha256() {
   if command -v sha256sum >/dev/null 2>&1; then sha256sum; else shasum -a 256; fi | cut -d' ' -f1
 }
 # The first frontmatter line that begins `description:`, without its newline:
-# the definition the evals repository hashes into description_sha256.
+# the definition the evals repository hashes into description_sha256
+# (lab_description_sha256 in its lib/pin.sh); the two must stay identical.
 desc_line() {  # <rev> <skill dir>
   git show "$1:$2/SKILL.md" 2>/dev/null | LC_ALL=C awk '
     NR == 1 { if ($0 != "---") exit; next }
     $0 == "---" { printf "%s", d; exit }
     d == "" && /^description:/ { d = $0 }'
 }
-# Everything else the agent reads: SKILL.md without that line, assets/, references/.
+# The rest of what the agent reads as text: SKILL.md without that line, and
+# the assets/ and references/ trees. scripts/ is left out: a script's own
+# offline test covers it.
 rest_of() {  # <rev> <skill dir>
   git show "$1:$2/SKILL.md" 2>/dev/null | LC_ALL=C awk '
     NR == 1 { fm = ($0 == "---"); print; next }
@@ -90,11 +101,13 @@ rest_of() {  # <rev> <skill dir>
 }
 has_skill() { git cat-file -e "$1:$2/SKILL.md" 2>/dev/null; }
 
-skills="$(git diff --name-only "$base...$head" -- skills/ \
+# --no-renames lists both ends of a move; quotePath=false keeps a non-ASCII
+# path matchable instead of quoted.
+changed="$(git -c core.quotePath=false diff --no-renames --name-only -z "$mb" "$head" -- skills/ \
+  | tr '\0' '\n')" || { echo "cannot diff $mb $head" >&2; exit 2; }
+skills="$(printf '%s\n' "$changed" \
   | LC_ALL=C grep -E '^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/)' \
   | cut -d/ -f1-3 | LC_ALL=C sort -u)"
-git diff --quiet "$base...$head" -- skills/ 2>/dev/null
-[ $? -le 1 ] || { echo "cannot diff $base...$head" >&2; exit 2; }
 
 # The records the body names. A malformed line is reported, never guessed at.
 records=() problems=()
@@ -121,37 +134,59 @@ if [ -z "$skills" ]; then
   exit 0
 fi
 
-# Why an evaluation record does not measure this change; empty when it does.
+# Why a record does not measure this change, or "ok" when it does. Anything
+# else, an empty or unparsable file included, is a reason it does not.
+record_why() {  # <file> <kind> <jq program> [jq args...]
+  local file="$1" kind="$2" prog="$3" out; shift 3
+  # Exactly one JSON document: an empty file or a second document is not a record.
+  if [ "$(jq -n '[inputs] | length' "$file" 2>/dev/null)" != 1 ] \
+    || ! out="$(jq -n -r "$@" 'input | '"$prog" "$file" 2>/dev/null)" || [ -z "$out" ]; then
+    out="its $kind is not a readable record"
+  fi
+  printf '%s\n' "$out"
+}
 eval_why() {  # <file> <skill> <head tree> <arm> <base tree>
-  jq -r --arg skill "$2" --arg head "$3" --arg arm "$4" --arg base "$5" '
-    if .metadata.skill != $skill then "it measures \(.metadata.skill), not \($skill)"
+  record_why "$1" benchmark.json '
+    ([.runs[]? | select(.configuration == "with_skill" or .configuration == $arm)]) as $r
+    | if (.metadata.skill | type) != "string" then "it names no skill (metadata.skill)"
+    elif .metadata.skill != $skill then "it measures \(.metadata.skill), not \($skill)"
     elif .metadata.plugin.skill_tree != $head then
       "its plugin.skill_tree \(.metadata.plugin.skill_tree) is not \($skill) at the head (\($head))"
     elif .metadata.configurations[1] != $arm then
       "its second arm is \(.metadata.configurations[1]), and this change needs \($arm)"
     elif $arm == "old_skill" and .metadata.baseline.skill_tree != $base then
-      "its baseline.skill_tree \(.metadata.baseline.skill_tree) is not \($skill) at the base (\($base))"
+      "its baseline.skill_tree \(.metadata.baseline.skill_tree) is not \($skill) at the merge base (\($base))"
     elif ((.metadata.runs_per_eval | numbers) // 0) < 3 then
       "runs_per_eval is \(.metadata.runs_per_eval); a record uses 3 or more"
+    elif ($r | length) == 0 then "it holds no run of with_skill or \($arm)"
+    elif any($r[]; .outcome != "ok") then
+      "\([$r[] | select(.outcome != "ok")] | length) run(s) are indeterminate"
+    elif any($r[]; (.pass_rate | type) != "number") then
+      "\([$r[] | select((.pass_rate | type) != "number")] | length) run(s) have no score (a null pass rate: an eval with no assertions, or one not graded)"
+    elif any($r[]; (.needs_review // 0) != 0) then
+      "\([$r[] | .needs_review // 0] | add) assertion result(s) await review"
+    elif [(.metadata.eval_ids // [])[] as $e | ("with_skill", $arm) as $c
+          | [$r[] | select(.eval_id == $e and .configuration == $c)] | length] | (length == 0 or any(. < 3)) then
+      "an eval has fewer than 3 runs in an arm"
     elif [.run_summary.with_skill, .run_summary[$arm]] | any(.pass_rate == null) then
       "an arm has no scored run (a null pass rate)"
-    elif [.run_summary.with_skill, .run_summary[$arm]] | any((.indeterminate_count // 0) > 0) then
-      "a run is indeterminate"
-    elif ([.runs[]? | .needs_review // 0] | add // 0) > 0 then
-      "\([.runs[] | .needs_review // 0] | add) assertion result(s) await review"
-    else "" end' "$1" 2>/dev/null || echo "its benchmark.json is not a readable record"
+    else "ok" end' --arg skill "$2" --arg head "$3" --arg arm "$4" --arg base "$5"
 }
 eval_numbers() {  # <file> <arm>
   jq -r --arg arm "$2" '"with_skill \(.run_summary.with_skill.pass_rate.mean), \($arm) \(.run_summary[$arm].pass_rate.mean), delta \(.run_summary.delta.pass_rate), runs_per_eval \(.metadata.runs_per_eval)"' "$1"
 }
 trig_why() {  # <file> <skill> <description sha256>
-  jq -r --arg skill "$2" --arg sha "$3" '
-    if .metadata.skill != $skill then "it measures \(.metadata.skill), not \($skill)"
+  record_why "$1" triggering.json '
+    if (.metadata.skill | type) != "string" then "it names no skill (metadata.skill)"
+    elif .metadata.skill != $skill then "it measures \(.metadata.skill), not \($skill)"
     elif .metadata.description_sha256 != $sha then
       "its description_sha256 is not the SHA-256 of \($skill)'"'"'s description line at the head (\($sha))"
     elif ((.metadata.runs | numbers) // 0) < 3 then "runs is \(.metadata.runs); a record uses 3 or more"
+    elif (.splits.validation | type) != "object" then "it has no validation split"
+    elif any(.splits[]; (.inconclusive | numbers) != 0) then
+      "\([.splits[] | .inconclusive // 0] | add) quer(ies) are inconclusive"
     elif .splits.validation.pass_rate == null then "its validation split scored no query"
-    else "" end' "$1" 2>/dev/null || echo "its triggering.json is not a readable record"
+    else "ok" end' --arg skill "$2" --arg sha "$3"
 }
 trig_numbers() {  # <file>
   jq -r '[.splits | to_entries[] | "\(.key) \(.value.pass_rate) (\(.value.passed)/\(.value.queries))"] | join(", ")' "$1"
@@ -165,7 +200,7 @@ need() {  # <kind> <skill dir> <skill> <head tree> <arm> <base tree> <descriptio
     [ -f "$file" ] || continue
     if [ "$kind" = evaluation ]; then why="$(eval_why "$file" "$name" "$4" "$5" "$6")"
     else why="$(trig_why "$file" "$name" "$7")"; fi
-    if [ -z "$why" ]; then found="$rec"; break; fi
+    if [ "$why" = ok ]; then found="$rec"; break; fi
     # A record of another skill is not a near miss for this one.
     case "$why" in "it measures "*) ;; *) reasons+=("$rec: $why");; esac
   done
@@ -179,7 +214,7 @@ need() {  # <kind> <skill dir> <skill> <head tree> <arm> <base tree> <descriptio
   fi
   if [ "$kind" = evaluation ]; then
     if [ "$5" = old_skill ]; then
-      unmet+=("$name ($dir) needs an evaluation record of its head tree $4 against its base tree $6 (old_skill)")
+      unmet+=("$name ($dir) needs an evaluation record of its head tree $4 against its merge-base tree $6 (old_skill)")
     else
       unmet+=("$name ($dir) needs an evaluation record of its head tree $4 against no skill (without_skill)")
     fi
@@ -194,18 +229,22 @@ while IFS= read -r dir; do
   [ -n "$dir" ] || continue
   name="${dir##*/}"
   if ! has_skill "$head" "$dir"; then
-    if has_skill "$base" "$dir"; then
+    if has_skill "$mb" "$dir"; then
       unmet+=("$name ($dir) is removed: no record can measure that, so it passes only with the maintainer's no-eval label")
     fi
+    continue
+  fi
+  if [ "$(git rev-parse -q --verify "$base:$dir" 2>/dev/null)" != "$(git rev-parse -q --verify "$mb:$dir" 2>/dev/null)" ]; then
+    unmet+=("$name ($dir) changed on the base after this branch left it: rebase onto the base and measure the rebased text")
     continue
   fi
   head_tree="$(git rev-parse "$head:$dir")"
   head_desc="$(desc_line "$head" "$dir")"
   if [ -n "$head_desc" ]; then sha="$(printf '%s' "$head_desc" | sha256)"; else sha="none (no description line)"; fi
-  if has_skill "$base" "$dir"; then
-    arm=old_skill; base_tree="$(git rev-parse "$base:$dir")"
-    [ "$(desc_line "$base" "$dir")" = "$head_desc" ]; desc_changed=$?
-    [ "$(rest_of "$base" "$dir")" = "$(rest_of "$head" "$dir")" ]; rest_changed=$?
+  if has_skill "$mb" "$dir"; then
+    arm=old_skill; base_tree="$(git rev-parse "$mb:$dir")"
+    [ "$(desc_line "$mb" "$dir")" = "$head_desc" ]; desc_changed=$?
+    [ "$(rest_of "$mb" "$dir")" = "$(rest_of "$head" "$dir")" ]; rest_changed=$?
   else
     arm=without_skill; base_tree="no skill"; desc_changed=1; rest_changed=1
   fi

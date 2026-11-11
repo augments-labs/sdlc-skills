@@ -107,11 +107,13 @@ line, after the record is on the evals repository's main:
     Eval record: results/<date>-<skill>-<harness>-triggering
 
 A description change needs a triggering record; any other change needs an
-evaluation record against the base's skill text, or against no skill for a
-new skill. The eval-record check fails the pull request until every changed
-skill has its records (CONTRIBUTING.md, "Eval records"). A change to
-scripts/ alone needs none; otherwise write `none: <reason>` and expect the
-check to stay red unless a maintainer applies the no-eval label. -->
+evaluation record against the skill text the branch started from. A new
+skill needs both, the evaluation record against no skill. The eval-record
+check fails the pull request until every changed skill has its records
+(CONTRIBUTING.md, "Eval records"). A change to a skill's scripts/ directory,
+or to files outside skills/, needs none; otherwise write `none: <reason>`
+and expect the check to stay red unless a maintainer applies the no-eval
+label. -->
 
 ## Environments tested
 
