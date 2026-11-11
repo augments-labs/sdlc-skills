@@ -22,9 +22,9 @@
 #     --exempt;
 #   - a skill the base changed after the merge base: the merge would hold
 #     text no record measured, so the branch is rebased and measured again;
-#   - a symbolic link anywhere under skills/ at the head but inside a
-#     skill's scripts/ (a link file, or a link that is itself assets/,
-#     references/, a skill, or a phase), a SKILL.md added or changed under
+#   - a symbolic link or a submodule anywhere under skills/ at the head but
+#     inside a skill's scripts/ (a link file, or a link that is itself
+#     assets/, references/, a skill, or a phase), a SKILL.md added or changed under
 #     skills/ anywhere but skills/<phase>/<name>/, or a changed path whose
 #     name has a newline: text no record can name, so it passes only with
 #     --exempt.
@@ -55,7 +55,8 @@ Run from the root of this repository's checkout, with both commits present.
 
 Exit codes: 0 every changed skill has its records, or --exempt · 1 a record
 is missing or does not match · 2 a usage error, an unknown revision, no
-merge base, a diff that fails, a missing input, or jq is missing
+merge base, a diff that fails, a tree it cannot list, a missing input, or
+jq is missing
 EOF
 }
 
@@ -113,8 +114,9 @@ has_skill() { git cat-file -e "$1:$2/SKILL.md" 2>/dev/null; }
 # --no-renames lists both ends of a move; quotePath=false keeps a non-ASCII
 # path matchable instead of quoted. The list is read NUL-separated: a newline
 # in a name would otherwise split it into lines no pattern matches.
+list="" tree=""
+trap 'rm -f ${list:+"$list"} ${tree:+"$tree"}' EXIT
 list="$(mktemp)" && tree="$(mktemp)" || exit 2
-trap 'rm -f "$list" "$tree"' EXIT
 git -c core.quotePath=false diff --no-renames --name-only -z "$mb" "$head" -- skills/ > "$list" \
   || { echo "cannot diff $mb $head" >&2; exit 2; }
 changed=() unmet=()
@@ -133,17 +135,21 @@ done < "$list"
 skills="$(printf '%s\n' "${changed[@]+"${changed[@]}"}" \
   | grep -E '^skills/[^/]+/[^/]+/(SKILL\.md$|assets(/|$)|references(/|$))' \
   | cut -d/ -f1-3 | LC_ALL=C sort -u)"
-# A symbolic link lets text outside the skill change under it unseen, so any
-# link under skills/ fails, changed or not: a link file, or a link that is
-# itself assets/, references/, a skill or a phase. Only a skill's scripts/,
-# which no record measures, may hold one.
+# A symbolic link or a submodule lets text outside the skill change under it
+# unseen, so any under skills/ fails, changed or not: a link file, or a link
+# or submodule that is itself assets/, references/, a skill or a phase. Only
+# a skill's scripts/, which no record measures, may hold one.
 git ls-tree -r -z "$head" -- skills/ > "$tree" \
   || { echo "cannot list $head" >&2; exit 2; }
 while IFS= read -r -d '' e; do
-  [ "${e%% *}" = 120000 ] || continue
+  case "${e%% *}" in
+    120000) kind="a symbolic link" fix="replace it with what it points to" ;;
+    160000) kind="a submodule" fix="replace it with the files it holds" ;;
+    *) continue ;;
+  esac
   p="${e#*$'\t'}"
   [[ "$p" =~ ^skills/[^/]+/[^/]+/scripts/ ]] \
-    || unmet+=("${p//$'\n'/\\n} is a symbolic link: a record measures a skill's own files, so replace it with what it points to")
+    || unmet+=("${p//$'\n'/\\n} is $kind: a record measures a skill's own files, so $fix")
 done < "$tree"
 
 # The records the body names. A malformed line is reported, never guessed at.

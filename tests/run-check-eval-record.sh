@@ -519,11 +519,50 @@ else
   echo "  skip  no UTF-8 locale, or the filesystem refuses a non-UTF-8 name"
 fi
 
-# CONTRIBUTING runs dev's copy as `bash <(git show ...)`: the script must not
-# depend on its own path.
-start docs2; printf 'more\n' >> "$repo/notes/a.md"; commit docs2
-out="$(cd "$repo" && bash <(cat "$S") --base base --head HEAD --evals "$evals" --body "$body" 2>&1)"; code=$?
-if [ "$code" = 0 ]; then ok "the script runs from a process substitution"; else bad "the script runs from a process substitution (got $code: $out)"; fi
+# A submodule under skills/ is text from another repository that no record
+# names, as a link is; only a skill's scripts/ may hold one.
+start gitlink
+git -C "$repo" update-index --add --cacheinfo "160000,$(git -C "$repo" rev-parse base),skills/common/sub"
+git -C "$repo" commit -qm gitlink
+run 1 "a skill directory that is a submodule fails"
+has "it names the submodule" "skills/common/sub is a submodule"
+start gitlink-scripts
+git -C "$repo" update-index --add --cacheinfo "160000,$(git -C "$repo" rev-parse base),$skill/scripts/vendored"
+git -C "$repo" commit -qm gitlink-scripts
+run 0 "a submodule inside a skill's scripts/ passes"
+git -C "$repo" checkout -q -f base
+
+# The command CONTRIBUTING gives for running dev's copy must fail when it
+# cannot get that copy, not run an empty script and exit 0.
+cmd="$(awk '/run `dev`.s copy/ { f = 1 } f && /^```bash$/ { b = 1; next } b && /^```$/ { exit } b { print }' "$ROOT/CONTRIBUTING.md")"
+if [ -z "$cmd" ]; then bad "CONTRIBUTING has a command for running dev's copy"; else
+  ln -s "$evals" "$tmp/sdlc-skills-evals"
+  git -C "$repo" checkout -q -B devcopy base; mkdir -p "$repo/scripts/sh"; cp "$S" "$repo/scripts/sh/"; commit devcopy
+  git -C "$repo" checkout -q -B case-devcopy devcopy; printf 'more\n' >> "$repo/notes/a.md"; commit case-devcopy
+  : > "$repo/pr-body.md"
+  git -C "$repo" update-ref refs/remotes/origin/dev devcopy
+  out="$(cd "$repo" && bash -c "$cmd" 2>&1)"; code=$?
+  if [ "$code" = 0 ] && printf '%s' "$out" | grep -q '^eval-record:'; then ok "the dev's-copy command runs dev's copy"
+  else bad "the dev's-copy command runs dev's copy (got $code: $out)"; fi
+  git -C "$repo" update-ref refs/remotes/origin/dev base
+  out="$(cd "$repo" && bash -c "$cmd" 2>&1)"; code=$?
+  if [ "$code" != 0 ]; then ok "the dev's-copy command fails when dev has no copy"
+  else bad "the dev's-copy command fails when dev has no copy (got 0: $out)"; fi
+  git -C "$repo" update-ref -d refs/remotes/origin/dev; rm -f "$repo/pr-body.md" "$tmp/sdlc-skills-evals"
+fi
+
+# Each temp file is removed even when a later one cannot be made.
+mt="$tmp/mt"; mkdir -p "$mt/bin" "$mt/tmp"
+printf '#!/bin/sh
+if [ -e "%s/made" ]; then exit 1; fi
+: > "%s/made"
+exec %s "$@"
+' "$mt" "$mt" "$(command -v mktemp)" > "$mt/bin/mktemp"
+chmod +x "$mt/bin/mktemp"
+out="$(cd "$repo" && env PATH="$mt/bin:$PATH" TMPDIR="$mt/tmp" bash "$S" --base base --head HEAD --evals "$evals" --body "$body" 2>&1)"; code=$?
+left="$(ls -A "$mt/tmp")"
+if [ "$code" = 2 ] && [ -z "$left" ]; then ok "a failed second mktemp exits 2 and leaves no temp file"
+else bad "a failed second mktemp exits 2 and leaves no temp file (got $code, left: $left)"; fi
 
 git -C "$repo" checkout -q --orphan unrelated; git -C "$repo" rm -rqf . >/dev/null
 printf 'x\n' > "$repo/x.md"; commit unrelated
@@ -553,6 +592,7 @@ if [ "$code" = 2 ] && printf '%s' "$out" | grep -q 'jq is required'; then ok "a 
 else bad "a machine without jq exits 2 and says so (got $code: $out)"; fi
 out="$(bash "$S" --help 2>&1)"; code=$?
 if [ "$code" = 0 ]; then ok "--help exits 0"; else bad "--help exits 0 (got $code)"; fi
+if printf '%s' "$out" | grep -q 'cannot list'; then ok "--help lists every cause of exit 2"; else bad "--help lists every cause of exit 2 (no 'cannot list')"; fi
 
 echo
 if [ "$fails" = 0 ]; then echo "all check-eval-record checks passed"; else echo "check-eval-record checks FAILED"; fi
