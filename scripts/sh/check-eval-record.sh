@@ -22,15 +22,20 @@
 #     --exempt;
 #   - a skill the base changed after the merge base: the merge would hold
 #     text no record measured, so the branch is rebased and measured again;
-#   - a symbolic link in a skill's SKILL.md, assets/ or references/ at the
-#     head, a changed SKILL.md anywhere but skills/<phase>/<name>/, or a
-#     changed path whose name has a newline: text no record can name, so it
-#     passes only with --exempt.
+#   - a symbolic link anywhere under skills/ at the head but inside a
+#     skill's scripts/ (a link file, or a link that is itself assets/,
+#     references/, a skill, or a phase), a SKILL.md added or changed under
+#     skills/ anywhere but skills/<phase>/<name>/, or a changed path whose
+#     name has a newline: text no record can name, so it passes only with
+#     --exempt.
 #
 # It checks that a record declares exactly that text and was fully scored,
 # not that the numbers are good: it prints them for a reviewer. No model
 # runs and no network is read.
 set -uo pipefail
+# Paths are matched as bytes: under a UTF-8 locale a name that is not valid
+# UTF-8 would slip past every pattern below.
+export LC_ALL=C
 
 usage() {
   cat <<'EOF'
@@ -108,8 +113,8 @@ has_skill() { git cat-file -e "$1:$2/SKILL.md" 2>/dev/null; }
 # --no-renames lists both ends of a move; quotePath=false keeps a non-ASCII
 # path matchable instead of quoted. The list is read NUL-separated: a newline
 # in a name would otherwise split it into lines no pattern matches.
-list="$(mktemp)" || exit 2
-trap 'rm -f "$list"' EXIT
+list="$(mktemp)" && tree="$(mktemp)" || exit 2
+trap 'rm -f "$list" "$tree"' EXIT
 git -c core.quotePath=false diff --no-renames --name-only -z "$mb" "$head" -- skills/ > "$list" \
   || { echo "cannot diff $mb $head" >&2; exit 2; }
 changed=() unmet=()
@@ -117,39 +122,46 @@ while IFS= read -r -d '' f; do
   case "$f" in *$'\n'*)
     unmet+=("a changed path under skills/ has a newline in its name: ${f//$'\n'/\\n}"); continue;;
   esac
-  # A SKILL.md anywhere else is text an agent may read that no record names.
-  if [[ "$f" =~ (^|/)SKILL\.md$ ]] && ! [[ "$f" =~ ^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/|scripts/) ]]; then
+  # A SKILL.md anywhere else is text an agent may read that no record names;
+  # removing one is the remedy, so only one the head still holds fails.
+  if [[ "$f" =~ (^|/)SKILL\.md$ ]] && ! [[ "$f" =~ ^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/|scripts/) ]] \
+     && git cat-file -e "$head:$f" 2>/dev/null; then
     unmet+=("$f is not at skills/<phase>/<name>/SKILL.md: move it there, or a maintainer applies no-eval")
   fi
   changed+=("$f")
 done < "$list"
 skills="$(printf '%s\n' "${changed[@]+"${changed[@]}"}" \
-  | LC_ALL=C grep -E '^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/)' \
+  | grep -E '^skills/[^/]+/[^/]+/(SKILL\.md$|assets(/|$)|references(/|$))' \
   | cut -d/ -f1-3 | LC_ALL=C sort -u)"
 # A symbolic link lets text outside the skill change under it unseen, so any
-# link in a skill's SKILL.md, assets/ or references/ fails, changed or not.
+# link under skills/ fails, changed or not: a link file, or a link that is
+# itself assets/, references/, a skill or a phase. Only a skill's scripts/,
+# which no record measures, may hold one.
+git ls-tree -r -z "$head" -- skills/ > "$tree" \
+  || { echo "cannot list $head" >&2; exit 2; }
 while IFS= read -r -d '' e; do
   [ "${e%% *}" = 120000 ] || continue
   p="${e#*$'\t'}"
-  [[ "$p" =~ ^skills/[^/]+/[^/]+/(SKILL\.md$|assets/|references/) ]] \
-    && unmet+=("${p//$'\n'/\\n} is a symbolic link: a record measures a skill's own files, so replace it with the file it points to")
-done < <(git ls-tree -r -z "$head" -- skills/)
+  [[ "$p" =~ ^skills/[^/]+/[^/]+/scripts/ ]] \
+    || unmet+=("${p//$'\n'/\\n} is a symbolic link: a record measures a skill's own files, so replace it with what it points to")
+done < "$tree"
 
 # The records the body names. A malformed line is reported, never guessed at.
-records=() problems=() seen=" "
+records=() problems=() seen=" " asked=0
 while IFS= read -r line || [ -n "$line" ]; do
   line="${line%$'\r'}"
   case "$line" in "Eval record:"*) ;; *) continue;; esac
   path="${line#Eval record:}"
   path="$(printf '%s' "$path" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s#/$##')"
-  # A line named twice is read once: the body is untrusted and its size is the cost.
-  case "$seen" in *" $path "*) continue;; esac
-  seen="$seen$path "
-  if ! printf '%s' "$path" | LC_ALL=C grep -Eq '^results/[A-Za-z0-9][A-Za-z0-9._-]*$' \
+  if ! printf '%s' "$path" | grep -Eq '^results/[A-Za-z0-9][A-Za-z0-9._-]*$' \
      || [ "${path#*..}" != "$path" ]; then
-    problems+=("a record line names no results/<dir>: $(printf '%s' "$path" | LC_ALL=C tr -cd 'A-Za-z0-9._/ -' | cut -c1-80)")
+    problems+=("a record line names no results/<dir>: $(printf '%s' "$path" | tr -cd 'A-Za-z0-9._/ -' | cut -c1-80)")
     continue
   fi
+  # A record named twice is read once: the body is untrusted and its size is
+  # the cost. Only a valid path is remembered, so it holds no space.
+  case "$seen" in *" $path "*) continue;; esac
+  seen="$seen$path "
   if [ -f "$evals/$path/benchmark.json" ] || [ -f "$evals/$path/triggering.json" ]; then
     records+=("$path")
   else
@@ -240,6 +252,7 @@ need() {  # <kind> <skill dir> <skill> <head tree> <arm> <base tree> <descriptio
     fi
     return
   fi
+  asked=1
   if [ "$kind" = evaluation ]; then
     if [ "$5" = old_skill ]; then
       unmet+=("$name ($dir) needs an evaluation record of its head tree $4 against its merge-base tree $6 (old_skill)")
@@ -299,5 +312,9 @@ if [ "$exempt" = 1 ]; then
   echo "exempt: the no-eval label is on this pull request, so the records above are not required."
   exit 0
 fi
-echo "eval-record: name each record in the pull request body as 'Eval record: results/<dir>', after it is on the evals repository's main."
+if [ "$asked" = 1 ]; then
+  echo "eval-record: name each record in the pull request body as 'Eval record: results/<dir>', after it is on the evals repository's main."
+else
+  echo "eval-record: fix what is listed above, or a maintainer applies the no-eval label."
+fi
 exit 1

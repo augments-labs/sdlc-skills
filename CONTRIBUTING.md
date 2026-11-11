@@ -234,7 +234,7 @@ trees which records the change needs:
 | A new skill | Both records, the evaluation one with `without_skill` as the second arm |
 | A removed skill, or one moved to another phase folder | The `no-eval` label: no record can measure a skill that is gone, and a move changes no text |
 | A skill's `scripts/` directory, or files outside `skills/` | Nothing; the script's offline test is the proof |
-| A symbolic link in a skill's `SKILL.md`, `assets/`, or `references/`, a `SKILL.md` anywhere but `skills/<phase>/<name>/`, or a path under `skills/` whose name has a newline | It fails: replace the link with the file it points to, move the `SKILL.md`, or rename the path. A link fails even when nothing in its skill changed, since text outside the skill can change under it |
+| A symbolic link anywhere under `skills/` but inside a skill's `scripts/` (a link file, or a link that is itself `assets/`, `references/`, a skill, or a phase folder), a `SKILL.md` added or changed under `skills/` anywhere but `skills/<phase>/<name>/`, or a path under `skills/` whose name has a newline | It fails: replace the link with what it points to, move or delete the `SKILL.md`, or rename the path. A link fails even when nothing in its skill changed, since text outside the skill can change under it |
 
 The check measures from the merge base, the commit the branch left `dev`
 at. If `dev` has changed the skill since, the merge would hold text no
@@ -246,8 +246,14 @@ if `dev` has moved since the check last ran.
 
 The workflow runs the pull request's own copy of `eval-record.yml` and of
 the script, so a pull request that changes either one attests its own
-check. Before merging one that also changes a skill, run `dev`'s copy of
-the script on it with the command below, or split it in two.
+check. Before merging one that also changes a skill, split it in two, or
+run `dev`'s copy of the script on its head, with the pull request body
+saved as `pr-body.md` and the evals repository cloned beside this one:
+
+```bash
+bash <(git show origin/dev:scripts/sh/check-eval-record.sh) --base origin/dev \
+  --head HEAD --evals ../sdlc-skills-evals --body pr-body.md
+```
 
 The records are matched by content, not by commit. `skill_tree` is
 `git rev-parse <commit>:skills/<phase>/<name>`, which a squash merge leaves

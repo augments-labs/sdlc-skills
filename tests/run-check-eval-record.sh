@@ -458,7 +458,72 @@ printf 'Eval record: results/dup-bad\nEval record: results/dup-bad\n' > "$body"
 run 1 "a record named twice still fails when it does not match"
 n="$(printf '%s\n' "$last_out" | grep -cF 'not results/dup-bad:')"
 if [ "$n" = 1 ]; then ok "a record named twice is checked once"; else bad "a record named twice is checked once (reported $n times)"; fi
+bench dup-good foo "$(tree_at HEAD "$skill")" old_skill "$(tree_at base "$skill")"
+printf 'Eval record: results/dup-good results/x\nEval record: results/dup-good\n' > "$body"
+run 1 "a malformed record line still fails"
+has "a malformed line that contains a valid one does not hide it" "ok    foo: evaluation record results/dup-good"
 : > "$body"
+
+# A link that is itself a directory, a skill, or a phase hides text as well
+# as a file link does; only a skill's scripts/ may hold one.
+git -C "$repo" checkout -q -B dirlink-base base
+mkdir -p "$repo/outside-dir"; printf 'shared\n' > "$repo/outside-dir/a.md"
+ln -s ../../../outside-dir "$repo/$skill/references"; commit dirlink-base
+run 1 "adding a skill's references/ as a directory link fails"
+has "it names the directory link" "skills/common/foo/references is a symbolic link"
+has "it counts as the skill's change" "foo (skills/common/foo) needs an evaluation record"
+git -C "$repo" checkout -q -B case-dirlink dirlink-base
+printf 'changed\n' >> "$repo/outside-dir/a.md"; commit case-dirlink
+BASE=dirlink-base run 1 "a directory link fails even when only its target changed"
+has "it names the directory link" "skills/common/foo/references is a symbolic link"
+start skilllink; ln -s foo "$repo/skills/common/bar"; commit skilllink
+run 1 "a skill directory that is a link fails"
+has "it names the skill link" "skills/common/bar is a symbolic link"
+start phaselink; ln -s common "$repo/skills/linked"; commit phaselink
+run 1 "a phase directory that is a link fails"
+has "it names the phase link" "skills/linked is a symbolic link"
+start scriptlink; ln -s x.sh "$repo/$skill/scripts/y.sh"; commit scriptlink
+run 0 "a link inside a skill's scripts/ passes"
+
+git -C "$repo" checkout -q -B stray-base base
+mkdir -p "$repo/skills/flat"; printf -- '---\nname: flat\ndescription: "Flat."\n---\n' > "$repo/skills/flat/SKILL.md"; commit stray-base
+git -C "$repo" checkout -q -B case-unstray stray-base
+git -C "$repo" rm -q skills/flat/SKILL.md; commit case-unstray
+BASE=stray-base run 0 "removing a stray SKILL.md passes"
+start flat2; mkdir -p "$repo/skills/flat"; printf -- '---\nname: flat\ndescription: "Flat."\n---\n' > "$repo/skills/flat/SKILL.md"; commit flat2
+run 1 "a layout failure alone still fails"
+if printf '%s\n' "$last_out" | grep -qF "name each record"; then
+  bad "a layout failure alone does not ask for record lines"; else ok "a layout failure alone does not ask for record lines"; fi
+
+# The link scan must fail closed when git cannot list the head.
+start lsfail; printf 'x\n' >> "$repo/$skill/scripts/x.sh"; commit lsfail
+shim="$tmp/shim"; mkdir -p "$shim"
+printf '#!/bin/sh\nfor a; do [ "$a" = ls-tree ] && exit 128; done\nexec %s "$@"\n' "$(command -v git)" > "$shim/git"
+chmod +x "$shim/git"
+out="$(cd "$repo" && env PATH="$shim:$PATH" bash "$S" --base base --head HEAD --evals "$evals" --body "$body" 2>&1)"; code=$?
+if [ "$code" = 2 ]; then ok "a link scan git cannot run exits 2"; else bad "a link scan git cannot run exits 2 (got $code: $out)"; fi
+
+# The path patterns are bytes, not characters: a name that is not valid
+# UTF-8 is still seen under a UTF-8 locale.
+utf8="$(locale -a 2>/dev/null | grep -iE '^(c|en_us)\.utf-?8$' | head -1)"
+start badbyte
+if [ -n "$utf8" ] && mkdir -p "$repo/skills/ph"$'\xff'"/baz/references" 2>/dev/null; then
+  printf -- '---\nname: baz\ndescription: "Baz."\n---\n' > "$repo/skills/ph"$'\xff'"/baz/SKILL.md"
+  ln -s ../../../../outside/shared.md "$repo/skills/ph"$'\xff'"/baz/references/l.md"; commit badbyte
+  out="$(cd "$repo" && LC_ALL="$utf8" bash "$S" --base base --head HEAD --evals "$evals" --body "$body" 2>&1)"
+  if printf '%s' "$out" | grep -qF "is a symbolic link"; then ok "a link in a skill whose path is not UTF-8 fails under $utf8"
+  else bad "a link in a skill whose path is not UTF-8 fails under $utf8"; printf '%s\n' "$out" | sed 's/^/        /'; fi
+  if printf '%s' "$out" | grep -qF "is not at skills/<phase>/<name>/SKILL.md"; then
+    bad "that skill's SKILL.md is not called stray"; else ok "that skill's SKILL.md is not called stray"; fi
+else
+  echo "  skip  no UTF-8 locale, or the filesystem refuses a non-UTF-8 name"
+fi
+
+# CONTRIBUTING runs dev's copy as `bash <(git show ...)`: the script must not
+# depend on its own path.
+start docs2; printf 'more\n' >> "$repo/notes/a.md"; commit docs2
+out="$(cd "$repo" && bash <(cat "$S") --base base --head HEAD --evals "$evals" --body "$body" 2>&1)"; code=$?
+if [ "$code" = 0 ]; then ok "the script runs from a process substitution"; else bad "the script runs from a process substitution (got $code: $out)"; fi
 
 git -C "$repo" checkout -q --orphan unrelated; git -C "$repo" rm -rqf . >/dev/null
 printf 'x\n' > "$repo/x.md"; commit unrelated
