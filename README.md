@@ -1,5 +1,12 @@
 # SDLC skills
 
+> [!IMPORTANT]
+> **This repository is archived and no longer actively maintained.**
+>
+> Development has moved to **[augments-labs/skills](https://github.com/augments-labs/skills)** — a multi-pack monorepo built around lean, evaluated skills, deterministic hooks, and integrated evaluations (currently being built from pre-release `0.0.0`).
+>
+> Existing releases here (through `v12.0.0`) remain available read-only for reference and existing installations.
+
 A ticket lands in your queue and you hand it to your coding agent. With the
 library installed, the skills walk the agent through it. It reads the ticket
 as written, records the acceptance criteria, and asks about the one thing
